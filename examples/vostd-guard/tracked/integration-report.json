@@ -1,0 +1,57 @@
+{
+  "analyses": [
+    {
+      "manifest": "/home/jinser/vie/work/AES/spec-check/examples/vostd-guard/tracked/manifest.json",
+      "name": "vacuity",
+      "out": "/tmp/kilo/check-vostd-out/analyses/vacuity",
+      "report": {
+        "dependency_summary": "verification results:: 2060 verified, 0 errors",
+        "probe_summary": "verification results:: 2 verified, 1 errors",
+        "target_summary": "1498 verified, 1 errors",
+        "verdicts": [
+          {
+            "detail": "construction: fabrication call rejected at expect_fail_requires (precondition not satisfied at ostd/src/spec_check_probes/mutex_guard_new_construction.rs:36; evidence: fabrication channel rejected + channel-exhaustion argument (documented, model-relative))",
+            "name": "mutex_guard_new_construction",
+            "verdict": "ConfirmedVacuous"
+          },
+          {
+            "detail": "construction: construct face verified (call path satisfiable)",
+            "name": "mutex_guard_new_holder_face",
+            "verdict": "ConfirmedLive"
+          },
+          {
+            "detail": "vacuous_probe_failed=true live_probe_failed=false",
+            "name": "mutex_guard_new_quantifier_shape",
+            "verdict": "ConfirmedLive"
+          }
+        ]
+      },
+      "repro": [
+        "cargo-spec-check analyses-vacuity --manifest /home/jinser/vie/work/AES/spec-check/examples/vostd-guard/tracked/manifest.json --cargo-verus /home/jinser/vie/work/AES/vostd/tools/verus/source/target-verus/release/cargo-verus --z3 /home/jinser/vie/work/AES/vostd/tools/verus/source/z3 --vstd /home/jinser/vie/work/AES/vostd/tools/verus/source/vstd --out NEW_DIRECTORY"
+      ],
+      "summary": [
+        "mutex_guard_new_construction: ConfirmedVacuous  (construction: fabrication call rejected at expect_fail_requires (precondition not satisfied at ostd/src/spec_check_probes/mutex_guard_new_construction.rs:36; evidence: fabrication channel rejected + channel-exhaustion argument (documented, model-relative))) confirmed vacuous: precondition unsatisfiable",
+        "mutex_guard_new_holder_face: ConfirmedLive  (construction: construct face verified (call path satisfiable)) confirmed live: precondition satisfiable",
+        "mutex_guard_new_quantifier_shape: ConfirmedLive  (vacuous_probe_failed=true live_probe_failed=false) confirmed live: precondition satisfiable"
+      ]
+    }
+  ],
+  "capture": {
+    "config": "/tmp/kilo/ktest-chan-capture.json",
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan/Cargo.toml",
+    "out": "/tmp/ktest-chan-capture",
+    "recaptured_stale_reason": null,
+    "reused": true,
+    "verus_root": "/home/jinser/vie/work/AES/vostd/tools/verus/source/target-verus/release"
+  },
+  "contract": "ANALYSIS-CONTRACT v1",
+  "project_config": "/tmp/kilo/check-vostd/project.json",
+  "summary": {
+    "analyses": 1,
+    "verdicts": {
+      "ConfirmedLive": 2,
+      "ConfirmedVacuous": 1
+    }
+  },
+  "tool": "cargo-spec-check check"
+}
