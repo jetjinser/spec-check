@@ -93,9 +93,38 @@ kvirt_area len/query、protect_range 闭包桥接）/ 3 项 permanent（机制�
 0 错误，ktest owner 27→28。处置表与残余风险见
 `research/.../ktest-capture-channel/README.md`。
 
-### M4. CI 接入（vostd 首站）—— 等 M1-M3
+### M4. CI 接入（vostd 首站）—— 完成（2026-11-11；配置与脚本交付，未触发 CI 运行）
 
-子命令已具备条件；接入 = vostd 仓库加一个调用 spec-check 二进制的 job。
+调研结论：vostd 已有 GitHub Actions（GitHub-hosted `ubuntu-24.04`/
+`macos-14` runner，无 self-hosted；`setup-verus` 复合 action 负责 apt +
+rustup + `cargo dv bootstrap` SDK 与缓存，bootstrap 路径正是 check 需要的
+`tools/verus/source/{target-verus/release/cargo-verus,z3,vstd}`；CI 内不用
+nix，flake 仅本地）。`ci.yml` 已有 spec-quality `--policy report` 先例
+（发现写报告不算失败），与本工具设计原则一致。spec-check 仓库当前无 git
+remote。详见 `docs/CI-WIRING.md`。
+
+- [x] 入口脚本 `examples/ci/run-spec-check.sh`（2026-11-11）：本地与 CI
+      同一条命令——nix devshell 进入（`SPEC_CHECK_NO_NIX=1` 可关）+ 构建
+      + `cargo-spec-check check` + artifact 目录整理（`CHECK_OUT/` 下
+      project.json、capture 剖面、capture/、check/、run.log）。
+- [x] workflow `vostd:.github/workflows/spec-check.yml`（2026-11-11）：
+      schedule 每夜（cron 40 2 * * *）+ workflow_dispatch（repo/ref 可
+      覆盖）；checkout vostd + spec-check → setup-verus → nix-installer
+      → 入口脚本 → summary（verdict 总数）→ 上传 `spec-check-report`
+      artifact（7 天）。发现不置红，退出码契约同 check。
+- [x] 文档：`docs/CI-WIRING.md`（现状、数据流、workflow 全文、本地冒烟
+      命令、上线前人工决定清单）；本节。
+- [x] 冒烟验证（2026-11-11，check-smoke 玩具 crate 输入换入）：脚本全
+      流程跑通，fresh capture → 4 契约判定（2 ConfirmedVacuous +
+      2 ConfirmedLive，与 wt-a E2E 一致），artifact 目录完整，
+      vostd 工作区无新增改动。
+- 上线前待人工决定（CI-WIRING.md 清单）：① spec-check remote 未定，
+  workflow 的 `OWNER/spec-check` 占位符必须填定；② spec-check rev 的
+  pin 策略（当前默认 main）；③ cron 时刻；④ capture 剖面成本（默认
+  ostd 全量验证 ≈ ci.yml verify 量级，夜班冷 runner 首轮叠加 SDK
+  bootstrap，job timeout 300min）；⑤ ktest cfgs 剖面是否换入；
+  ⑥ artifact 保留期；⑦ nix-installer-action@v23 升级策略；
+  ⑧ 私有仓库 checkout 权限（视 ①）。
 
 ### M5. 更多分析 —— 设计中
 
