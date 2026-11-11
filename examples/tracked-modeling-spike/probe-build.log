@@ -1,0 +1,23 @@
+warning: Git tree '/home/jinser/vie/work/AES/vostd' is dirty
+   Compiling tracked-modeling-spike v0.1.0 (/home/jinser/vie/work/AES/spec-check/examples/tracked-modeling-spike)
+error: postcondition not satisfied
+  --> src/lib.rs:28:9
+   |
+26 |   proof fn b1_guard_new_flat_vacuous_should_fail()
+   |         ------------------------------------------ at the end of the function body
+27 |       ensures
+28 | /         forall|cell_id: CellId, perm: PointsTo<u64>|
+29 | |             !pre_guard_new_b(cell_id, perm),
+   | |___________________________________________^ failed this postcondition
+
+error: precondition not satisfied
+   --> src/lib.rs:105:5
+    |
+ 88 |             perm.id() == cell_id(m),
+    |             ----------------------- failed precondition
+...
+105 |     model::guard_new(m, Tracked(pt2))
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+verification results:: 4 verified, 2 errors
+error: could not compile `tracked-modeling-spike` (lib) due to 2 previous errors

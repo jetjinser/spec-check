@@ -1,0 +1,29 @@
+warning: Git tree '/home/jinser/vie/work/AES/vostd' is dirty
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
+   Compiling verus_syn v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/dependencies/syn)
+   Compiling verus_prettyplease v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/dependencies/prettyplease)
+   Compiling equivalent v1.0.3
+   Compiling hashbrown v0.17.1
+   Compiling vstd v0.0.0-2026-10-04-0306 (/home/jinser/vie/work/AES/vostd/tools/verus/source/vstd)
+   Compiling convert_case v0.4.0
+   Compiling verus_builtin v0.0.0-2026-09-16-0054 (/home/jinser/vie/work/AES/vostd/tools/verus/source/builtin)
+   Compiling indexmap v2.14.2
+   Compiling syn v2.0.119
+   Compiling synstructure v0.13.2
+   Compiling verus_state_machines_macros v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/source/state_machines_macros)
+   Compiling verus_builtin_macros v0.0.0-2026-09-20-0158 (/home/jinser/vie/work/AES/vostd/tools/verus/source/builtin_macros)
+verification results:: 2060 verified, 0 errors
+   Compiling tracked-modeling-s1 v0.1.0 (/home/jinser/vie/work/AES/spec-check/examples/tracked-modeling-spike/s1-assume-new)
+error: `verus_builtin::impl&%6::assume_new` is not supported (note: you may be able to add a Verus specification to this function with `assume_specification`)
+  --> src/lib.rs:53:22
+   |
+53 |     let fabricated = Tracked::<PointsTo<u64>>::assume_new();
+   |                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: The following declaration may resolve this error:
+           pub assume_specification<A> [vstd::prelude::Tracked::<A>::assume_new] () -> vstd::prelude::Tracked<A>;
+
+error: could not compile `tracked-modeling-s1` (lib) due to 1 previous error
+warning: build failed, waiting for other jobs to finish...

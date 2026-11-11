@@ -17,6 +17,11 @@
   `examples/vostd-guard/FULL-RUN.md`）。
 - 缺陷台账在研究档案 `experiments/spec-quality-two-day/findings/registry.json`
   （14 条机械发现，9 个去重关系）。
+- M2 tracked 建模已完成：构造探针判据（route c）机器确认 MutexGuard::new
+  形状 ConfirmedVacuous 且阴性对照零误报；量词判据下真实 tracked 语义
+  判 ConfirmedLive（固有可满足），V-001 分歧精确定性为"孤立语义 vs
+  分布性可达性"。见 `docs/M2-tracked-modeling.md`、
+  `examples/tracked-modeling-spike/`。
 
 ## 主线条目（按优先级）
 
@@ -51,11 +56,29 @@
   `MutexGuard::new` 与 audit 判读的层级分歧保留在 V-001
   `rule_classified_probe_disputed`。恒假性的机器确认需 M2 tracked 建模。
 
-### M2. tracked 参数建模 —— 设计中
+### M2. tracked 参数建模 —— 完成（2026-11-11）
 
-形状探针无法表达 `Tracked<PointsTo<T>>` 不可伪造性（MutexGuard::new 判定
-不一致的根因）。候选方向：manifest 支持 `tracked_stubs`（以 uninterp spec
-fn 建模权限语义）。先做设计笔记，不急着实现。
+设计笔记 `docs/M2-tracked-modeling.md` + spike
+`examples/tracked-modeling-spike/`（预测先于运行写定，结果逐项回填
+RESULT.md）。三路线结论：
+
+- (a) uninterp `forgeable` 建模铸造集：**不可行**（结构性：uninterp 谓词
+  只能加模型，空洞方向不可证；公理化铸造集为空即假设结论；M1 条目
+  #5/#6 的 CandidateInconclusive 是同一机制的机器佐证）。
+- (b) 真实 tracked 类型 + 平面量词探针：**不能产生 ConfirmedVacuous**，
+  但给出 V-001 分歧的精确刻画——`perm.id() == mutex.cell_id()` 在孤立
+  vstd 语义下固有可满足（空洞 forall 被 `PCell::new` 配对反例否证，
+  铸造见证活性探针 verified → ConfirmedLive），audit 恒假是分布性判断。
+- (c) 源级构造探针（spike 主体）：**可行**。恒假 = 唯一可写伪造通道
+  （新铸 PCell 配对）被 verifier 拒绝且失败归因于被预测的 requires
+  （c1 → ConfirmedVacuous，构造判据）+ 伪造原语 `Tracked::assume_new`
+  被 verus 编译级阻断（s1 归档）；活性对照 holder 面调用（c2）与外部
+  可构造的 read 形状（c3）均 verified → 阴性对照零误报。不含任何直接
+  假设结论的公理；不可伪造性复用 verus 项纪律，非注入公理。
+- 生成器实现建议（`vacuity.rs` 五条：construction 条目类型、tracked
+  params 发射、precondition 失败归因、assume_specification 信任边界、
+  detail 证据形态标注）在 RESULT.md 末节，M3+ 实施时取用。
+- registry V-001 的 machine_status 更新属 research 仓库，本次未动。
 
 ### M3. ktest 通道 14 项排除闭合 —— 待做
 
