@@ -60,6 +60,7 @@ use std::{
     path::{Path, PathBuf},
     process::{Command, Stdio},
 };
+mod check_flow;
 fn check() -> Result<()> {
     let binary = env::current_exe()?;
     let binary_hash = hash(&fs::read(&binary)?)?;
@@ -88,6 +89,41 @@ fn check() -> Result<()> {
             println!("{}: {:?}", v.name, v.verdict);
         }
         return Ok(());
+    }
+    if args.first().is_some_and(|s| s == "check") {
+        let keys = ["--project", "--cargo-verus", "--z3", "--vstd", "--out"];
+        let usage = "check --project CONFIG --cargo-verus PATH --z3 PATH --vstd PATH --out NEW_DIRECTORY [--json]";
+        let mut values = BTreeMap::new();
+        let mut json_mode = false;
+        let mut iter = args.iter().skip(1);
+        while let Some(key) = iter.next() {
+            if key == "--json" {
+                if json_mode {
+                    return Err(usage.into());
+                }
+                json_mode = true;
+                continue;
+            }
+            if !keys.contains(&key.as_str()) {
+                return Err(usage.into());
+            }
+            let value = iter.next().ok_or(usage)?.clone();
+            if values.insert(key.clone(), value).is_some() {
+                return Err(usage.into());
+            }
+        }
+        if values.len() != keys.len() {
+            return Err(usage.into());
+        }
+        let get = |k: &str| values.get(k).map(String::as_str).ok_or("missing option");
+        return check_flow::run(
+            Path::new(get("--project")?),
+            Path::new(get("--cargo-verus")?),
+            Path::new(get("--z3")?),
+            Path::new(get("--vstd")?),
+            Path::new(get("--out")?),
+            json_mode,
+        );
     }
 if args.first().is_some_and(|s| s == "option-alternatives") {
         let keys = ["--input", "--context", "--verus-root", "--out"];

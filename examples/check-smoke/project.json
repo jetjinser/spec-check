@@ -1,0 +1,11 @@
+{
+  "capture": {
+    "config": "capture.json",
+    "manifest_path": "crate/Cargo.toml",
+    "verus_root": "/home/jinser/vie/work/AES/vostd/tools/verus/source/target-verus/release",
+    "out": "/tmp/spec-check-smoke/capture"
+  },
+  "analyses": [
+    {"name": "vacuity", "manifest": "manifest.json"}
+  ]
+}

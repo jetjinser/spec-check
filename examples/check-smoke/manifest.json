@@ -1,0 +1,27 @@
+{
+  "preamble": "pub open spec fn reachable_state(s: u64) -> bool {\n    s < 8\n}\n\npub open spec fn i_lt_len(i: usize, len: usize) -> bool {\n    i < len\n}\n\npub open spec fn i_ge_len(i: usize, len: usize) -> bool {\n    i >= len\n}",
+  "contracts": [
+    {
+      "name": "dead_entry",
+      "params": "s: u64",
+      "requires": "reachable_state(s) && s >= 8"
+    },
+    {
+      "name": "live_entry",
+      "params": "s: u64",
+      "requires": "s < 8",
+      "witness": "0"
+    },
+    {
+      "name": "arith_oob_vacuous_control",
+      "params": "i: usize, len: usize",
+      "requires": "i_lt_len(i, len) && i_ge_len(i, len)"
+    },
+    {
+      "name": "arith_bounds_live_control",
+      "params": "i: usize, len: usize",
+      "requires": "i_lt_len(i, len)",
+      "witness": "(0usize, 1usize)"
+    }
+  ]
+}

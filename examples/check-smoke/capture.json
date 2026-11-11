@@ -1,0 +1,12 @@
+{
+  "profiles": [
+    {
+      "name": "smoke-lib",
+      "package": "check-smoke-crate",
+      "target": "x86_64-unknown-linux-gnu",
+      "tests": false,
+      "features": [],
+      "default_features": true
+    }
+  ]
+}
