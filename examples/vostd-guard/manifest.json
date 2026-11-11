@@ -1,0 +1,43 @@
+{
+  "preamble": "// ===== vostd contract shape models =====\n// Frozen source: /tmp/vostd-43da079-ktest-chan/ostd/src (rev 43da0797bbfa)\n// `may_panic` is uninterpreted in the frozen source as well:\n//   verified_libs/vstd_extra/src/panic.rs:11  `pub uninterp spec fn may_panic() -> bool;`\npub uninterp spec fn may_panic() -> bool;\n\n// sync/mutex.rs MutexGuard::new (lines 217-228) shape: the contract's only\n// requires is `perm.id() == mutex.cell_id()` over a Tracked<PointsTo<T>>;\n// tracked resources are abstracted to usize ids, equality kept.\npub open spec fn perm_matches_cell(perm_id: usize, mutex_id: usize) -> bool {\n    perm_id == mutex_id\n}\n\n// sync/mutex.rs Mutex::new (lines 53-64) shape: constructor accepts any\n// value; modeled as a non-trivial contingent value domain so the probes\n// stay meaningful (a definitionally-true body would verify both probes).\npub open spec fn val_in_domain(val_id: usize) -> bool {\n    val_id < 8\n}\n\n// Generic arithmetic controls.\npub open spec fn i_lt_len(i: usize, len: usize) -> bool {\n    i < len\n}\npub open spec fn i_ge_len(i: usize, len: usize) -> bool {\n    i >= len\n}\n\n// mm/vm_space.rs shapes (lines 566-589 query, 670-688 jump, 909-930 map):\n// tracked ghost resources (CursorOwner / MetaRegionOwners / Guards /\n// EntryOwner / TlbModel) are abstracted to opaque ids; their invariant\n// predicates are uninterpreted — the frozen definitions involve deep\n// ghost state (page table views, RCU owners) not reproduced here.\npub uninterp spec fn cursor_invariants(owner: usize, regions: usize, guards: usize) -> bool;\npub uninterp spec fn query_panic_cond(space: usize, owner: usize, regions: usize) -> bool;\npub uninterp spec fn jump_panic_cond(va: usize) -> bool;\npub uninterp spec fn map_panic_cond(frame: usize, prop: usize) -> bool;\npub uninterp spec fn tlb_inv(tlb: usize) -> bool;\npub uninterp spec fn item_wf(frame: usize, prop: usize, entry_owner: usize, regions: usize) -> bool;\n\npub open spec fn query_requires(space: usize, owner: usize, regions: usize, guards: usize) -> bool {\n    cursor_invariants(owner, regions, guards)\n        && (query_panic_cond(space, owner, regions) ==> may_panic())\n}\n\npub open spec fn jump_requires(space: usize, va: usize, owner: usize, regions: usize, guards: usize) -> bool {\n    cursor_invariants(owner, regions, guards)\n        && (jump_panic_cond(va) ==> may_panic())\n}\n\npub open spec fn map_requires(space: usize, frame: usize, prop: usize, owner: usize, entry_owner: usize, regions: usize, guards: usize, tlb: usize) -> bool {\n    tlb_inv(tlb)\n        && cursor_invariants(owner, regions, guards)\n        && item_wf(frame, prop, entry_owner, regions)\n        && (map_panic_cond(frame, prop) ==> may_panic())\n}",
+  "contracts": [
+    {
+      "name": "mutex_guard_new_perm_cell_shape",
+      "params": "mutex_id: usize, perm_id: usize",
+      "requires": "perm_matches_cell(perm_id, mutex_id)",
+      "witness": "(0usize, 0usize)"
+    },
+    {
+      "name": "mutex_new_any_value_control",
+      "params": "val_id: usize",
+      "requires": "val_in_domain(val_id)",
+      "witness": "0usize"
+    },
+    {
+      "name": "arith_bounds_live_control",
+      "params": "i: usize, len: usize",
+      "requires": "i_lt_len(i, len)",
+      "witness": "(0usize, 1usize)"
+    },
+    {
+      "name": "arith_oob_vacuous_control",
+      "params": "i: usize, len: usize",
+      "requires": "i_lt_len(i, len) && i_ge_len(i, len)"
+    },
+    {
+      "name": "vmspace_cursor_query_shape",
+      "params": "space: usize, owner: usize, regions: usize, guards: usize",
+      "requires": "query_requires(space, owner, regions, guards)"
+    },
+    {
+      "name": "vmspace_cursor_jump_shape",
+      "params": "space: usize, va: usize, owner: usize, regions: usize, guards: usize",
+      "requires": "jump_requires(space, va, owner, regions, guards)"
+    },
+    {
+      "name": "vmspace_cursor_mut_map_shape",
+      "params": "space: usize, frame: usize, prop: usize, owner: usize, entry_owner: usize, regions: usize, guards: usize, tlb: usize",
+      "requires": "map_requires(space, frame, prop, owner, entry_owner, regions, guards, tlb)"
+    }
+  ]
+}

@@ -87,14 +87,22 @@ pub fn generate_probe_lib(manifest: &Manifest) -> String {
         let safe = sanitize(&c.name);
         let args = arg_names(&c.params);
         let witness_block = match &c.witness {
-            Some(w) => format!(
-                "    let {wnames} = {w};\n    assert(pre_{i}_{safe}({args}));\n",
-                wnames = param_names(&c.params).join(", "),
-                w = w,
-                args = args,
-                safe = safe,
-                i = i,
-            ),
+            Some(w) => {
+                let names = param_names(&c.params);
+                // Multi-parameter bindings need a tuple pattern: `let (a, b) = (..);`
+                let binding = if names.len() == 1 {
+                    names[0].clone()
+                } else {
+                    format!("({})", names.join(", "))
+                };
+                format!(
+                    "    let {binding} = {w};\n    assert(pre_{i}_{safe}({args}));\n",
+                    w = w,
+                    args = args,
+                    safe = safe,
+                    i = i,
+                )
+            },
             None => String::new(),
         };
         out.push_str(&format!(
@@ -215,7 +223,10 @@ pub fn classify(manifest: &Manifest, log: &str) -> VacuityReport {
             current_failure_line = None;
             continue;
         }
-        if let Some(rest) = line.strip_prefix("  --> src/lib.rs:") {
+        if let Some(rest) = line
+            .trim_start()
+            .strip_prefix("--> src/lib.rs:")
+        {
             if let Some(num) = rest
                 .split(':')
                 .next()
