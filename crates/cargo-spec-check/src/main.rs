@@ -90,6 +90,27 @@ fn check() -> Result<()> {
         }
         return Ok(());
     }
+    if args.first().is_some_and(|s| s == "analyses-divergence") {
+        let keys = ["--manifest", "--cargo-verus", "--z3", "--vstd", "--out"];
+        if args.len() != 11 || keys.iter().enumerate().any(|(i, k)| args[1 + i * 2] != *k) {
+            return Err("analyses-divergence --manifest FILE --cargo-verus PATH --z3 PATH --vstd PATH --out DIRECTORY".into());
+        }
+        let manifest: spec_check_analyses::divergence::Manifest = serde_json::from_slice(&fs::read(&args[2])?)?;
+        let report = spec_check_analyses::divergence::run(
+            &manifest,
+            Path::new(&args[4]),
+            Path::new(&args[6]),
+            Path::new(&args[8]),
+            Path::new(&args[10]),
+        )?;
+        let out = Path::new(&args[10]);
+        fs::create_dir_all(out)?;
+        write_json(&out.join("report.json"), &report)?;
+        for v in &report.verdicts {
+            println!("{}: {:?}", v.name, v.verdict);
+        }
+        return Ok(());
+    }
     if args.first().is_some_and(|s| s == "check") {
         let keys = ["--project", "--cargo-verus", "--z3", "--vstd", "--out"];
         let usage = "check --project CONFIG --cargo-verus PATH --z3 PATH --vstd PATH --out NEW_DIRECTORY [--json]";

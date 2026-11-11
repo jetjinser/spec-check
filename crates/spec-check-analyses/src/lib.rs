@@ -13,6 +13,8 @@
 //! 3. Add positive/negative controls under `tests/fixtures` so the analysis
 //!    is validated against a known-good and a known-bad case.
 
+pub mod divergence;
+mod probe_infra;
 pub mod vacuity;
 
 use std::collections::BTreeMap;

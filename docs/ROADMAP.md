@@ -126,10 +126,47 @@ remote。详见 `docs/CI-WIRING.md`。
   ⑥ artifact 保留期；⑦ nix-installer-action@v23 升级策略；
   ⑧ 私有仓库 checkout 权限（视 ①）。
 
-### M5. 更多分析 —— 设计中
+### M5. test-contract-divergence（义务对照分析）—— 完成（2026-11-11）
 
-test-contract-divergence（把研究管道的义务对照固化成子命令）复用 vacuity
-的探针生成器框架。
+研究管道的义务对照固化为第二条分析子命令
+`analyses-divergence --manifest --cargo-verus --z3 --vstd --out`，与
+vacuity 互补（vacuity 问 requires 侧是否空洞，divergence 问 ensures 侧
+是否足以支撑使用方义务）。设计笔记 `docs/M5-test-contract-divergence.md`
+（预测先于实现与运行写定；§6a 为 spike 迭代记录）。
+
+- [x] 插件实现：`crates/spec-check-analyses/src/divergence.rs`
+      （divergence manifest：target_workspace 同构 + obligation client
+      条目 + 机器可查 `expect` 预注册字段；obligation fn 注入模块生成；
+      两阶段 runner 复用 vacuity 回路；判定 ObligationSupported /
+      ContractGapCandidate / Inconclusive / Anomaly，基线对照 = 同一
+      构建日志中探针模块外零错误事件）。公共基础设施提取为
+      `probe_infra.rs`（TargetWorkspace、注入安装/恢复、cargo-verus
+      命令、日志 span 模型），vacuity 公开 API 路径不变；顺带修复
+      run_captured 日志 append 模式的跨运行证据污染 bug。CLI 子命令
+      接入 cargo-spec-check。工具单测 8/8（原 5 + 新 3），workspace
+      全测通过。
+- [x] spike（判据闸门）：mutex-lock-contract 锚点双面——同一语义义务
+      各态惯用形，A 面（冻结原契约）ContractGapCandidate / B 面
+      （候选契约 spec-change.patch 应用态）ObligationSupported，两面
+      皆中。v1 同文本预测的 B 面被运行证伪（closed 谓词只能按 ensures
+      实例匹配），迭代记录见设计笔记 §6a 与
+      `examples/vostd-divergence/spike/SPIKE.md`。
+- [x] vostd 首站运行：5 条目 / 3 家族（Mutex 获取族 ×4 + RwArc 包装族
+      ×1），全部机械转写自研究管道已归档义务。判定
+      **ContractGapCandidate 4 / ObligationSupported 1**，5/5 与预注册
+      一致；目标 1498 verified / 4 errors（恰为 4 个预期失败义务，
+      span 逐条归因 obligation fn），baseline clean，运行后工作区恢复
+      原字节。归档 `examples/vostd-divergence/{DIVERGENCE-EXPECTED.md,
+      DIVERGENCE-RUN.md, divergence-manifest.json, spike/}`；产物
+      `/tmp/vostd-divergence-run1`。
+- [x] registry：F-002 补机器探针证据；新增 F-013（Mutex::try_lock
+      is_none 需求）/F-014（RwArc::get_cloned 文档值义务），均
+      obligation_fail 级（无候选不虚构升级）；research 仓 commit 紧随。
+- 已知边界：RwLock/RwMutex/SpinLock guard 身份与 RCU owner 族义务的
+  谓词属研究侧建模态（冻结面无 rel_lock/owner 谓词、guard 字段模块
+  私有），不可机械转写，本站不覆盖；义务 fail 是证明论缺口候选，
+  非运行时反例；check 流程（capture 剖面）暂未接入 divergence
+  （需要活工作区注入，语义待定义）。
 
 ### M6. tracked 契约构造探针批量生成器 —— 完成（2026-11-11）
 

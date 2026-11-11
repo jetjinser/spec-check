@@ -1,0 +1,46 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": ["ktest_capture_gap"],
+    "target": "x86_64-unknown-none"
+  },
+  "contracts": [
+    {
+      "name": "mutex_lock_guard_identity",
+      "params": "",
+      "obligation": "let mutex = Mutex::<u64>::new(5);\nlet guard = mutex.lock();\nassert(guard.rel_mutex(mutex));\nlet _held_guard = guard;",
+      "model_preamble": "use crate::sync::{Mutex, MutexGuard, RwArc};",
+      "expect": "gap"
+    },
+    {
+      "name": "mutex_try_lock_rel_supported",
+      "params": "",
+      "obligation": "let mutex = Mutex::<u64>::new(5);\nlet mref = &mutex;\nif let Some(g) = mref.try_lock() {\n    assert(g.rel_mutex(*mref));\n}",
+      "model_preamble": "use crate::sync::{Mutex, MutexGuard, RwArc};",
+      "expect": "supported"
+    },
+    {
+      "name": "mutex_try_lock_rel_cross_negative",
+      "params": "",
+      "obligation": "let mutex = Mutex::<u64>::new(5);\nlet other = Mutex::<u64>::new(7);\nlet mref = &mutex;\nif let Some(g) = mref.try_lock() {\n    assert(g.rel_mutex(other));\n}",
+      "model_preamble": "use crate::sync::{Mutex, MutexGuard, RwArc};",
+      "expect": "gap"
+    },
+    {
+      "name": "mutex_try_lock_is_none_demand",
+      "params": "",
+      "obligation": "let lock = Mutex::<u64>::new(0);\nlet guard1 = lock.lock();\nlet __sq_assert_result_0 = lock.try_lock();\nassert(__sq_assert_result_0.is_none());\nlet _held_guard = guard1;",
+      "model_preamble": "use crate::sync::{Mutex, MutexGuard, RwArc};",
+      "expect": "gap"
+    },
+    {
+      "name": "rwarc_get_cloned_value",
+      "params": "",
+      "obligation": "let arc = RwArc::new(5u64);\nlet value = arc.get_cloned();\nassert(value == 5);",
+      "model_preamble": "use crate::sync::{Mutex, MutexGuard, RwArc};",
+      "expect": "gap"
+    }
+  ]
+}
