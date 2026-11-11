@@ -1,0 +1,35 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": ["ktest_capture_gap"],
+    "target": "x86_64-unknown-none"
+  },
+  "preamble": "// M1 quantifier control (shape reproduction, vostd-guard manifest #7):\n// MutexGuard::new's id equality as a mechanical scalar transcription —\n// real equality over opaque usize ids (same shape as\n// examples/vostd-guard/manifest.json, which recorded ConfirmedLive).\npub open spec fn perm_matches_cell(perm_id: usize, mutex_id: usize) -> bool {\n    perm_id == mutex_id\n}\n",
+  "contracts": [
+    {
+      "name": "mutex_guard_new_construction",
+      "probe": "construction",
+      "params": "m: &Mutex<u64>",
+      "expect_fail_requires": "perm.id() == m.cell_id()",
+      "model_preamble": "use vstd::cell::pcell::*;\nuse vstd::prelude::*;\nuse crate::sync::{Mutex, MutexGuard};\n\n// Contract-face stub: mechanical transcription of the contract under\n// analysis — ostd/src/sync/mutex.rs:217-224, MutexGuard::new's\n// #[verus_spec] (with Tracked(perm): Tracked<PointsTo<T>>; requires\n// perm.id() == mutex.cell_id(); ensures ret.rel_mutex(*mutex)) — over the\n// REAL workspace types (Mutex<u64>, MutexGuard<'a, u64>, vstd\n// PointsTo<u64>). external_body + diverging body: the contract face is\n// the subject under probe; the real MutexGuard::new is private to\n// sync::mutex (visibility wall, see VALIDATION.md) and is not called by\n// the probe.\n#[verifier::external_body]\npub fn stub_guard_new<'a>(m: &'a Mutex<u64>, Tracked(perm): Tracked<PointsTo<u64>>) -> (g: MutexGuard<'a, u64>)\n    requires\n        perm.id() == m.cell_id(),\n    ensures\n        g.rel_mutex(*m),\n{\n    loop {}\n}",
+      "construct": "let (_fresh_cell, Tracked(fresh_perm)) = PCell::new(7u64);\nlet _g = stub_guard_new(m, Tracked(fresh_perm));"
+    },
+    {
+      "name": "mutex_guard_new_holder_face",
+      "probe": "construction",
+      "face_requires": true,
+      "params": "m: &Mutex<u64>, Tracked(perm): Tracked<PointsTo<u64>>",
+      "expect_fail_requires": "perm.id() == m.cell_id()",
+      "model_preamble": "use vstd::cell::pcell::*;\nuse vstd::prelude::*;\nuse crate::sync::{Mutex, MutexGuard};\n\n// Contract-face stub: mechanical transcription of the contract under\n// analysis — ostd/src/sync/mutex.rs:217-224, MutexGuard::new's\n// #[verus_spec] (with Tracked(perm): Tracked<PointsTo<T>>; requires\n// perm.id() == mutex.cell_id(); ensures ret.rel_mutex(*mutex)) — over the\n// REAL workspace types (Mutex<u64>, MutexGuard<'a, u64>, vstd\n// PointsTo<u64>). external_body + diverging body: the contract face is\n// the subject under probe; the real MutexGuard::new is private to\n// sync::mutex (visibility wall, see VALIDATION.md) and is not called by\n// the probe.\n#[verifier::external_body]\npub fn stub_guard_new<'a>(m: &'a Mutex<u64>, Tracked(perm): Tracked<PointsTo<u64>>) -> (g: MutexGuard<'a, u64>)\n    requires\n        perm.id() == m.cell_id(),\n    ensures\n        g.rel_mutex(*m),\n{\n    loop {}\n}",
+      "construct": "let _g = stub_guard_new(m, Tracked(perm));"
+    },
+    {
+      "name": "mutex_guard_new_quantifier_shape",
+      "params": "mutex_id: usize, perm_id: usize",
+      "requires": "perm_matches_cell(perm_id, mutex_id)",
+      "witness": "(0usize, 0usize)"
+    }
+  ]
+}
