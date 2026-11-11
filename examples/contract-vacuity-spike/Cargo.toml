@@ -1,0 +1,13 @@
+[package]
+name = "vacuity-spike"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[dependencies]
+vstd = { path = "/home/jinser/vie/work/AES/vostd/tools/verus/source/vstd" }
+
+[workspace]
+
+[package.metadata.verus]
+verify = true
