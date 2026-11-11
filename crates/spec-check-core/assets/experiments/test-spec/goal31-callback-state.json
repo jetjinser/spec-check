@@ -1,0 +1,74 @@
+{
+  "scope": "Manual target-language feasibility controls; no automatic callback lifting or source/model equivalence claim.",
+  "cases": {
+    "captured": {
+      "source": "use vstd::prelude::*;\nverus! {\nfn client() -> (result: u64)\n    ensures result == 1,\n{\n    let mut value = 0u64;\n    let mut step = || { value += 1; };\n    step();\n    value\n}\n}\n",
+      "command": {
+        "program": "/tmp/vostd-level-fix-probe/tools/verus/source/target-verus/release/verus",
+        "args": [
+          "/tmp/goal31-callback-state-v1/captured.rs",
+          "--crate-type",
+          "lib",
+          "--error-format=json"
+        ]
+      },
+      "result": {
+        "exit_code": 1,
+        "summaries": [],
+        "source_sha256": "f70d5934d7721f9ab539cbb1d7b783c74ded902a35f261823a9095cb06d73458"
+      },
+      "stdout": "",
+      "stderr": "{\"$message_type\":\"diagnostic\",\"message\":\"Verus does not currently support closures capturing a mutable reference for variables of any mode\",\"code\":null,\"level\":\"error\",\"spans\":[{\"file_name\":\"/tmp/goal31-callback-state-v1/captured.rs\",\"byte_start\":137,\"byte_end\":147,\"line_start\":7,\"line_end\":7,\"column_start\":25,\"column_end\":35,\"is_primary\":true,\"text\":[{\"text\":\"    let mut step = || { value += 1; };\",\"highlight_start\":25,\"highlight_end\":35}],\"label\":null,\"suggested_replacement\":null,\"suggestion_applicability\":null,\"expansion\":null}],\"children\":[],\"rendered\":\"error: Verus does not currently support closures capturing a mutable reference for variables of any mode\\n --> /tmp/goal31-callback-state-v1/captured.rs:7:25\\n  |\\n7 |     let mut step = || { value += 1; };\\n  |                         ^^^^^^^^^^\\n\\n\"}\n{\"$message_type\":\"diagnostic\",\"message\":\"aborting due to 1 previous error\",\"code\":null,\"level\":\"error\",\"spans\":[],\"children\":[],\"rendered\":\"error: aborting due to 1 previous error\\n\\n\"}\n"
+    },
+    "explicit": {
+      "source": "use vstd::prelude::*;\nverus! {\nfn client() -> (result: u64)\n    ensures result == 1,\n{\n    let mut value = 0u64;\n    let step = |state: &mut u64|\n        requires *old(state) < u64::MAX,\n        ensures *final(state) == *old(state) + 1,\n    { *state += 1; };\n    step(&mut value);\n    value\n}\n}\n",
+      "command": {
+        "program": "/tmp/vostd-level-fix-probe/tools/verus/source/target-verus/release/verus",
+        "args": [
+          "/tmp/goal31-callback-state-v1/explicit.rs",
+          "--crate-type",
+          "lib",
+          "--error-format=json"
+        ]
+      },
+      "result": {
+        "exit_code": 0,
+        "summaries": [
+          [
+            "1",
+            "0"
+          ]
+        ],
+        "source_sha256": "814e95460b5313857023aa81a3adb5527fbeeebfce0a2fe70db9a50b810af416"
+      },
+      "stdout": "verification results:: 1 verified, 0 errors\n",
+      "stderr": ""
+    },
+    "wrong": {
+      "source": "use vstd::prelude::*;\nverus! {\nfn client() -> (result: u64)\n    ensures result == 1,\n{\n    let mut value = 0u64;\n    let step = |state: &mut u64|\n        requires *old(state) < u64::MAX,\n        ensures *final(state) == *old(state) + 2,\n    { *state += 1; };\n    step(&mut value);\n    value\n}\n}\n",
+      "command": {
+        "program": "/tmp/vostd-level-fix-probe/tools/verus/source/target-verus/release/verus",
+        "args": [
+          "/tmp/goal31-callback-state-v1/wrong.rs",
+          "--crate-type",
+          "lib",
+          "--error-format=json"
+        ]
+      },
+      "result": {
+        "exit_code": 1,
+        "summaries": [
+          [
+            "0",
+            "1"
+          ]
+        ],
+        "source_sha256": "f2f59eddb4444569989a415f0fad9753c1bb03d72968a012818f5c2b933cc1e1"
+      },
+      "stdout": "verification results:: 0 verified, 1 errors\n",
+      "stderr": "{\"$message_type\":\"diagnostic\",\"message\":\"function body check: not all errors may have been reported; rerun with a higher value for --multiple-errors to find other potential errors in this function\",\"code\":null,\"level\":\"note\",\"spans\":[{\"file_name\":\"/tmp/goal31-callback-state-v1/wrong.rs\",\"byte_start\":31,\"byte_end\":58,\"line_start\":3,\"line_end\":3,\"column_start\":1,\"column_end\":28,\"is_primary\":true,\"text\":[{\"text\":\"fn client() -> (result: u64)\",\"highlight_start\":1,\"highlight_end\":28}],\"label\":null,\"suggested_replacement\":null,\"suggestion_applicability\":null,\"expansion\":null}],\"children\":[],\"rendered\":\"note: function body check: not all errors may have been reported; rerun with a higher value for --multiple-errors to find other potential errors in this function\\n --> /tmp/goal31-callback-state-v1/wrong.rs:3:1\\n  |\\n3 | fn client() -> (result: u64)\\n  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^\\n\\n\"}\n{\"$message_type\":\"diagnostic\",\"message\":\"postcondition not satisfied\",\"code\":null,\"level\":\"error\",\"spans\":[{\"file_name\":\"/tmp/goal31-callback-state-v1/wrong.rs\",\"byte_start\":85,\"byte_end\":292,\"line_start\":5,\"line_end\":13,\"column_start\":1,\"column_end\":2,\"is_primary\":false,\"text\":[{\"text\":\"{\",\"highlight_start\":1,\"highlight_end\":2},{\"text\":\"    let mut value = 0u64;\",\"highlight_start\":1,\"highlight_end\":26},{\"text\":\"    let step = |state: &mut u64|\",\"highlight_start\":1,\"highlight_end\":33},{\"text\":\"        requires *old(state) < u64::MAX,\",\"highlight_start\":1,\"highlight_end\":41},{\"text\":\"        ensures *final(state) == *old(state) + 2,\",\"highlight_start\":1,\"highlight_end\":50},{\"text\":\"    { *state += 1; };\",\"highlight_start\":1,\"highlight_end\":22},{\"text\":\"    step(&mut value);\",\"highlight_start\":1,\"highlight_end\":22},{\"text\":\"    value\",\"highlight_start\":1,\"highlight_end\":10},{\"text\":\"}\",\"highlight_start\":1,\"highlight_end\":2}],\"label\":\"at the end of the function body\",\"suggested_replacement\":null,\"suggestion_applicability\":null,\"expansion\":null},{\"file_name\":\"/tmp/goal31-callback-state-v1/wrong.rs\",\"byte_start\":72,\"byte_end\":83,\"line_start\":4,\"line_end\":4,\"column_start\":13,\"column_end\":24,\"is_primary\":true,\"text\":[{\"text\":\"    ensures result == 1,\",\"highlight_start\":13,\"highlight_end\":24}],\"label\":\"failed this postcondition\",\"suggested_replacement\":null,\"suggestion_applicability\":null,\"expansion\":null}],\"children\":[],\"rendered\":\"error: postcondition not satisfied\\n  --> /tmp/goal31-callback-state-v1/wrong.rs:4:13\\n   |\\n 4 |       ensures result == 1,\\n   |               ^^^^^^^^^^^ failed this postcondition\\n 5 | / {\\n 6 | |     let mut value = 0u64;\\n 7 | |     let step = |state: &mut u64|\\n 8 | |         requires *old(state) < u64::MAX,\\n...  |\\n12 | |     value\\n13 | | }\\n   | |_- at the end of the function body\\n\\n\"}\n{\"$message_type\":\"diagnostic\",\"message\":\"unable to prove post-condition of closure\",\"code\":null,\"level\":\"error\",\"spans\":[{\"file_name\":\"/tmp/goal31-callback-state-v1/wrong.rs\",\"byte_start\":241,\"byte_end\":257,\"line_start\":10,\"line_end\":10,\"column_start\":5,\"column_end\":21,\"is_primary\":false,\"text\":[{\"text\":\"    { *state += 1; };\",\"highlight_start\":5,\"highlight_end\":21}],\"label\":\"returning this expression\",\"suggested_replacement\":null,\"suggestion_applicability\":null,\"expansion\":null},{\"file_name\":\"/tmp/goal31-callback-state-v1/wrong.rs\",\"byte_start\":203,\"byte_end\":235,\"line_start\":9,\"line_end\":9,\"column_start\":17,\"column_end\":49,\"is_primary\":true,\"text\":[{\"text\":\"        ensures *final(state) == *old(state) + 2,\",\"highlight_start\":17,\"highlight_end\":49}],\"label\":\"failed this postcondition\",\"suggested_replacement\":null,\"suggestion_applicability\":null,\"expansion\":null}],\"children\":[],\"rendered\":\"error: unable to prove post-condition of closure\\n  --> /tmp/goal31-callback-state-v1/wrong.rs:9:17\\n   |\\n 9 |         ensures *final(state) == *old(state) + 2,\\n   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition\\n10 |     { *state += 1; };\\n   |     ---------------- returning this expression\\n\\n\"}\n{\"$message_type\":\"diagnostic\",\"message\":\"aborting due to 2 previous errors\",\"code\":null,\"level\":\"error\",\"spans\":[],\"children\":[],\"rendered\":\"error: aborting due to 2 previous errors\\n\\n\"}\n"
+    }
+  },
+  "verus_sha256": "288f948666f3044afc1c124271b71c5a07796eeacf0836a91be0731638fefb03",
+  "conclusion": "Pinned Verus rejects mutable captures; explicit mutable parameters with stated contracts are verified. An incorrect state postcondition fails. for_each support alone cannot unblock the original stateful range-test callback."
+}

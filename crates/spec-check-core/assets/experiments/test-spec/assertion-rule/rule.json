@@ -1,0 +1,9 @@
+{
+  "id": "usize-assert-eq-v1",
+  "model_sha256": "d566e9b54d58771118344f82e1db13619794d6f097070159707b147da6cd2538",
+  "template_sha256": "f4c2f853ccf78d05ec7a2576d01e111d8bee70b04122678d77e697c35ed5ac62",
+  "bridge": "Reviewed core assert_eq tuple-borrow expansion and fixed emitted template; Rustc domain checks plus an independent MIR gate. The model proof does not prove Rustc or this bridge.",
+  "compiler_release": "1.98.1",
+  "macro_sha256": "9784131e43d255fed7a07ae18cbc72748eedbebe65dfcefeee999989289df30c",
+  "word_bits": 64
+}

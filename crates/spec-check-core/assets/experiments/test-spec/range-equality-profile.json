@@ -1,0 +1,18 @@
+{
+  "scope": "Compiled standard equality MIR, Rustc 1.98.1; source/model correspondence still requires review",
+  "bodies": {
+    "<std::option::Option<T> as std::cmp::PartialEq>::eq": {
+      "generic_args": "[std::ops::Range<usize>]",
+      "mir_sha256": "227f74302c55d7b1cb9e21d22239c7bb6ab703833e7875afa5cbfd113e2ab910"
+    },
+    "<std::ops::Range<Idx> as std::cmp::PartialEq>::eq": {
+      "generic_args": "[usize]",
+      "mir_sha256": "ab9d52965766271d50421e37e0947bb2b245c1f08953bbafaa538edc842a291b"
+    },
+    "std::cmp::impls::<impl std::cmp::PartialEq for usize>::eq": {
+      "generic_args": "[]",
+      "mir_sha256": "280ff414ee550a2a9c8db1f4c674748be51abb7840962a689f53f5a2323c7041"
+    }
+  },
+  "model_sha256": "571edd36662d4a6a66c85525ef92abcf0c3fb7d7986039edd36fb5aed240fc81"
+}

@@ -62,7 +62,7 @@ fn compact(work: &Path, name: &str) -> Result<()> {
     }
     Ok(())
 }
-pub(crate) fn run(config: &Path, sdk: &Path, out: &Path) -> Result<()> {
+pub fn run(config: &Path, sdk: &Path, out: &Path) -> Result<()> {
     if out.exists() {
         return Err("conditional-check output already exists".into());
     }

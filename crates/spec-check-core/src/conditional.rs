@@ -212,7 +212,7 @@ fn scan(functions: &[Node]) -> Value {
     }
     json!({"scope":"Machine-integer returns, top-level implications and ordered Match branches depending on the return binder. Payload bindings retain complete identities, constructor selectors and reference modes. Nested conditions and inherited contracts remain unanalysed. Candidates are inspection signals; no defect or satisfiability conclusion.","functions":inventory,"candidates":candidates,"defects_confirmed":0})
 }
-pub(crate) fn run(input: &Path, out: &Path) -> Result<()> {
+pub fn run(input: &Path, out: &Path) -> Result<()> {
     if out.exists() {
         return Err("conditional-scan output directory already exists".into());
     }
@@ -527,7 +527,7 @@ pub(crate) fn alternatives(f: &Node, datatypes: &[Node]) -> Result<Vec<String>> 
 }
 
 /// Emit isolated source mutations; acceptance still requires an independent Verus run.
-pub(crate) fn generate(input: &Path, source_root: &Path, out: &Path) -> Result<()> {
+pub fn generate(input: &Path, source_root: &Path, out: &Path) -> Result<()> {
     if out.exists() {
         return Err("conditional-generate output already exists".into());
     }

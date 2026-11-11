@@ -281,7 +281,7 @@ fn outcome(baseline: &Value, alternative: &Value, restored: &Value) -> &'static 
     }
 }
 
-pub(crate) fn run(config: &Path, manifest: &Path, sdk: &Path, destination: &Path) -> Result<()> {
+pub fn run(config: &Path, manifest: &Path, sdk: &Path, destination: &Path) -> Result<()> {
     let cfg: Config = serde_json::from_slice(&fs::read(config)?)?;
     if cfg.timeout_seconds == 0 || cfg.rlimit == Some(0) {
         return Err("resource limits must be positive".into());

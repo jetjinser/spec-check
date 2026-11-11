@@ -274,7 +274,7 @@ fn lower_body(
             end: closure.as_ref().map_or(end, |(_, anchor)| *anchor),
             replacement: format!(
                 "\nvstd::prelude::verus! {{\n{}\n}}\n",
-                include_str!("../../../experiments/test-spec/assertion_failure.rs")
+                include_str!("../assets/experiments/test-spec/assertion_failure.rs")
             ),
             origin: body["span"].clone(),
         });
@@ -735,6 +735,7 @@ mod tests {
         serde_json::from_value(v["records"].clone()).unwrap()
     }
     #[test]
+    #[ignore = "requires checker-evidence from the research archive"]
     fn golden_multiple_and_mutations() {
         let base = Path::new(env!("CARGO_MANIFEST_DIR"))
             .join("../../checker-evidence/test-spec/multiple-assertions/order/multiple");

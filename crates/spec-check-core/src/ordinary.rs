@@ -1417,7 +1417,7 @@ mod controls {
     #[test]
     fn compiler_capture_facts_keep_mutable_and_owned_state_distinct() {
         let data: Value = serde_json::from_str(include_str!(
-            "../../../experiments/test-spec/goal31-capture-facts.json"
+            "../assets/experiments/test-spec/goal31-capture-facts.json"
         ))
         .unwrap();
         let mut bodies =

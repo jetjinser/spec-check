@@ -1,0 +1,721 @@
+{
+  "stage": "frozen before Goal 19 rule development",
+  "capture_configuration_sha256": "c9ec23ea5450b44e003a1884a959993ac66cf1d899546cd6e53ef70adcc8d3c2",
+  "linkage_evidence_sha256": "282bf1cbcfa34abc6883f32b5a2f1e4a559bb742950b1477c3b7d73fbd59f906",
+  "clients": [
+    {
+      "profile": "host-tests",
+      "owner": {
+        "attributes": "[]",
+        "definition_kind": "Fn",
+        "kind": "owner",
+        "owner": "DefId(0:41 ~ align_ext[4b42]::test::test_align_up#1)",
+        "path": "test::test_align_up",
+        "span": "ostd/libs/align_ext/src/lib.rs:235:5: 235:23 (#0)"
+      },
+      "coverage": [
+        "assertion",
+        "loop"
+      ],
+      "mir_calls": [
+        {
+          "arguments": "[Spanned { node: move _5, span: ostd/libs/align_ext/src/lib.rs:240:18: 240:35 (#184) }]",
+          "block": "bb0",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/iter/traits/collect.rs:312:5: 312:42 (#0)",
+          "destination": "_4",
+          "generic_args": "[std::ops::Range<usize>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:41 ~ align_ext[4b42]::test::test_align_up#1)",
+          "span": "ostd/libs/align_ext/src/lib.rs:240:18: 240:35 (#187)",
+          "target": "std::iter::IntoIterator::into_iter",
+          "target_id": "DefId(2:10257 ~ core[c0ac]::iter::traits::collect::IntoIterator::into_iter)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _11, span: ostd/libs/align_ext/src/lib.rs:240:18: 240:35 (#187) }]",
+          "block": "bb2",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/iter/traits/iterator.rs:78:5: 78:46 (#0)",
+          "destination": "_10",
+          "generic_args": "[std::ops::Range<usize>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:41 ~ align_ext[4b42]::test::test_align_up#1)",
+          "span": "ostd/libs/align_ext/src/lib.rs:240:18: 240:35 (#187)",
+          "target": "std::iter::Iterator::next",
+          "target_id": "DefId(2:10438 ~ core[c0ac]::iter::traits::iterator::Iterator::next)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _14, span: ostd/libs/align_ext/src/lib.rs:244:21: 244:22 (#0) }, Spanned { node: copy _16, span: ostd/libs/align_ext/src/lib.rs:244:32: 244:33 (#0) }]",
+          "block": "bb9",
+          "definition_span": "ostd/libs/align_ext/src/lib.rs:39:5: 39:51 (#0)",
+          "destination": "_21",
+          "generic_args": "[usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:41 ~ align_ext[4b42]::test::test_align_up#1)",
+          "span": "ostd/libs/align_ext/src/lib.rs:244:21: 244:34 (#0)",
+          "target": "AlignExt::align_up",
+          "target_id": "DefId(0:16 ~ align_ext[4b42]::AlignExt::align_up)"
+        },
+        {
+          "arguments": "[Spanned { node: const \"assertion failed: n.align_up(a) == n2\", span: no-location (#0) }]",
+          "block": "bb11",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/panicking.rs:138:1: 138:44 (#0)",
+          "destination": "_22",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:41 ~ align_ext[4b42]::test::test_align_up#1)",
+          "span": "ostd/libs/align_ext/src/lib.rs:244:13: 244:41 (#175)",
+          "target": "core::panicking::panic",
+          "target_id": "DefId(2:11704 ~ core[c0ac]::panicking::panic)"
+        }
+      ]
+    },
+    {
+      "profile": "host-tests",
+      "owner": {
+        "attributes": "[]",
+        "definition_kind": "Fn",
+        "kind": "owner",
+        "owner": "DefId(0:45 ~ align_ext[4b42]::test::test_align_down#1)",
+        "path": "test::test_align_down",
+        "span": "ostd/libs/align_ext/src/lib.rs:249:5: 249:25 (#0)"
+      },
+      "coverage": [
+        "assertion",
+        "loop"
+      ],
+      "mir_calls": [
+        {
+          "arguments": "[Spanned { node: move _5, span: ostd/libs/align_ext/src/lib.rs:254:18: 254:35 (#188) }]",
+          "block": "bb0",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/iter/traits/collect.rs:312:5: 312:42 (#0)",
+          "destination": "_4",
+          "generic_args": "[std::ops::Range<usize>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:45 ~ align_ext[4b42]::test::test_align_down#1)",
+          "span": "ostd/libs/align_ext/src/lib.rs:254:18: 254:35 (#191)",
+          "target": "std::iter::IntoIterator::into_iter",
+          "target_id": "DefId(2:10257 ~ core[c0ac]::iter::traits::collect::IntoIterator::into_iter)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _11, span: ostd/libs/align_ext/src/lib.rs:254:18: 254:35 (#191) }]",
+          "block": "bb2",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/iter/traits/iterator.rs:78:5: 78:46 (#0)",
+          "destination": "_10",
+          "generic_args": "[std::ops::Range<usize>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:45 ~ align_ext[4b42]::test::test_align_down#1)",
+          "span": "ostd/libs/align_ext/src/lib.rs:254:18: 254:35 (#191)",
+          "target": "std::iter::Iterator::next",
+          "target_id": "DefId(2:10438 ~ core[c0ac]::iter::traits::iterator::Iterator::next)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _14, span: ostd/libs/align_ext/src/lib.rs:258:21: 258:22 (#0) }, Spanned { node: copy _16, span: ostd/libs/align_ext/src/lib.rs:258:34: 258:35 (#0) }]",
+          "block": "bb9",
+          "definition_span": "ostd/libs/align_ext/src/lib.rs:57:5: 57:53 (#0)",
+          "destination": "_21",
+          "generic_args": "[usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:45 ~ align_ext[4b42]::test::test_align_down#1)",
+          "span": "ostd/libs/align_ext/src/lib.rs:258:21: 258:36 (#0)",
+          "target": "AlignExt::align_down",
+          "target_id": "DefId(0:17 ~ align_ext[4b42]::AlignExt::align_down)"
+        },
+        {
+          "arguments": "[Spanned { node: const \"assertion failed: n.align_down(a) == n2\", span: no-location (#0) }]",
+          "block": "bb11",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/panicking.rs:138:1: 138:44 (#0)",
+          "destination": "_22",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:45 ~ align_ext[4b42]::test::test_align_down#1)",
+          "span": "ostd/libs/align_ext/src/lib.rs:258:13: 258:43 (#178)",
+          "target": "core::panicking::panic",
+          "target_id": "DefId(2:11704 ~ core[c0ac]::panicking::panic)"
+        }
+      ]
+    },
+    {
+      "profile": "kernel-library",
+      "owner": {
+        "attributes": "[Parsed(DocComment { style: Outer, kind: Raw(ostd/src/boot/memory_region.rs:181:5: 181:78 (#0)), span: ostd/src/boot/memory_region.rs:181:5: 181:78 (#0), comment: \" Returns the region with boundaries rounded to `PAGE_SIZE` boundaries:\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/boot/memory_region.rs:182:5: 182:61 (#0)), span: ostd/src/boot/memory_region.rs:182:5: 182:61 (#0), comment: \" inward for `Usable` regions, outward for the others.\" }), Unparsed(AttrItem { path: AttrPath { segments: [\"verus\", \"internal\"], span: ostd/src/boot/memory_region.rs:181:5: 226:6 (#0) }, args: Delimited(DelimArgs { dspan: DelimSpan { open: ostd/src/boot/memory_region.rs:181:5: 226:6 (#0), close: ostd/src/boot/memory_region.rs:181:5: 226:6 (#0) }, delim: Parenthesis, tokens: TokenStream([Token(Token { kind: Ident(\"verus_macro\", No), span: ostd/src/boot/memory_region.rs:183:5: 205:7 (#1281) }, Alone)]) }), id: HashIgnoredAttrId { attr_id: AttrId(2754) }, style: Outer, span: ostd/src/boot/memory_region.rs:181:5: 226:6 (#0) })]",
+        "definition_kind": "AssocFn",
+        "kind": "owner",
+        "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+        "path": "boot::memory_region::MemoryRegion::as_aligned",
+        "span": "ostd/src/boot/memory_region.rs:206:5: 206:33 (#0)"
+      },
+      "coverage": [
+        "no_assertion",
+        "branch"
+      ],
+      "mir_calls": [
+        {
+          "arguments": "[Spanned { node: copy _1, span: ostd/src/boot/memory_region.rs:211:33: 211:37 (#0) }]",
+          "block": "bb0",
+          "definition_span": "ostd/src/boot/memory_region.rs:177:5: 177:42 (#0)",
+          "destination": "_5",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+          "span": "ostd/src/boot/memory_region.rs:211:33: 211:43 (#0)",
+          "target": "boot::memory_region::MemoryRegion::typ",
+          "target_id": "DefId(0:3726 ~ ostd[4790]::boot::memory_region::{impl#19}::typ)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _1, span: ostd/src/boot/memory_region.rs:217:17: 217:21 (#0) }]",
+          "block": "bb2",
+          "definition_span": "ostd/src/boot/memory_region.rs:146:5: 146:32 (#0)",
+          "destination": "_12",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+          "span": "ostd/src/boot/memory_region.rs:217:17: 217:28 (#0)",
+          "target": "boot::memory_region::MemoryRegion::base",
+          "target_id": "DefId(0:3722 ~ ostd[4790]::boot::memory_region::{impl#19}::base)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _1, span: ostd/src/boot/memory_region.rs:213:17: 213:21 (#0) }]",
+          "block": "bb3",
+          "definition_span": "ostd/src/boot/memory_region.rs:146:5: 146:32 (#0)",
+          "destination": "_8",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+          "span": "ostd/src/boot/memory_region.rs:213:17: 213:28 (#0)",
+          "target": "boot::memory_region::MemoryRegion::base",
+          "target_id": "DefId(0:3722 ~ ostd[4790]::boot::memory_region::{impl#19}::base)"
+        },
+        {
+          "arguments": "[Spanned { node: move _8, span: ostd/src/boot/memory_region.rs:213:17: 213:28 (#0) }, Spanned { node: const arch::mm::PAGE_SIZE, span: ostd/src/boot/memory_region.rs:213:38: 213:47 (#0) }]",
+          "block": "bb4",
+          "definition_span": "ostd/libs/align_ext/src/lib.rs:39:5: 39:51 (#0)",
+          "destination": "_7",
+          "generic_args": "[usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+          "span": "ostd/src/boot/memory_region.rs:213:17: 213:48 (#0)",
+          "target": "align_ext::AlignExt::align_up",
+          "target_id": "DefId(20:16 ~ align_ext[08e7]::AlignExt::align_up)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _1, span: ostd/src/boot/memory_region.rs:214:17: 214:21 (#0) }]",
+          "block": "bb5",
+          "definition_span": "ostd/src/boot/memory_region.rs:160:5: 160:31 (#0)",
+          "destination": "_10",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+          "span": "ostd/src/boot/memory_region.rs:214:17: 214:27 (#0)",
+          "target": "boot::memory_region::MemoryRegion::end",
+          "target_id": "DefId(0:3724 ~ ostd[4790]::boot::memory_region::{impl#19}::end)"
+        },
+        {
+          "arguments": "[Spanned { node: move _10, span: ostd/src/boot/memory_region.rs:214:17: 214:27 (#0) }, Spanned { node: const arch::mm::PAGE_SIZE, span: ostd/src/boot/memory_region.rs:214:39: 214:48 (#0) }]",
+          "block": "bb6",
+          "definition_span": "ostd/libs/align_ext/src/lib.rs:57:5: 57:53 (#0)",
+          "destination": "_9",
+          "generic_args": "[usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+          "span": "ostd/src/boot/memory_region.rs:214:17: 214:49 (#0)",
+          "target": "align_ext::AlignExt::align_down",
+          "target_id": "DefId(20:17 ~ align_ext[08e7]::AlignExt::align_down)"
+        },
+        {
+          "arguments": "[Spanned { node: move _12, span: ostd/src/boot/memory_region.rs:217:17: 217:28 (#0) }, Spanned { node: const arch::mm::PAGE_SIZE, span: ostd/src/boot/memory_region.rs:217:40: 217:49 (#0) }]",
+          "block": "bb8",
+          "definition_span": "ostd/libs/align_ext/src/lib.rs:57:5: 57:53 (#0)",
+          "destination": "_11",
+          "generic_args": "[usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+          "span": "ostd/src/boot/memory_region.rs:217:17: 217:50 (#0)",
+          "target": "align_ext::AlignExt::align_down",
+          "target_id": "DefId(20:17 ~ align_ext[08e7]::AlignExt::align_down)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _1, span: ostd/src/boot/memory_region.rs:218:17: 218:21 (#0) }]",
+          "block": "bb9",
+          "definition_span": "ostd/src/boot/memory_region.rs:160:5: 160:31 (#0)",
+          "destination": "_14",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+          "span": "ostd/src/boot/memory_region.rs:218:17: 218:27 (#0)",
+          "target": "boot::memory_region::MemoryRegion::end",
+          "target_id": "DefId(0:3724 ~ ostd[4790]::boot::memory_region::{impl#19}::end)"
+        },
+        {
+          "arguments": "[Spanned { node: move _14, span: ostd/src/boot/memory_region.rs:218:17: 218:27 (#0) }, Spanned { node: const arch::mm::PAGE_SIZE, span: ostd/src/boot/memory_region.rs:218:37: 218:46 (#0) }]",
+          "block": "bb10",
+          "definition_span": "ostd/libs/align_ext/src/lib.rs:39:5: 39:51 (#0)",
+          "destination": "_13",
+          "generic_args": "[usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+          "span": "ostd/src/boot/memory_region.rs:218:17: 218:47 (#0)",
+          "target": "align_ext::AlignExt::align_up",
+          "target_id": "DefId(20:16 ~ align_ext[08e7]::AlignExt::align_up)"
+        }
+      ]
+    },
+    {
+      "profile": "kernel-library",
+      "owner": {
+        "attributes": "[Unparsed(AttrItem { path: AttrPath { segments: [\"verus\", \"internal\"], span: ostd/src/util/range_alloc.rs:164:5: 186:6 (#0) }, args: Delimited(DelimArgs { dspan: DelimSpan { open: ostd/src/util/range_alloc.rs:164:5: 186:6 (#0), close: ostd/src/util/range_alloc.rs:164:5: 186:6 (#0) }, delim: Parenthesis, tokens: TokenStream([Token(Token { kind: Ident(\"verus_macro\", No), span: ostd/src/util/range_alloc.rs:153:5: 159:7 (#13009) }, Alone)]) }), id: HashIgnoredAttrId { attr_id: AttrId(24205) }, style: Outer, span: ostd/src/util/range_alloc.rs:164:5: 186:6 (#0) })]",
+        "definition_kind": "AssocFn",
+        "kind": "owner",
+        "owner": "DefId(0:9480 ~ ostd[4790]::util::range_alloc::{impl#4}::new)",
+        "path": "util::range_alloc::RangeAllocator::new",
+        "span": "ostd/src/util/range_alloc.rs:164:5: 164:48 (#0)"
+      },
+      "coverage": [
+        "resource_creation"
+      ],
+      "mir_calls": [
+        {
+          "arguments": "[Spanned { node: move _5, span: ostd/src/util/range_alloc.rs:183:47: 183:62 (#0) }]",
+          "block": "bb0",
+          "definition_span": "tools/verus/source/builtin/src/lib.rs:517:5: 517:59 (#0)",
+          "destination": "_4",
+          "generic_args": "[util::range_alloc::FreelistConstant]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9480 ~ ostd[4790]::util::range_alloc::{impl#4}::new)",
+          "span": "ostd/src/util/range_alloc.rs:183:47: 183:62 (#0)",
+          "target": "vstd::prelude::Ghost::<A>::assume_new_fallback",
+          "target_id": "DefId(7:605 ~ verus_builtin[eff6]::{impl#5}::assume_new_fallback)"
+        },
+        {
+          "arguments": "[Spanned { node: move _7, span: ostd/src/util/range_alloc.rs:183:64: 183:81 (#0) }]",
+          "block": "bb1",
+          "definition_span": "tools/verus/source/builtin/src/lib.rs:575:5: 575:59 (#0)",
+          "destination": "_6",
+          "generic_args": "[util::range_alloc::FreelistResource]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9480 ~ ostd[4790]::util::range_alloc::{impl#4}::new)",
+          "span": "ostd/src/util/range_alloc.rs:183:64: 183:81 (#0)",
+          "target": "vstd::prelude::Tracked::<A>::assume_new_fallback",
+          "target_id": "DefId(7:611 ~ verus_builtin[eff6]::{impl#6}::assume_new_fallback)"
+        },
+        {
+          "arguments": "[Spanned { node: move _3, span: ostd/src/util/range_alloc.rs:183:41: 183:45 (#0) }, Spanned { node: const vstd::prelude::Ghost::<util::range_alloc::FreelistConstant> {{ phantom: core::marker::PhantomData::<util::range_alloc::FreelistConstant> }}, span: ostd/src/util/range_alloc.rs:183:47: 183:62 (#0) }, Spanned { node: const vstd::prelude::Tracked::<util::range_alloc::FreelistResource> {{ phantom: core::marker::PhantomData::<util::range_alloc::FreelistResource> }}, span: ostd/src/util/range_alloc.rs:183:64: 183:81 (#0) }]",
+          "block": "bb2",
+          "definition_span": "ostd/src/sync/spin.rs:163:5: 167:20 (#0)",
+          "destination": "_2",
+          "generic_args": "[core::option::Option<alloc::collections::BTreeMap<usize, util::range_alloc::FreeRange, alloc::alloc::Global>>, sync::guard::PreemptDisabled, util::range_alloc::FreelistInvariant]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9480 ~ ostd[4790]::util::range_alloc::{impl#4}::new)",
+          "span": "ostd/src/util/range_alloc.rs:183:27: 183:82 (#0)",
+          "target": "sync::spin::SpinLock::<T, G, I>::new",
+          "target_id": "DefId(0:7195 ~ ostd[4790]::sync::spin::{impl#3}::new)"
+        }
+      ]
+    },
+    {
+      "profile": "kernel-library",
+      "owner": {
+        "attributes": "[Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:193:5: 193:50 (#0)), span: ostd/src/util/range_alloc.rs:193:5: 193:50 (#0), comment: \" Allocates a specific kernel virtual area.\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:194:5: 194:8 (#0)), span: ostd/src/util/range_alloc.rs:194:5: 194:8 (#0), comment: \"\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:195:5: 195:30 (#0)), span: ostd/src/util/range_alloc.rs:195:5: 195:30 (#0), comment: \" # Verified Properties\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:196:5: 196:8 (#0)), span: ostd/src/util/range_alloc.rs:196:5: 196:8 (#0), comment: \"\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:197:5: 197:18 (#0)), span: ostd/src/util/range_alloc.rs:197:5: 197:18 (#0), comment: \" ## Safety\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:198:5: 198:64 (#0)), span: ostd/src/util/range_alloc.rs:198:5: 198:64 (#0), comment: \" - No unsafe code; no panic under the verified contract.\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:199:5: 199:8 (#0)), span: ostd/src/util/range_alloc.rs:199:5: 199:8 (#0), comment: \"\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:200:5: 200:34 (#0)), span: ostd/src/util/range_alloc.rs:200:5: 200:34 (#0), comment: \" ## Functional Correctness\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:201:5: 201:74 (#0)), span: ostd/src/util/range_alloc.rs:201:5: 201:74 (#0), comment: \" - Returns `Ok` if and only if the shared state's free list covers\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:202:5: 202:28 (#0)), span: ostd/src/util/range_alloc.rs:202:5: 202:28 (#0), comment: \"   `allocate_range`.\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:203:5: 203:8 (#0)), span: ostd/src/util/range_alloc.rs:203:5: 203:8 (#0), comment: \"\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:204:5: 204:25 (#0)), span: ostd/src/util/range_alloc.rs:204:5: 204:25 (#0), comment: \" ## Preconditions\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:205:5: 205:80 (#0)), span: ostd/src/util/range_alloc.rs:205:5: 205:80 (#0), comment: \" - The target range is non-empty and lies within this allocator's range.\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:206:5: 206:26 (#0)), span: ostd/src/util/range_alloc.rs:206:5: 206:26 (#0), comment: \" ## Postconditions\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:207:5: 207:75 (#0)), span: ostd/src/util/range_alloc.rs:207:5: 207:75 (#0), comment: \" - On success, returns a [`GhostSubRange`] proving ownership of the\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:208:5: 208:78 (#0)), span: ostd/src/util/range_alloc.rs:208:5: 208:78 (#0), comment: \"   allocated range; a token is dispatched if and only if the result is\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:209:5: 209:64 (#0)), span: ostd/src/util/range_alloc.rs:209:5: 209:64 (#0), comment: \"   `Ok`, and it is consumed by [`RangeAllocator::free`].\" }), Unparsed(AttrItem { path: AttrPath { segments: [\"verus\", \"internal\"], span: ostd/src/util/range_alloc.rs:193:5: 363:6 (#0) }, args: Delimited(DelimArgs { dspan: DelimSpan { open: ostd/src/util/range_alloc.rs:193:5: 363:6 (#0), close: ostd/src/util/range_alloc.rs:193:5: 363:6 (#0) }, delim: Parenthesis, tokens: TokenStream([Token(Token { kind: Ident(\"verus_macro\", No), span: ostd/src/util/range_alloc.rs:210:5: 221:7 (#13035) }, Alone)]) }), id: HashIgnoredAttrId { attr_id: AttrId(24224) }, style: Outer, span: ostd/src/util/range_alloc.rs:193:5: 363:6 (#0) }), Unparsed(AttrItem { path: AttrPath { segments: [\"verus\", \"internal\"], span: ostd/src/util/range_alloc.rs:211:9: 211:13 (#0) }, args: Delimited(DelimArgs { dspan: DelimSpan { open: ostd/src/util/range_alloc.rs:211:9: 211:13 (#0), close: ostd/src/util/range_alloc.rs:211:9: 211:13 (#0) }, delim: Parenthesis, tokens: TokenStream([Token(Token { kind: Ident(\"external_body\", No), span: ostd/src/util/range_alloc.rs:210:5: 221:7 (#13035) }, Alone)]) }), id: HashIgnoredAttrId { attr_id: AttrId(24225) }, style: Outer, span: ostd/src/util/range_alloc.rs:211:9: 211:13 (#0) }), Parsed(Doc(DocAttribute { first_span: ostd/src/util/range_alloc.rs:211:9: 211:13 (#0), aliases: {}, hidden: Some(ostd/src/util/range_alloc.rs:210:5: 221:7 (#13035)), inline: [], cfg: [], auto_cfg: [], auto_cfg_change: [], fake_variadic: None, keyword: None, attribute: None, masked: None, notable_trait: None, search_unbox: None, html_favicon_url: None, html_logo_url: None, html_playground_url: None, html_root_url: None, html_no_source: None, issue_tracker_base_url: None, rust_logo: None, test_attrs: [], no_crate_inject: None }))]",
+        "definition_kind": "AssocFn",
+        "kind": "owner",
+        "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+        "path": "util::range_alloc::RangeAllocator::alloc_specific",
+        "span": "ostd/src/util/range_alloc.rs:222:5: 222:95 (#0)"
+      },
+      "coverage": [
+        "branch",
+        "resource_acquire_use_return"
+      ],
+      "mir_calls": [
+        {
+          "arguments": "[Spanned { node: copy _1, span: ostd/src/util/range_alloc.rs:225:30: 225:34 (#0) }]",
+          "block": "bb1",
+          "definition_span": "ostd/src/util/range_alloc.rs:602:5: 604:99 (#0)",
+          "destination": "_7",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:225:30: 225:55 (#0)",
+          "target": "util::range_alloc::RangeAllocator::get_freelist_guard",
+          "target_id": "DefId(0:9490 ~ ostd[4790]::util::range_alloc::{impl#4}::get_freelist_guard)"
+        },
+        {
+          "arguments": "[]",
+          "block": "bb2",
+          "definition_span": "verified_libs/vstd_extra/src/panic.rs:16:1: 16:28 (#0)",
+          "destination": "_6",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "verified_libs/vstd_extra/src/trans_macros.rs:33:13: 33:43 (#13039)",
+          "target": "vstd_extra::panic::panic_diverge",
+          "target_id": "DefId(12:1540 ~ vstd_extra[3fb1]::panic::panic_diverge)"
+        },
+        {
+          "arguments": "[Spanned { node: move _11, span: ostd/src/util/range_alloc.rs:232:24: 232:34 (#0) }]",
+          "block": "bb3",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/ops/deref.rs:274:5: 274:50 (#0)",
+          "destination": "_10",
+          "generic_args": "[sync::spin::SpinLockGuard<'{erased}, core::option::Option<alloc::collections::BTreeMap<usize, util::range_alloc::FreeRange, alloc::alloc::Global>>, sync::guard::PreemptDisabled, util::range_alloc::FreelistInvariant>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:232:24: 232:43 (#0)",
+          "target": "core::ops::DerefMut::deref_mut",
+          "target_id": "DefId(1:4458 ~ core[7415]::ops::deref::DerefMut::deref_mut)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _10, span: ostd/src/util/range_alloc.rs:232:24: 232:34 (#0) }]",
+          "block": "bb4",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/option.rs:764:5: 764:53 (#0)",
+          "destination": "_9",
+          "generic_args": "[alloc::collections::BTreeMap<usize, util::range_alloc::FreeRange, alloc::alloc::Global>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:232:24: 232:43 (#0)",
+          "target": "core::option::Option::<T>::as_mut",
+          "target_id": "DefId(1:11249 ~ core[7415]::option::{impl#0}::as_mut)"
+        },
+        {
+          "arguments": "[Spanned { node: move _9, span: ostd/src/util/range_alloc.rs:232:24: 232:43 (#0) }]",
+          "block": "bb5",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/option.rs:1011:5: 1011:35 (#0)",
+          "destination": "_8",
+          "generic_args": "[&'{erased} mut alloc::collections::BTreeMap<usize, util::range_alloc::FreeRange, alloc::alloc::Global>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:232:24: 232:52 (#0)",
+          "target": "core::option::Option::<T>::unwrap",
+          "target_id": "DefId(1:11256 ~ core[7415]::option::{impl#0}::unwrap)"
+        },
+        {
+          "arguments": "[Spanned { node: move _17, span: ostd/src/util/range_alloc.rs:269:29: 269:37 (#0) }]",
+          "block": "bb6",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:2703:5: 2703:41 (#0)",
+          "destination": "_16",
+          "generic_args": "[usize, util::range_alloc::FreeRange, alloc::alloc::Global]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:269:29: 269:44 (#0)",
+          "target": "alloc::collections::BTreeMap::<K, V, A>::iter",
+          "target_id": "DefId(2:2471 ~ alloc[f239]::collections::btree::map::{impl#100}::iter)"
+        },
+        {
+          "arguments": "[Spanned { node: move _16, span: ostd/src/util/range_alloc.rs:269:29: 269:44 (#0) }]",
+          "block": "bb7",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/iter/traits/collect.rs:312:5: 312:42 (#0)",
+          "destination": "_15",
+          "generic_args": "[alloc::collections::btree_map::Iter<'{erased}, usize, util::range_alloc::FreeRange>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:269:29: 269:44 (#13377)",
+          "target": "core::iter::IntoIterator::into_iter",
+          "target_id": "DefId(1:10257 ~ core[7415]::iter::traits::collect::IntoIterator::into_iter)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _20, span: ostd/src/util/range_alloc.rs:269:29: 269:44 (#13377) }]",
+          "block": "bb9",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/iter/traits/iterator.rs:78:5: 78:46 (#0)",
+          "destination": "_19",
+          "generic_args": "[alloc::collections::btree_map::Iter<'{erased}, usize, util::range_alloc::FreeRange>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:269:29: 269:44 (#13377)",
+          "target": "core::iter::Iterator::next",
+          "target_id": "DefId(1:10438 ~ core[7415]::iter::traits::iterator::Iterator::next)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _8, span: ostd/src/util/range_alloc.rs:307:17: 307:25 (#0) }, Spanned { node: copy _43, span: ostd/src/util/range_alloc.rs:307:33: 307:37 (#0) }]",
+          "block": "bb19",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:1129:5: 1132:16 (#0)",
+          "destination": "_42",
+          "generic_args": "[usize, util::range_alloc::FreeRange, alloc::alloc::Global, usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:307:17: 307:38 (#0)",
+          "target": "alloc::collections::BTreeMap::<K, V, A>::remove",
+          "target_id": "DefId(2:1969 ~ alloc[f239]::collections::btree::map::{impl#20}::remove)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _8, span: ostd/src/util/range_alloc.rs:308:44: 308:52 (#0) }, Spanned { node: copy _45, span: ostd/src/util/range_alloc.rs:308:61: 308:65 (#0) }]",
+          "block": "bb20",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:1006:5: 1009:16 (#0)",
+          "destination": "_44",
+          "generic_args": "[usize, util::range_alloc::FreeRange, alloc::alloc::Global, usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:308:44: 308:66 (#0)",
+          "target": "alloc::collections::BTreeMap::<K, V, A>::get_mut",
+          "target_id": "DefId(2:1965 ~ alloc[f239]::collections::btree::map::{impl#20}::get_mut)"
+        },
+        {
+          "arguments": "[Spanned { node: move _54, span: ostd/src/util/range_alloc.rs:315:36: 315:91 (#13378) }]",
+          "block": "bb25",
+          "definition_span": "ostd/src/util/range_alloc.rs:646:5: 646:46 (#0)",
+          "destination": "_53",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:315:21: 315:92 (#0)",
+          "target": "util::range_alloc::FreeRange::new",
+          "target_id": "DefId(0:9494 ~ ostd[4790]::util::range_alloc::{impl#5}::new)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _8, span: ostd/src/util/range_alloc.rs:313:17: 313:25 (#0) }, Spanned { node: move _52, span: ostd/src/util/range_alloc.rs:314:21: 314:39 (#0) }, Spanned { node: move _53, span: ostd/src/util/range_alloc.rs:315:21: 315:92 (#0) }]",
+          "block": "bb26",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:1045:5: 1047:16 (#0)",
+          "destination": "_51",
+          "generic_args": "[usize, util::range_alloc::FreeRange, alloc::alloc::Global]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:313:17: 316:18 (#0)",
+          "target": "alloc::collections::BTreeMap::<K, V, A>::insert",
+          "target_id": "DefId(2:1967 ~ alloc[f239]::collections::btree::map::{impl#20}::insert)"
+        },
+        {
+          "arguments": "[Spanned { node: move _62, span: ostd/src/util/range_alloc.rs:320:22: 320:33 (#0) }]",
+          "block": "bb27",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/option.rs:633:5: 633:40 (#0)",
+          "destination": "_61",
+          "generic_args": "[usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:320:22: 320:43 (#0)",
+          "target": "core::option::Option::<T>::is_some",
+          "target_id": "DefId(1:11242 ~ core[7415]::option::{impl#0}::is_some)"
+        },
+        {
+          "arguments": "[Spanned { node: move _64, span: ostd/src/util/range_alloc.rs:360:9: 360:19 (#0) }]",
+          "block": "bb31",
+          "definition_span": "ostd/src/sync/spin.rs:588:5: 588:22 (#0)",
+          "destination": "_63",
+          "generic_args": "['{erased}, core::option::Option<alloc::collections::BTreeMap<usize, util::range_alloc::FreeRange, alloc::alloc::Global>>, sync::guard::PreemptDisabled, util::range_alloc::FreelistInvariant]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+          "span": "ostd/src/util/range_alloc.rs:360:9: 360:26 (#0)",
+          "target": "sync::spin::SpinLockGuard::<'a, T, G, I>::drop",
+          "target_id": "DefId(0:7270 ~ ostd[4790]::sync::spin::{impl#11}::drop)"
+        }
+      ]
+    },
+    {
+      "profile": "kernel-library",
+      "owner": {
+        "attributes": "[Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:465:5: 465:25 (#0)), span: ostd/src/util/range_alloc.rs:465:5: 465:25 (#0), comment: \" Frees a `range`.\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:466:5: 466:8 (#0)), span: ostd/src/util/range_alloc.rs:466:5: 466:8 (#0), comment: \"\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:467:5: 467:30 (#0)), span: ostd/src/util/range_alloc.rs:467:5: 467:30 (#0), comment: \" # Verified Properties\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:468:5: 468:8 (#0)), span: ostd/src/util/range_alloc.rs:468:5: 468:8 (#0), comment: \"\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:469:5: 469:18 (#0)), span: ostd/src/util/range_alloc.rs:469:5: 469:18 (#0), comment: \" ## Safety\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:470:5: 470:26 (#0)), span: ostd/src/util/range_alloc.rs:470:5: 470:26 (#0), comment: \" - No unsafe code.\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:471:5: 471:8 (#0)), span: ostd/src/util/range_alloc.rs:471:5: 471:8 (#0), comment: \"\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:472:5: 472:25 (#0)), span: ostd/src/util/range_alloc.rs:472:5: 472:25 (#0), comment: \" ## Preconditions\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:473:5: 473:64 (#0)), span: ostd/src/util/range_alloc.rs:473:5: 473:64 (#0), comment: \" - The range to free lies within this allocator's range.\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:474:5: 474:73 (#0)), span: ostd/src/util/range_alloc.rs:474:5: 474:73 (#0), comment: \" - Supply the allocation token returned when this exact range was\" }), Parsed(DocComment { style: Outer, kind: Raw(ostd/src/util/range_alloc.rs:475:5: 475:62 (#0)), span: ostd/src/util/range_alloc.rs:475:5: 475:62 (#0), comment: \"   allocated. The token is consumed by this operation.\" }), Unparsed(AttrItem { path: AttrPath { segments: [\"verus\", \"internal\"], span: ostd/src/util/range_alloc.rs:465:5: 585:6 (#0) }, args: Delimited(DelimArgs { dspan: DelimSpan { open: ostd/src/util/range_alloc.rs:465:5: 585:6 (#0), close: ostd/src/util/range_alloc.rs:465:5: 585:6 (#0) }, delim: Parenthesis, tokens: TokenStream([Token(Token { kind: Ident(\"verus_macro\", No), span: ostd/src/util/range_alloc.rs:476:5: 483:7 (#13108) }, Alone)]) }), id: HashIgnoredAttrId { attr_id: AttrId(24301) }, style: Outer, span: ostd/src/util/range_alloc.rs:465:5: 585:6 (#0) }), Unparsed(AttrItem { path: AttrPath { segments: [\"verus\", \"internal\"], span: ostd/src/util/range_alloc.rs:477:9: 477:13 (#0) }, args: Delimited(DelimArgs { dspan: DelimSpan { open: ostd/src/util/range_alloc.rs:477:9: 477:13 (#0), close: ostd/src/util/range_alloc.rs:477:9: 477:13 (#0) }, delim: Parenthesis, tokens: TokenStream([Token(Token { kind: Ident(\"external_body\", No), span: ostd/src/util/range_alloc.rs:476:5: 483:7 (#13108) }, Alone)]) }), id: HashIgnoredAttrId { attr_id: AttrId(24302) }, style: Outer, span: ostd/src/util/range_alloc.rs:477:9: 477:13 (#0) }), Parsed(Doc(DocAttribute { first_span: ostd/src/util/range_alloc.rs:477:9: 477:13 (#0), aliases: {}, hidden: Some(ostd/src/util/range_alloc.rs:476:5: 483:7 (#13108)), inline: [], cfg: [], auto_cfg: [], auto_cfg_change: [], fake_variadic: None, keyword: None, attribute: None, masked: None, notable_trait: None, search_unbox: None, html_favicon_url: None, html_logo_url: None, html_playground_url: None, html_root_url: None, html_no_source: None, issue_tracker_base_url: None, rust_logo: None, test_attrs: [], no_crate_inject: None }))]",
+        "definition_kind": "AssocFn",
+        "kind": "owner",
+        "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+        "path": "util::range_alloc::RangeAllocator::free",
+        "span": "ostd/src/util/range_alloc.rs:484:5: 484:44 (#0)"
+      },
+      "coverage": [
+        "resource_acquire_use_return",
+        "existing_tracked_entry"
+      ],
+      "mir_calls": [
+        {
+          "arguments": "[Spanned { node: move _4, span: ostd/src/util/range_alloc.rs:488:30: 488:43 (#0) }]",
+          "block": "bb0",
+          "definition_span": "ostd/src/sync/spin.rs:270:5: 270:53 (#0)",
+          "destination": "_3",
+          "generic_args": "[core::option::Option<alloc::collections::BTreeMap<usize, util::range_alloc::FreeRange, alloc::alloc::Global>>, sync::guard::PreemptDisabled, util::range_alloc::FreelistInvariant]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:488:30: 488:50 (#0)",
+          "target": "sync::spin::SpinLock::<T, G, I>::lock",
+          "target_id": "DefId(0:7211 ~ ostd[4790]::sync::spin::{impl#5}::lock)"
+        },
+        {
+          "arguments": "[Spanned { node: move _8, span: ostd/src/util/range_alloc.rs:502:24: 502:34 (#0) }]",
+          "block": "bb1",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/ops/deref.rs:274:5: 274:50 (#0)",
+          "destination": "_7",
+          "generic_args": "[sync::spin::SpinLockGuard<'{erased}, core::option::Option<alloc::collections::BTreeMap<usize, util::range_alloc::FreeRange, alloc::alloc::Global>>, sync::guard::PreemptDisabled, util::range_alloc::FreelistInvariant>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:502:24: 502:43 (#0)",
+          "target": "core::ops::DerefMut::deref_mut",
+          "target_id": "DefId(1:4458 ~ core[7415]::ops::deref::DerefMut::deref_mut)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _7, span: ostd/src/util/range_alloc.rs:502:24: 502:34 (#0) }]",
+          "block": "bb2",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/option.rs:764:5: 764:53 (#0)",
+          "destination": "_6",
+          "generic_args": "[alloc::collections::BTreeMap<usize, util::range_alloc::FreeRange, alloc::alloc::Global>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:502:24: 502:43 (#0)",
+          "target": "core::option::Option::<T>::as_mut",
+          "target_id": "DefId(1:11249 ~ core[7415]::option::{impl#0}::as_mut)"
+        },
+        {
+          "arguments": "[Spanned { node: move _6, span: ostd/src/util/range_alloc.rs:502:24: 502:43 (#0) }]",
+          "block": "bb3",
+          "definition_span": "verified_libs/vstd_extra/src/panic.rs:39:5: 45:6 (#0)",
+          "destination": "_5",
+          "generic_args": "[core::option::Option<&'{erased} mut alloc::collections::BTreeMap<usize, util::range_alloc::FreeRange, alloc::alloc::Global>>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:502:24: 502:61 (#0)",
+          "target": "vstd_extra::panic::UnwrapOrPanic::unwrap_or_panic",
+          "target_id": "DefId(12:1543 ~ vstd_extra[3fb1]::panic::UnwrapOrPanic::unwrap_or_panic)"
+        },
+        {
+          "arguments": "[Spanned { node: move _10, span: ostd/src/util/range_alloc.rs:506:30: 506:35 (#0) }]",
+          "block": "bb4",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/clone.rs:236:5: 236:29 (#0)",
+          "destination": "_9",
+          "generic_args": "[core::ops::Range<usize>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:506:30: 506:43 (#0)",
+          "target": "core::clone::Clone::clone",
+          "target_id": "DefId(1:3462 ~ core[7415]::clone::Clone::clone)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _5, span: ostd/src/util/range_alloc.rs:513:45: 513:53 (#0) }, Spanned { node: move _14, span: ostd/src/util/range_alloc.rs:514:30: 514:75 (#0) }]",
+          "block": "bb5",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:3069:5: 3072:16 (#0)",
+          "destination": "_13",
+          "generic_args": "[usize, util::range_alloc::FreeRange, alloc::alloc::Global, usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:513:45: 514:76 (#0)",
+          "target": "alloc::collections::BTreeMap::<K, V, A>::upper_bound_mut",
+          "target_id": "DefId(2:2484 ~ alloc[f239]::collections::btree::map::{impl#100}::upper_bound_mut)"
+        },
+        {
+          "arguments": "[Spanned { node: move _12, span: ostd/src/util/range_alloc.rs:513:45: 514:76 (#0) }]",
+          "block": "bb6",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:3301:5: 3301:56 (#0)",
+          "destination": "_11",
+          "generic_args": "['{erased}, usize, util::range_alloc::FreeRange, alloc::alloc::Global]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:513:45: 515:25 (#0)",
+          "target": "alloc::collections::btree_map::CursorMut::<'a, K, V, A>::peek_prev",
+          "target_id": "DefId(2:2541 ~ alloc[f239]::collections::btree::map::{impl#106}::peek_prev)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _5, span: ostd/src/util/range_alloc.rs:520:17: 520:25 (#0) }, Spanned { node: copy _25, span: ostd/src/util/range_alloc.rs:520:33: 520:41 (#0) }]",
+          "block": "bb9",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:1129:5: 1132:16 (#0)",
+          "destination": "_24",
+          "generic_args": "[usize, util::range_alloc::FreeRange, alloc::alloc::Global, usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:520:17: 520:42 (#0)",
+          "target": "alloc::collections::BTreeMap::<K, V, A>::remove",
+          "target_id": "DefId(2:1969 ~ alloc[f239]::collections::btree::map::{impl#20}::remove)"
+        },
+        {
+          "arguments": "[Spanned { node: move _30, span: ostd/src/util/range_alloc.rs:541:58: 541:68 (#0) }]",
+          "block": "bb10",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/clone.rs:236:5: 236:29 (#0)",
+          "destination": "_29",
+          "generic_args": "[core::ops::Range<usize>]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:541:58: 541:76 (#0)",
+          "target": "core::clone::Clone::clone",
+          "target_id": "DefId(1:3462 ~ core[7415]::clone::Clone::clone)"
+        },
+        {
+          "arguments": "[Spanned { node: move _29, span: ostd/src/util/range_alloc.rs:541:58: 541:76 (#0) }]",
+          "block": "bb11",
+          "definition_span": "ostd/src/util/range_alloc.rs:646:5: 646:46 (#0)",
+          "destination": "_28",
+          "generic_args": "[]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:541:43: 541:77 (#0)",
+          "target": "util::range_alloc::FreeRange::new",
+          "target_id": "DefId(0:9494 ~ ostd[4790]::util::range_alloc::{impl#5}::new)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _5, span: ostd/src/util/range_alloc.rs:541:9: 541:17 (#0) }, Spanned { node: move _27, span: ostd/src/util/range_alloc.rs:541:25: 541:41 (#0) }, Spanned { node: move _28, span: ostd/src/util/range_alloc.rs:541:43: 541:77 (#0) }]",
+          "block": "bb12",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:1045:5: 1047:16 (#0)",
+          "destination": "_26",
+          "generic_args": "[usize, util::range_alloc::FreeRange, alloc::alloc::Global]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:541:9: 541:78 (#0)",
+          "target": "alloc::collections::BTreeMap::<K, V, A>::insert",
+          "target_id": "DefId(2:1967 ~ alloc[f239]::collections::btree::map::{impl#20}::insert)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _5, span: ostd/src/util/range_alloc.rs:549:45: 549:53 (#0) }, Spanned { node: move _34, span: ostd/src/util/range_alloc.rs:550:30: 550:75 (#0) }]",
+          "block": "bb13",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:2946:5: 2949:16 (#0)",
+          "destination": "_33",
+          "generic_args": "[usize, util::range_alloc::FreeRange, alloc::alloc::Global, usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:549:45: 550:76 (#0)",
+          "target": "alloc::collections::BTreeMap::<K, V, A>::lower_bound_mut",
+          "target_id": "DefId(2:2480 ~ alloc[f239]::collections::btree::map::{impl#100}::lower_bound_mut)"
+        },
+        {
+          "arguments": "[Spanned { node: move _32, span: ostd/src/util/range_alloc.rs:549:45: 550:76 (#0) }]",
+          "block": "bb14",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:3291:5: 3291:56 (#0)",
+          "destination": "_31",
+          "generic_args": "['{erased}, usize, util::range_alloc::FreeRange, alloc::alloc::Global]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:549:45: 551:25 (#0)",
+          "target": "alloc::collections::btree_map::CursorMut::<'a, K, V, A>::peek_next",
+          "target_id": "DefId(2:2540 ~ alloc[f239]::collections::btree::map::{impl#106}::peek_next)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _5, span: ostd/src/util/range_alloc.rs:556:17: 556:25 (#0) }, Spanned { node: copy _45, span: ostd/src/util/range_alloc.rs:556:33: 556:41 (#0) }]",
+          "block": "bb17",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:1129:5: 1132:16 (#0)",
+          "destination": "_44",
+          "generic_args": "[usize, util::range_alloc::FreeRange, alloc::alloc::Global, usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:556:17: 556:42 (#0)",
+          "target": "alloc::collections::BTreeMap::<K, V, A>::remove",
+          "target_id": "DefId(2:1969 ~ alloc[f239]::collections::btree::map::{impl#20}::remove)"
+        },
+        {
+          "arguments": "[Spanned { node: copy _5, span: ostd/src/util/range_alloc.rs:557:17: 557:25 (#0) }, Spanned { node: copy _49, span: ostd/src/util/range_alloc.rs:557:34: 557:51 (#0) }]",
+          "block": "bb18",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/alloc/src/collections/btree/map.rs:1006:5: 1009:16 (#0)",
+          "destination": "_48",
+          "generic_args": "[usize, util::range_alloc::FreeRange, alloc::alloc::Global, usize]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:557:17: 557:52 (#0)",
+          "target": "alloc::collections::BTreeMap::<K, V, A>::get_mut",
+          "target_id": "DefId(2:1965 ~ alloc[f239]::collections::btree::map::{impl#20}::get_mut)"
+        },
+        {
+          "arguments": "[Spanned { node: move _48, span: ostd/src/util/range_alloc.rs:557:17: 557:52 (#0) }]",
+          "block": "bb19",
+          "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/option.rs:1011:5: 1011:35 (#0)",
+          "destination": "_47",
+          "generic_args": "[&'{erased} mut util::range_alloc::FreeRange]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:557:17: 557:61 (#0)",
+          "target": "core::option::Option::<T>::unwrap",
+          "target_id": "DefId(1:11256 ~ core[7415]::option::{impl#0}::unwrap)"
+        },
+        {
+          "arguments": "[Spanned { node: move _51, span: ostd/src/util/range_alloc.rs:584:9: 584:19 (#0) }]",
+          "block": "bb21",
+          "definition_span": "ostd/src/sync/spin.rs:588:5: 588:22 (#0)",
+          "destination": "_50",
+          "generic_args": "['{erased}, core::option::Option<alloc::collections::BTreeMap<usize, util::range_alloc::FreeRange, alloc::alloc::Global>>, sync::guard::PreemptDisabled, util::range_alloc::FreelistInvariant]",
+          "kind": "mir_call",
+          "owner": "DefId(0:9488 ~ ostd[4790]::util::range_alloc::{impl#4}::free)",
+          "span": "ostd/src/util/range_alloc.rs:584:9: 584:26 (#0)",
+          "target": "sync::spin::SpinLockGuard::<'a, T, G, I>::drop",
+          "target_id": "DefId(0:7270 ~ ostd[4790]::sync::spin::{impl#11}::drop)"
+        }
+      ]
+    }
+  ],
+  "selection_note": "Previously studied development inputs, not blind evaluation. Native verified clients are baselines, not new proof coverage. RangeAllocator guard acquisition, use and explicit drop supply the resource lifetime chain; original tracked entry parameters remain original prerequisites."
+}

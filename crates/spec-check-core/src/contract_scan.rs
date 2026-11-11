@@ -415,7 +415,7 @@ fn scan(functions: &[vir::Node]) -> Value {
     json!({"schema":2,"report_complete":true,"omission_summary":omission_summary,"coverage_summary":coverage_summary,"omission_candidates":omissions,"coverage_limits":"Occurrences are syntactic signals. Generic return shapes, unavailable inherited binders, implicit type invariants and returned-reference aliases retain their stated limitations. No omission is classified as a defect.","scope":"Every Function item in the supplied typed VIR; constant bool bodies and empty blocks only. Uses are VIR calls, including inherited trait postconditions resolved in their implementation context. No source build or solver is run.","assessment":"Review signals requiring a concrete client need and independent verification before any defect conclusion.","functions_total":functions.len(),"contracts_unavailable":unavailable,"constant_predicates":constants,"review_candidates":candidates,"functions":inventory})
 }
 
-pub(crate) fn run(input: &Path, out: &Path) -> Result<()> {
+pub fn run(input: &Path, out: &Path) -> Result<()> {
     if out.exists() {
         return Err("contract-scan output directory already exists".into());
     }

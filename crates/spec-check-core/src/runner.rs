@@ -560,7 +560,7 @@ pub(crate) fn build_probe(inv: &Invocation, dir: &Path) -> Result<Option<PathBuf
     build_source_probe(
         inv,
         dir,
-        include_str!("../../../experiments/rustc-ir/mir_probe.rs"),
+        include_str!("../assets/experiments/rustc-ir/mir_probe.rs"),
         "mir-probe",
     )
 }
@@ -1369,7 +1369,7 @@ mod tests {
     #[test]
     fn actual_opaque_callback_panics_are_tool_failures() {
         let data: serde_json::Value = serde_json::from_str(include_str!(
-            "../../../experiments/test-spec/goal31-opaque-callback.json"
+            "../assets/experiments/test-spec/goal31-opaque-callback.json"
         ))
         .unwrap();
         for (name, expected) in [
@@ -1390,7 +1390,7 @@ mod tests {
     #[test]
     fn actual_callback_diagnostics_separate_unsupported_from_unproved() {
         let data: serde_json::Value = serde_json::from_str(include_str!(
-            "../../../experiments/test-spec/goal31-callback-state.json"
+            "../assets/experiments/test-spec/goal31-callback-state.json"
         ))
         .unwrap();
         for (name, expected) in [

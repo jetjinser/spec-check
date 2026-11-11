@@ -2,7 +2,7 @@
 use crate::{Result, hash, ir, std_body::Copy};
 use serde_json::json;
 use std::{fs, path::Path};
-const HELPER: &str = include_str!("../../../experiments/test-spec/filter-guidance.template");
+const HELPER: &str = include_str!("../assets/experiments/test-spec/filter-guidance.template");
 
 pub fn propose(records: &[ir::Record], cwd: &Path) -> Result<Option<Copy>> {
     let calls = records

@@ -1,0 +1,186 @@
+{
+  "scope": "Pinned SDK development controls; actual candidate remains unaccepted. No library spec defect established.",
+  "sdk_commit": "d128dda371ca4b19faa8b9b6e31425891ca9eadf",
+  "verus": "/tmp/vostd-level-fix-probe/tools/verus/source/target-verus/release/verus",
+  "args": [
+    "SOURCE",
+    "--crate-type",
+    "lib",
+    "--error-format=json"
+  ],
+  "env": {
+    "VERUS_USE_RUSTUP": "0",
+    "VERUS_Z3_PATH": "/tmp/vostd-level-fix-probe/tools/verus/source/z3",
+    "PATH_prefix": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/bin"
+  },
+  "cases": {
+    "opaque": {
+      "source": "use vstd::prelude::*;\nverus! {\nfn make() -> impl Copy { 0u64 }\nfn client() {\n    let mut state = make();\n    let callback = |_state: &mut _| {};\n    callback(&mut state);\n}\n}\n",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\nthread '<unnamed>' (12) panicked at rust_verify/src/verifier.rs:681:17:\ninternal error: ill-typed AIR code: error 'error 'error 'error 'use of undeclared variable DCR%opaque!make.opaque0.' in expression 'DCR%opaque!make.opaque0.'' in expression '(MUTREF DCR%opaque!make.opaque0. TYPE%opaque!make.opaque0.)'' in expression '(TYPE%tuple%1. $ (MUTREF DCR%opaque!make.opaque0. TYPE%opaque!make.opaque0.))'' in expression '(proj%%core!ops.function.FnOnce./Output $ TYPE%anonymous_closure%7. (DST $) (TYPE%tuple%1.\n  $ (MUTREF DCR%opaque!make.opaque0. TYPE%opaque!make.opaque0.)\n))'\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread '<unnamed>' (12) panicked at rust_verify/src/verifier.rs:2198:29:\nworker thread panicked\n"
+    },
+    "concrete": {
+      "source": "use vstd::prelude::*;\nverus! {\nfn make() -> u64 { 0u64 }\nfn client() {\n    let mut state = make();\n    let callback = |_state: &mut _| {};\n    callback(&mut state);\n}\n}\n",
+      "exit_code": 0,
+      "stdout": "verification results:: 2 verified, 0 errors\n",
+      "stderr": ""
+    },
+    "no_callback": {
+      "source": "use vstd::prelude::*;\nverus! {\nfn make() -> impl Copy { 0u64 }\nfn client() {\n    let mut state = make();\n}\n}\n",
+      "exit_code": 0,
+      "stdout": "verification results:: 2 verified, 0 errors\n",
+      "stderr": ""
+    },
+    "shared": {
+      "source": "use vstd::prelude::*;\nverus! {\nfn make() -> impl Copy { 0u64 }\nfn client() {\n    let mut state = make();\n    let callback = |_state: &_| {};\n    callback(&state);\n}\n}\n",
+      "exit_code": 1,
+      "stdout": "",
+      "stderr": "\nthread '<unnamed>' (22) panicked at rust_verify/src/verifier.rs:681:17:\ninternal error: ill-typed AIR code: error 'error 'error 'error 'use of undeclared variable DCR%shared!make.opaque0.' in expression 'DCR%shared!make.opaque0.'' in expression '(REF DCR%shared!make.opaque0.)'' in expression '(DST (REF DCR%shared!make.opaque0.))'' in expression '(proj%%core!ops.function.FnOnce./Output $ TYPE%anonymous_closure%7. (DST (REF DCR%shared!make.opaque0.))\n (TYPE%tuple%1. (REF DCR%shared!make.opaque0.) TYPE%shared!make.opaque0.)\n)'\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread '<unnamed>' (22) panicked at rust_verify/src/verifier.rs:2198:29:\nworker thread panicked\n"
+    }
+  },
+  "real_candidate": [
+    {
+      "run": "/tmp/goal31-real-callback-verus-v1",
+      "source": "#![feature(proc_macro_hygiene)]\n// SPDX-License-Identifier: MPL-2.0\nuse vstd::{\n    laws_cmp::{\n        obeys_cmp, obeys_cmp_ord, obeys_cmp_partial_ord, obeys_partial_cmp_spec_properties,\n    },\n    laws_eq::obeys_eq_spec_properties,\n    prelude::*,\n    set_lib::{FiniteRange, range_set_properties},\n    std_specs::{\n        cmp::PartialOrdIs,\n        iter::{IteratorSpec, filter_keep, filter_post, filter_postcondition},\n    },\n};\nuse vstd_extra::{\n    external::{cmp::*, iter::*, range::*},\n    range::{\n        RangeExtraFns, finite_range_matches_ord, lemma_seq_range_union_contains, seq_range_union,\n    },\n};\n\nuse core::ops::Range;\n\nverus! {\n\n/// Operational spec of `range_difference`.\npub open spec fn range_difference_spec<T: Ord>(a: Range<T>, b: Range<T>) -> Seq<Range<T>> {\n    let left = if !b.start.is_lt(&b.end) {\n        a\n    } else {\n        Range { start: a.start, end: spec_ord_min(a.end, b.start) }\n    };\n    let right = if !b.start.is_lt(&b.end) {\n        b\n    } else {\n        Range { start: spec_ord_max(a.start, b.end), end: a.end }\n    };\n    if left.start.is_lt(&left.end) {\n        if right.start.is_lt(&right.end) {\n            seq![left, right]\n        } else {\n            seq![left]\n        }\n    } else if right.start.is_lt(&right.end) {\n        seq![right]\n    } else {\n        Seq::empty()\n    }\n}\n\npub proof fn lemma_range_difference_set<T: FiniteRange + Ord>(a: Range<T>, b: Range<T>)\n    requires\n        obeys_cmp::<T>(),\n        finite_range_matches_ord::<T>(),\n    ensures\n        seq_range_union(range_difference_spec(a, b)) == a.view_set().difference(b.view_set()),\n{\n    broadcast use range_set_properties;\n\n    reveal(obeys_partial_cmp_spec_properties);\n    reveal(obeys_cmp_ord);\n    reveal(obeys_eq_spec_properties);\n    let s = range_difference_spec(a, b);\n    assert forall|x: T| #[trigger]\n        seq_range_union(s).contains(x) <==> ((s.len() >= 1 && s[0].view_set().contains(x)) || (\n        s.len() == 2 && s[1].view_set().contains(x))) by {\n        lemma_seq_range_union_contains(s, x);\n        let pred = |r: Range<T>| r.view_set().contains(x);\n        if s.any(pred) {\n            let i = choose|i: int| #![auto] 0 <= i < s.len() && pred(s[i]);\n            assert(i == 0 || i == 1);\n        }\n    }\n    assert forall|x: T|\n        #![trigger a.view_set().contains(x)]\n        seq_range_union(s).contains(x) <==> a.view_set().difference(b.view_set()).contains(x) by {}\n}\n\n} // verus!\n/// Calculates the [difference] of two [`Range`]s, i.e., `a - b`.\n///\n/// This method will return 0, 1, or 2 ranges. All returned ranges are\n/// guaranteed to be non-empty and non-overlapping. The returned ranges\n/// will be sorted in ascending order.\n///\n/// [difference]: https://en.wikipedia.org/wiki/Set_(mathematics)#Set_difference\n#[verus_verify(spinoff_prover, rlimit(50))]\n#[verus_spec(ret =>\n    requires\n        obeys_cmp::<T>(),\n        finite_range_matches_ord::<T>(),\n        forall |x: T, y: T| #[trigger] cloned::<T>(x,y) ==> x == y,\n    ensures\n        ret.obeys_prophetic_iter_laws() && ret.will_return_none() ==> {\n            &&& ret.remaining() == range_difference_spec(*a, *b)\n            &&& ret.remaining().len() <= 2\n            &&& ret.remaining().all(\n                |range: Range<T>| range.start.is_lt(&range.end),\n            )\n            &&& forall|i: int|\n                0 <= i < ret.remaining().len() - 1 ==> (\n                #[trigger] ret.remaining()[i]).end.is_le(&ret.remaining()[i + 1].start)\n            &&& seq_range_union(ret.remaining()) == a.view_set().difference(b.view_set())\n        },\n)]\npub fn range_difference<T: Ord + Copy + FiniteRange>(\n    a: &Range<T>,\n    b: &Range<T>,\n) -> impl Iterator<Item = Range<T>> {\n    use core::cmp::{max, min};\n\n    proof! {\n        reveal(obeys_cmp_partial_ord);\n        reveal(obeys_cmp_ord);\n        reveal(obeys_partial_cmp_spec_properties);\n        reveal_with_fuel(Seq::filter_index, 3);\n    }\n    let r = if b.is_empty() {\n        [a.clone(), b.clone()]\n    } else {\n        [a.start..min(a.end, b.start), max(a.start, b.end)..a.end]\n    };\n\n    // Original execution: `r.into_iter().filter(|v| !v.is_empty())`.\n    // Name the operands to instantiate `filter_postcondition` explicitly.\n    let iter = r.into_iter();\n    let pred = #[verus_spec(keep: bool =>\n        ensures\n            keep == v.start.is_lt(&v.end),\n    )]\n    |v: &Range<T>| !v.is_empty();\n    proof! {\n        lemma_range_difference_set(*a, *b);\n        assert forall|ret: core::iter::Filter<_, _>|\n            #[trigger] filter_post(iter, pred, ret) &&\n            ret.will_return_none() implies\n            ret.remaining() == range_difference_spec(*a, *b) by {\n            filter_postcondition(iter, pred, ret);\n        }\n    }\n    iter.filter(pred)\n}\n\n#[cfg(test)]\n#[expect(clippy::single_range_in_vec_init)]\nmod test {\n    use super::*;\n\n    #[track_caller]\n    #[vstd::prelude::verus_verify]\n    fn assert_range_difference<const N: usize>(\n        a: Range<usize>,\n        b: Range<usize>,\n        expected: [Range<usize>; N],\n    ) {\n        let mut res = range_difference(&a, &b);\n        self::__spec_each_state(expected\n            .into_iter(), &mut res, |__spec_callback_state: &mut _, val| match (&((*__spec_callback_state).next()), &(Some(val))) { (left_val, right_val) => { if !(*left_val == *right_val) { self::checked_eq_failure(&*left_val, &*right_val); } } });\n        assert!(res.next().is_none());\n    }\nvstd::prelude::verus! {\nfn checked_eq_failure<L: ?Sized, R: ?Sized>(_left: &L, _right: &R) -> !\n    requires false,\n{\n    panic!(\"assertion failed\");\n}\n\n}\n\n#[vstd::prelude::verus_verify]\nfn __spec_each_state<I: Iterator, S, F: Fn(&mut S, I::Item)>(iter: I, state: &mut S, callback: F) {\n    for item in iter { callback(state, item); }\n}\n\n\n    #[test]\n    fn range_difference_contained() {\n        assert_range_difference(0..10, 3..7, [0..3, 7..10]);\n    }\n    #[test]\n    fn range_difference_all_same() {\n        assert_range_difference(0..10, 0..10, []);\n    }\n    #[test]\n    fn range_difference_left_same() {\n        assert_range_difference(0..10, 0..5, [5..10]);\n    }\n    #[test]\n    fn range_difference_right_same() {\n        assert_range_difference(0..10, 5..10, [0..5]);\n    }\n    #[test]\n    fn range_difference_b_empty() {\n        assert_range_difference(0..10, 0..0, [0..10]);\n    }\n    #[test]\n    fn range_difference_a_empty() {\n        assert_range_difference(0..0, 0..10, []);\n    }\n    #[test]\n    fn range_difference_all_empty() {\n        assert_range_difference(0..0, 0..0, []);\n    }\n    #[test]\n    fn range_difference_left_intersected() {\n        assert_range_difference(5..10, 0..6, [6..10]);\n    }\n    #[test]\n    fn range_difference_right_intersected() {\n        assert_range_difference(5..10, 6..12, [5..6]);\n    }\n}\n\n#[allow(unused_imports)] use vstd::prelude::verus_spec;\n",
+      "command": {
+        "args": [
+          "rustc",
+          "--crate-name",
+          "range_use_runtime",
+          "--edition=2021",
+          "/tmp/goal31-real-callback-verus-v1/candidate.rs",
+          "--error-format=json",
+          "--json=diagnostic-rendered-ansi,artifacts,future-incompat",
+          "-C",
+          "embed-bitcode=no",
+          "-C",
+          "debuginfo=2",
+          "--test",
+          "--check-cfg",
+          "cfg(docsrs,test)",
+          "--check-cfg",
+          "cfg(feature, values())",
+          "-C",
+          "metadata=e785b67588a2a387",
+          "-C",
+          "extra-filename=-4632e349eee4129c",
+          "--target",
+          "x86_64-unknown-linux-gnu",
+          "-L",
+          "dependency=/tmp/goal32-range-host-project-v3/capture/range-host-tests/cargo-target/x86_64-unknown-linux-gnu/debug/deps",
+          "-L",
+          "dependency=/tmp/goal32-range-host-project-v3/capture/range-host-tests/cargo-target/debug/deps",
+          "--extern",
+          "vstd=/tmp/goal32-range-host-project-v3/capture/range-host-tests/cargo-target/x86_64-unknown-linux-gnu/debug/deps/libvstd-b1be26d26f9fdd97.rlib",
+          "--extern",
+          "vstd_extra=/tmp/goal32-range-host-project-v3/capture/range-host-tests/cargo-target/x86_64-unknown-linux-gnu/debug/deps/libvstd_extra-49ab85416881776d.rlib",
+          "--cfg",
+          "feature=\"nonzero_internals\"",
+          "-Z",
+          "checksum-hash-algorithm=blake3",
+          "--emit=metadata,dep-info",
+          "--out-dir",
+          "/tmp/goal31-real-callback-verus-v1/output",
+          "-Zcrate-attr=feature(proc_macro_hygiene)",
+          "--verify-only-module",
+          "test",
+          "--log",
+          "vir",
+          "--log-dir",
+          "/tmp/goal31-real-callback-verus-v1/vir"
+        ],
+        "cwd": "/tmp/goal32-range-runtime-v3",
+        "program": "/tmp/vostd-level-fix-probe/tools/verus/source/target-verus/release/verus",
+        "env": {
+          "VERUS_USE_RUSTUP": "0",
+          "VERUS_Z3_PATH": "/tmp/vostd-level-fix-probe/tools/verus/source/z3",
+          "RUSTC_BOOTSTRAP": "1",
+          "PATH": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/bin:/nix/store/r5ri78axx1qggkjq3vawywlzglg70b5w-gcc-wrapper-16.2.0/bin:/nix/store/s7rv2qx2ycfpllx7arg6f3xh2cwrp2rr-codex-0.166.0/libexec/codex/codex-path:/home/jinser/.codex/tmp/arg0-linux/codex-arg00XAZPC:/nix/store/s7rv2qx2ycfpllx7arg6f3xh2cwrp2rr-codex-0.166.0/libexec/codex/codex-path:/nix/store/1z9ac0bpjwxg7xfxqcfacc872fr31inl-devshell-dir/bin:/nix/store/kwyi4bq5s2qgwbhz6cs4gjy57c2zdxws-bash-interactive-5.3p20/bin:/path-not-set:/home/jinser/vie/work/AES/research/.direnv/bin:/run/wrappers/bin:/guix/current/bin:/home/jinser/.guix-home/profile/bin:/home/jinser/.guix-profile/bin:/home/jinser/.nix-profile/bin:/nix/profile/bin:/home/jinser/.local/state/nix/profile/bin:/etc/profiles/per-user/jinser/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin",
+          "__VERUS_DRIVER_VIA_CARGO__": "1"
+        },
+        "captured_environment": "/tmp/goal32-range-host-project-v3/capture/range-host-tests/unit-0/context.json",
+        "environment_normalization": "runner::verifier log/no-verify/compile-when filtering"
+      },
+      "stdout": "",
+      "stderr": "{\"$message_type\":\"artifact\",\"artifact\":\"/tmp/goal31-real-callback-verus-v1/output/range_use_runtime-4632e349eee4129c.d\",\"emit\":\"dep-info\"}\n{\"$message_type\":\"diagnostic\",\"message\":\"verifying module test\",\"code\":null,\"level\":\"note\",\"spans\":[],\"children\":[],\"rendered\":\"\\u001b[1m\\u001b[92mnote\\u001b[0m\\u001b[1m: verifying module test\\u001b[0m\\n\\n\"}\n\nthread '<unnamed>' (10) panicked at rust_verify/src/verifier.rs:681:17:\ninternal error: ill-typed AIR code: error 'error 'error 'error 'use of undeclared function DCR%range_use_runtime!range_difference.opaque0.' in expression '(DCR%range_use_runtime!range_difference.opaque0. $ USIZE)'' in expression '(MUTREF (DCR%range_use_runtime!range_difference.opaque0. $ USIZE) (TYPE%range_use_runtime!range_difference.opaque0.\n  $ USIZE\n))'' in expression '(TYPE%tuple%2. $ (MUTREF (DCR%range_use_runtime!range_difference.opaque0. $ USIZE)\n  (TYPE%range_use_runtime!range_difference.opaque0. $ USIZE)\n ) $ (TYPE%core!ops.range.Range. $ USIZE)\n)'' in expression '(proj%%core!ops.function.FnOnce./Output $ (TYPE%anonymous_closure%67. N&. N&) (DST\n  $\n ) (TYPE%tuple%2. $ (MUTREF (DCR%range_use_runtime!range_difference.opaque0. $ USIZE)\n   (TYPE%range_use_runtime!range_difference.opaque0. $ USIZE)\n  ) $ (TYPE%core!ops.range.Range. $ USIZE)\n))'\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread '<unnamed>' (10) panicked at rust_verify/src/verifier.rs:2198:29:\nworker thread panicked\n",
+      "exit_code": 1,
+      "manual_changes": [
+        "Compose generated explicit-state candidate with generated assertion lowering",
+        "Mark enclosing helper and dispatcher for verification; insert existing failure helper"
+      ],
+      "correspondence_accepted": false
+    },
+    {
+      "run": "/tmp/goal31-real-callback-verus-v2",
+      "source": "#![feature(proc_macro_hygiene)]\n// SPDX-License-Identifier: MPL-2.0\nuse vstd::{\n    laws_cmp::{\n        obeys_cmp, obeys_cmp_ord, obeys_cmp_partial_ord, obeys_partial_cmp_spec_properties,\n    },\n    laws_eq::obeys_eq_spec_properties,\n    prelude::*,\n    set_lib::{FiniteRange, range_set_properties},\n    std_specs::{\n        cmp::PartialOrdIs,\n        iter::{IteratorSpec, filter_keep, filter_post, filter_postcondition},\n    },\n};\nuse vstd_extra::{\n    external::{cmp::*, iter::*, range::*},\n    range::{\n        RangeExtraFns, finite_range_matches_ord, lemma_seq_range_union_contains, seq_range_union,\n    },\n};\n\nuse core::ops::Range;\n\nverus! {\n\n/// Operational spec of `range_difference`.\npub open spec fn range_difference_spec<T: Ord>(a: Range<T>, b: Range<T>) -> Seq<Range<T>> {\n    let left = if !b.start.is_lt(&b.end) {\n        a\n    } else {\n        Range { start: a.start, end: spec_ord_min(a.end, b.start) }\n    };\n    let right = if !b.start.is_lt(&b.end) {\n        b\n    } else {\n        Range { start: spec_ord_max(a.start, b.end), end: a.end }\n    };\n    if left.start.is_lt(&left.end) {\n        if right.start.is_lt(&right.end) {\n            seq![left, right]\n        } else {\n            seq![left]\n        }\n    } else if right.start.is_lt(&right.end) {\n        seq![right]\n    } else {\n        Seq::empty()\n    }\n}\n\npub proof fn lemma_range_difference_set<T: FiniteRange + Ord>(a: Range<T>, b: Range<T>)\n    requires\n        obeys_cmp::<T>(),\n        finite_range_matches_ord::<T>(),\n    ensures\n        seq_range_union(range_difference_spec(a, b)) == a.view_set().difference(b.view_set()),\n{\n    broadcast use range_set_properties;\n\n    reveal(obeys_partial_cmp_spec_properties);\n    reveal(obeys_cmp_ord);\n    reveal(obeys_eq_spec_properties);\n    let s = range_difference_spec(a, b);\n    assert forall|x: T| #[trigger]\n        seq_range_union(s).contains(x) <==> ((s.len() >= 1 && s[0].view_set().contains(x)) || (\n        s.len() == 2 && s[1].view_set().contains(x))) by {\n        lemma_seq_range_union_contains(s, x);\n        let pred = |r: Range<T>| r.view_set().contains(x);\n        if s.any(pred) {\n            let i = choose|i: int| #![auto] 0 <= i < s.len() && pred(s[i]);\n            assert(i == 0 || i == 1);\n        }\n    }\n    assert forall|x: T|\n        #![trigger a.view_set().contains(x)]\n        seq_range_union(s).contains(x) <==> a.view_set().difference(b.view_set()).contains(x) by {}\n}\n\n} // verus!\n/// Calculates the [difference] of two [`Range`]s, i.e., `a - b`.\n///\n/// This method will return 0, 1, or 2 ranges. All returned ranges are\n/// guaranteed to be non-empty and non-overlapping. The returned ranges\n/// will be sorted in ascending order.\n///\n/// [difference]: https://en.wikipedia.org/wiki/Set_(mathematics)#Set_difference\n#[verus_verify(spinoff_prover, rlimit(50))]\n#[verus_spec(ret =>\n    requires\n        obeys_cmp::<T>(),\n        finite_range_matches_ord::<T>(),\n        forall |x: T, y: T| #[trigger] cloned::<T>(x,y) ==> x == y,\n    ensures\n        ret.obeys_prophetic_iter_laws() && ret.will_return_none() ==> {\n            &&& ret.remaining() == range_difference_spec(*a, *b)\n            &&& ret.remaining().len() <= 2\n            &&& ret.remaining().all(\n                |range: Range<T>| range.start.is_lt(&range.end),\n            )\n            &&& forall|i: int|\n                0 <= i < ret.remaining().len() - 1 ==> (\n                #[trigger] ret.remaining()[i]).end.is_le(&ret.remaining()[i + 1].start)\n            &&& seq_range_union(ret.remaining()) == a.view_set().difference(b.view_set())\n        },\n)]\npub fn range_difference<T: Ord + Copy + FiniteRange>(\n    a: &Range<T>,\n    b: &Range<T>,\n) -> impl Iterator<Item = Range<T>> {\n    use core::cmp::{max, min};\n\n    proof! {\n        reveal(obeys_cmp_partial_ord);\n        reveal(obeys_cmp_ord);\n        reveal(obeys_partial_cmp_spec_properties);\n        reveal_with_fuel(Seq::filter_index, 3);\n    }\n    let r = if b.is_empty() {\n        [a.clone(), b.clone()]\n    } else {\n        [a.start..min(a.end, b.start), max(a.start, b.end)..a.end]\n    };\n\n    // Original execution: `r.into_iter().filter(|v| !v.is_empty())`.\n    // Name the operands to instantiate `filter_postcondition` explicitly.\n    let iter = r.into_iter();\n    let pred = #[verus_spec(keep: bool =>\n        ensures\n            keep == v.start.is_lt(&v.end),\n    )]\n    |v: &Range<T>| !v.is_empty();\n    proof! {\n        lemma_range_difference_set(*a, *b);\n        assert forall|ret: core::iter::Filter<_, _>|\n            #[trigger] filter_post(iter, pred, ret) &&\n            ret.will_return_none() implies\n            ret.remaining() == range_difference_spec(*a, *b) by {\n            filter_postcondition(iter, pred, ret);\n        }\n    }\n    iter.filter(pred)\n}\n\n#[cfg(test)]\n#[expect(clippy::single_range_in_vec_init)]\nmod test {\n    use super::*;\n\n    #[track_caller]\n    #[vstd::prelude::verus_verify]\n    fn assert_range_difference<const N: usize>(\n        a: Range<usize>,\n        b: Range<usize>,\n        expected: [Range<usize>; N],\n    ) {\n        let mut res = range_difference(&a, &b);\n        self::__spec_each_state(expected\n            .into_iter(), &mut res, |__spec_callback_state: &mut _, val| match (&((*__spec_callback_state).next()), &(Some(val))) { (left_val, right_val) => { if !(*left_val == *right_val) { self::checked_eq_failure(&*left_val, &*right_val); } } });\n        assert!(res.next().is_none());\n    }\nvstd::prelude::verus! {\nfn checked_eq_failure<L: ?Sized, R: ?Sized>(_left: &L, _right: &R) -> !\n    requires false,\n{\n    panic!(\"assertion failed\");\n}\n\n}\n\n#[vstd::prelude::verus_verify]\nfn __spec_each_state<I: Iterator, S, F: Fn(&mut S, I::Item)>(iter: I, state: &mut S, callback: F) {\n    for item in iter { callback(state, item); }\n}\n\n\n    #[test]\n    fn range_difference_contained() {\n        assert_range_difference(0..10, 3..7, [0..3, 7..10]);\n    }\n    #[test]\n    fn range_difference_all_same() {\n        assert_range_difference(0..10, 0..10, []);\n    }\n    #[test]\n    fn range_difference_left_same() {\n        assert_range_difference(0..10, 0..5, [5..10]);\n    }\n    #[test]\n    fn range_difference_right_same() {\n        assert_range_difference(0..10, 5..10, [0..5]);\n    }\n    #[test]\n    fn range_difference_b_empty() {\n        assert_range_difference(0..10, 0..0, [0..10]);\n    }\n    #[test]\n    fn range_difference_a_empty() {\n        assert_range_difference(0..0, 0..10, []);\n    }\n    #[test]\n    fn range_difference_all_empty() {\n        assert_range_difference(0..0, 0..0, []);\n    }\n    #[test]\n    fn range_difference_left_intersected() {\n        assert_range_difference(5..10, 0..6, [6..10]);\n    }\n    #[test]\n    fn range_difference_right_intersected() {\n        assert_range_difference(5..10, 6..12, [5..6]);\n    }\n}\n\n#[allow(unused_imports)] use vstd::prelude::verus_spec;\n",
+      "command": {
+        "args": [
+          "rustc",
+          "--crate-name",
+          "range_use_runtime",
+          "--edition=2021",
+          "/tmp/goal31-real-callback-verus-v2/candidate.rs",
+          "--error-format=json",
+          "--json=diagnostic-rendered-ansi,artifacts,future-incompat",
+          "-C",
+          "embed-bitcode=no",
+          "-C",
+          "debuginfo=2",
+          "--test",
+          "--check-cfg",
+          "cfg(docsrs,test)",
+          "--check-cfg",
+          "cfg(feature, values())",
+          "-C",
+          "metadata=e785b67588a2a387",
+          "-C",
+          "extra-filename=-4632e349eee4129c",
+          "--target",
+          "x86_64-unknown-linux-gnu",
+          "-L",
+          "dependency=/tmp/goal32-range-host-project-v3/capture/range-host-tests/cargo-target/x86_64-unknown-linux-gnu/debug/deps",
+          "-L",
+          "dependency=/tmp/goal32-range-host-project-v3/capture/range-host-tests/cargo-target/debug/deps",
+          "--extern",
+          "vstd=/tmp/goal32-range-host-project-v3/capture/range-host-tests/cargo-target/x86_64-unknown-linux-gnu/debug/deps/libvstd-b1be26d26f9fdd97.rlib",
+          "--extern",
+          "vstd_extra=/tmp/goal32-range-host-project-v3/capture/range-host-tests/cargo-target/x86_64-unknown-linux-gnu/debug/deps/libvstd_extra-49ab85416881776d.rlib",
+          "--cfg",
+          "feature=\"nonzero_internals\"",
+          "-Z",
+          "checksum-hash-algorithm=blake3",
+          "--emit=metadata,dep-info",
+          "--out-dir",
+          "/tmp/goal31-real-callback-verus-v2/output",
+          "-Zcrate-attr=feature(proc_macro_hygiene)",
+          "--log",
+          "vir",
+          "--log-dir",
+          "/tmp/goal31-real-callback-verus-v2/vir"
+        ],
+        "cwd": "/tmp/goal32-range-runtime-v3",
+        "program": "/tmp/vostd-level-fix-probe/tools/verus/source/target-verus/release/verus",
+        "env": {
+          "VERUS_USE_RUSTUP": "0",
+          "VERUS_Z3_PATH": "/tmp/vostd-level-fix-probe/tools/verus/source/z3",
+          "RUSTC_BOOTSTRAP": "1",
+          "PATH": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/bin:/nix/store/r5ri78axx1qggkjq3vawywlzglg70b5w-gcc-wrapper-16.2.0/bin:/nix/store/s7rv2qx2ycfpllx7arg6f3xh2cwrp2rr-codex-0.166.0/libexec/codex/codex-path:/home/jinser/.codex/tmp/arg0-linux/codex-arg00XAZPC:/nix/store/s7rv2qx2ycfpllx7arg6f3xh2cwrp2rr-codex-0.166.0/libexec/codex/codex-path:/nix/store/1z9ac0bpjwxg7xfxqcfacc872fr31inl-devshell-dir/bin:/nix/store/kwyi4bq5s2qgwbhz6cs4gjy57c2zdxws-bash-interactive-5.3p20/bin:/path-not-set:/home/jinser/vie/work/AES/research/.direnv/bin:/run/wrappers/bin:/guix/current/bin:/home/jinser/.guix-home/profile/bin:/home/jinser/.guix-profile/bin:/home/jinser/.nix-profile/bin:/nix/profile/bin:/home/jinser/.local/state/nix/profile/bin:/etc/profiles/per-user/jinser/bin:/nix/var/nix/profiles/default/bin:/run/current-system/sw/bin",
+          "__VERUS_DRIVER_VIA_CARGO__": "1"
+        },
+        "captured_environment": "/tmp/goal32-range-host-project-v3/capture/range-host-tests/unit-0/context.json",
+        "environment_normalization": "runner::verifier log/no-verify/compile-when filtering"
+      },
+      "stdout": "",
+      "stderr": "{\"$message_type\":\"artifact\",\"artifact\":\"/tmp/goal31-real-callback-verus-v2/output/range_use_runtime-4632e349eee4129c.d\",\"emit\":\"dep-info\"}\n\nthread '<unnamed>' (11) panicked at rust_verify/src/verifier.rs:681:17:\ninternal error: ill-typed AIR code: error 'error 'error 'error 'use of undeclared function DCR%range_use_runtime!range_difference.opaque0.' in expression '(DCR%range_use_runtime!range_difference.opaque0. $ USIZE)'' in expression '(MUTREF (DCR%range_use_runtime!range_difference.opaque0. $ USIZE) (TYPE%range_use_runtime!range_difference.opaque0.\n  $ USIZE\n))'' in expression '(TYPE%tuple%2. $ (MUTREF (DCR%range_use_runtime!range_difference.opaque0. $ USIZE)\n  (TYPE%range_use_runtime!range_difference.opaque0. $ USIZE)\n ) $ (TYPE%core!ops.range.Range. $ USIZE)\n)'' in expression '(proj%%core!ops.function.FnOnce./Output $ (TYPE%anonymous_closure%67. N&. N&) (DST\n  $\n ) (TYPE%tuple%2. $ (MUTREF (DCR%range_use_runtime!range_difference.opaque0. $ USIZE)\n   (TYPE%range_use_runtime!range_difference.opaque0. $ USIZE)\n  ) $ (TYPE%core!ops.range.Range. $ USIZE)\n))'\nnote: run with `RUST_BACKTRACE=1` environment variable to display a backtrace\n\nthread '<unnamed>' (11) panicked at rust_verify/src/verifier.rs:2198:29:\nworker thread panicked\n\nthread '<unnamed>' (12) panicked at rust_verify/src/verifier.rs:229:14:\ncould not send the message!: SendError { .. }\n\nthread '<unnamed>' (10) panicked at rust_verify/src/verifier.rs:229:14:\ncould not send the message!: SendError { .. }\n",
+      "exit_code": 1,
+      "manual_changes": [
+        "Compose generated explicit-state candidate with generated assertion lowering",
+        "Mark enclosing helper and dispatcher for verification; insert existing failure helper"
+      ],
+      "correspondence_accepted": false
+    }
+  ],
+  "conclusion": "Opaque return type in callback reference parameter triggers undeclared AIR type symbol; both shared and mutable references fail. Concrete parameter and opaque local without callback each verify 2/0. Real candidate fails with and without module-only verification.",
+  "new_complete_target_checks": 0
+}

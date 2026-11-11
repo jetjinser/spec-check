@@ -292,7 +292,7 @@ fn captured_context_matches(capture: &Path, root: &Path, sdk: &Path) -> Result<b
                 unit.parent()
                     .ok_or("missing captured unit")?
                     .join("probe.rs"),
-            )? != include_bytes!("../../../experiments/rustc-ir/mir_probe.rs")
+            )? != include_bytes!("../assets/experiments/rustc-ir/mir_probe.rs")
             {
                 return Ok(false);
             }

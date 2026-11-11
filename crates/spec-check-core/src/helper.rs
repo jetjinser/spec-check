@@ -11,9 +11,9 @@ use std::{
     path::{Path, PathBuf},
 };
 
-const TEMPLATE: &str = include_str!("../../../experiments/test-spec/range_incremental.rs");
-const STEPS: &[u8] = include_bytes!("../../../experiments/test-spec/range_step_correspondence.rs");
-const OBSERVATIONS: &str = include_str!("../../../experiments/test-spec/range_observation.rs");
+const TEMPLATE: &str = include_str!("../assets/experiments/test-spec/range_incremental.rs");
+const STEPS: &[u8] = include_bytes!("../assets/experiments/test-spec/range_step_correspondence.rs");
+const OBSERVATIONS: &str = include_str!("../assets/experiments/test-spec/range_observation.rs");
 
 fn compact(text: &str) -> String {
     text.chars().filter(|c| !c.is_whitespace()).collect()
@@ -253,7 +253,7 @@ pub fn lower(
 ) -> Result<Lowering> {
     let mut report = inspect(caller, parent, callback, cwd)?;
     let approved: Value = serde_json::from_str(include_str!(
-        "../../../experiments/test-spec/range-lowering-profile.json"
+        "../assets/experiments/test-spec/range-lowering-profile.json"
     ))?;
     if approved["helper_sha256"] != hash(TEMPLATE.as_bytes())?
         || approved["step_model_sha256"] != hash(STEPS)?
@@ -340,7 +340,7 @@ pub fn lower(
     );
     let replacement = format!(
         "{replacement}\nmod __client_check_rule {{\n{}\nvstd::prelude::verus! {{\n{}\n{OBSERVATIONS}\n}}\n}}\n",
-        include_str!("../../../experiments/test-spec/range_equality.rs"),
+        include_str!("../assets/experiments/test-spec/range_equality.rs"),
         std::str::from_utf8(STEPS)?
     );
     let (caller_file, _, mut edits) = ir::lower(caller, cwd)?;
@@ -531,11 +531,11 @@ pub fn closure(parent: &[Record]) -> Result<String> {
 
 pub fn equality(records: &[Record]) -> Result<Value> {
     let profile: Value = serde_json::from_str(include_str!(
-        "../../../experiments/test-spec/range-equality-profile.json"
+        "../assets/experiments/test-spec/range-equality-profile.json"
     ))?;
     if profile["model_sha256"]
         != hash(include_bytes!(
-            "../../../experiments/test-spec/range_equality.rs"
+            "../assets/experiments/test-spec/range_equality.rs"
         ))?
     {
         return Err("equality model changed; recheck model and standard MIR correspondence".into());
@@ -633,7 +633,7 @@ fn profile_records(records: &[Record], parent: &[Record]) -> Result<Vec<Record>>
 
 fn mir_profile(records: &[Record], name: &str, parent: &[Record]) -> Result<()> {
     let profile: Value = serde_json::from_str(include_str!(
-        "../../../experiments/test-spec/range-lowering-profile.json"
+        "../assets/experiments/test-spec/range-lowering-profile.json"
     ))?;
     let digest = hash(&serde_json::to_vec(&profile_records(records, parent)?)?)?;
     if profile["role_mir_sha256"][name] != digest {
@@ -854,7 +854,7 @@ mod tests {
         let old_parent = read("old-helper-source.json");
         let parent = read("new-helper-source.json");
         let profile: Value = serde_json::from_str(include_str!(
-            "../../../experiments/test-spec/range-lowering-profile.json"
+            "../assets/experiments/test-spec/range-lowering-profile.json"
         ))
         .unwrap();
         let mut results = serde_json::Map::new();

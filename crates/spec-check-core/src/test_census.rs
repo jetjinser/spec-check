@@ -91,7 +91,7 @@ fn candidates(records: &[Value], all_functions: bool) -> Vec<Value> {
         .collect()
 }
 
-pub(crate) fn run(context: &Path, source: &Path, out: &Path, all_functions: bool) -> Result<()> {
+pub fn run(context: &Path, source: &Path, out: &Path, all_functions: bool) -> Result<()> {
     let context_bytes = fs::read(context)?;
     let context_hash = hash(&context_bytes)?;
     let inv: Invocation = serde_json::from_slice(&context_bytes)?;
@@ -103,7 +103,7 @@ pub(crate) fn run(context: &Path, source: &Path, out: &Path, all_functions: bool
     let probe = runner::build_source_probe(
         &inv,
         &out,
-        include_str!("../../../experiments/rustc-ir/test_ast_probe.rs"),
+        include_str!("../assets/experiments/rustc-ir/test_ast_probe.rs"),
         "test-ast-probe",
     )?
     .ok_or("Rustc AST probe build failed")?;
@@ -273,7 +273,7 @@ pub(crate) fn validate(census: &Path) -> Result<Value> {
     Ok(report)
 }
 
-pub(crate) fn isolate(census: &Path, out: &Path, sdk: Option<&Path>) -> Result<()> {
+pub fn isolate(census: &Path, out: &Path, sdk: Option<&Path>) -> Result<()> {
     let report = validate(census)?;
     let source = Path::new(report["source"].as_str().unwrap()).canonicalize()?;
     let bytes = fs::read(&source)?;

@@ -56,7 +56,7 @@ fn receiver_types(function: &vir::Node) -> Vec<Value> {
         .collect()
 }
 
-pub(crate) fn run(vir_path: &Path, report_path: &Path, out: &Path) -> Result<()> {
+pub fn run(vir_path: &Path, report_path: &Path, out: &Path) -> Result<()> {
     if out.exists() {
         return Err("owner report enrichment output directory already exists".into());
     }

@@ -1,0 +1,10 @@
+vstd::prelude::verus! {
+proof fn __spec_filter_laws<I: Iterator + vstd::std_specs::iter::IteratorSpec, P: FnMut(&I::Item) -> bool>(base: I, predicate: P, iter: core::iter::Filter<I, P>)
+    requires base.obeys_prophetic_iter_laws(), base.decrease() is Some,
+        forall |k| #![auto] 0 <= k < base.remaining().len() ==> vstd::prelude::call_requires(predicate, (&base.remaining()[k],)),
+        vstd::std_specs::iter::filter_post(base, predicate, iter),
+    ensures iter.obeys_prophetic_iter_laws(), iter.decrease() is Some,
+{
+    vstd::std_specs::iter::filter_postcondition(base, predicate, iter);
+}
+}

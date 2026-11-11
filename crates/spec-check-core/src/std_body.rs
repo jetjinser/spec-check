@@ -497,7 +497,7 @@ pub fn pointer_propose(
     if !independent_resource_control {
         helpers.push_str(&format!(
             "\nvstd::prelude::verus! {{\n{}\n}}\n",
-            include_str!("../../../experiments/test-spec/assertion_failure.rs")
+            include_str!("../assets/experiments/test-spec/assertion_failure.rs")
         ));
     }
     if independent_resource_control {

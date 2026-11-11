@@ -1,0 +1,43 @@
+{
+  "scope": "Pinned Range<usize> owned-array for_each with one next/assert_eq callback and final next/is_none assertion",
+  "observations": [
+    "read outcomes",
+    "assertion attempts",
+    "first failed assertion index",
+    "normal completion or read panic/stall",
+    "expected-value evaluation projected only under owned plain-field/no-destructor instance conditions"
+  ],
+  "excluded_observations": [
+    "panic text and backtrace",
+    "moves/drops of plain Range<usize> values",
+    "compiler correctness"
+  ],
+  "helper_sha256": "c3c79f70a8353e4f31af2cd3883343092062745d502815cba882af82eec6e369",
+  "step_model_sha256": "a83298ca7e94815dfbfb58bf187b00355714e4ca5c00b58823168c6da06cfa00",
+  "mir_sha256": {
+    "source-helper": "fbf27060392c251b4adb39dec72402dcfb44749ca6e4b4a1f30f44ab8fba4a23",
+    "source-callback": "71b37286dd2cfe4d64ab879039534078b382c167e8af113469d48b839a6218ba",
+    "lowered-helper": "1b7f4daf53da6faf1527e2c3e3a858531bb39a1b600e0a098cd85cbdb49f63b0"
+  },
+  "stdlib_sha256": {
+    "iter/traits/iterator.rs": "db43b7acc33fca53d85fef3ddea29ec9f8c1e768df428676fe2de160f21d5f6b",
+    "array/iter.rs": "570b98951edb1bf47932c2de58dc4d3f38f34d37b3dffeac2fe80572dc0475cb",
+    "array/iter/iter_inner.rs": "6906e8e1e1956d415a9058df036e2a28fe0938dbae0b2c499a5889d8b983c4c1",
+    "ops/index_range.rs": "be7f1a663156319aa4762288c44b726338276f0bcb1c36a5ced5003d329deb8f",
+    "ops/range.rs": "4ce46aa140f364787ac5584154035dd766150cec32a7e5358193425cafc8b6fc",
+    "option.rs": "fc70106a756f98208e6a6a3e428310bdfa3531877cf6c6a99f39fffa26ab2c40",
+    "macros/mod.rs": "9784131e43d255fed7a07ae18cbc72748eedbebe65dfcefeee999989289df30c"
+  },
+  "observation_model_sha256": "73900f471571ea563462bafad1bde073fad166c0848f68dd67d6ed482b09245e",
+  "rust_mir_sha256": {
+    "helper-source": "55c362c1a6a8de0e5f86df9f3e140c5f5ece3a7521da878faf800bcead1e32a7",
+    "helper-callback": "4ca3d7a8fcdd0627f12a124dceef7a3cbd13b0a994f43de1f0c32dba30b2922f",
+    "helper-checked": "cbeb07c807944a222c4b887be88a636ae7ea42b187e1626b10a5fc560969b7bb"
+  },
+  "role_mir_sha256": {
+    "helper-callback": "bcf8baa43c909ec108a80d3e4745b6a630cb68c7572452954d4c64a489227b28",
+    "helper-checked": "51caef0d8f2e8a7c7d1234281d868d5cb216e024aafef5de3cba77fd83749183",
+    "helper-source": "7257d9bb09d572f7b6812211cada319f0ba4cc9402ee95b44c1c449a680ef0d7"
+  },
+  "role_binding": "Only producer/helper identities bound to the producer call, its opaque result owner and the extracted helper are renamed. String literals and other nominal identities remain unchanged."
+}

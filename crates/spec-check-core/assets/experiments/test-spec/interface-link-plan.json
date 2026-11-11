@@ -1,0 +1,215 @@
+{
+  "stage": "frozen before linkage rule development",
+  "capture_configuration_sha256": "c9ec23ea5450b44e003a1884a959993ac66cf1d899546cd6e53ef70adcc8d3c2",
+  "capture_records_sha256": {
+    "host-tests": "0eadb643ea89191efb46e926dbdfd4c58922a341f51e29692cf27aa37914e485",
+    "kernel-library": "f70c00f1060ef9f4dee45cf95f67199af94202c762110032618fe80b47c5eee8"
+  },
+  "calls": [
+    {
+      "id": "call-01",
+      "profile": "kernel-library",
+      "category": "ordinary",
+      "call": {
+        "arguments": "[Spanned { node: copy _2, span: ostd/src/arch/x86/kernel/acpi/mod.rs:24:59: 24:75 (#0) }]",
+        "block": "bb0",
+        "definition_span": "ostd/src/mm/kspace/mod.rs:146:1: 146:42 (#0)",
+        "destination": "_7",
+        "generic_args": "[]",
+        "kind": "mir_call",
+        "owner": "DefId(0:78 ~ ostd[4790]::arch::kernel::acpi::{impl#0}::map_physical_region)",
+        "span": "ostd/src/arch/x86/kernel/acpi/mod.rs:24:44: 24:76 (#0)",
+        "target": "mm::kspace::paddr_to_vaddr",
+        "target_id": "DefId(0:4972 ~ ostd[4790]::mm::kspace::paddr_to_vaddr)"
+      }
+    },
+    {
+      "id": "call-02",
+      "profile": "kernel-library",
+      "category": "ordinary",
+      "call": {
+        "arguments": "[Spanned { node: move _54, span: ostd/src/util/range_alloc.rs:315:36: 315:91 (#13378) }]",
+        "block": "bb25",
+        "definition_span": "ostd/src/util/range_alloc.rs:646:5: 646:46 (#0)",
+        "destination": "_53",
+        "generic_args": "[]",
+        "kind": "mir_call",
+        "owner": "DefId(0:9484 ~ ostd[4790]::util::range_alloc::{impl#4}::alloc_specific)",
+        "span": "ostd/src/util/range_alloc.rs:315:21: 315:92 (#0)",
+        "target": "util::range_alloc::FreeRange::new",
+        "target_id": "DefId(0:9494 ~ ostd[4790]::util::range_alloc::{impl#5}::new)"
+      }
+    },
+    {
+      "id": "call-03",
+      "profile": "host-tests",
+      "category": "cross-package",
+      "call": {
+        "arguments": "[]",
+        "block": "bb4",
+        "definition_span": "verified_libs/vstd_extra/src/panic.rs:16:1: 16:28 (#0)",
+        "destination": "_5",
+        "generic_args": "[]",
+        "kind": "mir_call",
+        "owner": "DefId(0:24 ~ align_ext[4b42]::{impl#0}::align_up)",
+        "span": "verified_libs/vstd_extra/src/trans_macros.rs:9:13: 9:43 (#49)",
+        "target": "vstd_extra::panic::panic_diverge",
+        "target_id": "DefId(24:1540 ~ vstd_extra[4643]::panic::panic_diverge)"
+      }
+    },
+    {
+      "id": "call-04",
+      "profile": "kernel-library",
+      "category": "cross-package-trait",
+      "call": {
+        "arguments": "[Spanned { node: move _8, span: ostd/src/boot/memory_region.rs:213:17: 213:28 (#0) }, Spanned { node: const arch::mm::PAGE_SIZE, span: ostd/src/boot/memory_region.rs:213:38: 213:47 (#0) }]",
+        "block": "bb4",
+        "definition_span": "ostd/libs/align_ext/src/lib.rs:39:5: 39:51 (#0)",
+        "destination": "_7",
+        "generic_args": "[usize]",
+        "kind": "mir_call",
+        "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+        "span": "ostd/src/boot/memory_region.rs:213:17: 213:48 (#0)",
+        "target": "align_ext::AlignExt::align_up",
+        "target_id": "DefId(20:16 ~ align_ext[08e7]::AlignExt::align_up)"
+      }
+    },
+    {
+      "id": "call-05",
+      "profile": "host-tests",
+      "category": "trait",
+      "call": {
+        "arguments": "[Spanned { node: copy _14, span: ostd/libs/align_ext/src/lib.rs:244:21: 244:22 (#0) }, Spanned { node: copy _16, span: ostd/libs/align_ext/src/lib.rs:244:32: 244:33 (#0) }]",
+        "block": "bb9",
+        "definition_span": "ostd/libs/align_ext/src/lib.rs:39:5: 39:51 (#0)",
+        "destination": "_21",
+        "generic_args": "[usize]",
+        "kind": "mir_call",
+        "owner": "DefId(0:41 ~ align_ext[4b42]::test::test_align_up#1)",
+        "span": "ostd/libs/align_ext/src/lib.rs:244:21: 244:34 (#0)",
+        "target": "AlignExt::align_up",
+        "target_id": "DefId(0:16 ~ align_ext[4b42]::AlignExt::align_up)"
+      }
+    },
+    {
+      "id": "call-06",
+      "profile": "kernel-library",
+      "category": "cross-package-trait",
+      "call": {
+        "arguments": "[Spanned { node: move _10, span: ostd/src/boot/memory_region.rs:214:17: 214:27 (#0) }, Spanned { node: const arch::mm::PAGE_SIZE, span: ostd/src/boot/memory_region.rs:214:39: 214:48 (#0) }]",
+        "block": "bb6",
+        "definition_span": "ostd/libs/align_ext/src/lib.rs:57:5: 57:53 (#0)",
+        "destination": "_9",
+        "generic_args": "[usize]",
+        "kind": "mir_call",
+        "owner": "DefId(0:3727 ~ ostd[4790]::boot::memory_region::{impl#19}::as_aligned)",
+        "span": "ostd/src/boot/memory_region.rs:214:17: 214:49 (#0)",
+        "target": "align_ext::AlignExt::align_down",
+        "target_id": "DefId(20:17 ~ align_ext[08e7]::AlignExt::align_down)"
+      }
+    },
+    {
+      "id": "call-07",
+      "profile": "host-tests",
+      "category": "trait",
+      "call": {
+        "arguments": "[Spanned { node: copy _14, span: ostd/libs/align_ext/src/lib.rs:258:21: 258:22 (#0) }, Spanned { node: copy _16, span: ostd/libs/align_ext/src/lib.rs:258:34: 258:35 (#0) }]",
+        "block": "bb9",
+        "definition_span": "ostd/libs/align_ext/src/lib.rs:57:5: 57:53 (#0)",
+        "destination": "_21",
+        "generic_args": "[usize]",
+        "kind": "mir_call",
+        "owner": "DefId(0:45 ~ align_ext[4b42]::test::test_align_down#1)",
+        "span": "ostd/libs/align_ext/src/lib.rs:258:21: 258:36 (#0)",
+        "target": "AlignExt::align_down",
+        "target_id": "DefId(0:17 ~ align_ext[4b42]::AlignExt::align_down)"
+      }
+    },
+    {
+      "id": "call-08",
+      "profile": "host-tests",
+      "category": "trusted-overload",
+      "call": {
+        "arguments": "[Spanned { node: copy _1, span: ostd/libs/align_ext/src/lib.rs:175:21: 175:25 (#38) }, Spanned { node: move _8, span: ostd/libs/align_ext/src/lib.rs:175:38: 175:47 (#38) }]",
+        "block": "bb5",
+        "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/num/uint_macros.rs:890:9: 890:66 (#554)",
+        "destination": "_7",
+        "generic_args": "[]",
+        "kind": "mir_call",
+        "owner": "DefId(0:24 ~ align_ext[4b42]::{impl#0}::align_up)",
+        "span": "ostd/libs/align_ext/src/lib.rs:175:21: 175:48 (#38)",
+        "target": "core::num::<impl u8>::checked_add",
+        "target_id": "DefId(2:36951 ~ core[c0ac]::num::{impl#6}::checked_add)"
+      }
+    },
+    {
+      "id": "call-09",
+      "profile": "host-tests",
+      "category": "trusted-overload",
+      "call": {
+        "arguments": "[Spanned { node: copy _1, span: ostd/libs/align_ext/src/lib.rs:175:21: 175:25 (#38) }, Spanned { node: move _8, span: ostd/libs/align_ext/src/lib.rs:175:38: 175:47 (#38) }]",
+        "block": "bb5",
+        "definition_span": "/nix/store/z5l6ny9fzjclmq21nxicf95k37k1dzd7-rust-default-1.98.1/lib/rustlib/src/rust/library/core/src/num/uint_macros.rs:890:9: 890:66 (#567)",
+        "destination": "_7",
+        "generic_args": "[]",
+        "kind": "mir_call",
+        "owner": "DefId(0:27 ~ align_ext[4b42]::{impl#1}::align_up)",
+        "span": "ostd/libs/align_ext/src/lib.rs:175:21: 175:48 (#38)",
+        "target": "core::num::<impl u16>::checked_add",
+        "target_id": "DefId(2:37134 ~ core[c0ac]::num::{impl#7}::checked_add)"
+      }
+    },
+    {
+      "id": "call-10",
+      "profile": "kernel-library",
+      "category": "macro-generated",
+      "call": {
+        "arguments": "[]",
+        "block": "bb6",
+        "definition_span": "verified_libs/bitflags/src/lib.rs:157:13: 265:54 (#4627)",
+        "destination": "_23",
+        "generic_args": "[]",
+        "kind": "mir_call",
+        "owner": "DefId(0:3633 ~ ostd[4790]::arch::mm::{impl#38}::prop)",
+        "span": "ostd/src/arch/x86/mm/mod.rs:458:70: 458:84 (#0)",
+        "target": "mm::page_prop::PageFlags::R",
+        "target_id": "DefId(0:5133 ~ ostd[4790]::mm::page_prop::{impl#26}::R)"
+      }
+    },
+    {
+      "id": "call-11",
+      "profile": "kernel-library",
+      "category": "macro-generated",
+      "call": {
+        "arguments": "[Spanned { node: move _22, span: ostd/src/arch/x86/mm/mod.rs:458:70: 458:84 (#0) }]",
+        "block": "bb7",
+        "definition_span": "verified_libs/bitflags/src/lib.rs:157:13: 355:18 (#4627)",
+        "destination": "_21",
+        "generic_args": "[]",
+        "kind": "mir_call",
+        "owner": "DefId(0:3633 ~ ostd[4790]::arch::mm::{impl#38}::prop)",
+        "span": "ostd/src/arch/x86/mm/mod.rs:370:76: 370:86 (#1090)",
+        "target": "mm::page_prop::PageFlags::bits",
+        "target_id": "DefId(0:5157 ~ ostd[4790]::mm::page_prop::{impl#26}::bits)"
+      }
+    },
+    {
+      "id": "call-12",
+      "profile": "kernel-library",
+      "category": "macro-generated",
+      "call": {
+        "arguments": "[]",
+        "block": "bb76",
+        "definition_span": "verified_libs/bitflags/src/lib.rs:157:13: 265:54 (#4858)",
+        "destination": "_144",
+        "generic_args": "[]",
+        "kind": "mir_call",
+        "owner": "DefId(0:3633 ~ ostd[4790]::arch::mm::{impl#38}::prop)",
+        "span": "ostd/src/arch/x86/mm/mod.rs:465:72: 465:89 (#0)",
+        "target": "mm::page_prop::PrivilegedPageFlags::USER",
+        "target_id": "DefId(0:5279 ~ ostd[4790]::mm::page_prop::{impl#51}::USER)"
+      }
+    }
+  ],
+  "policy": "All twelve must link; no per-client mappings or name exceptions; all other captured calls remain reported. No expected VIR targets supplied."
+}

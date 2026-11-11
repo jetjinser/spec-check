@@ -53,5 +53,9 @@ pub mod set_state;
 pub mod state;
 pub mod state_semantics;
 pub mod std_body;
+pub mod support;
 pub mod test_census;
 pub mod vir;
+
+pub use serde_json::json;
+pub use support::{execute, hash, write_json, Result};

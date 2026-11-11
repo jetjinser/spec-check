@@ -863,7 +863,7 @@ fn conditional_plan(records: &[Record], native: &str, cwd: &Path) -> Result<(Str
         json!({"status":"planned","producer":producer,"consumer":consumer,"guard":guard,"owner_place":owner,"producer_signature":annotation(pf)?,"consumer_signature":annotation(cf)?,"manual_call_mappings":0,"entry_permissions":0,"native_verification_required":true,"runtime_correspondence_required":true}),
     ))
 }
-pub(crate) fn conditional(records: &Path, native: &Path, cwd: &Path, out: &Path) -> Result<()> {
+pub fn conditional(records: &Path, native: &Path, cwd: &Path, out: &Path) -> Result<()> {
     fs::create_dir(out)?;
     let records = ir::parse(&fs::read_to_string(records)?)?;
     let native = fs::read_to_string(native)?;
@@ -976,7 +976,7 @@ pub(crate) fn erase_captures(records: &[Record], connections: &Value) -> Result<
     ir::remap(data, &removed, false)
 }
 
-pub(crate) fn run(
+pub fn run(
     context: &Path,
     source: &Path,
     function: &str,

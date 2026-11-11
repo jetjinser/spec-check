@@ -4,6 +4,7 @@
 //! campaign replays keep working; all logic lives in the core crate.
 
 use spec_check_core::assertion_rule;
+use spec_check_core::support::{execute, hash, write_json, Result};
 use spec_check_core::attribution;
 use spec_check_core::borrowed_resource;
 use spec_check_core::call_guidance;
@@ -59,36 +60,6 @@ use std::{
     path::{Path, PathBuf},
     process::{Command, Stdio},
 };
-type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
-fn write_json(path: &Path, value: &impl Serialize) -> Result<()> {
-    fs::write(path, serde_json::to_vec_pretty(value)?)?;
-    Ok(())
-}
-fn hash(bytes: &[u8]) -> Result<String> {
-    let mut p = Command::new("sha256sum")
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
-        .spawn()?;
-    p.stdin
-        .take()
-        .ok_or("missing hash stdin")?
-        .write_all(bytes)?;
-    let r = p.wait_with_output()?;
-    if !r.status.success() {
-        return Err("sha256sum failed".into());
-    }
-    Ok(String::from_utf8(r.stdout)?[..64].to_owned())
-}
-fn execute(command: &mut Command, out: &Path, name: &str) -> Result<std::process::Output> {
-    write_json(
-        &out.join(format!("{name}.command.json")),
-        &json!({"program":command.get_program().to_string_lossy(),"args":command.get_args().map(|s|s.to_string_lossy()).collect::<Vec<_>>(),"cwd":command.get_current_dir()}),
-    )?;
-    let r = command.output()?;
-    fs::write(out.join(format!("{name}.stdout")), &r.stdout)?;
-    fs::write(out.join(format!("{name}.stderr")), &r.stderr)?;
-    Ok(r)
-}
 fn check() -> Result<()> {
     let binary = env::current_exe()?;
     let binary_hash = hash(&fs::read(&binary)?)?;

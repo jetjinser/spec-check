@@ -712,7 +712,7 @@ fn ensures_returns_callback_result(function: &vir::Node) -> bool {
 /// Find blocking guard APIs whose `wait_until` callback returns a same-owner
 /// `try_*` result. The report records VIR flow evidence and leaves entailment to
 /// Verus; it does not infer a missing contract from structure alone.
-pub(crate) fn closure_forwarder_scan(
+pub fn closure_forwarder_scan(
     input: &Path,
     owner_report_path: &Path,
     out: &Path,
@@ -898,7 +898,7 @@ fn helper_contains_closure_ensures(
     ensures_returns_callback_result(function)
 }
 
-pub(crate) fn run(input: &Path, out: &Path) -> Result<()> {
+pub fn run(input: &Path, out: &Path) -> Result<()> {
     if out.exists() {
         return Err("guard-owner-scan output directory already exists".into());
     }

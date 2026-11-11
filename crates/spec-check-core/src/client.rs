@@ -200,7 +200,7 @@ pub(crate) fn full_verification_context(inv: &Invocation) -> Result<()> {
 pub fn run(links: &Path, sdk: &Path, out: &Path) -> Result<()> {
     run_scoped(links, sdk, out, None)
 }
-pub(crate) fn run_scoped(
+pub fn run_scoped(
     links: &Path,
     sdk: &Path,
     out: &Path,
@@ -209,7 +209,7 @@ pub(crate) fn run_scoped(
     run_mode(links, sdk, out, sources, false)
 }
 
-pub(crate) fn census(links: &Path, sdk: &Path, out: &Path) -> Result<()> {
+pub fn census(links: &Path, sdk: &Path, out: &Path) -> Result<()> {
     run_mode(links, sdk, out, None, true)
 }
 
@@ -790,7 +790,7 @@ mod real_controls {
         let report: Value =
             serde_json::from_slice(&fs::read(run.join("report.json")).unwrap()).unwrap();
         let plan: Value = serde_json::from_str(include_str!(
-            "../../../experiments/test-spec/client-check-plan.json"
+            "../assets/experiments/test-spec/client-check-plan.json"
         ))
         .unwrap();
         let branch = plan["clients"]

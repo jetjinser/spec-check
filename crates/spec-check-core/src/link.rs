@@ -1098,7 +1098,7 @@ mod tests {
         let capture = std::env::var("LINK_CAPTURE").unwrap();
         let output = std::env::var("LINK_OUTPUT").unwrap();
         let plan: Value = serde_json::from_str(include_str!(
-            "../../../experiments/test-spec/interface-link-plan.json"
+            "../assets/experiments/test-spec/interface-link-plan.json"
         ))
         .unwrap();
         assert_eq!(
