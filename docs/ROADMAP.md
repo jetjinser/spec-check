@@ -58,6 +58,11 @@
 
 ### M2. tracked 参数建模 —— 完成（2026-11-11）
 
+**生成器接入已完成**（M1/M2 分支合并后，commit fcfa3e3）：manifest v1.1
+（target_workspace 注入 + construction 条目）实现于 vacuity.rs，3/3 验证
+一致；`check` 流程端到端组合验证通过（wt-a 流程 + wt-b 能力零改动组合，
+报告 `examples/vostd-guard/tracked/integration-report.json`）。
+
 设计笔记 `docs/M2-tracked-modeling.md` + spike
 `examples/tracked-modeling-spike/`（预测先于运行写定，结果逐项回填
 RESULT.md）。三路线结论：
