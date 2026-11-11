@@ -80,11 +80,13 @@ RESULT.md）。三路线结论：
   detail 证据形态标注）在 RESULT.md 末节，M3+ 实施时取用。
 - registry V-001 的 machine_status 更新属 research 仓库，本次未动。
 
-### M3. ktest 通道 14 项排除闭合 —— 待做
+### M3. ktest 通道 14 项排除闭合 —— ✅ 完成（research commit d32e67f7）
 
-见研究档案 `ktest-capture-channel/README.md` 排除清单。逐项判定：可修复
-（如 dma re-export 类已完成）vs 永久排除（已删机制）。已在通道内修复的
-不再重复。
+4 项 closed-fixed（into_non_overlapping external_body 恢复、va_range、
+kvirt_area len/query、protect_range 闭包桥接）/ 3 项 permanent（机制已删）/
+7 项 fixable-expensive（工作量已评估）。重跑 1 轮：1,497 verified /
+0 错误，ktest owner 27→28。处置表与残余风险见
+`research/.../ktest-capture-channel/README.md`。
 
 ### M4. CI 接入（vostd 首站）—— 等 M1-M3
 
