@@ -1,55 +1,156 @@
 //! `contract-vacuity`: generic vacuity analysis over a probe manifest.
 //!
+//! Interface contract: `docs/ANALYSIS-CONTRACT.md` (manifest v1.1 + two-phase
+//! construction-probe runner + per-probe-kind classification).
+//!
 //! Phase-1 scope (honest boundary): the analysis consumes a **probe
 //! manifest** — a project-side JSON listing contracts as self-contained
-//! verus snippets (`params` + `requires` referencing them). Automatic
-//! contract extraction from captured VIR is a later milestone; the runner,
-//! probe-crate generator, and judgment below are fully generic.
+//! verus snippets. Automatic contract extraction from captured VIR is a
+//! later milestone; the runner, probe generator, and judgments below are
+//! fully generic.
 //!
-//! Judgment criterion (validated in `examples/contract-vacuity-spike`):
-//! - vacuity probe (`forall` params, negated requires) verifies
-//!   → `confirmed_vacuous`
-//! - liveness probe (`exists` params, requires, explicit witness) has no
-//!   failure attributed → `confirmed_live` (an `assertion failed` on the
-//!   witness `assert` inside the `live_` body counts as attributed)
-//! - both probes fail → `candidate_inconclusive` (verifier incompleteness;
-//!   never counted as a defect)
-//! - both probes succeed → `anomaly` (logically impossible; inspected)
+//! Two probe kinds (manifest v1.1; absent `probe` field = `quantifier`,
+//! back-compatible with v1.0):
 //!
-//! Manifest notes: quantifier triggers must be inferable, so `requires`
-//! expressions should be written as named `spec fn` applications over the
-//! parameters (literal-only comparisons fail trigger inference).
+//! - **quantifier** entries run in a standalone probe crate (existing
+//!   behavior): vacuity probe (`forall` params, negated requires) verifies
+//!   → `confirmed_vacuous`; liveness probe (`exists` + witness) has no
+//!   attributed failure → `confirmed_live`; both fail →
+//!   `candidate_inconclusive`; both succeed → `anomaly`.
+//! - **construction** entries are injected into a target workspace
+//!   (`target_workspace.inject_dir/<name>.rs`, gated `#[cfg(gate_cfg)]`),
+//!   pre-compiled by a rustc-check loop (`cargo-verus check --no-verify`
+//!   with the gate cfg forwarded to the Verus driver), then the target
+//!   workspace is built with `cargo-verus build` and the log is parsed.
+//!   The generated module holds `model_preamble` (model verus source after
+//!   `verus! {`) plus a synthesized entry fn `entry_<i>_<safe>` whose body
+//!   is the manifest `construct` (the caller-face construction attempt),
+//!   and — iff a `witness` is given — a holder-face control fn
+//!   `live_<i>_<safe}` with `requires expect_fail_requires`. With
+//!   `face_requires = true` the entry fn itself carries
+//!   `requires expect_fail_requires` (holder-face entries).
+//!   Judgment: a `precondition not satisfied` error attributed by span to
+//!   the entry fn region → `confirmed_vacuous` (fabrication channel
+//!   rejected + channel-exhaustion argument, documented — model-relative);
+//!   entry fn verifies with no holder control → `confirmed_live`; both
+//!   probes verified, or contradictory outcomes → `anomaly`; everything
+//!   else → `candidate_inconclusive` (never counted as a defect).
+//!
+//! Injection replay/removal: every created/modified target file is
+//! snapshotted under `<out>/injections/` (original bytes + injected bytes +
+//! `replay.json`); after the run the workspace is restored to its original
+//! state.
+//!
+//! Manifest notes: quantifier triggers must be inferable, so quantifier
+//! `requires` expressions should be written as named `spec fn`
+//! applications over the parameters. Schema clarifications added by this
+//! implementation (reported against the contract doc): optional
+//! `target_workspace.target` (cross-compilation triple; ostd-style crates
+//! do not build for the host), optional `target_workspace.extra_cfgs`
+//! (additional forwarded rustc cfgs, e.g. exclusion gates such as
+//! `ktest_capture_gap`), and optional per-entry `face_requires` (the
+//! contract table distinguishes fabrication and holder faces but the
+//! schema had no field selecting which one the entry fn is).
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
+/// Which probe family an entry belongs to.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ProbeKind {
+    /// Standalone quantifier probe crate (default; v1.0 behavior).
+    Quantifier,
+    /// Construction probe injected into `target_workspace`.
+    Construction,
+}
+
+impl Default for ProbeKind {
+    fn default() -> Self {
+        ProbeKind::Quantifier
+    }
+}
+
 /// Project-side probe manifest: the contracts to probe.
 #[derive(Debug, Deserialize)]
 pub struct Manifest {
     /// Optional verus source inserted right after `verus! {` (spec
-    /// predicates the requires expressions reference, e.g. a named
-    /// reachable-state set). Required for quantifier triggers.
+    /// predicates the quantifier requires expressions reference). Required
+    /// for quantifier triggers.
     #[serde(default)]
     pub preamble: String,
+    /// Required by construction entries: the target workspace to inject
+    /// into. Absent = pure quantifier manifest (v1.0).
+    #[serde(default)]
+    pub target_workspace: Option<TargetWorkspace>,
     pub contracts: Vec<ContractEntry>,
+}
+
+/// Construction-probe target workspace (manifest v1.1).
+#[derive(Debug, Deserialize)]
+pub struct TargetWorkspace {
+    /// Absolute path of the target workspace manifest (`Cargo.toml`).
+    pub manifest_path: PathBuf,
+    /// Probe-module injection directory, relative to the workspace root;
+    /// its first path component names the crate (e.g. `ostd/src/probes`).
+    pub inject_dir: PathBuf,
+    /// cfg gate carried by the injected module declarations.
+    pub gate_cfg: String,
+    /// Additional cfgs forwarded to both build phases (target-side
+    /// exclusion gates; the injected module itself is gated only by
+    /// `gate_cfg`).
+    #[serde(default)]
+    pub extra_cfgs: Vec<String>,
+    /// Target triple for the target-workspace builds (crates with
+    /// target-specific dependencies do not build for the host).
+    #[serde(default)]
+    pub target: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct ContractEntry {
     /// Stable subject identifier.
     pub name: String,
+    /// Probe kind (default `quantifier`).
+    #[serde(default)]
+    pub probe: ProbeKind,
     /// Verus parameter list source, e.g. `"s: u64, owner: usize"`.
     pub params: String,
-    /// Verus requires expression source referencing the parameters; write it
-    /// as named spec-fn applications so quantifier triggers are inferable.
-    pub requires: String,
-    /// Optional self-typed witness expression (tuple matching the params).
-    /// Without a witness, a satisfiable contract can only be classified
-    /// `candidate_inconclusive` — witnesses are not synthesized.
+    /// quantifier: Verus requires expression source referencing the
+    /// parameters; write it as named spec-fn applications so quantifier
+    /// triggers are inferable.
+    #[serde(default)]
+    pub requires: Option<String>,
+    /// quantifier: optional self-typed witness expression (tuple matching
+    /// the params). construction: optional holder-face control body.
+    /// Without a quantifier witness, a satisfiable contract can only be
+    /// classified `candidate_inconclusive` — witnesses are not synthesized.
     #[serde(default)]
     pub witness: Option<String>,
+    /// construction: model verus source (uses, uninterp/spec fns, structs,
+    /// the contract-face stub) inserted after `verus! {` in the injected
+    /// module.
+    #[serde(default)]
+    pub model_preamble: Option<String>,
+    /// construction: the precondition text expected to be unsatisfiable
+    /// through the fabrication channel; used as the holder-face requires
+    /// and for verdict detail.
+    #[serde(default)]
+    pub expect_fail_requires: Option<String>,
+    /// construction: verus source emitted as the body of the entry fn —
+    /// the caller-face construction attempt (e.g. the only writable
+    /// fabrication channel, or the holder call for `face_requires`
+    /// entries).
+    #[serde(default)]
+    pub construct: Option<String>,
+    /// construction: emit `requires expect_fail_requires` on the entry fn
+    /// itself (holder-face entries whose construct call is satisfied by the
+    /// call-face parameters). Default false: the entry fn is the
+    /// fabrication face and must not carry the expected-fail requires.
+    #[serde(default)]
+    pub face_requires: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -68,16 +169,20 @@ pub enum Verdict {
     Anomaly,
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub struct VacuityReport {
     pub verdicts: Vec<EntryVerdict>,
     /// Verification summary of the dependency build (e.g. vstd).
     pub dependency_summary: Option<String>,
     /// Verification summary of the probe crate.
     pub probe_summary: Option<String>,
+    /// Verification summary of the target workspace crate (construction).
+    pub target_summary: Option<String>,
 }
 
-/// Generate the probe crate source for a manifest.
+/// Generate the standalone probe crate source for a manifest (quantifier
+/// entries only; construction entries are injected into the target
+/// workspace instead).
 pub fn generate_probe_lib(manifest: &Manifest) -> String {
     let mut out = String::from("#![no_std]\nuse vstd::prelude::*;\n\nverus! {\n\n");
     if !manifest.preamble.is_empty() {
@@ -85,8 +190,12 @@ pub fn generate_probe_lib(manifest: &Manifest) -> String {
         out.push_str("\n\n");
     }
     for (i, c) in manifest.contracts.iter().enumerate() {
+        if c.probe != ProbeKind::Quantifier {
+            continue;
+        }
         let safe = sanitize(&c.name);
         let args = arg_names(&c.params);
+        let requires = c.requires.as_deref().unwrap_or("");
         let witness_block = match &c.witness {
             Some(w) => {
                 let names = param_names(&c.params);
@@ -114,7 +223,7 @@ pub fn generate_probe_lib(manifest: &Manifest) -> String {
              proof fn live_{i}_{safe}()\n    ensures\n        exists|{params}| pre_{i}_{safe}({args}),\n{{\n{witness_block}}}\n\n",
             name = c.name,
             params = c.params,
-            requires = c.requires,
+            requires = requires,
             args = args,
             safe = safe,
             i = i,
@@ -126,9 +235,15 @@ pub fn generate_probe_lib(manifest: &Manifest) -> String {
 }
 
 fn sanitize(name: &str) -> String {
-    name.chars()
+    let raw: String = name
+        .chars()
         .map(|c| if c.is_ascii_alphanumeric() { c } else { '_' })
-        .collect()
+        .collect();
+    // Identifiers must not start with a digit.
+    match raw.chars().next() {
+        Some(c) if c.is_ascii_alphabetic() || c == '_' => raw,
+        _ => format!("p_{raw}"),
+    }
 }
 
 fn param_names(params: &str) -> Vec<String> {
@@ -144,6 +259,181 @@ fn arg_names(params: &str) -> String {
     param_names(params).join(", ")
 }
 
+// ---------------------------------------------------------------------------
+// Construction-probe injection generation
+// ---------------------------------------------------------------------------
+
+/// One generated per-entry probe module plus its synthesized-fn line
+/// regions (1-based, inclusive) used for log span attribution.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ProbeModule {
+    pub safe_name: String,
+    pub index: usize,
+    pub source: String,
+    pub entry_region: (usize, usize),
+    pub live_region: Option<(usize, usize)>,
+}
+
+/// The full injection set for a manifest's construction entries.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ProbeInjection {
+    /// Module name of the injection directory (file_name of inject_dir).
+    pub module_name: String,
+    /// Declaration appended to the crate root file.
+    pub lib_decl: String,
+    /// Content of `inject_dir/mod.rs` (wiring + cfg gates).
+    pub mod_rs: String,
+    pub modules: Vec<ProbeModule>,
+}
+
+fn indent_block(src: &str) -> String {
+    src.lines()
+        .map(|l| if l.trim().is_empty() { String::new() } else { format!("    {l}") })
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+/// Region of a synthesized fn: from its `pub fn ...` declaration line to
+/// the next line that is exactly `}` (convention: construct/witness bodies
+/// are indented and contain no column-0 closing braces).
+fn fn_region(lines: &[&str], decl_prefix: &str) -> Option<(usize, usize)> {
+    let start = lines
+        .iter()
+        .position(|l| l.starts_with(decl_prefix))?
+        + 1;
+    for (off, l) in lines[start..].iter().enumerate() {
+        if l.trim() == "}" {
+            return Some((start, start + off + 1));
+        }
+    }
+    None
+}
+
+/// Generate the injected probe module set for a manifest's construction
+/// entries. Pure: the classifier regenerates this to map log spans.
+pub fn generate_probe_injection(manifest: &Manifest) -> Result<ProbeInjection, String> {
+    let tw = manifest
+        .target_workspace
+        .as_ref()
+        .ok_or("construction entries require target_workspace")?;
+    let module_name = tw
+        .inject_dir
+        .file_name()
+        .map(|n| sanitize(&n.to_string_lossy()))
+        .ok_or("target_workspace.inject_dir has no file name")?;
+    let gate = &tw.gate_cfg;
+    let mut modules = Vec::new();
+    let mut mod_decls = String::new();
+    for (i, c) in manifest.contracts.iter().enumerate() {
+        if c.probe != ProbeKind::Construction {
+            continue;
+        }
+        let safe = sanitize(&c.name);
+        if modules.iter().any(|m: &ProbeModule| m.safe_name == safe) {
+            return Err(format!("construction entry name collides after sanitize: {}", c.name));
+        }
+        let construct = c
+            .construct
+            .as_deref()
+            .ok_or_else(|| format!("construction entry {} missing construct", c.name))?;
+        let efr = c
+            .expect_fail_requires
+            .as_deref()
+            .ok_or_else(|| format!("construction entry {} missing expect_fail_requires", c.name))?;
+
+        let mut src = String::new();
+        src.push_str(&format!(
+            "// Generated by spec-check contract-vacuity (construction probe).\n\
+             // Entry: {} — injected under cfg({}); removed after the run; replay\n\
+             // copy kept in the analysis output directory.\n\
+             #![allow(dead_code, unused_imports, unused_variables, unused_mut)]\n\n\
+             use vstd::prelude::*;\n\n\
+             verus! {{\n\n",
+            c.name, gate,
+        ));
+        if let Some(mp) = &c.model_preamble {
+            if !mp.is_empty() {
+                src.push_str(mp);
+                src.push_str("\n\n");
+            }
+        }
+        src.push_str(&format!(
+            "// ---- probe entry fn (construct face) — do not edit ----\n\
+             pub fn entry_{i}_{safe}({params})",
+            i = i,
+            safe = safe,
+            params = c.params,
+        ));
+        if c.face_requires {
+            src.push_str(&format!(
+                "\n    requires\n        {efr},\n{{\n{construct}\n}}\n\n",
+                efr = efr,
+                construct = indent_block(construct),
+            ));
+        } else {
+            src.push_str(&format!(
+                " {{\n{construct}\n}}\n\n",
+                construct = indent_block(construct),
+            ));
+        }
+        let entry_decl = format!("pub fn entry_{i}_{safe}");
+
+        let live_region;
+        if let Some(w) = &c.witness {
+            src.push_str(&format!(
+                "// ---- probe live fn (holder face control) — do not edit ----\n\
+                 pub fn live_{i}_{safe}({params})\n\
+                 \x20   requires\n\
+                 \x20       {efr},\n\
+                 {{\n{witness}\n}}\n\n",
+                i = i,
+                safe = safe,
+                params = c.params,
+                efr = efr,
+                witness = indent_block(w),
+            ));
+            live_region = Some(format!("pub fn live_{i}_{safe}"));
+        } else {
+            live_region = None;
+        }
+        src.push_str("} // verus!\n");
+
+        let lines: Vec<&str> = src.lines().collect();
+        let entry_region = fn_region(&lines, &entry_decl)
+            .ok_or_else(|| format!("internal: entry fn region not found for {}", c.name))?;
+        let live = live_region.and_then(|d| fn_region(&lines, &d));
+
+        mod_decls.push_str(&format!("#[cfg({gate})]\npub mod {safe};\n\n"));
+
+        modules.push(ProbeModule {
+            safe_name: safe,
+            index: i,
+            source: src,
+            entry_region,
+            live_region: live,
+        });
+    }
+    if modules.is_empty() {
+        return Err("no construction entries in manifest".into());
+    }
+    let mod_rs = format!(
+        "// Generated by spec-check contract-vacuity (construction probes).\n\
+         // Removed after the run; replay copy kept in the analysis output directory.\n\
+         #![allow(dead_code, unused_imports)]\n\n\
+         {mod_decls}"
+    );
+    Ok(ProbeInjection {
+        lib_decl: format!("#[cfg({gate})] mod {module_name};", gate = gate),
+        module_name,
+        mod_rs,
+        modules,
+    })
+}
+
+// ---------------------------------------------------------------------------
+// Runner
+// ---------------------------------------------------------------------------
+
 /// Write the probe crate and run cargo-verus. Returns per-contract verdicts.
 pub fn run(
     manifest: &Manifest,
@@ -152,14 +442,364 @@ pub fn run(
     vstd: &Path,
     out: &Path,
 ) -> Result<VacuityReport, String> {
-    let src = out.join("src");
-    std::fs::create_dir_all(&src).map_err(|e| e.to_string())?;
-    std::fs::write(out.join("Cargo.toml"), &probe_cargo_toml(vstd)).map_err(|e| e.to_string())?;
-    std::fs::write(src.join("lib.rs"), generate_probe_lib(manifest))
-        .map_err(|e| e.to_string())?;
+    validate_manifest(manifest)?;
+    let has_construction = manifest
+        .contracts
+        .iter()
+        .any(|c| c.probe == ProbeKind::Construction);
+    let has_quantifier = manifest
+        .contracts
+        .iter()
+        .any(|c| c.probe == ProbeKind::Quantifier);
+    if has_construction && manifest.target_workspace.is_none() {
+        return Err("construction entries require target_workspace".into());
+    }
+    std::fs::create_dir_all(out).map_err(|e| e.to_string())?;
 
-    let log = run_verus(cargo_verus, z3, out)?;
-    Ok(classify(manifest, &log))
+    let mut verdicts: Vec<Option<EntryVerdict>> = manifest.contracts.iter().map(|_| None).collect();
+    let mut dependency_summary = None;
+    let mut probe_summary = None;
+    let mut target_summary = None;
+
+    if has_quantifier {
+        let src = out.join("src");
+        std::fs::create_dir_all(&src).map_err(|e| e.to_string())?;
+        std::fs::write(out.join("Cargo.toml"), &probe_cargo_toml(vstd))
+            .map_err(|e| e.to_string())?;
+        std::fs::write(src.join("lib.rs"), generate_probe_lib(manifest))
+            .map_err(|e| e.to_string())?;
+
+        let log = run_verus(cargo_verus, z3, out)?;
+        let report = classify_quantifier(manifest, &log);
+        for v in report.verdicts {
+            if let Some(idx) = manifest.contracts.iter().position(|c| c.name == v.name) {
+                verdicts[idx] = Some(v);
+            }
+        }
+        dependency_summary = report.dependency_summary;
+        probe_summary = report.probe_summary;
+    }
+
+    if has_construction {
+        let tw = manifest.target_workspace.as_ref().unwrap();
+        let report = run_construction(manifest, tw, cargo_verus, z3, out)?;
+        for v in report.verdicts {
+            if let Some(idx) = manifest.contracts.iter().position(|c| c.name == v.name) {
+                verdicts[idx] = Some(v);
+            }
+        }
+        target_summary = report.target_summary;
+    }
+
+    let verdicts = verdicts
+        .into_iter()
+        .zip(manifest.contracts.iter())
+        .map(|(v, c)| {
+            v.unwrap_or(EntryVerdict {
+                name: c.name.clone(),
+                verdict: Verdict::CandidateInconclusive,
+                detail: "entry was not evaluated".into(),
+            })
+        })
+        .collect();
+    Ok(VacuityReport {
+        verdicts,
+        dependency_summary,
+        probe_summary,
+        target_summary,
+    })
+}
+
+fn validate_manifest(manifest: &Manifest) -> Result<(), String> {
+    for c in &manifest.contracts {
+        match c.probe {
+            ProbeKind::Quantifier => {
+                if c.params.trim().is_empty() {
+                    return Err(format!("quantifier entry {} missing params", c.name));
+                }
+                if c.requires.as_deref().unwrap_or("").trim().is_empty() {
+                    return Err(format!("quantifier entry {} missing requires", c.name));
+                }
+            },
+            ProbeKind::Construction => {
+                if c.expect_fail_requires.as_deref().unwrap_or("").trim().is_empty() {
+                    return Err(format!(
+                        "construction entry {} missing expect_fail_requires",
+                        c.name
+                    ));
+                }
+                if c.construct.as_deref().unwrap_or("").trim().is_empty() {
+                    return Err(format!("construction entry {} missing construct", c.name));
+                }
+            },
+        }
+    }
+    Ok(())
+}
+
+/// Run one target-workspace phase with stdout/stderr interleaved into a
+/// single log file (dup'd descriptors share the write offset, preserving
+/// real-time ordering — required for `Compiling`-section attribution).
+fn run_captured(cmd: &mut Command, log_path: &Path) -> Result<(std::process::ExitStatus, String), String> {
+    if let Some(parent) = log_path.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    let file = std::fs::OpenOptions::new()
+        .create(true)
+        .append(true)
+        .open(log_path)
+        .map_err(|e| e.to_string())?;
+    let err = file.try_clone().map_err(|e| e.to_string())?;
+    cmd.stdout(file).stderr(err);
+    let status = cmd.status().map_err(|e| {
+        format!(
+            "failed to execute {}: {e}",
+            cmd.get_program().to_string_lossy()
+        )
+    })?;
+    let mut log = std::fs::read_to_string(log_path).map_err(|e| e.to_string())?;
+    log.push_str(&format!("\n[cargo-verus exit status: {status}]\n"));
+    Ok((status, log))
+}
+
+fn verus_env(cmd: &mut Command, z3: &Path) {
+    cmd.env("VERUS_USE_RUSTUP", "0")
+        .env("VERUS_Z3_PATH", z3)
+        .env("RUSTC_BOOTSTRAP", "1");
+}
+
+fn target_command(
+    cargo_verus: &Path,
+    phase: &str,
+    workspace_root: &Path,
+    crate_name: &str,
+    target_dir: &Path,
+    target: Option<&String>,
+    verus_args: &[&str],
+    z3: &Path,
+) -> Command {
+    let mut cmd = Command::new(cargo_verus);
+    cmd.arg(phase);
+    cmd.current_dir(workspace_root);
+    cmd.arg("-p").arg(crate_name).arg("--offline");
+    cmd.arg("--target-dir").arg(target_dir);
+    if let Some(t) = target {
+        cmd.arg("--target").arg(t);
+    }
+    cmd.arg("--lib");
+    cmd.arg("--");
+    for a in verus_args {
+        cmd.arg(a);
+    }
+    verus_env(&mut cmd, z3);
+    cmd
+}
+
+fn forwarded_cfgs(tw: &TargetWorkspace) -> Vec<String> {
+    let mut args = vec!["--cfg".to_owned(), tw.gate_cfg.clone()];
+    for cfg in &tw.extra_cfgs {
+        args.push("--cfg".to_owned());
+        args.push(cfg.clone());
+    }
+    args
+}
+
+/// Snapshot/restore bookkeeping for the injection. Drop restores the
+/// workspace to its original state on every exit path.
+struct InjectionGuard {
+    /// Files we overwrote: (path, original bytes; None = did not exist).
+    modified: Vec<(PathBuf, Option<Vec<u8>>)>,
+    /// Directory we created wholesale (removed recursively on restore).
+    created_dir: Option<PathBuf>,
+}
+
+impl Drop for InjectionGuard {
+    fn drop(&mut self) {
+        for (path, orig) in &self.modified {
+            match orig {
+                Some(bytes) => {
+                    let _ = std::fs::write(path, bytes);
+                },
+                None => {
+                    let _ = std::fs::remove_file(path);
+                },
+            }
+        }
+        if let Some(dir) = &self.created_dir {
+            let _ = std::fs::remove_dir_all(dir);
+        }
+    }
+}
+
+fn snapshot(path: &Path) -> Result<Option<Vec<u8>>, String> {
+    match std::fs::read(path) {
+        Ok(bytes) => Ok(Some(bytes)),
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(e) => Err(e.to_string()),
+    }
+}
+
+fn run_construction(
+    manifest: &Manifest,
+    tw: &TargetWorkspace,
+    cargo_verus: &Path,
+    z3: &Path,
+    out: &Path,
+) -> Result<VacuityReport, String> {
+    let injection = generate_probe_injection(manifest)?;
+    let workspace_root = tw
+        .manifest_path
+        .parent()
+        .ok_or("target_workspace.manifest_path has no parent")?
+        .to_path_buf();
+    let crate_name = tw
+        .inject_dir
+        .components()
+        .next()
+        .map(|c| c.as_os_str().to_string_lossy().to_string())
+        .filter(|s| s != "src")
+        .ok_or("target_workspace.inject_dir must start with the crate directory")?;
+    let crate_dir = workspace_root.join(&crate_name);
+    let root_file = ["src/lib.rs", "src/main.rs"]
+        .iter()
+        .map(|rel| crate_dir.join(rel))
+        .find(|p| p.is_file())
+        .ok_or("target crate root file (src/lib.rs or src/main.rs) not found")?;
+    let inject_dir_abs = workspace_root.join(&tw.inject_dir);
+
+    // Replay copies under out/injections/.
+    let replay = out.join("injections");
+    std::fs::create_dir_all(&replay).map_err(|e| e.to_string())?;
+
+    let dir_existed = inject_dir_abs.is_dir();
+    let mut guard = InjectionGuard {
+        modified: Vec::new(),
+        created_dir: if dir_existed { None } else { Some(inject_dir_abs.clone()) },
+    };
+
+    // Crate root wiring: append the gated module declaration.
+    let mut lib_injected = std::fs::read_to_string(&root_file).map_err(|e| e.to_string())?;
+    if !lib_injected.ends_with('\n') {
+        lib_injected.push('\n');
+    }
+    lib_injected.push_str(&format!(
+        "\n// injected by spec-check contract-vacuity (construction probes) — replay copy in the analysis out dir\n{}\n",
+        injection.lib_decl
+    ));
+    let lib_orig = snapshot(&root_file)?;
+    std::fs::write(&root_file, &lib_injected).map_err(|e| e.to_string())?;
+    std::fs::write(replay.join("lib.rs.orig"), lib_orig.clone().unwrap_or_default())
+        .map_err(|e| e.to_string())?;
+    guard.modified.push((root_file.clone(), lib_orig));
+    std::fs::write(replay.join("lib.rs.injected"), &lib_injected).map_err(|e| e.to_string())?;
+
+    // Injection directory contents.
+    let mod_rs_path = inject_dir_abs.join("mod.rs");
+    let mod_rs_orig = snapshot(&mod_rs_path)?;
+    std::fs::create_dir_all(&inject_dir_abs).map_err(|e| e.to_string())?;
+    std::fs::write(&mod_rs_path, &injection.mod_rs).map_err(|e| e.to_string())?;
+    guard.modified.push((mod_rs_path.clone(), mod_rs_orig));
+    std::fs::write(replay.join("mod.rs"), &injection.mod_rs).map_err(|e| e.to_string())?;
+    let mut created_records = vec![(
+        mod_rs_path.to_string_lossy().to_string(),
+        "mod.rs".to_string(),
+    )];
+    for m in &injection.modules {
+        let path = inject_dir_abs.join(format!("{}.rs", m.safe_name));
+        let orig = snapshot(&path)?;
+        std::fs::write(&path, &m.source).map_err(|e| e.to_string())?;
+        guard.modified.push((path.clone(), orig));
+        let replay_name = format!("{}.rs", m.safe_name);
+        std::fs::write(replay.join(&replay_name), &m.source).map_err(|e| e.to_string())?;
+        created_records.push((
+            path.to_string_lossy().to_string(),
+            replay_name,
+        ));
+    }
+
+    // replay.json: structured record for manual replay/audit.
+    let manifest_path_json = tw.manifest_path.display().to_string();
+    let records = created_records
+        .iter()
+        .map(|(p, r)| format!("{{\"path\": {p:?}, \"replay_copy\": {r:?}}}"))
+        .collect::<Vec<_>>()
+        .join(", ");
+    let mut modified_records = vec![format!(
+        "{{\"path\": {:?}, \"orig\": \"lib.rs.orig\", \"injected\": \"lib.rs.injected\"}}",
+        root_file.display().to_string()
+    )];
+    if !dir_existed {
+        modified_records.push(format!(
+            "{{\"directory_created\": {:?}}}",
+            inject_dir_abs.display().to_string()
+        ));
+    }
+    let replay_json = format!(
+        "{{\n  \"workspace_root\": {root:?},\n  \"manifest_path\": {mp:?},\n  \"created\": [{created}],\n  \"modified\": [{modified}],\n  \"restore\": \"write *.orig bytes back over each modified path; delete each created path (and the created directory)\"\n}}\n",
+        root = workspace_root.display().to_string(),
+        mp = manifest_path_json,
+        created = records,
+        modified = modified_records.join(", "),
+    );
+    std::fs::write(replay.join("replay.json"), replay_json).map_err(|e| e.to_string())?;
+
+    let cfg_args = forwarded_cfgs(tw);
+    let mut check_args = vec!["--no-verify"];
+    check_args.extend(cfg_args.iter().map(|s| s.as_str()));
+    let build_args = cfg_args.iter().map(|s| s.as_str()).collect::<Vec<_>>();
+    let target = tw.target.as_ref();
+    let precheck_log = out.join("precheck-build.log");
+    let build_log = out.join("target-build.log");
+
+    let run_result = (|| -> Result<VacuityReport, String> {
+        // Phase 1: rustc-check loop (no verification) — catches probe
+        // module syntax/name errors before the expensive verified build.
+        let mut phase1 = target_command(
+            cargo_verus,
+            "check",
+            &workspace_root,
+            &crate_name,
+            &out.join("target-check"),
+            target,
+            &check_args,
+            z3,
+        );
+        let (status, log1) = run_captured(&mut phase1, &precheck_log)?;
+        if !status.success() {
+            let tail: String = log1
+                .lines()
+                .rev()
+                .take(40)
+                .collect::<Vec<_>>()
+                .into_iter()
+                .rev()
+                .fold(String::new(), |acc, l| acc + l + "\n");
+            return Err(format!(
+                "precompile check loop failed; see {}\n--- tail ---\n{}",
+                precheck_log.display(),
+                tail
+            ));
+        }
+
+        // Phase 2: verified cargo-verus build of the target workspace.
+        // A nonzero exit is expected when a fabrication probe is rejected —
+        // the log, not the exit code, is the evidence.
+        let mut phase2 = target_command(
+            cargo_verus,
+            "build",
+            &workspace_root,
+            &crate_name,
+            &out.join("target-verify"),
+            target,
+            &build_args,
+            z3,
+        );
+        let (_, log2) = run_captured(&mut phase2, &build_log)?;
+        Ok(classify_construction(manifest, &log2))
+    })();
+
+    drop(guard); // restore workspace regardless of outcome
+    run_result
 }
 
 fn probe_cargo_toml(vstd: &Path) -> String {
@@ -183,8 +823,33 @@ fn run_verus(cargo_verus: &Path, z3: &Path, out: &Path) -> Result<String, String
     Ok(log)
 }
 
-/// Classify per-contract verdicts from the verus log.
+// ---------------------------------------------------------------------------
+// Classification
+// ---------------------------------------------------------------------------
+
+/// Classify quantifier entries from a standalone probe-crate verus log.
+/// Construction entries are classified by [`classify_construction`] against
+/// the target-workspace build log; in this log they have no evidence and
+/// receive a placeholder verdict that `run` overwrites.
 pub fn classify(manifest: &Manifest, log: &str) -> VacuityReport {
+    let mut report = classify_quantifier(manifest, log);
+    for c in &manifest.contracts {
+        if c.probe == ProbeKind::Construction
+            && !report.verdicts.iter().any(|v| v.name == c.name)
+        {
+            report.verdicts.push(EntryVerdict {
+                name: c.name.clone(),
+                verdict: Verdict::CandidateInconclusive,
+                detail: "construction entry has no evidence in the quantifier standalone log"
+                    .into(),
+            });
+        }
+    }
+    report
+}
+
+/// Quantifier classification (existing M1 behavior, quantifier entries only).
+fn classify_quantifier(manifest: &Manifest, log: &str) -> VacuityReport {
     let summaries: Vec<&str> = log
         .lines()
         .filter(|l| l.starts_with("verification results::"))
@@ -200,7 +865,10 @@ pub fn classify(manifest: &Manifest, log: &str) -> VacuityReport {
     let generated = generate_probe_lib(manifest);
     let mut probe_lines: Vec<(usize, usize, &'static str)> = Vec::new();
     for (n, line) in generated.lines().enumerate() {
-        for (idx, _) in manifest.contracts.iter().enumerate() {
+        for (idx, c) in manifest.contracts.iter().enumerate() {
+            if c.probe != ProbeKind::Quantifier {
+                continue;
+            }
             for kind in ["vacuous", "live"] {
                 if line.starts_with(&format!("proof fn {kind}_{idx}_")) {
                     probe_lines.push((n + 1, idx, kind));
@@ -261,6 +929,7 @@ pub fn classify(manifest: &Manifest, log: &str) -> VacuityReport {
         .contracts
         .iter()
         .enumerate()
+        .filter(|(_, c)| c.probe == ProbeKind::Quantifier)
         .map(|(i, c)| {
             let vacuous_failed = failed.contains_key(&(i, "vacuous"));
             let live_failed = failed.contains_key(&(i, "live"));
@@ -287,5 +956,571 @@ pub fn classify(manifest: &Manifest, log: &str) -> VacuityReport {
         verdicts,
         dependency_summary,
         probe_summary,
+        target_summary: None,
+    }
+}
+
+// Construction-log model: rustc/verus diagnostics as span events, grouped by
+// cargo `Compiling`/`Checking` sections, plus per-section verification
+// summaries.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+enum CMarker {
+    Precondition,
+    Postcondition,
+    Assertion,
+    Other,
+}
+
+#[derive(Debug, Clone)]
+struct CEvent {
+    marker: CMarker,
+    file: String,
+    line: usize,
+}
+
+fn marker_of(line: &str) -> CMarker {
+    if line.contains("precondition not satisfied") {
+        CMarker::Precondition
+    } else if line.contains("postcondition not satisfied") {
+        CMarker::Postcondition
+    } else if line.contains("assertion failed") {
+        CMarker::Assertion
+    } else {
+        CMarker::Other
+    }
+}
+
+fn parse_target_log(log: &str) -> (Vec<CEvent>, Vec<(usize, String)>, HashMap<String, usize>) {
+    let mut events = Vec::new();
+    let mut summaries = Vec::new();
+    let mut crate_sections: HashMap<String, usize> = HashMap::new();
+    let mut section = 0usize;
+    let mut pending: Option<CMarker> = None;
+    for line in log.lines() {
+        let trimmed_line = line.trim_start();
+        if let Some(rest) = trimmed_line.strip_prefix("Compiling ").or_else(|| trimmed_line.strip_prefix("Checking ")) {
+            section += 1;
+            if let Some(name) = rest.split_whitespace().next() {
+                crate_sections.entry(name.to_string()).or_insert(section);
+            }
+            pending = None;
+            continue;
+        }
+        if let Some(text) = trimmed_line.strip_prefix("verification results::") {
+            summaries.push((section, text.trim().to_string()));
+            pending = None;
+            continue;
+        }
+        if line.starts_with("warning") {
+            pending = None;
+            continue;
+        }
+        if line.starts_with("error:") || line.starts_with("error[") {
+            pending = Some(marker_of(line));
+            continue;
+        }
+        if let Some(rest) = line.trim_start().strip_prefix("--> ") {
+            let mut parts = rest.split(':');
+            let file = parts.next().unwrap_or("").trim().to_string();
+            if let (Some(marker), Some(num)) = (
+                pending.take(),
+                parts.next().and_then(|s| s.trim().parse::<usize>().ok()),
+            ) {
+                events.push(CEvent { marker, file, line: num });
+            }
+            continue;
+        }
+    }
+    (events, summaries, crate_sections)
+}
+
+/// Classify construction entries from the target-workspace verus build log.
+pub fn classify_construction(manifest: &Manifest, log: &str) -> VacuityReport {
+    let injection = match generate_probe_injection(manifest) {
+        Ok(inj) => inj,
+        Err(e) => {
+            return VacuityReport {
+                verdicts: manifest
+                    .contracts
+                    .iter()
+                    .filter(|c| c.probe == ProbeKind::Construction)
+                    .map(|c| EntryVerdict {
+                        name: c.name.clone(),
+                        verdict: Verdict::CandidateInconclusive,
+                        detail: format!("injection generation failed: {e}"),
+                    })
+                    .collect(),
+                dependency_summary: None,
+                probe_summary: None,
+                target_summary: None,
+            };
+        },
+    };
+    let crate_name = manifest
+        .target_workspace
+        .as_ref()
+        .and_then(|tw| tw.inject_dir.components().next())
+        .map(|c| c.as_os_str().to_string_lossy().to_string())
+        .unwrap_or_default();
+
+    let (events, summaries, crate_sections) = parse_target_log(log);
+    let target_ran = crate_sections
+        .get(&crate_name)
+        .map(|sec| summaries.iter().any(|(s, _)| s == sec))
+        .unwrap_or(false);
+    let target_summary = crate_sections
+        .get(&crate_name)
+        .and_then(|sec| {
+            summaries
+                .iter()
+                .filter(|(s, _)| s == sec)
+                .map(|(_, t)| t.clone())
+                .next_back()
+        })
+        .or_else(|| summaries.last().map(|(_, t)| t.clone()));
+
+    let mut verdicts = Vec::new();
+    for m in &injection.modules {
+        let c = &manifest.contracts[m.index];
+        let suffix = format!("/{}.rs", m.safe_name);
+        let in_region = |r: (usize, usize)| {
+            events
+                .iter()
+                .filter(|e| e.file.ends_with(&suffix) || e.file == format!("{}.rs", m.safe_name))
+                .filter(|e| e.line >= r.0 && e.line <= r.1)
+                .collect::<Vec<_>>()
+        };
+        let entry_events = in_region(m.entry_region);
+        let live_events = m.live_region.map(in_region).unwrap_or_default();
+
+        let entry_outcome = if !target_ran {
+            "not_run"
+        } else if entry_events.iter().any(|e| e.marker == CMarker::Precondition) {
+            "rejected_expected"
+        } else if !entry_events.is_empty() {
+            "failed_other"
+        } else {
+            "clean"
+        };
+        let live_outcome = if m.live_region.is_none() {
+            "absent"
+        } else if !target_ran {
+            "not_run"
+        } else if !live_events.is_empty() {
+            "failed"
+        } else {
+            "clean"
+        };
+
+        let span_note = |es: &[&CEvent]| {
+            es.first()
+                .map(|e| format!("{}:{}", e.file, e.line))
+                .unwrap_or_else(|| "-".into())
+        };
+        let (verdict, reason) = match (entry_outcome, live_outcome) {
+            ("rejected_expected", "clean") | ("rejected_expected", "absent") => (
+                Verdict::ConfirmedVacuous,
+                format!(
+                    "construction: fabrication call rejected at expect_fail_requires \
+                     (precondition not satisfied at {}; evidence: fabrication channel \
+                     rejected + channel-exhaustion argument (documented, model-relative))",
+                    span_note(&entry_events),
+                ),
+            ),
+            ("rejected_expected", _) => (
+                Verdict::CandidateInconclusive,
+                format!(
+                    "construction: fabrication rejected ({}), but holder-face control failed ({})",
+                    span_note(&entry_events),
+                    span_note(&live_events),
+                ),
+            ),
+            ("clean", "absent") => (
+                Verdict::ConfirmedLive,
+                "construction: construct face verified (call path satisfiable)".into(),
+            ),
+            ("clean", "clean") | ("clean", "failed") => (
+                Verdict::Anomaly,
+                format!(
+                    "construction: entry fn verified while holder-face control outcome is {live_outcome} — manual inspection required",
+                ),
+            ),
+            ("failed_other", "failed") => (
+                Verdict::Anomaly,
+                format!(
+                    "construction: both probes failed without the expected attribution \
+                     (entry fn failure at {})",
+                    span_note(&entry_events),
+                ),
+            ),
+            (entry, live) => (
+                Verdict::CandidateInconclusive,
+                format!(
+                    "construction: probes inconclusive (entry fn {entry}, holder face {live}, \
+                     target verification ran: {target_ran}; entry fn failure at {})",
+                    span_note(&entry_events),
+                ),
+            ),
+        };
+        verdicts.push(EntryVerdict {
+            name: c.name.clone(),
+            verdict,
+            detail: reason,
+        });
+    }
+
+    VacuityReport {
+        verdicts,
+        dependency_summary: None,
+        probe_summary: None,
+        target_summary,
+    }
+}
+
+// ---------------------------------------------------------------------------
+// Tests
+// ---------------------------------------------------------------------------
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn quantifier_manifest() -> Manifest {
+        serde_json::from_str(
+            r#"{
+              "preamble": "pub uninterp spec fn f(x: u64) -> bool;\n",
+              "contracts": [
+                {"name": "vacuous_thing", "params": "x: u64", "requires": "f(x) && !f(x)"},
+                {"name": "live_thing", "params": "x: u64", "requires": "f(x)", "witness": "0u64"}
+              ]
+            }"#,
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn v1_0_manifest_backcompat_and_generation() {
+        let m = quantifier_manifest();
+        assert!(m.target_workspace.is_none());
+        for c in &m.contracts {
+            assert_eq!(c.probe, ProbeKind::Quantifier);
+            assert!(c.requires.is_some());
+            assert!(!c.face_requires);
+        }
+        let lib = generate_probe_lib(&m);
+        assert!(lib.contains("proof fn vacuous_0_vacuous_thing"));
+        assert!(lib.contains("proof fn live_1_live_thing"));
+        assert!(lib.contains("pub uninterp spec fn f(x: u64) -> bool;"));
+    }
+
+    #[test]
+    fn quantifier_classification_matrix() {
+        let m = quantifier_manifest();
+        // No failures at all: both probes verified → anomaly (impossible).
+        let r = classify(&m, "verification results:: 4 verified, 0 errors\n");
+        assert_eq!(r.verdicts[0].verdict, Verdict::Anomaly);
+        assert_eq!(r.verdicts[1].verdict, Verdict::Anomaly);
+        // Synthetic log spans must match the generated source line numbers.
+        let generated = generate_probe_lib(&m);
+        let line_of = |prefix: &str| {
+            generated
+                .lines()
+                .position(|l| l.starts_with(prefix))
+                .unwrap() + 1
+        };
+        let vac_line = line_of("proof fn vacuous_0_vacuous_thing");
+        let live_line = line_of("proof fn live_1_live_thing");
+        // Vacuous probe failed (postcondition under vacuous_0), live clean
+        // → ConfirmedVacuous.
+        let log = format!(
+            "\
+error: postcondition not satisfied
+   --> src/lib.rs:{vac_line}:9
+    |
+{vac_line}  |     proof fn vacuous_0_vacuous_thing()
+    |         ^^^^^^^^^ failed this postcondition
+
+verification results:: 3 verified, 1 errors
+"
+        );
+        // Postcondition failure under vacuous_0 = the forall probe cannot
+        // be proven → contract 0 is satisfiable → ConfirmedLive; contract 1
+        // probes verified → anomaly.
+        let r = classify(&m, &log);
+        assert_eq!(r.verdicts[0].verdict, Verdict::ConfirmedLive);
+        assert_eq!(r.verdicts[1].verdict, Verdict::Anomaly);
+        // Witness assertion failure counts as live failure: contract 0
+        // (vacuous failed) → ConfirmedLive; contract 1 (vacuous verified,
+        // live failed) → ConfirmedVacuous.
+        let log = format!(
+            "\
+error: postcondition not satisfied
+   --> src/lib.rs:{vac_line}:9
+    |     ^^^^^^^^^ failed this postcondition
+
+error: assertion failed
+   --> src/lib.rs:{live_line}:5
+    |
+{live_line} |         assert(pre_1_live_thing(0u64));
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ assertion failed
+
+verification results:: 2 verified, 2 errors
+"
+        );
+        let r = classify(&m, &log);
+        assert_eq!(r.verdicts[0].verdict, Verdict::ConfirmedLive);
+        assert_eq!(r.verdicts[1].verdict, Verdict::ConfirmedVacuous);
+    }
+
+    fn construction_manifest() -> Manifest {
+        serde_json::from_str(
+            r#"{
+              "target_workspace": {
+                "manifest_path": "/tmp/target/Cargo.toml",
+                "inject_dir": "ostd/src/spec_check_probes",
+                "gate_cfg": "ktest"
+              },
+              "contracts": [
+                {
+                  "name": "fabrication",
+                  "probe": "construction",
+                  "params": "m: &Mutex<u64>",
+                  "expect_fail_requires": "perm.id() == m.cell_id()",
+                  "model_preamble": "pub struct Stub;",
+                  "construct": "let t = mint(m);\nstub_call(m, t);"
+                },
+                {
+                  "name": "holder_face",
+                  "probe": "construction",
+                  "params": "m: &Mutex<u64>, Tracked(perm): Tracked<PointsTo<u64>>",
+                  "expect_fail_requires": "perm.id() == m.cell_id()",
+                  "face_requires": true,
+                  "model_preamble": "pub struct Stub;",
+                  "construct": "stub_call(m, Tracked(perm));"
+                },
+                {
+                  "name": "shape_control",
+                  "params": "a: u64",
+                  "requires": "g(a)",
+                  "witness": "0u64"
+                }
+              ]
+            }"#,
+        )
+        .unwrap()
+    }
+
+    #[test]
+    fn injection_generation_shapes() {
+        let m = construction_manifest();
+        let inj = generate_probe_injection(&m).unwrap();
+        assert_eq!(inj.module_name, "spec_check_probes");
+        assert_eq!(inj.lib_decl, "#[cfg(ktest)] mod spec_check_probes;");
+        assert_eq!(inj.modules.len(), 2);
+        assert!(inj.mod_rs.contains("#[cfg(ktest)]\npub mod fabrication;"));
+        assert!(inj.mod_rs.contains("#[cfg(ktest)]\npub mod holder_face;"));
+
+        let fab = &inj.modules[0];
+        // entry fn has NO requires clause (fabrication face)
+        assert!(!fab.source.contains("pub fn entry_0_fabrication(m: &Mutex<u64>)\n    requires"));
+        assert!(fab.source.contains("pub fn entry_0_fabrication(m: &Mutex<u64>) {"));
+        assert!(fab.source.contains("stub_call(m, t);"));
+        assert!(fab.live_region.is_none());
+        // region covers the whole synthesized fn
+        let lines: Vec<&str> = fab.source.lines().collect();
+        assert_eq!(lines[fab.entry_region.0 - 1], "pub fn entry_0_fabrication(m: &Mutex<u64>) {");
+        assert_eq!(lines[fab.entry_region.1 - 1], "}");
+
+        let holder = &inj.modules[1];
+        assert!(holder.source.contains("pub fn entry_1_holder_face(m: &Mutex<u64>, Tracked(perm): Tracked<PointsTo<u64>>)\n    requires\n        perm.id() == m.cell_id(),\n{"));
+
+        // quantifier entries excluded from the standalone crate
+        let lib = generate_probe_lib(&m);
+        assert!(!lib.contains("fabrication"));
+        assert!(lib.contains("proof fn vacuous_2_shape_control"));
+
+        // witness-bearing construction entry generates the live control fn
+        let with_witness: Manifest = serde_json::from_str(
+            r#"{
+              "target_workspace": {
+                "manifest_path": "/tmp/target/Cargo.toml",
+                "inject_dir": "ostd/src/probes",
+                "gate_cfg": "ktest"
+              },
+              "contracts": [{
+                "name": "1fabrication",
+                "probe": "construction",
+                "params": "m: &Mutex<u64>",
+                "expect_fail_requires": "p(m)",
+                "model_preamble": "",
+                "construct": "attempt(m);",
+                "witness": "held_call(m);"
+              }]
+            }"#,
+        )
+        .unwrap();
+        let inj = generate_probe_injection(&with_witness).unwrap();
+        // leading digit sanitized
+        assert_eq!(inj.modules[0].safe_name, "p_1fabrication");
+        let live = inj.modules[0].live_region.unwrap();
+        let lines: Vec<&str> = inj.modules[0].source.lines().collect();
+        assert!(lines[live.0 - 1].starts_with("pub fn live_0_p_1fabrication(m: &Mutex<u64>)"));
+        assert!(inj.modules[0].source.contains("held_call(m);"));
+    }
+
+    #[test]
+    fn construction_classification_matrix() {
+        let m = construction_manifest();
+        let inj = generate_probe_injection(&m).unwrap();
+        // fabrication rejected at the entry fn span (module file), holder
+        // face clean → ConfirmedVacuous.
+        let fab_line = inj.modules[0].entry_region.0 + 1; // inside the entry fn body
+        let log = format!(
+            "\
+   Compiling vstd v0.1.0 (/tmp/target/tools/verus/source/vstd)
+verification results:: 2060 verified, 0 errors
+   Compiling ostd v0.1.0 (/tmp/target/ostd)
+error[E0624]: nothing here
+  --> ostd/src/other.rs:5:1
+
+error: precondition not satisfied
+   --> ostd/src/spec_check_probes/fabrication.rs:{fab_line}:5
+    |
+ 88 |     perm.id() == m.cell_id(),
+    |     ------------------------- failed precondition
+
+verification results:: 1500 verified, 1 errors
+error: could not compile `ostd` (lib) due to 1 previous error
+"
+        );
+        let r = classify_construction(&m, &log);
+        assert_eq!(r.verdicts[0].verdict, Verdict::ConfirmedVacuous);
+        assert!(r.verdicts[0].detail.contains(&format!("fabrication.rs:{fab_line}")));
+        assert!(r.verdicts[0].detail.contains("channel-exhaustion"));
+        assert_eq!(r.verdicts[1].verdict, Verdict::ConfirmedLive);
+        assert_eq!(r.target_summary.as_deref(), Some("1500 verified, 1 errors"));
+
+        // entry fn clean + absent live → ConfirmedLive (holder-face entry).
+        let log = "\
+   Compiling ostd v0.1.0 (/tmp/target/ostd)
+verification results:: 1501 verified, 0 errors
+";
+        let r = classify_construction(&m, &log);
+        assert_eq!(r.verdicts[0].verdict, Verdict::ConfirmedLive);
+        assert_eq!(r.verdicts[1].verdict, Verdict::ConfirmedLive);
+
+        // compile abort: no summary in the ostd section → not_run → candidate.
+        let log = "\
+   Compiling vstd v0.1.0 (/tmp/target/tools/verus/source/vstd)
+verification results:: 2060 verified, 0 errors
+   Compiling ostd v0.1.0 (/tmp/target/ostd)
+error[E0433]: cannot find module `nope`
+  --> ostd/src/spec_check_probes/fabrication.rs:3:5
+error: could not compile `ostd` (lib) due to 1 previous error
+";
+        let r = classify_construction(&m, &log);
+        assert_eq!(r.verdicts[0].verdict, Verdict::CandidateInconclusive);
+        assert!(r.verdicts[0].detail.contains("not_run"));
+        assert_eq!(r.verdicts[1].verdict, Verdict::CandidateInconclusive);
+
+        // entry fn fails at an unexpected spot (no holder control) →
+        // candidate; the same failure shape with a failing live fn →
+        // anomaly (both failed, attribution missing).
+        let hf_line = inj.modules[1].entry_region.0 + 1; // inside holder entry body
+        let log = format!("\
+   Compiling ostd v0.1.0 (/tmp/target/ostd)
+error: postcondition not satisfied
+   --> ostd/src/spec_check_probes/fabrication.rs:{fab_line}:5
+
+error: postcondition not satisfied
+   --> ostd/src/spec_check_probes/holder_face.rs:{hf_line}:5
+
+verification results:: 1499 verified, 2 errors
+");
+        let r = classify_construction(&m, &log);
+        assert_eq!(r.verdicts[0].verdict, Verdict::CandidateInconclusive);
+        assert_eq!(r.verdicts[1].verdict, Verdict::CandidateInconclusive);
+        assert!(r.verdicts[0].detail.contains("failed_other"));
+
+        // fabrication rejected but holder control failed → candidate.
+        let with_witness: Manifest = serde_json::from_str(
+            r#"{
+              "target_workspace": {
+                "manifest_path": "/tmp/target/Cargo.toml",
+                "inject_dir": "ostd/src/spec_check_probes",
+                "gate_cfg": "ktest"
+              },
+              "contracts": [{
+                "name": "fabrication",
+                "probe": "construction",
+                "params": "m: &Mutex<u64>",
+                "expect_fail_requires": "p(m)",
+                "model_preamble": "",
+                "construct": "attempt(m);",
+                "witness": "held_call(m);"
+              }]
+            }"#,
+        )
+        .unwrap();
+        let inj = generate_probe_injection(&with_witness).unwrap();
+        let fab_line = inj.modules[0].entry_region.0 + 1;
+        let live_line = inj.modules[0].live_region.unwrap().0 + 1;
+        let log = format!(
+            "\
+   Compiling ostd v0.1.0 (/tmp/target/ostd)
+error: precondition not satisfied
+   --> ostd/src/spec_check_probes/fabrication.rs:{fab_line}:5
+
+error: precondition not satisfied
+   --> ostd/src/spec_check_probes/fabrication.rs:{live_line}:5
+
+verification results:: 1499 verified, 2 errors
+"
+        );
+        let r = classify_construction(&with_witness, &log);
+        assert_eq!(r.verdicts[0].verdict, Verdict::CandidateInconclusive);
+        assert!(r.verdicts[0].detail.contains("holder-face control failed"));
+
+        // both probes fail without expected attribution → anomaly.
+        let log = format!(
+            "\
+   Compiling ostd v0.1.0 (/tmp/target/ostd)
+error: postcondition not satisfied
+   --> ostd/src/spec_check_probes/fabrication.rs:{fab_line}:5
+
+error: postcondition not satisfied
+   --> ostd/src/spec_check_probes/fabrication.rs:{live_line}:5
+
+verification results:: 1499 verified, 2 errors
+"
+        );
+        let r = classify_construction(&with_witness, &log);
+        assert_eq!(r.verdicts[0].verdict, Verdict::Anomaly);
+    }
+
+    #[test]
+    fn run_rejects_invalid_manifests() {
+        let bad: Manifest = serde_json::from_str(
+            r#"{
+              "contracts": [
+                {"name": "c", "probe": "construction", "params": "", "construct": "x();"}
+              ]
+            }"#,
+        )
+        .unwrap();
+        assert!(validate_manifest(&bad).is_err());
+
+        let no_tw: Manifest = serde_json::from_str(
+            r#"{
+              "contracts": [
+                {"name": "c", "probe": "construction", "params": "", "expect_fail_requires": "f", "construct": "x();"}
+              ]
+            }"#,
+        )
+        .unwrap();
+        let out = std::env::temp_dir().join("spec-check-vacuity-test-out");
+        let err = run(&no_tw, Path::new("cargo-verus"), Path::new("z3"), Path::new("vstd"), &out)
+            .unwrap_err();
+        assert!(err.contains("target_workspace"));
     }
 }
