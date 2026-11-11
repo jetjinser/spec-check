@@ -1,5 +1,9 @@
 # vostd 契约清单全量运行归档（M1 里程碑③，2026-11-11）
 
+> 本文件是 M1 的 7 项恒假 stub 子集（10 条目）运行档案。全量化运行
+> （60 行清单 + 锚点 + 构造对照，28 条目）见 `FULL-RUN-60.md`；
+> 预注册与逐条转写对照见 `EXTRACTION-NOTES.md`。
+
 对象：`guard-return-inventory.csv` 中 `entry_precondition_vacuous=true` 的全部
 7 项（external_body stub）+ 3 个对照。冻结源
 `/tmp/vostd-43da079-ktest-chan/ostd/src`（rev 43da0797bbfa）。
