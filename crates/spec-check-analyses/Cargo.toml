@@ -1,0 +1,7 @@
+[package]
+name = "spec-check-analyses"
+version.workspace = true
+edition.workspace = true
+publish.workspace = true
+
+[dependencies]
