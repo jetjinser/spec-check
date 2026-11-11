@@ -1,8 +1,42 @@
 {
-  "preamble": "// ===== vostd contract shape models =====\n// Frozen source: /tmp/vostd-43da079-ktest-chan/ostd/src (rev 43da0797bbfa)\n// `may_panic` is uninterpreted in the frozen source as well:\n//   verified_libs/vstd_extra/src/panic.rs:11  `pub uninterp spec fn may_panic() -> bool;`\npub uninterp spec fn may_panic() -> bool;\n\n// sync/mutex.rs MutexGuard::new (lines 217-228) shape: the contract's only\n// requires is `perm.id() == mutex.cell_id()` over a Tracked<PointsTo<T>>;\n// tracked resources are abstracted to usize ids, equality kept.\npub open spec fn perm_matches_cell(perm_id: usize, mutex_id: usize) -> bool {\n    perm_id == mutex_id\n}\n\n// sync/mutex.rs Mutex::new (lines 53-64) shape: constructor accepts any\n// value; modeled as a non-trivial contingent value domain so the probes\n// stay meaningful (a definitionally-true body would verify both probes).\npub open spec fn val_in_domain(val_id: usize) -> bool {\n    val_id < 8\n}\n\n// Generic arithmetic controls.\npub open spec fn i_lt_len(i: usize, len: usize) -> bool {\n    i < len\n}\npub open spec fn i_ge_len(i: usize, len: usize) -> bool {\n    i >= len\n}\n\n// mm/vm_space.rs shapes (lines 566-589 query, 670-688 jump, 909-930 map):\n// tracked ghost resources (CursorOwner / MetaRegionOwners / Guards /\n// EntryOwner / TlbModel) are abstracted to opaque ids; their invariant\n// predicates are uninterpreted — the frozen definitions involve deep\n// ghost state (page table views, RCU owners) not reproduced here.\npub uninterp spec fn cursor_invariants(owner: usize, regions: usize, guards: usize) -> bool;\npub uninterp spec fn query_panic_cond(space: usize, owner: usize, regions: usize) -> bool;\npub uninterp spec fn jump_panic_cond(va: usize) -> bool;\npub uninterp spec fn map_panic_cond(frame: usize, prop: usize) -> bool;\npub uninterp spec fn tlb_inv(tlb: usize) -> bool;\npub uninterp spec fn item_wf(frame: usize, prop: usize, entry_owner: usize, regions: usize) -> bool;\n\npub open spec fn query_requires(space: usize, owner: usize, regions: usize, guards: usize) -> bool {\n    cursor_invariants(owner, regions, guards)\n        && (query_panic_cond(space, owner, regions) ==> may_panic())\n}\n\npub open spec fn jump_requires(space: usize, va: usize, owner: usize, regions: usize, guards: usize) -> bool {\n    cursor_invariants(owner, regions, guards)\n        && (jump_panic_cond(va) ==> may_panic())\n}\n\npub open spec fn map_requires(space: usize, frame: usize, prop: usize, owner: usize, entry_owner: usize, regions: usize, guards: usize, tlb: usize) -> bool {\n    tlb_inv(tlb)\n        && cursor_invariants(owner, regions, guards)\n        && item_wf(frame, prop, entry_owner, regions)\n        && (map_panic_cond(frame, prop) ==> may_panic())\n}",
+  "preamble": "// ===== vostd full-run contract shape models =====\n// Frozen source: /tmp/vostd-43da079-ktest-chan/ostd/src (rev 43da0797bbfa)\n// Inventory: research/experiments/spec-quality-two-day/guard-return-inventory.csv\n//   rows with entry_precondition_vacuous=true (7 rows, all external_body stubs)\n// All shape entries are SHAPE REPRODUCTIONS: tracked parameters\n// (Tracked<&mut CursorOwner> / NodeOwner / OwnerSubtree / MetaRegionOwners /\n// Guards / PointsTo / Tracked<&NodeOwner>) are abstracted to opaque usize ids;\n// scalar comparisons are transcribed mechanically; predicates over ghost\n// structure that cannot be expressed over plain parameters are declared as\n// named uninterp spec fns below (constraint structure preserved by name, body\n// abstract — see EXTRACTION.md for the clause-by-clause mapping).\n\n// mm/page_table/node/mod.rs lock & make_guard_unchecked:\n//   self.inner@.invariants(*owner),\n//   self.inner@.external_meta_wf(owner.frame_permission.resource(), ()),\n//   old(guards).unlocked(owner.slot_vaddr())\npub uninterp spec fn node_invariants(node_id: usize, owner_id: usize) -> bool;\npub uninterp spec fn external_meta_wf(node_id: usize, owner_id: usize) -> bool;\npub uninterp spec fn guards_unlocked(guards_id: usize, slot_vaddr: usize) -> bool;\n\n// mm/page_table/node/entry.rs alloc_if_none / split_if_mapped_huge /\n// alloc_absent_child: predicates over CursorOwner/NodeOwner/MetaRegionOwners\n// ghost structure (invariants, inv, path, metaregion soundness, count windows,\n// match_pte, guard relations, slot maps)\npub uninterp spec fn entry_invariants(entry_id: usize, owner_id: usize, regions_id: usize) -> bool;\npub uninterp spec fn owner_inv(owner_id: usize) -> bool;\npub uninterp spec fn node_matching(entry_id: usize, owner_id: usize, parent_owner_id: usize) -> bool;\npub uninterp spec fn entry_wf(entry_id: usize, owner_id: usize) -> bool;\npub uninterp spec fn relate_guard(owner_id: usize, entry_id: usize) -> bool;\npub uninterp spec fn metaregion_sound(owner_id: usize, regions_id: usize) -> bool;\npub uninterp spec fn metaregion_sound_node(owner_id: usize, regions_id: usize) -> bool;\npub uninterp spec fn regions_inv(regions_id: usize) -> bool;\npub uninterp spec fn in_count_window(level: usize, idx: usize) -> bool;\npub uninterp spec fn match_pte(owner_id: usize, parent_owner_id: usize, idx: usize, owner_parent_level: usize) -> bool;\npub uninterp spec fn slots_contains_key(regions_id: usize, slot_index: usize) -> bool;\n\n// mm/page_table/cursor/locking.rs try_traverse_and_lock_subtree_root:\n//   old(cursor_own).continuations.dom().contains(NR_LEVELS - 1),\n//   old(cursor_own).continuations[NR_LEVELS - 1].all_some()\npub uninterp spec fn cont_dom_contains(cursor_own_id: usize, level: usize) -> bool;\npub uninterp spec fn cont_all_some(cursor_own_id: usize, level: usize) -> bool;\n\n// ---- mechanical scalar transcriptions (spec arithmetic is mathematical in\n// verus, so e.g. level < inc_levels - 1 is well-defined for inc_levels == 0) ----\npub open spec fn perm_matches_cell(perm_id: usize, mutex_id: usize) -> bool {\n    perm_id == mutex_id\n}\npub open spec fn cursor_level_eq_nr_levels(cursor_level: usize, nr_levels: usize) -> bool {\n    cursor_level == nr_levels\n}\npub open spec fn path_len_eq_level(path_len: usize, level: usize) -> bool {\n    path_len == level\n}\npub open spec fn level_lt_inc_minus_1(level: usize, inc_levels: usize) -> bool {\n    level < inc_levels - 1\n}\npub open spec fn levels_sum_eq_inc(level_a: usize, level_b: usize, inc_levels: usize) -> bool {\n    level_a + level_b == inc_levels\n}\npub open spec fn parent_level_eq_owner_parent_level(parent_level: usize, owner_parent_level: usize) -> bool {\n    parent_level == owner_parent_level\n}\npub open spec fn level_lt_nr_levels(level: usize, nr_levels: usize) -> bool {\n    level < nr_levels\n}\npub open spec fn parent_level_gt_1(parent_level: usize) -> bool {\n    parent_level > 1\n}\npub open spec fn idx_lt_nr_entries(idx: usize, nr_entries: usize) -> bool {\n    idx < nr_entries\n}\n// split_if_mapped_huge:\n//   old(owner).value().is_frame() && old(parent_owner).level() > 1 ==>\n//       old(owner).value().metaregion_sound(*old(regions))\npub open spec fn frame_split_metaregion(owner_is_frame: bool, parent_level: usize, owner_id: usize, regions_id: usize) -> bool {\n    !(owner_is_frame && parent_level > 1) || metaregion_sound(owner_id, regions_id)\n}\n\n// ---- negative-control models ----\npub open spec fn val_in_domain(val_id: usize) -> bool {\n    val_id < 8\n}\npub open spec fn i_lt_len(i: usize, len: usize) -> bool {\n    i < len\n}\npub open spec fn i_ge_len(i: usize, len: usize) -> bool {\n    i >= len\n}",
   "contracts": [
     {
-      "name": "mutex_guard_new_perm_cell_shape",
+      "name": "try_traverse_and_lock_subtree_root_shape",
+      "params": "cursor_level: usize, nr_levels: usize, cursor_own_id: usize",
+      "requires": "cursor_level_eq_nr_levels(cursor_level, nr_levels) && cont_dom_contains(cursor_own_id, nr_levels) && cont_all_some(cursor_own_id, nr_levels)",
+      "witness": "(3usize, 3usize, 0usize)"
+    },
+    {
+      "name": "alloc_if_none_shape",
+      "params": "entry_id: usize, idx: usize, owner_id: usize, owner_level: usize, owner_path_len: usize, parent_owner_id: usize, parent_level: usize, regions_id: usize, inc_levels: usize",
+      "requires": "entry_invariants(entry_id, owner_id, regions_id) && owner_inv(owner_id) && path_len_eq_level(owner_path_len, owner_level) && node_matching(entry_id, owner_id, parent_owner_id) && level_lt_inc_minus_1(owner_level, inc_levels) && levels_sum_eq_inc(owner_level, parent_level, inc_levels) && metaregion_sound_node(parent_owner_id, regions_id) && in_count_window(parent_level, idx)",
+      "witness": "(0usize, 0usize, 1usize, 0usize, 0usize, 2usize, 2usize, 3usize, 2usize)"
+    },
+    {
+      "name": "split_if_mapped_huge_shape",
+      "params": "entry_id: usize, owner_id: usize, owner_level: usize, owner_path_len: usize, owner_parent_level: usize, owner_is_frame: bool, parent_owner_id: usize, parent_level: usize, regions_id: usize, nr_levels: usize, inc_levels: usize",
+      "requires": "regions_inv(regions_id) && owner_inv(owner_id) && path_len_eq_level(owner_path_len, owner_level) && entry_wf(entry_id, owner_id) && relate_guard(parent_owner_id, entry_id) && owner_inv(parent_owner_id) && parent_level_eq_owner_parent_level(parent_level, owner_parent_level) && level_lt_nr_levels(parent_level, nr_levels) && levels_sum_eq_inc(owner_level, parent_level, inc_levels) && node_matching(entry_id, owner_id, parent_owner_id) && metaregion_sound_node(parent_owner_id, regions_id) && frame_split_metaregion(owner_is_frame, parent_level, owner_id, regions_id)",
+      "witness": "(0usize, 1usize, 1usize, 1usize, 2usize, false, 2usize, 2usize, 3usize, 4usize, 3usize)"
+    },
+    {
+      "name": "alloc_absent_child_shape",
+      "params": "entry_id: usize, idx: usize, nr_entries: usize, owner_id: usize, owner_level: usize, owner_path_len: usize, owner_is_absent: bool, owner_parent_level: usize, parent_owner_id: usize, parent_level: usize, parent_slot_index: usize, regions_id: usize, inc_levels: usize",
+      "requires": "owner_inv(owner_id) && path_len_eq_level(owner_path_len, owner_level) && owner_is_absent && level_lt_inc_minus_1(owner_level, inc_levels) && metaregion_sound(owner_id, regions_id) && owner_inv(parent_owner_id) && relate_guard(parent_owner_id, entry_id) && parent_level_eq_owner_parent_level(parent_level, owner_parent_level) && parent_level_gt_1(parent_level) && levels_sum_eq_inc(owner_level, parent_level, inc_levels) && metaregion_sound_node(parent_owner_id, regions_id) && idx_lt_nr_entries(idx, nr_entries) && in_count_window(parent_level, idx) && match_pte(owner_id, parent_owner_id, idx, owner_parent_level) && regions_inv(regions_id) && slots_contains_key(regions_id, parent_slot_index)",
+      "witness": "(0usize, 0usize, 16usize, 1usize, 1usize, 1usize, true, 2usize, 2usize, 2usize, 0usize, 3usize, 3usize)"
+    },
+    {
+      "name": "node_lock_shape",
+      "params": "node_id: usize, owner_id: usize, guards_id: usize, slot_vaddr: usize",
+      "requires": "node_invariants(node_id, owner_id) && external_meta_wf(node_id, owner_id) && guards_unlocked(guards_id, slot_vaddr)"
+    },
+    {
+      "name": "make_guard_unchecked_shape",
+      "params": "node_id: usize, owner_id: usize, guards_id: usize, slot_vaddr: usize",
+      "requires": "node_invariants(node_id, owner_id) && external_meta_wf(node_id, owner_id) && guards_unlocked(guards_id, slot_vaddr)"
+    },
+    {
+      "name": "mutex_guard_new_shape",
       "params": "mutex_id: usize, perm_id: usize",
       "requires": "perm_matches_cell(perm_id, mutex_id)",
       "witness": "(0usize, 0usize)"
@@ -23,21 +57,6 @@
       "name": "arith_oob_vacuous_control",
       "params": "i: usize, len: usize",
       "requires": "i_lt_len(i, len) && i_ge_len(i, len)"
-    },
-    {
-      "name": "vmspace_cursor_query_shape",
-      "params": "space: usize, owner: usize, regions: usize, guards: usize",
-      "requires": "query_requires(space, owner, regions, guards)"
-    },
-    {
-      "name": "vmspace_cursor_jump_shape",
-      "params": "space: usize, va: usize, owner: usize, regions: usize, guards: usize",
-      "requires": "jump_requires(space, va, owner, regions, guards)"
-    },
-    {
-      "name": "vmspace_cursor_mut_map_shape",
-      "params": "space: usize, frame: usize, prop: usize, owner: usize, entry_owner: usize, regions: usize, guards: usize, tlb: usize",
-      "requires": "map_requires(space, frame, prop, owner, entry_owner, regions, guards, tlb)"
     }
   ]
 }

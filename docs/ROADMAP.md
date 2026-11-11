@@ -12,13 +12,15 @@
 - 第一条分析 `contract-vacuity` 已实现并接入 CLI：
   `analyses-vacuity --manifest --cargo-verus --z3 --vstd --out`。
   判据经 spike 与 vostd 形状运行验证（见
-  `examples/contract-vacuity-spike/`、`examples/vostd-guard/`）。
+  `examples/contract-vacuity-spike/`、`examples/vostd-guard/`）；
+  vostd 清单 7 项恒假契约的全量探针运行已完成（M1，见
+  `examples/vostd-guard/FULL-RUN.md`）。
 - 缺陷台账在研究档案 `experiments/spec-quality-two-day/findings/registry.json`
   （14 条机械发现，9 个去重关系）。
 
 ## 主线条目（按优先级）
 
-### M1. contract-vacuity 里程碑③：vostd 契约清单全量运行 —— 待做
+### M1. contract-vacuity 里程碑③：vostd 契约清单全量运行 —— 完成（2026-11-11）
 
 - [x] 定位清单数据（2026-11-11）：
       `research/experiments/spec-quality-two-day/guard-return-inventory.csv`
@@ -27,16 +29,27 @@
       node/entry::alloc_if_none、node/entry::split_if_mapped_huge、
       node/entry::alloc_absent_child、node::lock、node::make_guard_unchecked、
       sync::mutex MutexGuard::new）。
-- [ ] 写 `examples/vostd-guard/extract_manifest.py`：从清单 + 冻结源码
-      `/tmp/vostd-43da079-ktest-chan` 提取每个接口的 `#[verus_spec]`
-      requires 文本 → manifest 条目。跳过 tracked 参数契约并记录跳过原因
-      （tracked 不可表达，见 M2）；无 tracked 参数的保留 requires 原文。
-- [ ] 全量运行 `analyses-vacuity`，对照预注册预期（7 项恒假应报
-      ConfirmedVacuous 或 Candidate；其余 ConfirmedLive）。
-- [ ] 归档运行结果 + 更新研究档案 findings/registry.json 的 V-002 条目
-      （7 项从 rule_classified 升级为探针判定）。
-- 已知边界：`MutexGuard::new` 形状探针与 audit 判读不一致（PointsTo 不可
-  伪造性无法在普通参数建模）——保持如实归档，不在模型上迁就。
+- [x] 提取 7 项 stub 契约为 manifest 条目（2026-11-11）：按既定边界做形状
+      再现（tracked 参数 → 不透明 usize id；不可转写的 ghost 子句 → 具名
+      uninterp spec fn；标量比较/算术机械保留），逐子句对照归档
+      `examples/vostd-guard/EXTRACTION.md`。原计划的 extract_manifest.py
+      未做：7 项契约分散在 5 个文件的属性块里、结构不一，手工提取加逐条
+      核对更可靠；脚本化留待契约量增大（M5 一起考虑）。
+- [x] 全量运行 `analyses-vacuity`（2026-11-11）：10 条目（7 契约 + 2 阴性
+      + 1 阳性对照），manifest 首轮通过 cargo-verus 编译与触发推断。
+      结果：7 项中 0 × ConfirmedVacuous、1 × ConfirmedLive（MutexGuard::new
+      纯等式形状）、6 × CandidateInconclusive；对照全部按预期。10 条目中
+      6 个与预注册一致；#1–#4 不一致，根因是预注册对 uninterp 谓词
+      assert 语义的假设被运行证伪（详见 FULL-RUN.md，预期未改写）。
+- [x] 归档 + registry 更新（2026-11-11）：`examples/vostd-guard/FULL-RUN.md`
+      （含运行中发现并修复的分类器缺口：live 探针体内 witness `assertion
+      failed` 曾被静默当作活性成功）；findings/registry.json V-002 升级为
+      逐项探针判定（research 仓库 commit 紧随本 commit）。
+- 已知边界（更新）：形状探针无法机器确认 7 项的恒假性——恒假性不在标量
+  层（#1–#4 机械子句可满足、#5/#6 无标量约束、#7 等式可满足，均无
+  ConfirmedVacuous），只能来自被抽象掉的 tracked 资源与不变式结构。
+  `MutexGuard::new` 与 audit 判读的层级分歧保留在 V-001
+  `rule_classified_probe_disputed`。恒假性的机器确认需 M2 tracked 建模。
 
 ### M2. tracked 参数建模 —— 设计中
 

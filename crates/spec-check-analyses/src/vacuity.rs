@@ -10,7 +10,8 @@
 //! - vacuity probe (`forall` params, negated requires) verifies
 //!   → `confirmed_vacuous`
 //! - liveness probe (`exists` params, requires, explicit witness) has no
-//!   failure attributed → `confirmed_live`
+//!   failure attributed → `confirmed_live` (an `assertion failed` on the
+//!   witness `assert` inside the `live_` body counts as attributed)
 //! - both probes fail → `candidate_inconclusive` (verifier incompleteness;
 //!   never counted as a defect)
 //! - both probes succeed → `anomaly` (logically impossible; inspected)
@@ -209,17 +210,16 @@ pub fn classify(manifest: &Manifest, log: &str) -> VacuityReport {
     }
     probe_lines.sort();
 
-    // Attribute each "postcondition not satisfied" span line to its probe.
+    // Attribute each failure marker line to its probe. Two marker kinds:
+    // - `failed this postcondition` under a probe's `ensures`
+    // - `assertion failed` under the witness `assert` inside a `live_` probe
+    //   body: a witness that cannot be proven must NOT count as an
+    //   unattributed liveness success — verus proves the rest of the poisoned
+    //   path vacuously, so the assert error is the only emitted failure.
     let mut failed: HashMap<(usize, &'static str), ()> = HashMap::new();
-    for line in log.lines() {
-        if let Some(rest) = line.strip_prefix("   |         ^^^^") {
-            // failure marker; the span line precedes it — handled below
-            let _ = rest;
-        }
-    }
     let mut current_failure_line: Option<usize> = None;
     for line in log.lines() {
-        if line.contains("error: postcondition not satisfied") {
+        if line.starts_with("error:") {
             current_failure_line = None;
             continue;
         }
@@ -236,7 +236,11 @@ pub fn classify(manifest: &Manifest, log: &str) -> VacuityReport {
             }
             continue;
         }
-        if line.contains("failed this postcondition") {
+        let trimmed = line.trim_start();
+        if line.contains('^')
+            && (trimmed.contains("failed this postcondition")
+                || trimmed.contains("assertion failed"))
+        {
             if let Some(l) = current_failure_line {
                 // nearest preceding probe declaration
                 let mut best: Option<(usize, usize, &'static str)> = None;
