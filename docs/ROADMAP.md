@@ -20,9 +20,13 @@
 
 ### M1. contract-vacuity 里程碑③：vostd 契约清单全量运行 —— 待做
 
-- [ ] 定位 60 接口 guard 清单 JSON（含"7 项入口前置恒假"分类）：约在研究
-      档案 guard_owner 扫描输出（`checker-evidence/spec-quality/` 或
-      `experiments/test-spec/`；扫描逻辑在 `guard_owner.rs`）。
+- [x] 定位清单数据（2026-11-11）：
+      `research/experiments/spec-quality-two-day/guard-return-inventory.csv`
+      （60 行；`entry_precondition_vacuous=true` 共 7 行，全部
+      `external_body=true`：cursor/locking::try_traverse_and_lock_subtree_root、
+      node/entry::alloc_if_none、node/entry::split_if_mapped_huge、
+      node/entry::alloc_absent_child、node::lock、node::make_guard_unchecked、
+      sync::mutex MutexGuard::new）。
 - [ ] 写 `examples/vostd-guard/extract_manifest.py`：从清单 + 冻结源码
       `/tmp/vostd-43da079-ktest-chan` 提取每个接口的 `#[verus_spec]`
       requires 文本 → manifest 条目。跳过 tracked 参数契约并记录跳过原因
