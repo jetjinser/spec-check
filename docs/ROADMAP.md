@@ -131,6 +131,39 @@ remote。详见 `docs/CI-WIRING.md`。
 test-contract-divergence（把研究管道的义务对照固化成子命令）复用 vacuity
 的探针生成器框架。
 
+### M6. tracked 契约构造探针批量生成器 —— 完成（2026-11-11）
+
+M2 手工单点构造探针路线的批量化：60 接口 quantifier 全量运行中 10 个
+CandidateInconclusive 条目（6 个恒假 stub 锚点 + row04/15/16/17）全部
+改走源级构造探针。工具代码零改动（manifest v1.1 原样承载）；全部产物
+在项目侧：`examples/vostd-guard/extract_construction_manifest.py`
+（从冻结源 `#[verus_spec]` 契约机械转写：契约面直调/方法形 stub 自由
+fn stub 三种面形态自动选型 + 铸造策略表 + 叶证据 run 生成）与
+`examples/vostd-guard/construction/`（两 manifest + 预注册 EXPECTED +
+归档 RUN）。
+
+- [x] spike（node_lock 单点，成败闸门）：铸造策略表实证——可铸叶
+      （PCell/PCellMU PointsTo、Count::alloc、Guards、OwnerSubtree、
+      MetaRegionOwners 字面量）与阻断叶（simple_pptr/array_ptr
+      PointsTo 的 std 门控铸造 API + 私有字段；FrameRef/PageTableGuard
+      值；传递阻断 NodeOwner/CursorOwner 等）。判据可迁移性分层：
+      铸造链完整 → 拒绝型 ConfirmedVacuous；链缺失 → 通道缺席
+      （编译级锚点），不虚构机器判定。
+- [x] 全量运行（预注册 14 条目 verifying run + 8 条目叶证据 run）：
+      verifying run 1508 verified / 3 errors，判定 ConfirmedVacuous 3 /
+      ConfirmedLive 11，14/14 与预注册一致，伪造拒绝 span 逐字归因
+      （row15/16 落在真实 axiom `old(regions).inv()`，cursor.rs:97/138）；
+      叶证据 run 13 错误全部落在铸造调用点（5×E0599 `PPtr::new` +
+      5×E0599 `ArrayPtr::new` + 3×E0624 `borrow_paddr` private，8 模块
+      无杂音）。10 条目中 2 个升级为机器 ConfirmedVacuous（row15/16），
+      8 个记录"holder 面可调用性机器确认 + 铸造通道缺席编译锚点"的
+      部分升级。见 `construction/CONSTRUCTION-RUN.md`；registry 更新在
+      research 仓库（紧随本 commit）。
+- 已知边界：调用面模型 = 注入点可见 pub 面 + no_std 铸造通道（模型
+  相对）；通道穷尽是文档化论证；alloc_absent stub 的
+  `relate_guard(*old(self).node)` 为 rustc 可见形式偏差（语义保持，
+  RUN 文档 §证据边界 4）。
+
 ## 维护纪律
 
 1. 主线进度只认本文件与 git 历史；会话记忆不作为状态来源。
