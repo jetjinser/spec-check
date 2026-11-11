@@ -18,6 +18,7 @@ dependencies = [
  "regex",
  "serde",
  "serde_json",
+ "spec-check-analyses",
  "spec-check-core",
 ]
 
@@ -126,6 +127,9 @@ dependencies = [
 [[package]]
 name = "spec-check-analyses"
 version = "0.2.0"
+dependencies = [
+ "serde",
+]
 
 [[package]]
 name = "spec-check-core"

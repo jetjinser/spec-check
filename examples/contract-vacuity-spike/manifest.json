@@ -1,0 +1,16 @@
+{
+  "preamble": "pub open spec fn reachable_state(s: u64) -> bool {\n    s < 8\n}",
+  "contracts": [
+    {
+      "name": "dead_entry",
+      "params": "s: u64",
+      "requires": "reachable_state(s) && s >= 8"
+    },
+    {
+      "name": "live_entry",
+      "params": "s: u64",
+      "requires": "s < 8",
+      "witness": "0"
+    }
+  ]
+}

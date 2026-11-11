@@ -13,6 +13,8 @@
 //! 3. Add positive/negative controls under `tests/fixtures` so the analysis
 //!    is validated against a known-good and a known-bad case.
 
+pub mod vacuity;
+
 use std::collections::BTreeMap;
 
 /// Captured artifacts an analysis may require.
@@ -79,7 +81,8 @@ impl std::error::Error for AnalysisError {}
 /// Registry of built-in analyses, keyed by name.
 pub mod registry {
     use super::Analysis;
-    use std::collections::BTreeMap;
+
+use std::collections::BTreeMap;
 
     /// Returns all built-in analyses. New analyses register here.
     pub fn builtin_registry() -> BTreeMap<&'static str, Box<dyn Analysis>> {

@@ -9,3 +9,4 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 regex = { workspace = true }
 spec-check-core = { workspace = true }
+spec-check-analyses = { workspace = true }
