@@ -3,6 +3,8 @@
 Status: implemented in `spec-check-core::requires` + `cargo-spec-check
 screen-requires`; first station archived under `examples/vostd-requires/`.
 Pre-registration and run archive were written before the probe run.
+Tier C modeling (generics/references/ghost) is a separate opt-in extension:
+`docs/M7e-tierc-modeling.md` (`--config`, default off).
 
 ## 1. Goal and boundary
 
@@ -169,7 +171,9 @@ one or more `screen-requires` batches; it must not run inside the default
   proof. They are not defects.
 - Tier A uses a bounded witness domain; "no witness" is not a proof of
   unsatisfiability.
-- Constants are lifted, references/ghosts/generics are not modelled.
+- Constants are lifted. References/ghosts/generics are not modelled by
+  default; the opt-in M7e-ext config abstracts a safe subset to Tier B
+  (`docs/M7e-tierc-modeling.md`).
 - The probe model is not the real implementation; a `ConfirmedVacuous`
   means the *transcribed precondition shape* is unsatisfiable.
 - Generator controls (`examples/vostd-requires/controls/`): zero-argument

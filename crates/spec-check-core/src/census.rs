@@ -4,7 +4,7 @@
 //! verifier, or make defect judgements. See `docs/M7a-spec-census.md`.
 
 use crate::vir::{self, Node};
-use crate::{hash, write_json, Result};
+use crate::{Result, hash, write_json};
 use serde_json::{Value, json};
 use std::{
     collections::{BTreeMap, BTreeSet},
@@ -82,14 +82,11 @@ fn type_is_unit(node: &Node) -> bool {
     };
     items.first().and_then(Node::atom) == Some("Typ")
         && items.get(1).and_then(Node::atom) == Some("Datatype")
-        && items
-            .get(2)
-            .and_then(Node::list)
-            .is_some_and(|dt| {
-                dt.first().and_then(Node::atom) == Some("Dt")
-                    && dt.get(1).and_then(Node::atom) == Some("Tuple")
-                    && dt.get(2).and_then(Node::atom) == Some("0")
-            })
+        && items.get(2).and_then(Node::list).is_some_and(|dt| {
+            dt.first().and_then(Node::atom) == Some("Dt")
+                && dt.get(1).and_then(Node::atom) == Some("Tuple")
+                && dt.get(2).and_then(Node::atom) == Some("0")
+        })
 }
 
 fn unwrap_type(node: &Node) -> &Node {
@@ -236,7 +233,10 @@ fn ensure_parts(node: &Node) -> (&[Node], &[Node]) {
         return (&[], &[]);
     };
     if items.first().and_then(Node::atom) == Some("tuple") && items.len() == 3 {
-        (items[1].list().unwrap_or(&[]), items[2].list().unwrap_or(&[]))
+        (
+            items[1].list().unwrap_or(&[]),
+            items[2].list().unwrap_or(&[]),
+        )
     } else {
         (items, &[])
     }
@@ -464,7 +464,7 @@ fn render_type(node: &Node) -> String {
                 Some("Ref") => format!("&{inner}"),
                 _ => render_compact(node),
             }
-        },
+        }
         Some("Datatype") => {
             let dt = items.get(2).and_then(Node::list);
             let path = dt
@@ -478,7 +478,7 @@ fn render_type(node: &Node) -> String {
                 let rendered = args.iter().map(render_type).collect::<Vec<_>>().join(", ");
                 format!("{}<{rendered}>", path.replace("&%", "impl "))
             }
-        },
+        }
         _ => render_compact(node),
     }
 }
@@ -495,7 +495,13 @@ fn type_param_names(function: &Node) -> Vec<String> {
                         .atom()
                         .map(str::to_owned)
                         .or_else(|| param.field("name").and_then(Node::atom).map(str::to_owned))
-                        .or_else(|| param.unwrap().field("name").and_then(Node::atom).map(str::to_owned))
+                        .or_else(|| {
+                            param
+                                .unwrap()
+                                .field("name")
+                                .and_then(Node::atom)
+                                .map(str::to_owned)
+                        })
                 })
                 .collect()
         })
@@ -541,13 +547,13 @@ impl Mech {
         match self {
             Self::Var(name) => {
                 names.insert(name.clone());
-            },
+            }
             Self::Not(arg) | Self::Neg(arg) => arg.vars(names),
             Self::Bin(_, lhs, rhs) => {
                 lhs.vars(names);
                 rhs.vars(names);
-            },
-            Self::Int(_) | Self::Bool(_) | Self::Const(_) => {},
+            }
+            Self::Int(_) | Self::Bool(_) | Self::Const(_) => {}
         }
     }
 
@@ -555,13 +561,13 @@ impl Mech {
         match self {
             Self::Const(path) => {
                 paths.insert(path.clone());
-            },
+            }
             Self::Not(arg) | Self::Neg(arg) => arg.consts(paths),
             Self::Bin(_, lhs, rhs) => {
                 lhs.consts(paths);
                 rhs.consts(paths);
-            },
-            Self::Int(_) | Self::Bool(_) | Self::Var(_) => {},
+            }
+            Self::Int(_) | Self::Bool(_) | Self::Var(_) => {}
         }
     }
 
@@ -573,7 +579,9 @@ impl Mech {
             Self::Const(path) => json!({"op": "const", "path": path}),
             Self::Not(arg) => json!({"op": "not", "arg": arg.value()}),
             Self::Neg(arg) => json!({"op": "neg", "arg": arg.value()}),
-            Self::Bin(sym, lhs, rhs) => json!({"op": "bin", "sym": sym, "lhs": lhs.value(), "rhs": rhs.value()}),
+            Self::Bin(sym, lhs, rhs) => {
+                json!({"op": "bin", "sym": sym, "lhs": lhs.value(), "rhs": rhs.value()})
+            }
         }
     }
 }
@@ -599,7 +607,7 @@ fn mech(node: &Node) -> Option<Mech> {
                 },
                 _ => None,
             }
-        },
+        }
         "ConstVar" => items
             .get(2)
             .and_then(|fun| fun.field("path"))
@@ -617,14 +625,14 @@ fn mech(node: &Node) -> Option<Mech> {
                 return None;
             }
             Some(Mech::Var(name.get(1)?.atom()?.to_owned()))
-        },
+        }
         "Var" => {
             let name = items.get(2)?.list()?;
             if name.first().and_then(Node::atom) != Some("VarIdent") {
                 return None;
             }
             Some(Mech::Var(name.get(1)?.atom()?.to_owned()))
-        },
+        }
         "Unary" => {
             let op = items.get(2)?.list()?;
             let arg = items.get(3)?;
@@ -633,7 +641,7 @@ fn mech(node: &Node) -> Option<Mech> {
                 "Neg" => Some(Mech::Neg(Box::new(mech(arg)?))),
                 _ => None,
             }
-        },
+        }
         "Binary" => {
             let op = items.get(2)?.list()?;
             let lhs = mech(items.get(3)?)?;
@@ -658,7 +666,7 @@ fn mech(node: &Node) -> Option<Mech> {
                 _ => return None,
             };
             Some(Mech::Bin(sym, Box::new(lhs), Box::new(rhs)))
-        },
+        }
         "Logical" => {
             let op = items.get(2)?.list()?;
             let lhs = mech(items.get(3)?)?;
@@ -670,7 +678,7 @@ fn mech(node: &Node) -> Option<Mech> {
                 _ => return None,
             };
             Some(Mech::Bin(sym, Box::new(lhs), Box::new(rhs)))
-        },
+        }
         "Multi" => {
             let op = items.get(2)?.list()?;
             if op.get(1).and_then(Node::atom) != Some("Chained") {
@@ -703,7 +711,7 @@ fn mech(node: &Node) -> Option<Mech> {
                 });
             }
             result
-        },
+        }
         _ => None,
     }
 }
@@ -733,21 +741,26 @@ fn scan_features(node: &Node, features: &mut ClauseFeatures) {
             Some("Ctor") => features.ctor = true,
             Some("Quant") => features.quantifier = true,
             Some("UnaryOpr") => features.unary_opr = true,
+            Some("Old") => features.old_or_final = true,
             Some("Unary") => {
                 let op = items.get(2).and_then(Node::list).unwrap_or_default();
                 match op.get(1).and_then(Node::atom) {
                     Some("MutRefFuture") => features.old_or_final = true,
                     Some("Trigger") => features.trigger = true,
-                    _ => {},
+                    _ => {}
                 }
-            },
+            }
             Some("ReadPlace") => {
-                let place = items.get(2).map(Node::unwrap).and_then(Node::list).unwrap_or_default();
+                let place = items
+                    .get(2)
+                    .map(Node::unwrap)
+                    .and_then(Node::list)
+                    .unwrap_or_default();
                 if place.get(1).and_then(Node::atom) == Some("Field") {
                     features.field_access = true;
                 }
-            },
-            _ => {},
+            }
+            _ => {}
         }
     }
     for child in items {
@@ -763,9 +776,9 @@ fn clause_source(
     let root = root?;
     let span = span?;
     let (file, coordinates) = crate::ir::span(span, root).ok()?;
-    let text = cache.entry(file.clone()).or_insert_with(|| {
-        fs::read_to_string(&file).unwrap_or_default()
-    });
+    let text = cache
+        .entry(file.clone())
+        .or_insert_with(|| fs::read_to_string(&file).unwrap_or_default());
     if text.is_empty() {
         return None;
     }
@@ -773,9 +786,270 @@ fn clause_source(
     text.get(start..end).map(str::to_owned)
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum PlaceSegment {
+    Field(String),
+    Deref,
+}
+
+#[derive(Debug, Clone)]
+struct ParamUse {
+    name: String,
+    kind: &'static str,
+    callee: Option<String>,
+    field: Option<String>,
+    argc: Option<usize>,
+}
+
+impl ParamUse {
+    fn value(&self) -> Value {
+        json!({
+            "name": self.name,
+            "kind": self.kind,
+            "callee": self.callee,
+            "field": self.field,
+            "argc": self.argc,
+        })
+    }
+}
+
+fn var_ident_name(node: &Node) -> Option<String> {
+    let items = node.list()?;
+    if items.first().and_then(Node::atom) != Some("VarIdent") {
+        return None;
+    }
+    items.get(1).and_then(Node::atom).map(str::to_owned)
+}
+
+fn is_mutref_future_unary(node: &Node) -> bool {
+    let node = node.unwrap();
+    let Some(items) = node.list() else {
+        return false;
+    };
+    if items.first().and_then(Node::atom) != Some(">")
+        || items.get(1).and_then(Node::atom) != Some("Unary")
+    {
+        return false;
+    }
+    items
+        .get(2)
+        .and_then(Node::list)
+        .and_then(|op| op.get(1))
+        .and_then(Node::atom)
+        == Some("MutRefFuture")
+}
+
+fn place_root(node: &Node) -> Option<(String, Vec<PlaceSegment>)> {
+    let node = node.unwrap();
+    let items = node.list()?;
+    match items.first().and_then(Node::atom)? {
+        "Place" => match items.get(1).and_then(Node::atom)? {
+            "Local" => var_ident_name(items.get(2)?).map(|name| (name, Vec::new())),
+            "Field" => {
+                let field = items
+                    .get(2)?
+                    .field("field")
+                    .and_then(Node::atom)?
+                    .to_owned();
+                let (name, mut segments) = place_root(items.get(3)?)?;
+                segments.push(PlaceSegment::Field(field));
+                Some((name, segments))
+            }
+            "Deref" | "DerefMut" => {
+                let (name, mut segments) = place_root(items.get(2)?)?;
+                segments.push(PlaceSegment::Deref);
+                Some((name, segments))
+            }
+            "Temporary" => expr_root(items.get(2)?),
+            _ => None,
+        },
+        "ReadPlace" => place_root(items.get(2)?),
+        "Old" => expr_root(items.get(2)?),
+        "Var" => var_ident_name(items.get(1)?).map(|name| (name, Vec::new())),
+        _ => None,
+    }
+}
+
+fn expr_root(node: &Node) -> Option<(String, Vec<PlaceSegment>)> {
+    let node = node.unwrap();
+    let items = node.list()?;
+    let head = items.first().and_then(Node::atom)?;
+    if head == ">" {
+        return match items.get(1).and_then(Node::atom)? {
+            "ReadPlace" => place_root(items.get(2)?),
+            "Old" => expr_root(items.get(2)?),
+            "Unary" if is_mutref_future_unary(node) => expr_root(items.get(3)?),
+            _ => None,
+        };
+    }
+    match head {
+        "Place" | "Var" => place_root(node),
+        _ => None,
+    }
+}
+
+fn call_args(node: &Node) -> Option<Vec<Node>> {
+    let node = node.unwrap();
+    let items = node.list()?;
+    if items.first().and_then(Node::atom) != Some(">")
+        || items.get(1).and_then(Node::atom) != Some("Call")
+    {
+        return None;
+    }
+    Some(
+        node.field("args")
+            .and_then(Node::list)
+            .unwrap_or_default()
+            .to_vec(),
+    )
+}
+
+fn node_contains_atom(node: &Node, wanted: &str) -> bool {
+    if node.atom() == Some(wanted) {
+        return true;
+    }
+    node.list()
+        .is_some_and(|items| items.iter().any(|child| node_contains_atom(child, wanted)))
+}
+
+fn call_is_dynamic(node: &Node) -> bool {
+    node.unwrap()
+        .field("target")
+        .is_some_and(|target| node_contains_atom(target, "DynamicResolved"))
+}
+
+fn call_path(node: &Node) -> Option<String> {
+    let mut paths = Vec::new();
+    vir::walk_calls(node.unwrap().field("target")?, &mut paths);
+    paths.into_iter().next()
+}
+
+fn is_read_place(node: &Node) -> bool {
+    let node = node.unwrap();
+    node.list()
+        .and_then(|items| items.get(1))
+        .and_then(Node::atom)
+        == Some("ReadPlace")
+}
+
+fn classify_use(
+    root: &(String, Vec<PlaceSegment>),
+    params: &BTreeSet<String>,
+    uses: &mut Vec<ParamUse>,
+) -> bool {
+    let (name, segments) = root;
+    if !params.contains(name) {
+        return false;
+    }
+    let field = segments.iter().rev().find_map(|segment| match segment {
+        PlaceSegment::Field(field) => Some(field.clone()),
+        PlaceSegment::Deref => None,
+    });
+    let kind = if segments
+        .iter()
+        .any(|segment| matches!(segment, PlaceSegment::Field(_)))
+    {
+        "field_root"
+    } else if segments
+        .iter()
+        .any(|segment| matches!(segment, PlaceSegment::Deref))
+    {
+        "deref_root"
+    } else {
+        "plain_root"
+    };
+    uses.push(ParamUse {
+        name: name.clone(),
+        kind,
+        callee: None,
+        field,
+        argc: None,
+    });
+    true
+}
+
+fn walk_param_uses(node: &Node, params: &BTreeSet<String>, uses: &mut Vec<ParamUse>) {
+    let node = node.unwrap();
+    if let Some(args) = call_args(node) {
+        if call_is_dynamic(node) {
+            if let Some(root) = args.first().and_then(expr_root) {
+                if params.contains(&root.0) {
+                    let field = root.1.iter().rev().find_map(|segment| match segment {
+                        PlaceSegment::Field(field) => Some(field.clone()),
+                        PlaceSegment::Deref => None,
+                    });
+                    uses.push(ParamUse {
+                        name: root.0,
+                        kind: "receiver_root",
+                        callee: call_path(node),
+                        field,
+                        argc: Some(args.len()),
+                    });
+                    for argument in args.iter().skip(1) {
+                        walk_param_uses(argument, params, uses);
+                    }
+                    return;
+                }
+            }
+        }
+        for argument in &args {
+            walk_param_uses(argument, params, uses);
+        }
+        return;
+    }
+    if is_read_place(node) {
+        if let Some(root) = expr_root(node)
+            && classify_use(&root, params, uses)
+        {
+            return;
+        }
+    }
+    for child in node.list().unwrap_or_default() {
+        walk_param_uses(child, params, uses);
+    }
+}
+
+fn count_param_occurrences(node: &Node, name: &str, count: &mut usize) {
+    let node = node.unwrap();
+    if let Some(items) = node.list() {
+        if items.first().and_then(Node::atom) == Some("Place")
+            && items.get(1).and_then(Node::atom) == Some("Local")
+            && items.get(2).and_then(var_ident_name).as_deref() == Some(name)
+        {
+            *count += 1;
+        }
+        if items.first().and_then(Node::atom) == Some("Var")
+            && items.get(1).and_then(var_ident_name).as_deref() == Some(name)
+        {
+            *count += 1;
+        }
+        for child in items {
+            count_param_occurrences(child, name, count);
+        }
+    }
+}
+
+fn param_use_facts(
+    clause: &Node,
+    param_names: &BTreeSet<String>,
+) -> (BTreeMap<String, usize>, Vec<Value>) {
+    let mut occurrences = BTreeMap::new();
+    for name in param_names {
+        let mut count = 0usize;
+        count_param_occurrences(clause, name, &mut count);
+        if count > 0 {
+            occurrences.insert(name.clone(), count);
+        }
+    }
+    let mut uses = Vec::new();
+    walk_param_uses(clause, param_names, &mut uses);
+    (occurrences, uses.iter().map(ParamUse::value).collect())
+}
+
 fn requires_facts(
     function: &Node,
     scalar_names: &BTreeSet<String>,
+    param_names: &BTreeSet<String>,
     source_root: Option<&Path>,
     cache: &mut BTreeMap<PathBuf, String>,
 ) -> Vec<Value> {
@@ -786,7 +1060,10 @@ fn requires_facts(
         .iter()
         .enumerate()
         .map(|(index, clause)| {
-            let span = clause.list().and_then(|items| items.get(1)).and_then(Node::atom);
+            let span = clause
+                .list()
+                .and_then(|items| items.get(1))
+                .and_then(Node::atom);
             let mut features = ClauseFeatures::default();
             scan_features(clause, &mut features);
             let mut vars = BTreeSet::new();
@@ -797,6 +1074,7 @@ fn requires_facts(
             calls.dedup();
             let mut consts = BTreeSet::new();
             collect_const_vars(clause, &mut consts);
+            let (param_occurrences, param_uses) = param_use_facts(clause, param_names);
             let parsed = mech(clause).filter(|expression| {
                 let mut names = BTreeSet::new();
                 mech_vars(expression, &mut names);
@@ -823,6 +1101,8 @@ fn requires_facts(
                 "vars": vars,
                 "consts": consts,
                 "calls": calls,
+                "param_occurrences": param_occurrences,
+                "param_uses": param_uses,
                 "features": {
                     "call": features.call,
                     "field_access": features.field_access,
@@ -910,7 +1190,10 @@ fn output(
             mentions.default_vars.contains(name)
         }
     });
-    let type_invariant = typ.as_ref().and_then(type_path).and_then(|path| invariants.get(&path).cloned());
+    let type_invariant = typ
+        .as_ref()
+        .and_then(type_path)
+        .and_then(|path| invariants.get(&path).cloned());
     let finding = if mentioned {
         None
     } else if kind == "mut_param" {
@@ -979,8 +1262,8 @@ pub fn analyze(text: &str, crate_name: &str, source_root: Option<&Path>) -> Resu
         canonical
             .entry(declared)
             .and_modify(|slot| {
-                let current_verified = function_path(slot.1)
-                    .is_some_and(|p| p.contains("::_VERUS_VERIFIED_"));
+                let current_verified =
+                    function_path(slot.1).is_some_and(|p| p.contains("::_VERUS_VERIFIED_"));
                 let current_body = slot
                     .1
                     .field("body")
@@ -1055,7 +1338,9 @@ fn function_entry(
     let own_returns = function
         .field("returns")
         .filter(|node| node.atom() != Some("None"));
-    let declaration = method.as_ref().and_then(|method| by_path.get(method).copied());
+    let declaration = method
+        .as_ref()
+        .and_then(|method| by_path.get(method).copied());
     let decl_regular = declaration
         .and_then(|d| d.field("ensure"))
         .map(ensure_parts)
@@ -1148,9 +1433,7 @@ fn function_entry(
             .and_then(|p| p.unwrap().field("typ"))
         {
             if !type_is_unit(return_type) {
-                let impl_name = function
-                    .field("inner_ret")
-                    .and_then(param_name);
+                let impl_name = function.field("inner_ret").and_then(param_name);
                 let decl_name = declaration
                     .and_then(|d| d.field("inner_ret"))
                     .and_then(param_name);
@@ -1261,14 +1544,27 @@ fn function_entry(
         .unwrap_or_default();
     let (requires_count, requires_preview) = previews(requires);
     let params = param_facts(function);
+    let param_names = params
+        .iter()
+        .filter_map(|param| param["name"].as_str().map(str::to_owned))
+        .collect::<BTreeSet<_>>();
     let scalar_names = params
         .iter()
         .filter(|param| matches!(param["kind"].as_str(), Some("int" | "bool")))
         .filter_map(|param| param["name"].as_str().map(str::to_owned))
         .collect::<BTreeSet<_>>();
-    let requires_detail = requires_facts(function, &scalar_names, source_root, source_cache);
+    let requires_detail = requires_facts(
+        function,
+        &scalar_names,
+        &param_names,
+        source_root,
+        source_cache,
+    );
     let generics = type_param_names(function);
-    let span = outer.list().and_then(|items| items.get(1)).and_then(Node::atom);
+    let span = outer
+        .list()
+        .and_then(|items| items.get(1))
+        .and_then(Node::atom);
     let mut source = source(span);
     if let (Some(root), Some(file)) = (source_root, source["file"].as_str()) {
         let root = root.to_string_lossy();
@@ -1463,6 +1759,39 @@ mod tests {
     const PATTERN: &str = r#"(@ "t.rs:1:1: 1:2 (#0)" (Function :name (Fun :path p::pat) :mode Exec :visibility (Visibility :restricted_to None) :inner_ret (@ "t.rs:1:1: 1:2 (#0)" (Param :name (VarIdent _VERUS_ret_ident (VarIdentDisambiguate RustcId 1)) :typ (Typ Datatype (Dt Tuple 2) ((Typ Int (IntRange USize)) (Typ Datatype (Dt Path p::G) () ())) ()))) :params () :ensure (tuple ((@@ "t.rs:1:1: 1:2 (#0)" (> Block ((@ "t.rs:1:1: 1:2 (#0)" (Stmt Decl :pattern (@@ "t.rs:1:1: 1:2 (#0)" (Pattern Constructor (Dt Tuple 2) tuple%2 ((-> 0 (@@ "t.rs:1:1: 1:2 (#0)" (Pattern Var (PatternBinding :name (VarIdent r (VarIdentDisambiguate RustcId 2)) :by_ref (ByRef No) :typ (Typ Int (IntRange USize)) :user_mut false :copy false)))) (-> 1 (@@ "t.rs:1:1: 1:2 (#0)" (Pattern Var (PatternBinding :name (VarIdent g (VarIdentDisambiguate RustcId 3)) :by_ref (ByRef No) :typ (Typ Datatype (Dt Path p::G) () ()) :user_mut false :copy false))))))) :init None :els None :assert_irrefutable false)))))) ()) :require () :attrs (FunctionAttrs :is_external_body false)))"#;
 
     #[test]
+    fn requires_param_uses_distinguish_receiver_field_and_direct_use() {
+        let function = r#"(@ "t.rs:1:1: 1:2 (#0)" (Function :name (Fun :path p::f) :mode Exec :visibility (Visibility :restricted_to None) :inner_ret (@ "t.rs:1:1: 1:2 (#0)" (Param :name (VarIdent r (VarIdentDisambiguate RustcId 1)) :typ (Typ Int (IntRange USize)))) :params ((@ "t.rs:1:1: 1:2 (#0)" (Param :name (VarIdent self (VarIdentDisambiguate RustcId 2)) :typ (Typ MutRef (Typ Datatype (Dt Path p::T) () ())) :mode Exec)) (@ "t.rs:1:1: 1:2 (#0)" (Param :name (VarIdent fld (VarIdentDisambiguate RustcId 3)) :typ (Typ Int (IntRange USize)) :mode Exec))) :ensure (tuple () ()) :require ((@@ "t.rs:1:1: 1:2 (#0)" (> Call :target (CallTarget Fun (CallTargetKind DynamicResolved :resolved (Fun :path p::inv) :typs () :impl_paths () :is_trait_default false) (Fun :path p::inv) () (ImplPath TraitImplPath p::I) (CallTargetAttrs :autospec (AutospecUsage IfMarked) :const_var false :assume_external_allowed false)) :args ((@@ "t.rs:1:1: 1:2 (#0)" (> ReadPlace (@ "t.rs:1:1: 1:2 (#0)" (Place Local (VarIdent self (VarIdentDisambiguate RustcId 2))) (Typ Datatype (Dt Path p::T) () ())) (Typ Datatype (Dt Path p::T) () ()) (UnfinalizedReadKind :preliminary_kind (ReadKind Move) :id 1)))) :post_args None :body None) (Typ Bool)) (@@ "t.rs:1:1: 1:2 (#0)" (> Binary (BinaryOp Eq Spec) (@@ "t.rs:1:1: 1:2 (#0)" (> ReadPlace (@ "t.rs:1:1: 1:2 (#0)" (Place Field (FieldOpr :datatype (Dt Path p::T) :variant "T" :field "fld" :get_variant false :check (VariantCheck None)) (@ "t.rs:1:1: 1:2 (#0)" (Place Local (VarIdent self (VarIdentDisambiguate RustcId 2))) (Typ MutRef (Typ Datatype (Dt Path p::T) () ()))) (Typ Int (IntRange USize))) (Typ Int (IntRange USize))) (Typ Int (IntRange USize)) (UnfinalizedReadKind :preliminary_kind (ReadKind Copy) :id 2))) (@@ "t.rs:1:1: 1:2 (#0)" (> ReadPlace (@ "t.rs:1:1: 1:2 (#0)" (Place Local (VarIdent fld (VarIdentDisambiguate RustcId 3))) (Typ Int (IntRange USize))) (Typ Int (IntRange USize)) (UnfinalizedReadKind :preliminary_kind (ReadKind Copy) :id 3)))) (Typ Bool))) :attrs (FunctionAttrs :is_external_body false) :body (@ "t.rs:1:1: 1:2 (#0)" (> Block ()))))"#;
+        let report = analyze(function, "p", None).unwrap();
+        let clauses = report["functions"][0]["requires"].as_array().unwrap();
+        assert_eq!(clauses.len(), 2);
+        let occurrences = &clauses[0]["param_occurrences"];
+        assert_eq!(occurrences["self"], 1);
+        let uses = clauses[0]["param_uses"].as_array().unwrap();
+        assert_eq!(uses.len(), 1);
+        assert_eq!(uses[0]["name"], "self");
+        assert_eq!(uses[0]["kind"], "receiver_root");
+        assert_eq!(uses[0]["callee"], "p::inv");
+        let uses = clauses[1]["param_uses"].as_array().unwrap();
+        assert_eq!(uses.len(), 2);
+        assert_eq!(uses[0]["kind"], "field_root");
+        assert_eq!(uses[0]["field"], "fld");
+        assert_eq!(uses[1]["kind"], "plain_root");
+        assert_eq!(uses[1]["name"], "fld");
+    }
+
+    #[test]
+    fn requires_param_uses_flag_old_wrapped_receiver_and_deref() {
+        let function = r#"(@ "t.rs:1:1: 1:2 (#0)" (Function :name (Fun :path p::g) :mode Exec :visibility (Visibility :restricted_to None) :inner_ret (@ "t.rs:1:1: 1:2 (#0)" (Param :name (VarIdent r (VarIdentDisambiguate RustcId 1)) :typ (Typ Int (IntRange USize)))) :params ((@ "t.rs:1:1: 1:2 (#0)" (Param :name (VarIdent self (VarIdentDisambiguate RustcId 2)) :typ (Typ MutRef (Typ Datatype (Dt Path p::T) () ())) :mode Exec))) :ensure (tuple () ()) :require ((@@ "t.rs:1:1: 1:2 (#0)" (> Call :target (CallTarget Fun (CallTargetKind DynamicResolved :resolved (Fun :path p::inv) :typs () :impl_paths () :is_trait_default false) (Fun :path p::inv) () (ImplPath TraitImplPath p::I) (CallTargetAttrs :autospec (AutospecUsage IfMarked) :const_var false :assume_external_allowed false)) :args ((@@ "t.rs:1:1: 1:2 (#0)" (> ReadPlace (@ "t.rs:1:1: 1:2 (#0)" (Place Temporary (@@ "t.rs:1:1: 1:2 (#0)" (> Old (@@ "t.rs:1:1: 1:2 (#0)" (> ReadPlace (@ "t.rs:1:1: 1:2 (#0)" (Place Local (VarIdent self (VarIdentDisambiguate RustcId 2))) (Typ MutRef (Typ Datatype (Dt Path p::T) () ()))) (Typ MutRef (Typ Datatype (Dt Path p::T) () ())) (UnfinalizedReadKind :preliminary_kind (ReadKind Move) :id 1))) (Typ MutRef (Typ Datatype (Dt Path p::T) () ())))) (Typ Datatype (Dt Path p::T) () ())) (Typ Datatype (Dt Path p::T) () ())) (UnfinalizedReadKind :preliminary_kind (ReadKind Move) :id 2)))) :post_args None :body None) (Typ Bool)) (@@ "t.rs:1:1: 1:2 (#0)" (> Binary (BinaryOp Eq Spec) (@@ "t.rs:1:1: 1:2 (#0)" (> ReadPlace (@ "t.rs:1:1: 1:2 (#0)" (Place Deref (@ "t.rs:1:1: 1:2 (#0)" (Place Local (VarIdent self (VarIdentDisambiguate RustcId 2))) (Typ MutRef (Typ Datatype (Dt Path p::T) () ()))) (Typ Int (IntRange USize))) (Typ Int (IntRange USize))) (Typ Int (IntRange USize)) (UnfinalizedReadKind :preliminary_kind (ReadKind Copy) :id 3))) (@ "t.rs:1:1: 1:2 (#0)" (Const "0"))) (Typ Bool))) :attrs (FunctionAttrs :is_external_body false) :body (@ "t.rs:1:1: 1:2 (#0)" (> Block ()))))"#;
+        let report = analyze(function, "p", None).unwrap();
+        let clauses = report["functions"][0]["requires"].as_array().unwrap();
+        assert_eq!(clauses[0]["features"]["old_or_final"], true);
+        let uses = clauses[0]["param_uses"].as_array().unwrap();
+        assert_eq!(uses[0]["kind"], "receiver_root");
+        let uses = clauses[1]["param_uses"].as_array().unwrap();
+        assert_eq!(uses[0]["kind"], "deref_root");
+    }
+
+    #[test]
     fn return_and_mut_outputs_follow_mention_rules() {
         let text = [F, G, H].join("\n");
         let report = analyze(&text, "p", None).unwrap();
@@ -1470,10 +1799,16 @@ mod tests {
         assert_eq!(functions.len(), 3);
         assert_eq!(functions[0]["outputs"][0]["mentioned"], true);
         assert_eq!(functions[0]["outputs"][1]["mentioned"], false);
-        assert_eq!(functions[0]["outputs"][1]["finding"], "mut_state_unmentioned");
+        assert_eq!(
+            functions[0]["outputs"][1]["finding"],
+            "mut_state_unmentioned"
+        );
         assert_eq!(functions[1]["postcondition"]["present"], false);
         assert_eq!(functions[1]["outputs"][0]["finding"], "return_unmentioned");
-        assert_eq!(functions[1]["outputs"][1]["finding"], "mut_state_unmentioned");
+        assert_eq!(
+            functions[1]["outputs"][1]["finding"],
+            "mut_state_unmentioned"
+        );
         assert_eq!(functions[2]["outputs"].as_array().unwrap().len(), 1);
         assert_eq!(functions[2]["outputs"][0]["kind"], "mut_param");
         assert_eq!(functions[2]["outputs"][0]["mentioned"], false);

@@ -1,0 +1,31 @@
+{
+  "schema": "spec-check.requires-config/1",
+  "generic_instances": [
+    {
+      "match": "*",
+      "types": {
+        "C": "u64",
+        "M": "u64",
+        "T": "u64",
+        "E": "u64",
+        "P": "u64",
+        "A": "u64",
+        "L": "u64",
+        "I": "u64",
+        "V": "u64",
+        "F": "u64",
+        "R": "u64",
+        "G": "u64",
+        "FCancel": "u64",
+        "Self%": "u64",
+        "*": "u64"
+      }
+    }
+  ],
+  "reference": {
+    "mode": "opaque"
+  },
+  "ghost": {
+    "mode": "opaque"
+  }
+}

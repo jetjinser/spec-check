@@ -33,6 +33,93 @@ use std::{
 };
 
 pub const SCHEMA: &str = "spec-check.requires-screen/1";
+pub const CONFIG_SCHEMA: &str = "spec-check.requires-config/1";
+
+/// Project-side Tier C modeling configuration. The default is exactly the
+/// M7e behavior: no instantiation, no reference/ghost abstraction.
+#[derive(Debug, Clone, Default)]
+pub struct Config {
+    pub generic_instances: Vec<GenericRule>,
+    pub reference_opaque: bool,
+    pub ghost_opaque: bool,
+}
+
+#[derive(Debug, Clone)]
+pub struct GenericRule {
+    pub pattern: String,
+    pub types: BTreeMap<String, String>,
+}
+
+impl Config {
+    pub fn from_path(path: &Path) -> Result<Self> {
+        let text = std::fs::read_to_string(path)?;
+        let value: Value = serde_json::from_str(&text)?;
+        Self::from_value(&value)
+    }
+
+    pub fn from_value(value: &Value) -> Result<Self> {
+        if value["schema"].as_str() != Some(CONFIG_SCHEMA) {
+            return Err(format!("config schema must be {CONFIG_SCHEMA}").into());
+        }
+        let mut config = Config::default();
+        for rule in value["generic_instances"].as_array().into_iter().flatten() {
+            let pattern = rule["match"]
+                .as_str()
+                .ok_or("generic_instances entry needs a match pattern")?;
+            let mut types = BTreeMap::new();
+            for (name, typ) in rule["types"]
+                .as_object()
+                .ok_or("generic_instances entry needs a types object")?
+            {
+                types.insert(
+                    name.clone(),
+                    typ.as_str()
+                        .ok_or("generic instance type must be a string")?
+                        .to_owned(),
+                );
+            }
+            config.generic_instances.push(GenericRule {
+                pattern: pattern.to_owned(),
+                types,
+            });
+        }
+        config.reference_opaque = match value["reference"]["mode"].as_str().unwrap_or("off") {
+            "off" => false,
+            "opaque" => true,
+            other => return Err(format!("unsupported reference mode: {other}").into()),
+        };
+        config.ghost_opaque = match value["ghost"]["mode"].as_str().unwrap_or("off") {
+            "off" => false,
+            "opaque" => true,
+            other => return Err(format!("unsupported ghost mode: {other}").into()),
+        };
+        Ok(config)
+    }
+
+    fn generic_rule(&self, path: &str) -> Option<&GenericRule> {
+        self.generic_instances
+            .iter()
+            .find(|rule| glob_match(&rule.pattern, path))
+    }
+
+    fn is_default(&self) -> bool {
+        self.generic_instances.is_empty() && !self.reference_opaque && !self.ghost_opaque
+    }
+}
+
+fn glob_match(pattern: &str, text: &str) -> bool {
+    if pattern == "*" {
+        return true;
+    }
+    match pattern.split_once('*') {
+        None => pattern == text,
+        Some((prefix, suffix)) => {
+            text.len() >= prefix.len() + suffix.len()
+                && text.starts_with(prefix)
+                && text.ends_with(suffix)
+        }
+    }
+}
 
 /// Selected tiers and deterministic batching options.
 #[derive(Debug, Clone)]
@@ -42,6 +129,7 @@ pub struct Options {
     pub limit: Option<usize>,
     pub batch: Option<usize>,
     pub batch_size: usize,
+    pub config: Config,
 }
 
 impl Default for Options {
@@ -52,6 +140,7 @@ impl Default for Options {
             limit: None,
             batch: None,
             batch_size: 50,
+            config: Config::default(),
         }
     }
 }
@@ -75,6 +164,12 @@ impl Tier {
     }
 }
 
+struct ParamInfo {
+    name: String,
+    ty: String,
+    kind: String,
+}
+
 struct ParamModel {
     probe: String,
     int: bool,
@@ -90,6 +185,7 @@ struct Decision {
     clauses: usize,
     mechanical: usize,
     unsupported: usize,
+    modeling: Value,
 }
 
 /// Build the manifest and screening report from a census JSON document.
@@ -98,10 +194,14 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
         .as_array()
         .ok_or("census has no functions array")?;
     let mut decisions = Vec::with_capacity(functions.len());
+    let mut baselines = Vec::with_capacity(functions.len());
     let mut name_used = BTreeSet::new();
+    let mut baseline_name_used = BTreeSet::new();
 
     for (index, function) in functions.iter().enumerate() {
-        let decision = classify(function, index, &mut name_used);
+        let baseline = classify(function, index, &mut baseline_name_used, &Config::default());
+        baselines.push((baseline.tier, baseline.reasons.clone()));
+        let decision = classify(function, index, &mut name_used, &options.config);
         decisions.push(decision);
     }
 
@@ -189,6 +289,7 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
             "mechanical_clauses": decision.mechanical,
             "unsupported_clauses": decision.unsupported,
             "origin": entry["origin"],
+            "modeling": decision.modeling,
         }));
     }
 
@@ -198,11 +299,24 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
     });
 
     let mut tier_counts = BTreeMap::new();
+    let mut baseline_counts = BTreeMap::new();
+    let mut upgraded = [0usize; 3];
     let mut reason_counts = BTreeMap::new();
     let mut clause_counts = [0usize; 3];
     let mut function_rows = Vec::with_capacity(decisions.len());
-    for decision in &decisions {
+    for (decision, (baseline_tier, baseline_reasons)) in decisions.iter().zip(&baselines) {
         *tier_counts.entry(decision.tier.as_str()).or_insert(0usize) += 1;
+        *baseline_counts
+            .entry(baseline_tier.as_str())
+            .or_insert(0usize) += 1;
+        if *baseline_tier == Tier::C && decision.tier != Tier::None {
+            match decision.tier {
+                Tier::A => upgraded[0] += 1,
+                Tier::B => upgraded[1] += 1,
+                Tier::C => upgraded[2] += 1,
+                Tier::None => {}
+            }
+        }
         let kinds = decision
             .reasons
             .iter()
@@ -221,12 +335,15 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
             "path": decision.path,
             "tier": decision.tier.as_str(),
             "reasons": decision.reasons,
+            "baseline_tier": baseline_tier.as_str(),
+            "baseline_reasons": baseline_reasons,
             "clauses": decision.clauses,
             "mechanical_clauses": decision.mechanical,
             "unsupported_clauses": decision.unsupported,
             "entry": decision.entry.as_ref().map(|entry| entry["name"].clone()),
             "expected": decision.expected,
             "selected": selected_set.contains(&decision.path),
+            "modeling": decision.modeling,
         }));
     }
 
@@ -243,6 +360,12 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
             "limit": options.limit,
             "batch": options.batch,
             "batch_size": options.batch_size,
+            "config": {
+                "is_default": options.config.is_default(),
+                "generic_instances": options.config.generic_instances.len(),
+                "reference": if options.config.reference_opaque { "opaque" } else { "off" },
+                "ghost": if options.config.ghost_opaque { "opaque" } else { "off" },
+            },
         },
         "counts": {
             "functions": functions.len(),
@@ -256,6 +379,16 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
                 "tier_a": clause_counts[0],
                 "tier_b": clause_counts[1],
                 "tier_c": clause_counts[2],
+            },
+            "baseline": {
+                "tier_a": baseline_counts.get("A").copied().unwrap_or(0),
+                "tier_b": baseline_counts.get("B").copied().unwrap_or(0),
+                "tier_c": baseline_counts.get("C").copied().unwrap_or(0),
+            },
+            "upgraded": {
+                "to_a": upgraded[0],
+                "to_b": upgraded[1],
+                "still_c": upgraded[2],
             },
             "candidates": total_candidates,
             "selected": entries.len(),
@@ -278,11 +411,26 @@ pub fn run(census_path: &Path, out: &Path, options: &Options) -> Result<Value> {
     Ok(built)
 }
 
-fn classify(function: &Value, index: usize, name_used: &mut BTreeSet<String>) -> Decision {
+fn classify(
+    function: &Value,
+    index: usize,
+    name_used: &mut BTreeSet<String>,
+    config: &Config,
+) -> Decision {
     let path = function["path"].as_str().unwrap_or("<unknown>").to_owned();
     let clauses = function["requires"].as_array().cloned().unwrap_or_default();
-    let params = function["params"].as_array().cloned().unwrap_or_default();
-    let generics = function["generics"]["count"].as_u64().unwrap_or(0) as usize;
+    let raw_params = function["params"].as_array().cloned().unwrap_or_default();
+    let generic_names = function["generics"]["names"]
+        .as_array()
+        .map(|names| {
+            names
+                .iter()
+                .filter_map(Value::as_str)
+                .map(str::to_owned)
+                .collect::<Vec<_>>()
+        })
+        .unwrap_or_default();
+    let generic_count = function["generics"]["count"].as_u64().unwrap_or(0);
     let mechanical = clauses
         .iter()
         .filter(|clause| clause["class"].as_str() == Some("mechanical"))
@@ -297,8 +445,12 @@ fn classify(function: &Value, index: usize, name_used: &mut BTreeSet<String>) ->
         "mode": function["mode"],
         "generics": function["generics"],
     });
+    let mut modeling = json!({
+        "generic_instantiation": Value::Null,
+        "reference_mapping": [],
+        "ghost_mapping": [],
+    });
 
-    let mut reasons = Vec::new();
     if clauses.is_empty() {
         return Decision {
             path,
@@ -310,26 +462,94 @@ fn classify(function: &Value, index: usize, name_used: &mut BTreeSet<String>) ->
             clauses: 0,
             mechanical: 0,
             unsupported: 0,
+            modeling,
         };
     }
 
-    // Referenced parameters are the only ones that can constrain the
-    // precondition; unreferenced tracked/reference parameters are irrelevant.
-    let referenced = referenced_names(&clauses, &params);
-    if generics > 0 {
+    let mut reasons = Vec::new();
+    let mut params = raw_params
+        .iter()
+        .filter_map(|param| {
+            let name = param["name"].as_str()?.to_owned();
+            Some(ParamInfo {
+                name,
+                ty: param["type"].as_str().unwrap_or("").to_owned(),
+                kind: param["kind"].as_str().unwrap_or("opaque").to_owned(),
+            })
+        })
+        .collect::<Vec<_>>();
+
+    // G rules: project-side instantiation, then re-derive parameter kinds.
+    if generic_count > 0 && generic_names.is_empty() {
+        // Legacy/foreign census without names: keep the M7e blocker.
         reasons.push(format!("generic:{}", function["generics"]["names"]));
+    } else if !generic_names.is_empty() {
+        match config.generic_rule(&path) {
+            Some(rule) => {
+                let mut types = BTreeMap::new();
+                let mut missing = Vec::new();
+                for name in &generic_names {
+                    if let Some(ty) = rule.types.get(name).or_else(|| rule.types.get("*")) {
+                        types.insert(name.clone(), ty.clone());
+                    } else {
+                        missing.push(name.clone());
+                    }
+                }
+                if missing.is_empty() {
+                    for param in &mut params {
+                        param.ty = substitute_type(&param.ty, &types);
+                        param.kind = type_kind_of(&param.ty);
+                    }
+                    modeling["generic_instantiation"] = json!({
+                        "matched": rule.pattern,
+                        "types": types,
+                    });
+                } else {
+                    reasons.push(format!("generic_uninstantiated:{}", json!(missing)));
+                }
+            }
+            None => reasons.push(format!("generic:{}", function["generics"]["names"])),
+        }
     }
+
+    // R/H rules: only parameters referenced by a clause can constrain it.
+    let referenced = referenced_names(&clauses, &raw_params);
+    let mut reference_mapping = Vec::new();
+    let mut ghost_mapping = Vec::new();
     for param in &params {
-        let name = param["name"].as_str().unwrap_or_default();
-        if !referenced.contains(name) {
+        if !referenced.contains(&param.name) {
             continue;
         }
-        match param["kind"].as_str() {
-            Some("ghost") => reasons.push(format!("ghost_param:{name}")),
-            Some("reference") => reasons.push(format!("reference_param:{name}")),
+        match param.kind.as_str() {
+            "ghost" => {
+                if config.ghost_opaque && param_is_mappable(&param.name, &clauses) {
+                    ghost_mapping.push(mapping_json(param, &clauses));
+                } else {
+                    let kind = if config.ghost_opaque {
+                        "ghost_param_unmapped"
+                    } else {
+                        "ghost_param"
+                    };
+                    reasons.push(format!("{kind}:{}", param.name));
+                }
+            }
+            "reference" => {
+                if config.reference_opaque && param_is_mappable(&param.name, &clauses) {
+                    reference_mapping.push(mapping_json(param, &clauses));
+                } else {
+                    let kind = if config.reference_opaque {
+                        "reference_param_unmapped"
+                    } else {
+                        "reference_param"
+                    };
+                    reasons.push(format!("{kind}:{}", param.name));
+                }
+            }
             _ => {}
         }
     }
+    modeling["reference_mapping"] = json!(reference_mapping);
+    modeling["ghost_mapping"] = json!(ghost_mapping);
 
     let tier = if !reasons.is_empty() {
         Tier::C
@@ -350,6 +570,7 @@ fn classify(function: &Value, index: usize, name_used: &mut BTreeSet<String>) ->
             clauses: clauses.len(),
             mechanical,
             unsupported,
+            modeling,
         };
     }
 
@@ -500,7 +721,141 @@ fn classify(function: &Value, index: usize, name_used: &mut BTreeSet<String>) ->
         clauses: clauses.len(),
         mechanical,
         unsupported,
+        modeling,
     }
+}
+
+fn sanitize_ident(name: &str) -> String {
+    let mut out = name
+        .chars()
+        .map(|c| {
+            if c.is_ascii_alphanumeric() || c == '_' {
+                c
+            } else {
+                '_'
+            }
+        })
+        .collect::<String>();
+    if out.is_empty() {
+        out.push('p');
+    }
+    if out.as_bytes()[0].is_ascii_digit() {
+        out.insert(0, 'p');
+    }
+    out
+}
+
+fn type_kind_of(ty: &str) -> String {
+    let ty = ty.trim();
+    if ty.starts_with('&') {
+        "reference".to_owned()
+    } else if ty.starts_with("Tracked<") || ty.starts_with("Ghost<") {
+        "ghost".to_owned()
+    } else if ty == "bool" {
+        "bool".to_owned()
+    } else if is_int_type(ty) {
+        "int".to_owned()
+    } else {
+        "opaque".to_owned()
+    }
+}
+
+fn is_int_type(ty: &str) -> bool {
+    matches!(ty, "int" | "nat" | "char" | "usize" | "isize")
+        || ty
+            .strip_prefix(['u', 'i'])
+            .is_some_and(|rest| !rest.is_empty() && rest.chars().all(|c| c.is_ascii_digit()))
+}
+
+fn replace_ident(text: &str, name: &str, replacement: &str) -> String {
+    let identifier = |c: char| c.is_ascii_alphanumeric() || c == '_' || c == '%';
+    let mut out = String::with_capacity(text.len());
+    let mut token = String::new();
+    let flush = |token: &mut String, out: &mut String| {
+        if token.is_empty() {
+            return;
+        }
+        if token == name {
+            out.push_str(replacement);
+        } else {
+            out.push_str(token);
+        }
+        token.clear();
+    };
+    for c in text.chars() {
+        if identifier(c) {
+            token.push(c);
+        } else {
+            flush(&mut token, &mut out);
+            out.push(c);
+        }
+    }
+    flush(&mut token, &mut out);
+    out
+}
+
+fn substitute_type(ty: &str, types: &BTreeMap<String, String>) -> String {
+    let mut out = ty.to_owned();
+    let mut names = types.keys().collect::<Vec<_>>();
+    names.sort_by_key(|name| std::cmp::Reverse(name.len()));
+    for name in names {
+        let replacement = &types[name];
+        out = out.replace(&format!("Typ TypParam {name}"), replacement);
+        out = replace_ident(&out, name, replacement);
+    }
+    out
+}
+
+fn param_uses(clause: &Value, name: &str) -> Vec<Value> {
+    clause["param_uses"]
+        .as_array()
+        .into_iter()
+        .flatten()
+        .filter(|entry| entry["name"].as_str() == Some(name))
+        .cloned()
+        .collect()
+}
+
+fn param_is_mappable(name: &str, clauses: &[Value]) -> bool {
+    let mut seen = false;
+    for clause in clauses {
+        let occurrences = clause["param_occurrences"][name].as_u64().unwrap_or(0) as usize;
+        let uses = param_uses(clause, name);
+        if occurrences == 0 && uses.is_empty() {
+            continue;
+        }
+        if occurrences == 0 || uses.len() != occurrences {
+            return false;
+        }
+        for entry in &uses {
+            match entry["kind"].as_str() {
+                Some("receiver_root" | "field_root" | "deref_root") => {}
+                _ => return false,
+            }
+        }
+        seen = true;
+    }
+    seen
+}
+
+fn mapping_json(param: &ParamInfo, clauses: &[Value]) -> Value {
+    let uses = clauses
+        .iter()
+        .flat_map(|clause| param_uses(clause, &param.name))
+        .map(|entry| {
+            json!({
+                "kind": entry["kind"],
+                "callee": entry["callee"],
+                "field": entry["field"],
+                "argc": entry["argc"],
+            })
+        })
+        .collect::<Vec<_>>();
+    json!({
+        "param": param.name,
+        "id": format!("{}_id", sanitize_ident(&param.name)),
+        "uses": uses,
+    })
 }
 
 fn referenced_names(clauses: &[Value], params: &[Value]) -> BTreeSet<String> {
@@ -521,22 +876,23 @@ fn referenced_names(clauses: &[Value], params: &[Value]) -> BTreeSet<String> {
     referenced
 }
 
-fn param_models(params: &[Value], referenced: &BTreeSet<String>) -> BTreeMap<String, ParamModel> {
+fn param_models(
+    params: &[ParamInfo],
+    referenced: &BTreeSet<String>,
+) -> BTreeMap<String, ParamModel> {
     params
         .iter()
         .filter_map(|param| {
-            let name = param["name"].as_str()?;
-            if !referenced.contains(name) {
+            if !referenced.contains(&param.name) {
                 return None;
             }
-            let kind = param["kind"].as_str().unwrap_or("opaque");
-            let int = kind != "bool";
-            let probe = if kind == "int" || kind == "bool" {
-                name.to_owned()
+            let int = param.kind != "bool";
+            let probe = if param.kind == "int" || param.kind == "bool" {
+                sanitize_ident(&param.name)
             } else {
-                format!("{name}_id")
+                format!("{}_id", sanitize_ident(&param.name))
             };
-            Some((name.to_owned(), ParamModel { probe, int }))
+            Some((param.name.clone(), ParamModel { probe, int }))
         })
         .collect()
 }
@@ -623,14 +979,14 @@ fn collect_ast_vars(ast: &Value, out: &mut BTreeSet<String>) {
 
 fn ordered_args(
     vars: &BTreeSet<String>,
-    params: &[Value],
+    params: &[ParamInfo],
     model: &BTreeMap<String, ParamModel>,
     const_names: &BTreeMap<String, String>,
     param_order: &mut Vec<String>,
 ) -> Vec<(String, String)> {
     let mut args = Vec::new();
     for param in params {
-        let original = param["name"].as_str().unwrap_or_default();
+        let original = param.name.as_str();
         if let Some(entry) = model.get(original) {
             if vars.contains(&entry.probe) || vars.contains(original) {
                 args.push((entry.probe.clone(), entry.probe.clone()));
@@ -654,7 +1010,7 @@ fn ordered_args(
 
 fn unsupported_args(
     clause: &Value,
-    params: &[Value],
+    params: &[ParamInfo],
     model: &BTreeMap<String, ParamModel>,
     used_names: &mut BTreeSet<String>,
     const_names: &mut BTreeMap<String, String>,
@@ -668,7 +1024,7 @@ fn unsupported_args(
     }
     let mut args = Vec::new();
     for param in params {
-        let original = param["name"].as_str().unwrap_or_default();
+        let original = param.name.as_str();
         if vars.contains(original) {
             if let Some(entry) = model.get(original) {
                 args.push((entry.probe.clone(), entry.probe.clone()));
@@ -678,10 +1034,11 @@ fn unsupported_args(
             } else {
                 // Free variable that is not a modelable parameter: keep an
                 // opaque id with a deterministic name.
-                let mut name = format!("{original}_id");
+                let base = format!("{}_id", sanitize_ident(original));
+                let mut name = base.clone();
                 let mut suffix = 2;
                 while used_names.contains(&name) {
-                    name = format!("{original}_id_{suffix}");
+                    name = format!("{base}_{suffix}");
                     suffix += 1;
                 }
                 used_names.insert(name.clone());
@@ -1183,6 +1540,247 @@ mod tests {
         let built = build(&data, &options).unwrap();
         assert_eq!(built["report"]["entries"].as_array().unwrap().len(), 2);
         assert_eq!(built["report"]["counts"]["candidates"], 3);
+    }
+
+    fn typed_function(
+        path: &str,
+        generics: &[&str],
+        params: Vec<Value>,
+        clauses: Vec<Value>,
+    ) -> Value {
+        json!({
+            "path": path,
+            "name": path.rsplit("::").next().unwrap_or(path),
+            "mode": "exec",
+            "kind": "static",
+            "visibility": {"kind": "pub", "restricted_to": null},
+            "source": {"file": null, "line": null, "span": null},
+            "external_body": false,
+            "trait": null,
+            "generics": {"count": generics.len(), "names": generics},
+            "params": params,
+            "requires": clauses,
+        })
+    }
+
+    fn config(value: Value) -> Config {
+        Config::from_value(&value).unwrap()
+    }
+
+    fn uses_clause(kind: &str, name: &str, occurrences: usize) -> Value {
+        let mut clause = clause(0, "unsupported", Value::Null, &[name]);
+        clause["param_occurrences"] = json!({name: occurrences});
+        clause["param_uses"] =
+            json!([{"name": name, "kind": kind, "callee": "p::inv", "field": null, "argc": 1}]);
+        clause
+    }
+
+    #[test]
+    fn generic_instantiation_reclassifies_and_unmapped_names_stay_c() {
+        let lt = json!({
+            "op": "bin", "sym": "<=",
+            "lhs": {"op": "var", "name": "n"},
+            "rhs": {"op": "int", "value": 3}
+        });
+        let data = census(vec![
+            typed_function(
+                "p::lemma",
+                &["E"],
+                vec![param("s", "opaque"), param("n", "int")],
+                vec![clause(0, "mechanical", lt.clone(), &["n"])],
+            ),
+            typed_function(
+                "p::other",
+                &["E"],
+                vec![param("n", "int")],
+                vec![clause(0, "mechanical", lt, &["n"])],
+            ),
+        ]);
+        let configured = config(json!({
+            "schema": CONFIG_SCHEMA,
+            "generic_instances": [{"match": "p::lemma", "types": {"E": "u64"}}]
+        }));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        let rows = built["report"]["functions"].as_array().unwrap();
+        assert_eq!(rows[0]["tier"], "A");
+        assert_eq!(rows[0]["baseline_tier"], "C");
+        assert_eq!(
+            rows[0]["modeling"]["generic_instantiation"]["matched"],
+            "p::lemma"
+        );
+        assert_eq!(built["report"]["counts"]["baseline"]["tier_c"], 2);
+        assert_eq!(built["report"]["counts"]["upgraded"]["to_a"], 1);
+        assert_eq!(rows[1]["tier"], "C");
+        assert!(
+            rows[1]["reasons"][0]
+                .as_str()
+                .unwrap()
+                .starts_with("generic:")
+        );
+        assert_eq!(built["manifest"]["contracts"][0]["witness"], "0usize");
+    }
+
+    #[test]
+    fn generic_instantiation_defaults_all_parameters_to_star() {
+        let ast = json!({
+            "op": "bin", "sym": "==",
+            "lhs": {"op": "var", "name": "n"},
+            "rhs": {"op": "int", "value": 0}
+        });
+        let data = census(vec![typed_function(
+            "p::f",
+            &["T", "U"],
+            vec![param("n", "int")],
+            vec![clause(0, "mechanical", ast, &["n"])],
+        )]);
+        let configured = config(json!({
+            "schema": CONFIG_SCHEMA,
+            "generic_instances": [{"match": "*", "types": {"*": "u64"}}]
+        }));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        assert_eq!(built["report"]["functions"][0]["tier"], "A");
+    }
+
+    #[test]
+    fn reference_receiver_use_is_abstracted_to_an_id_at_tier_b() {
+        let data = census(vec![typed_function(
+            "p::m",
+            &[],
+            vec![param("self", "reference"), param("cpu", "opaque")],
+            vec![uses_clause("receiver_root", "self", 1)],
+        )]);
+        let configured = config(json!({
+            "schema": CONFIG_SCHEMA,
+            "reference": {"mode": "opaque"}
+        }));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        let row = &built["report"]["functions"][0];
+        assert_eq!(row["tier"], "B");
+        assert_eq!(row["baseline_tier"], "C");
+        assert_eq!(row["modeling"]["reference_mapping"][0]["id"], "self_id");
+        let contract = &built["manifest"]["contracts"][0];
+        assert_eq!(contract["params"], "self_id: usize");
+        assert_eq!(contract["requires"], "p0_k0(self_id)");
+        assert_eq!(
+            built["report"]["entries"][0]["expected"],
+            "CandidateInconclusive"
+        );
+    }
+
+    #[test]
+    fn reference_direct_use_stays_tier_c_with_an_unmapped_reason() {
+        let data = census(vec![typed_function(
+            "p::m",
+            &[],
+            vec![param("self", "reference")],
+            vec![uses_clause("plain_root", "self", 1)],
+        )]);
+        let configured = config(json!({
+            "schema": CONFIG_SCHEMA,
+            "reference": {"mode": "opaque"}
+        }));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        let row = &built["report"]["functions"][0];
+        assert_eq!(row["tier"], "C");
+        assert_eq!(row["reasons"][0], "reference_param_unmapped:self");
+        assert!(
+            built["manifest"]["contracts"]
+                .as_array()
+                .unwrap()
+                .is_empty()
+        );
+    }
+
+    #[test]
+    fn ghost_receiver_is_abstracted_only_when_the_policy_is_on() {
+        let data = census(vec![typed_function(
+            "p::perm",
+            &[],
+            vec![param("tracked", "ghost")],
+            vec![uses_clause("receiver_root", "tracked", 1)],
+        )]);
+        let off = build(&data, &Options::default()).unwrap();
+        assert_eq!(off["report"]["functions"][0]["tier"], "C");
+        assert_eq!(
+            off["report"]["functions"][0]["reasons"][0],
+            "ghost_param:tracked"
+        );
+        let on = build(
+            &data,
+            &Options {
+                config: config(json!({
+                    "schema": CONFIG_SCHEMA,
+                    "ghost": {"mode": "opaque"}
+                })),
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        let row = &on["report"]["functions"][0];
+        assert_eq!(row["tier"], "B");
+        assert_eq!(row["modeling"]["ghost_mapping"][0]["id"], "tracked_id");
+        assert_eq!(
+            on["manifest"]["contracts"][0]["params"],
+            "tracked_id: usize"
+        );
+    }
+
+    #[test]
+    fn tier_recomputation_is_deterministic() {
+        let data = census(vec![
+            typed_function(
+                "p::g",
+                &["T"],
+                vec![param("self", "reference")],
+                vec![uses_clause("receiver_root", "self", 1)],
+            ),
+            typed_function(
+                "p::h",
+                &[],
+                vec![param("self", "reference")],
+                vec![uses_clause("plain_root", "self", 1)],
+            ),
+        ]);
+        let options = Options {
+            config: config(json!({
+                "schema": CONFIG_SCHEMA,
+                "generic_instances": [{"match": "*", "types": {"*": "u64"}}],
+                "reference": {"mode": "opaque"},
+                "ghost": {"mode": "opaque"}
+            })),
+            ..Options::default()
+        };
+        let first = build(&data, &options).unwrap();
+        let second = build(&data, &options).unwrap();
+        assert_eq!(first, second);
     }
 
     #[test]

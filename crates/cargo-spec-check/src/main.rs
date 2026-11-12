@@ -218,7 +218,7 @@ fn check() -> Result<()> {
         return Ok(());
     }
     if args.first().is_some_and(|s| s == "screen-requires") {
-        let usage = "screen-requires --census FILE --out DIRECTORY [--tier A,B] [--filter SUBSTRING] [--limit N] [--batch N] [--batch-size N] [--cargo-verus PATH --z3 PATH --vstd PATH]";
+        let usage = "screen-requires --census FILE --out DIRECTORY [--tier A,B] [--filter SUBSTRING] [--limit N] [--batch N] [--batch-size N] [--config FILE] [--cargo-verus PATH --z3 PATH --vstd PATH]";
         let mut values = BTreeMap::new();
         let mut iter = args.iter().skip(1);
         while let Some(key) = iter.next() {
@@ -231,6 +231,7 @@ fn check() -> Result<()> {
                     | "--limit"
                     | "--batch"
                     | "--batch-size"
+                    | "--config"
                     | "--cargo-verus"
                     | "--z3"
                     | "--vstd"
@@ -276,6 +277,11 @@ fn check() -> Result<()> {
                 .transpose()
                 .map_err(|_| "--batch-size must be a non-negative integer")?
                 .unwrap_or(50),
+            config: values
+                .get("--config")
+                .map(|value| requires::Config::from_path(Path::new(value)))
+                .transpose()?
+                .unwrap_or_default(),
         };
         let out = Path::new(get("--out")?);
         let built = requires::run(Path::new(get("--census")?), out, &options)?;
