@@ -195,8 +195,14 @@ Translation to a probe term `T` is:
 | `e == e'` / `e != e'` | translate operands; a raw reference/ghost id may appear here as its id. This is a deliberate over-approximation of equality of the underlying values (the id is a value-identity token). |
 | `Not(e)`, `Neg(e)`, arithmetic/ordering/logical `Bin` | translate operands; both must be scalar (a raw base id may not be ordered or used in arithmetic) |
 | `Const` / `ConstVar` / integer type bound (`usize::MAX`, ...) | lifted to a fresh probe parameter (same convention as M7e) |
-| `forall` / `exists` | bound variables become fresh scalar quantifier variables; the body is translated. The clause is rendered as an open spec fn but is **Tier B** (the bounded witness search does not decide quantifiers) |
-| `Ctor`, `Match`, raw bit operations, blocks, unknown nodes | unmapped; the clause stays Tier C if it mentions a reference/ghost parameter |
+| `forall` / `exists` | bound variables become fresh scalar quantifier variables; the body is translated. The clause is **Tier B** (the bounded witness search does not decide quantifiers) and is rendered as a named `uninterp spec fn`, so Verus never has to infer triggers for an arbitrary projected quantifier |
+| `Ctor` (E6) | a fresh structural token (`Opaque`), usable as a model argument or in equality, not in arithmetic/ordering; the clause is over-approx |
+| `Block` (E6) | simple `let` bindings are substituted in order; the trailing expression is translated |
+| `Match` (E6) | pattern conditions become a scalar `if/else` chain; `Some`/`None` and project variant rules are model calls; pattern variables bind fresh tokens; an uncovered else is a fresh token |
+| `Clip` cast (E6) | identity over the extended integer domain, marked as a structural relaxation (over-approx) |
+| `/`, `%` (E6) | Euclidean division/modulo over the extended integer domain, marked over-approx |
+| tuple field without datatype (E6) | numeric field (`0`, `1`, ...) becomes a fresh scalar token with `relation: over-approx`; a non-numeric field remains an explicit unmapped diagnostic |
+| `Ctor`, `Match`, `Block`, `Clip`, `/`, `%`, tuple field | **only enabled for baseline Tier C entries.** Baseline A/B entries keep their pre-E6 probe text; this prevents an expression extension from silently changing an already-screened verdict. Raw bit operations and unknown nodes remain unmapped. |
 
 A parameter is **projection-covered** iff every clause in which it occurs
 translates successfully. A clause with an unmapped node does not cover any
@@ -238,7 +244,10 @@ Generated probes:
 
 - Projected clauses are rendered as named `open spec fn`s whose bodies call the
   project-side model functions. This keeps the constraint structure, unlike the
-  old whole-clause `uninterp` fallback.
+  old whole-clause `uninterp` fallback. A clause containing a quantifier is the
+  exception: it is rendered as a named `uninterp spec fn` (it is Tier B and the
+  bounded search cannot decide it anyway), which avoids Verus trigger-inference
+  failures.
 - The model definitions are injected once into the manifest `preamble`
   (`pub open spec fn ... { body }` or `pub uninterp spec fn ...;`), deduplicated
   by name across selected entries.
@@ -295,8 +304,8 @@ remainder of C is an acceptable and expected outcome.
   `uninterp` for fields/other values.
 - `old` is transparent at entry; this is exact for the id abstraction but not a
   claim about post-state changes.
-- Quantifiers are rendered but not decided by the bounded search; they stay
-  Tier B.
+- Quantifiers are not decided by the bounded search; they stay Tier B and are
+  rendered as uninterp named constraints.
 - Missing source text is not a blocker because the tree comes from VIR, but a
   VIR node the extractor does not understand is an explicit `opaque` node and
   therefore unmapped.

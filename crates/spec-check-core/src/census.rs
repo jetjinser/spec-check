@@ -863,6 +863,8 @@ fn binary_sym(op: &Node) -> Option<&'static str> {
                 "Add" => Some("+"),
                 "Sub" => Some("-"),
                 "Mul" => Some("*"),
+                "EuclideanDiv" | "Div" => Some("/"),
+                "EuclideanMod" | "Mod" => Some("%"),
                 _ => None,
             },
             _ => None,
@@ -877,6 +879,140 @@ fn binary_sym(op: &Node) -> Option<&'static str> {
         "InequalityOp" => inequality_sym(op),
         _ => None,
     }
+}
+
+fn pattern_var_name(node: &Node) -> Option<String> {
+    let node = node.unwrap();
+    let items = node.list()?;
+    if items.first().and_then(Node::atom) != Some("Pattern")
+        || items.get(1).and_then(Node::atom) != Some("Var")
+    {
+        return None;
+    }
+    let binding = items.get(2)?.list()?;
+    if binding.first().and_then(Node::atom) != Some("PatternBinding") {
+        return None;
+    }
+    let position = binding
+        .iter()
+        .position(|node| node.atom() == Some(":name"))?;
+    expr_var_ident(binding.get(position + 1)?)
+}
+
+fn pattern_expr(node: &Node) -> Value {
+    let node = node.unwrap();
+    let Some(items) = node.list() else {
+        return json!({"kind": "unsupported", "tag": "pattern-atom"});
+    };
+    match items.get(1).and_then(Node::atom) {
+        Some("Wildcard") => json!({"kind": "wildcard"}),
+        Some("Var") => pattern_var_name(node).map_or_else(
+            || json!({"kind": "unsupported", "tag": "pattern-var"}),
+            |name| json!({"kind": "var", "name": name}),
+        ),
+        Some("Constructor") => {
+            let datatype = items
+                .get(2)
+                .and_then(dt_path)
+                .or_else(|| items.get(2).map(render_compact));
+            let variant = items.get(3).and_then(Node::atom).map(str::to_owned);
+            let mut args = Vec::new();
+            if let Some(fields) = items.get(4).and_then(Node::list) {
+                for field in fields {
+                    let field = field.unwrap().list().unwrap_or_default();
+                    if field.first().and_then(Node::atom) == Some("->")
+                        && let Some(pattern) = field.get(2)
+                    {
+                        args.push(pattern_expr(pattern));
+                    }
+                }
+            }
+            json!({
+                "kind": "ctor",
+                "datatype": datatype,
+                "variant": variant,
+                "args": args,
+            })
+        }
+        Some("Or") => {
+            let patterns = items
+                .get(2)
+                .and_then(Node::list)
+                .unwrap_or_default()
+                .iter()
+                .map(pattern_expr)
+                .collect::<Vec<_>>();
+            json!({"kind": "or", "patterns": patterns})
+        }
+        other => json!({"kind": "unsupported", "tag": other.unwrap_or("pattern")}),
+    }
+}
+
+fn block_expr(statements: Option<&Node>, body: Option<&Node>) -> Value {
+    let statements = statements.and_then(Node::list).unwrap_or_default();
+    let mut bindings = Vec::new();
+    for statement in statements {
+        let statement = statement.unwrap();
+        let Some(items) = statement.list() else {
+            return json!({"op": "opaque", "tag": "block-stmt"});
+        };
+        if items.first().and_then(Node::atom) != Some("Stmt")
+            || items.get(1).and_then(Node::atom) != Some("Decl")
+        {
+            return json!({"op": "opaque", "tag": "block-stmt"});
+        }
+        let pattern = statement.field("pattern");
+        let init = statement.field("init");
+        let Some(name) = pattern.and_then(pattern_var_name) else {
+            return json!({"op": "opaque", "tag": "block-stmt-pattern"});
+        };
+        let Some(init) = init.filter(|node| node.unwrap().atom() != Some("None")) else {
+            return json!({"op": "opaque", "tag": "block-stmt-init"});
+        };
+        bindings.push(json!({"name": name, "init": clause_expr(init)}));
+    }
+    let Some(body) = body else {
+        return json!({"op": "opaque", "tag": "block-body"});
+    };
+    json!({
+        "op": "block",
+        "bindings": bindings,
+        "body": clause_expr(body),
+    })
+}
+
+fn match_expr(scrutinee: Option<&Node>, arms: &[Node]) -> Value {
+    let Some(scrutinee) = scrutinee else {
+        return json!({"op": "opaque", "tag": "match-scrutinee"});
+    };
+    let mut translated = Vec::new();
+    for arm in arms {
+        let arm = arm.unwrap();
+        let Some(items) = arm.list() else {
+            return json!({"op": "opaque", "tag": "match-arm"});
+        };
+        if items.first().and_then(Node::atom) != Some("Arm") {
+            return json!({"op": "opaque", "tag": "match-arm"});
+        }
+        let pattern = arm
+            .field("pattern")
+            .map(pattern_expr)
+            .unwrap_or_else(|| json!({"kind": "unsupported", "tag": "missing-pattern"}));
+        let guard = arm.field("guard").map(clause_expr);
+        let Some(body) = arm.field("body") else {
+            return json!({"op": "opaque", "tag": "match-body"});
+        };
+        translated.push(json!({
+            "pattern": pattern,
+            "guard": guard,
+            "body": clause_expr(body),
+        }));
+    }
+    json!({
+        "op": "match",
+        "scrutinee": clause_expr(scrutinee),
+        "arms": translated,
+    })
 }
 
 /// Generic, best-effort expression tree for a requires clause. This is the
@@ -913,6 +1049,10 @@ fn clause_expr(node: &Node) -> Value {
             match op.get(1).and_then(Node::atom) {
                 Some("Not") => json!({"op": "not", "arg": arg}),
                 Some("Neg") => json!({"op": "neg", "arg": arg}),
+                Some("Clip") => json!({
+                    "op": "cast",
+                    "arg": arg.unwrap_or_else(|| json!({"op": "opaque", "tag": "unary"})),
+                }),
                 Some("Trigger" | "CoerceMode" | "Cast") => {
                     arg.unwrap_or_else(|| json!({"op": "opaque", "tag": "unary"}))
                 }
@@ -1014,6 +1154,11 @@ fn clause_expr(node: &Node) -> Value {
                 "args": args,
             })
         }
+        "Block" => block_expr(rest.first(), rest.get(1)),
+        "Match" => match_expr(
+            rest.first(),
+            rest.get(1).and_then(Node::list).unwrap_or_default(),
+        ),
         "Ctor" => {
             let fields = rest.get(2).and_then(Node::list).unwrap_or_default();
             let mut args = Vec::new();

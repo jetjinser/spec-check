@@ -489,6 +489,36 @@ ledger"，不把离线合成器伪装成自动发现。验证：bash -n、既有
   {config-projections.json,PROJECTION-EXPECTED.md,PROJECTION-RUN.md}`。
   commits 64587a2；registry 129ebd20（V-003）。
 
+### M7e-E6. 信号产品化 + 剩余 Tier C 表达式扩展 —— 完成（2026-11-13）
+
+把 7 条 VmIo 的“工具 expected 与预注册/实际不一致”从归档手工对比升级为一等输出，
+并把剩余 51 条 Tier C 中的 26 条按保守原则升级：
+
+- **E6 信号**：`screen-requires --expectations FILE`（`spec-check.expectations/1`，
+  entry → expected/basis/scope/registry）；同时比较预注册 expected 与工具内部
+  expected；输出 `signals[]`（direction/severity/model_relation/scope/evidence/
+  suggested_registry_action）与聚合统计。`vacuous-signal` 仅在 exact/faithful/
+  over-approx 关系上为 candidate；under-approx/undeclared 降为 info；Live 不声称
+  真实 liveness；工具不自动改 registry。新增 `signals` 子命令可对已有 run 重算。
+- **723 基线复核**（pre-E6 二进制 + 归档 census，15 批）：Live 22 / Vacuous 7 /
+  Inconclusive 694 / Anomaly 0；7 条信号全部 VmIo、expected_source=tool、
+  preregistered_match=true、candidate、confirm-registry:V-003；其余 716 无信号。
+  实际模型关系 6 faithful + 1 over-approx（`r0358_write_vals`），预注册的 7×faithful
+  有 1 条偏差，已归档。
+- **表达式扩展**：Ctor→结构 token、Match→标量 if-else、Block→let 序列、Clip cast、
+  `/`/`%`、数值 tuple field token；量化 projected 子句改 named uninterp（避免 trigger
+  推断失败）。扩展仅对 baseline C 启用，baseline A/B 探针文本保持不变。
+- Tier：774 全库 **A 28 / B 721 / C 25**（C→B 26、C→A 0，候选 723→749）。
+  仍 C 25：未建模 call（`relate_guard`/`node_matching`/`pcell_maybe_uninit::id`/
+  `atomic::value`/`disjoint` 等）与 1 个 `==` 类型冲突，逐条原因见 `E6-RUN.md`。
+- 扩展运行 749 条 / 15 批：**Live 22 / Vacuous 7 / Inconclusive 720 / Anomaly 0**；
+  原 723 逐条 verdict 0 差异；26 个新条目全 Inconclusive；7 条信号精确复现，
+  0 新 Vacuous、0 新信号。registry 未修改（V-003 仍 crate-scope，不升全局）。
+- 归档：`docs/M7e-e6-signals.md`、`examples/vostd-requires/
+  {E6-EXPECTED.md,E6-RUN.md,e6-expectations.json,e6-screening.json,e6-signals.json}`。
+  实现：`signals.rs`、`census.rs`、`requires.rs`、`cargo-spec-check/src/main.rs`。
+- 全测：`cargo test --offline` 全绿；core lib 152 passed / 72 ignored。
+
 ## 维护纪律
 
 1. 主线进度只认本文件与 git 历史；会话记忆不作为状态来源。

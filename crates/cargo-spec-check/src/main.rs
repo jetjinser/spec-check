@@ -218,7 +218,7 @@ fn check() -> Result<()> {
         return Ok(());
     }
     if args.first().is_some_and(|s| s == "screen-requires") {
-        let usage = "screen-requires --census FILE --out DIRECTORY [--tier A,B] [--filter SUBSTRING] [--limit N] [--batch N] [--batch-size N] [--config FILE] [--cargo-verus PATH --z3 PATH --vstd PATH]";
+        let usage = "screen-requires --census FILE --out DIRECTORY [--tier A,B] [--filter SUBSTRING] [--limit N] [--batch N] [--batch-size N] [--config FILE] [--expectations FILE] [--cargo-verus PATH --z3 PATH --vstd PATH]";
         let mut values = BTreeMap::new();
         let mut iter = args.iter().skip(1);
         while let Some(key) = iter.next() {
@@ -232,6 +232,7 @@ fn check() -> Result<()> {
                     | "--batch"
                     | "--batch-size"
                     | "--config"
+                    | "--expectations"
                     | "--cargo-verus"
                     | "--z3"
                     | "--vstd"
@@ -282,6 +283,10 @@ fn check() -> Result<()> {
                 .map(|value| requires::Config::from_path(Path::new(value)))
                 .transpose()?
                 .unwrap_or_default(),
+            expectations: values
+                .get("--expectations")
+                .map(|value| spec_check_core::signals::Expectations::from_path(Path::new(value)))
+                .transpose()?,
         };
         let out = Path::new(get("--out")?);
         let built = requires::run(Path::new(get("--census")?), out, &options)?;
@@ -340,22 +345,84 @@ fn check() -> Result<()> {
                     "detail": verdict.detail,
                 }));
             }
-            write_json(&run_out.join("verdicts.json"), &json!({
+            let verdict_doc = json!({"entries": matches.clone()});
+            let signals = spec_check_core::signals::evaluate(
+                &built["report"],
+                &verdict_doc,
+                options.expectations.as_ref(),
+            )?;
+            write_json(&run_out.join("signals.json"), &signals)?;
+            let mut verdicts_doc = json!({
                 "dependency_summary": report.dependency_summary,
                 "probe_summary": report.probe_summary,
                 "target_summary": report.target_summary,
                 "entries": matches,
+                "signals": signals["signals"],
+                "signal_counts": signals["counts"],
+                "e6_expectations": signals["expectations"],
                 "distribution": {
                     "confirmed_vacuous": report.verdicts.iter().filter(|v| matches!(v.verdict, spec_check_analyses::vacuity::Verdict::ConfirmedVacuous)).count(),
                     "confirmed_live": report.verdicts.iter().filter(|v| matches!(v.verdict, spec_check_analyses::vacuity::Verdict::ConfirmedLive)).count(),
                     "candidate_inconclusive": report.verdicts.iter().filter(|v| matches!(v.verdict, spec_check_analyses::vacuity::Verdict::CandidateInconclusive)).count(),
                     "anomaly": report.verdicts.iter().filter(|v| matches!(v.verdict, spec_check_analyses::vacuity::Verdict::Anomaly)).count(),
                 },
-            }))?;
+            });
+            verdicts_doc["signals"] = signals["signals"].clone();
+            verdicts_doc["signal_counts"] = signals["counts"].clone();
+            verdicts_doc["e6_expectations"] = signals["expectations"].clone();
+            write_json(&run_out.join("verdicts.json"), &verdicts_doc)?;
+            let mut screening = built["report"].clone();
+            screening["signals"] = signals["signals"].clone();
+            screening["signal_counts"] = signals["counts"].clone();
+            screening["e6_expectations"] = signals["expectations"].clone();
+            write_json(&out.join("screening.json"), &screening)?;
             for verdict in &report.verdicts {
                 println!("{}: {:?}", verdict.name, verdict.verdict);
             }
+            println!(
+                "signals: {} ({} candidate / {} info); directions {}",
+                signals["counts"]["signals"],
+                signals["counts"]["candidates"],
+                signals["counts"]["info"],
+                signals["counts"]["by_direction"],
+            );
         }
+        return Ok(());
+    }
+    if args.first().is_some_and(|s| s == "signals") {
+        let usage =
+            "signals --screening FILE --verdicts FILE [--expectations FILE] --out FILE";
+        let mut values = BTreeMap::new();
+        let mut iter = args.iter().skip(1);
+        while let Some(key) = iter.next() {
+            if !matches!(
+                key.as_str(),
+                "--screening" | "--verdicts" | "--expectations" | "--out"
+            ) {
+                return Err(usage.into());
+            }
+            let value = iter.next().ok_or(usage)?.clone();
+            if values.insert(key.clone(), value).is_some() {
+                return Err(usage.into());
+            }
+        }
+        let get = |key: &str| values.get(key).map(String::as_str).ok_or(usage);
+        let screening: Value = serde_json::from_str(&fs::read_to_string(get("--screening")?)?)?;
+        let verdicts: Value = serde_json::from_str(&fs::read_to_string(get("--verdicts")?)?)?;
+        let expectations = values
+            .get("--expectations")
+            .map(|value| spec_check_core::signals::Expectations::from_path(Path::new(value)))
+            .transpose()?;
+        let report =
+            spec_check_core::signals::evaluate(&screening, &verdicts, expectations.as_ref())?;
+        write_json(Path::new(get("--out")?), &report)?;
+        println!(
+            "signals: {} ({} candidate / {} info); directions {}",
+            report["counts"]["signals"],
+            report["counts"]["candidates"],
+            report["counts"]["info"],
+            report["counts"]["by_direction"],
+        );
         return Ok(());
     }
     if args.first().is_some_and(|s| s == "ledger") {

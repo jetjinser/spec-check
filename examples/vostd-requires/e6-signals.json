@@ -1,0 +1,251 @@
+{
+ "counts": {
+  "by_direction": {
+   "vacuous-signal": 7
+  },
+  "by_expected_source": {
+   "tool": 7
+  },
+  "by_model_relation": {
+   "faithful": 6,
+   "over-approx": 1
+  },
+  "candidates": 7,
+  "info": 0,
+  "signals": 7
+ },
+ "expectations": {
+  "entries": 723,
+  "matched": 723,
+  "missing": 26,
+  "provided": true,
+  "unmatched": 0
+ },
+ "schema": "spec-check.e6-signals/1",
+ "signals": [
+  {
+   "actual": "ConfirmedVacuous",
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "direction": "vacuous-signal",
+   "entry": "r0351_read_bytes",
+   "evidence": {
+    "detail": "vacuous_probe_failed=false live_probe_failed=true",
+    "projection_relations": {
+     "faithful": 1,
+     "over-approx": 0,
+     "structural_relaxed_clauses": 0,
+     "under-approx": 0
+    },
+    "requires": "p351_k0()",
+    "span": "ostd/src/mm/io.rs:1309:5: 1310:19 (#0)",
+    "witness": null
+   },
+   "expected": "CandidateInconclusive",
+   "expected_source": "tool",
+   "function": "ostd::mm::io::VmIo::read_bytes",
+   "model_relation": "faithful",
+   "preregistered_expected": "ConfirmedVacuous",
+   "preregistered_match": true,
+   "registry": "V-003",
+   "scope": "crate",
+   "severity": "candidate",
+   "suggested_registry_action": "confirm-registry:V-003",
+   "tier": "A",
+   "tool_expected": "CandidateInconclusive",
+   "tool_match": false,
+   "vacuum_evidence": true
+  },
+  {
+   "actual": "ConfirmedVacuous",
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "direction": "vacuous-signal",
+   "entry": "r0352_read_slice",
+   "evidence": {
+    "detail": "vacuous_probe_failed=false live_probe_failed=true",
+    "projection_relations": {
+     "faithful": 1,
+     "over-approx": 0,
+     "structural_relaxed_clauses": 0,
+     "under-approx": 0
+    },
+    "requires": "p352_k0()",
+    "span": "ostd/src/mm/io.rs:1336:5: 1341:24 (#0)",
+    "witness": null
+   },
+   "expected": "CandidateInconclusive",
+   "expected_source": "tool",
+   "function": "ostd::mm::io::VmIo::read_slice",
+   "model_relation": "faithful",
+   "preregistered_expected": "ConfirmedVacuous",
+   "preregistered_match": true,
+   "registry": "V-003",
+   "scope": "crate",
+   "severity": "candidate",
+   "suggested_registry_action": "confirm-registry:V-003",
+   "tier": "A",
+   "tool_expected": "CandidateInconclusive",
+   "tool_match": false,
+   "vacuum_evidence": true
+  },
+  {
+   "actual": "ConfirmedVacuous",
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "direction": "vacuous-signal",
+   "entry": "r0353_read_val",
+   "evidence": {
+    "detail": "vacuous_probe_failed=false live_probe_failed=true",
+    "projection_relations": {
+     "faithful": 1,
+     "over-approx": 0,
+     "structural_relaxed_clauses": 0,
+     "under-approx": 0
+    },
+    "requires": "p353_k0()",
+    "span": "ostd/src/mm/io.rs:1324:5: 1324:96 (#0)",
+    "witness": null
+   },
+   "expected": "CandidateInconclusive",
+   "expected_source": "tool",
+   "function": "ostd::mm::io::VmIo::read_val",
+   "model_relation": "faithful",
+   "preregistered_expected": "ConfirmedVacuous",
+   "preregistered_match": true,
+   "registry": "V-003",
+   "scope": "crate",
+   "severity": "candidate",
+   "suggested_registry_action": "confirm-registry:V-003",
+   "tier": "A",
+   "tool_expected": "CandidateInconclusive",
+   "tool_match": false,
+   "vacuum_evidence": true
+  },
+  {
+   "actual": "ConfirmedVacuous",
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "direction": "vacuous-signal",
+   "entry": "r0355_write_bytes",
+   "evidence": {
+    "detail": "vacuous_probe_failed=false live_probe_failed=true",
+    "projection_relations": {
+     "faithful": 1,
+     "over-approx": 0,
+     "structural_relaxed_clauses": 0,
+     "under-approx": 0
+    },
+    "requires": "p355_k0()",
+    "span": "ostd/src/mm/io.rs:1359:5: 1361:6 (#0)",
+    "witness": null
+   },
+   "expected": "CandidateInconclusive",
+   "expected_source": "tool",
+   "function": "ostd::mm::io::VmIo::write_bytes",
+   "model_relation": "faithful",
+   "preregistered_expected": "ConfirmedVacuous",
+   "preregistered_match": true,
+   "registry": "V-003",
+   "scope": "crate",
+   "severity": "candidate",
+   "suggested_registry_action": "confirm-registry:V-003",
+   "tier": "A",
+   "tool_expected": "CandidateInconclusive",
+   "tool_match": false,
+   "vacuum_evidence": true
+  },
+  {
+   "actual": "ConfirmedVacuous",
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "direction": "vacuous-signal",
+   "entry": "r0356_write_slice",
+   "evidence": {
+    "detail": "vacuous_probe_failed=false live_probe_failed=true",
+    "projection_relations": {
+     "faithful": 1,
+     "over-approx": 0,
+     "structural_relaxed_clauses": 0,
+     "under-approx": 0
+    },
+    "requires": "p356_k0()",
+    "span": "ostd/src/mm/io.rs:1384:5: 1389:24 (#0)",
+    "witness": null
+   },
+   "expected": "CandidateInconclusive",
+   "expected_source": "tool",
+   "function": "ostd::mm::io::VmIo::write_slice",
+   "model_relation": "faithful",
+   "preregistered_expected": "ConfirmedVacuous",
+   "preregistered_match": true,
+   "registry": "V-003",
+   "scope": "crate",
+   "severity": "candidate",
+   "suggested_registry_action": "confirm-registry:V-003",
+   "tier": "A",
+   "tool_expected": "CandidateInconclusive",
+   "tool_match": false,
+   "vacuum_evidence": true
+  },
+  {
+   "actual": "ConfirmedVacuous",
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "direction": "vacuous-signal",
+   "entry": "r0357_write_val",
+   "evidence": {
+    "detail": "vacuous_probe_failed=false live_probe_failed=true",
+    "projection_relations": {
+     "faithful": 1,
+     "over-approx": 0,
+     "structural_relaxed_clauses": 0,
+     "under-approx": 0
+    },
+    "requires": "p357_k0()",
+    "span": "ostd/src/mm/io.rs:1375:5: 1376:19 (#0)",
+    "witness": null
+   },
+   "expected": "CandidateInconclusive",
+   "expected_source": "tool",
+   "function": "ostd::mm::io::VmIo::write_val",
+   "model_relation": "faithful",
+   "preregistered_expected": "ConfirmedVacuous",
+   "preregistered_match": true,
+   "registry": "V-003",
+   "scope": "crate",
+   "severity": "candidate",
+   "suggested_registry_action": "confirm-registry:V-003",
+   "tier": "A",
+   "tool_expected": "CandidateInconclusive",
+   "tool_match": false,
+   "vacuum_evidence": true
+  },
+  {
+   "actual": "ConfirmedVacuous",
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "direction": "vacuous-signal",
+   "entry": "r0358_write_vals",
+   "evidence": {
+    "detail": "vacuous_probe_failed=false live_probe_failed=true",
+    "projection_relations": {
+     "faithful": 1,
+     "over-approx": 1,
+     "structural_relaxed_clauses": 0,
+     "under-approx": 0
+    },
+    "requires": "p358_k0() && p358_k1(_integer_type_bound_integertypeboundkind_unsignedmax_, align, offset) && p358_k2(_integer_type_bound_integertypeboundkind_unsignedmax_, align) && p358_k3(iter) && p358_k4(iter) && p358_k5(align)",
+    "span": "ostd/src/mm/io.rs:1421:5: 1427:6 (#0)",
+    "witness": null
+   },
+   "expected": "CandidateInconclusive",
+   "expected_source": "tool",
+   "function": "ostd::mm::io::VmIo::write_vals",
+   "model_relation": "over-approx",
+   "preregistered_expected": "ConfirmedVacuous",
+   "preregistered_match": true,
+   "registry": "V-003",
+   "scope": "crate",
+   "severity": "candidate",
+   "suggested_registry_action": "confirm-registry:V-003",
+   "tier": "B",
+   "tool_expected": "CandidateInconclusive",
+   "tool_match": false,
+   "vacuum_evidence": true
+  }
+ ]
+}

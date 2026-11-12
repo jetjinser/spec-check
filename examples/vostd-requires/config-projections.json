@@ -2056,6 +2056,54 @@
     ],
     "returns": "bool",
     "body": null
+   },
+   {
+    "name": "proj_variant_ostd_specs_mm_io_VmIoMemView_ReadView",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_variant_ostd_specs_mm_io_VmIoMemView_WriteView",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_vm_space_vm_space_specs_VmSpaceOwner_mem_view",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_vm_space_vm_space_specs_VmSpaceOwner_mv_range",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_io_VmIoOwner_range",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_virt_mem_MemView_mappings",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
    }
   ],
   "rules": [
@@ -4076,6 +4124,60 @@
     "note": "uninterpreted enum discriminant projection: no constraints; vacuity-only over-approximation",
     "datatype": "vstd::raw_ptr::MemContents",
     "variant": "Init"
+   },
+   {
+    "match": "*",
+    "kind": "variant",
+    "datatype": "ostd::specs::mm::io::VmIoMemView",
+    "variant": "ReadView",
+    "model": "proj_variant_ostd_specs_mm_io_VmIoMemView_ReadView",
+    "relation": "over-approx",
+    "note": "VmIoMemView variant predicate; opaque over-approximation for Match scalarization"
+   },
+   {
+    "match": "*",
+    "kind": "variant",
+    "datatype": "ostd::specs::mm::io::VmIoMemView",
+    "variant": "WriteView",
+    "model": "proj_variant_ostd_specs_mm_io_VmIoMemView_WriteView",
+    "relation": "over-approx",
+    "note": "VmIoMemView variant predicate; opaque over-approximation for Match scalarization"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "datatype": "ostd::mm::vm_space::vm_space_specs::VmSpaceOwner",
+    "field": "mem_view",
+    "model": "proj_field_ostd_mm_vm_space_vm_space_specs_VmSpaceOwner_mem_view",
+    "relation": "over-approx",
+    "note": "VmSpaceOwner field projection; opaque over-approximation for Match scrutinee"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "datatype": "ostd::mm::vm_space::vm_space_specs::VmSpaceOwner",
+    "field": "mv_range",
+    "model": "proj_field_ostd_mm_vm_space_vm_space_specs_VmSpaceOwner_mv_range",
+    "relation": "over-approx",
+    "note": "VmSpaceOwner field projection; opaque over-approximation for Match scrutinee"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "datatype": "ostd::specs::mm::io::VmIoOwner",
+    "field": "range",
+    "model": "proj_field_ostd_specs_mm_io_VmIoOwner_range",
+    "relation": "over-approx",
+    "note": "field projection; opaque over-approximation for Match/range clauses"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "datatype": "ostd::specs::mm::virt_mem::MemView",
+    "field": "mappings",
+    "model": "proj_field_ostd_specs_mm_virt_mem_MemView_mappings",
+    "relation": "over-approx",
+    "note": "field projection; opaque over-approximation for Match/range clauses"
    }
   ]
  }

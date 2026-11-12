@@ -691,6 +691,28 @@ enum Term {
         param: String,
         name: String,
     },
+    /// A fresh structural token: a constructor value, an uncovered `Match`
+    /// else value, or a pattern binding. It may be consumed by a model call
+    /// or compared for equality, but it is not an integer for arithmetic or
+    /// ordering. It is an existential scalar in the probe, hence an
+    /// over-approximation of the real structure.
+    Opaque {
+        name: String,
+        int: bool,
+    },
+    /// A scalar operation that is exact on real (non-negative) values but
+    /// admits more values over the probe's unbounded `int` domain: a `Clip`
+    /// cast, `/`, or `%`.
+    Relaxed {
+        inner: Box<Term>,
+        int: bool,
+    },
+    Ite {
+        cond: Box<Term>,
+        then: Box<Term>,
+        els: Box<Term>,
+        int: bool,
+    },
     Call {
         model: usize,
         args: Vec<Term>,
@@ -744,12 +766,20 @@ impl ProjectionUse {
 
 fn term_type(term: &Term) -> ScalarType {
     match term {
-        Term::Int(_) | Term::Neg(_) | Term::Base { .. } | Term::Var { int: true, .. } => {
-            ScalarType::Int
-        }
-        Term::Bool(_) | Term::Not(_) | Term::Quant { .. } | Term::Var { int: false, .. } => {
-            ScalarType::Bool
-        }
+        Term::Int(_)
+        | Term::Neg(_)
+        | Term::Base { .. }
+        | Term::Opaque { int: true, .. }
+        | Term::Relaxed { int: true, .. }
+        | Term::Ite { int: true, .. }
+        | Term::Var { int: true, .. } => ScalarType::Int,
+        Term::Bool(_)
+        | Term::Not(_)
+        | Term::Quant { .. }
+        | Term::Opaque { int: false, .. }
+        | Term::Relaxed { int: false, .. }
+        | Term::Ite { int: false, .. }
+        | Term::Var { int: false, .. } => ScalarType::Bool,
         Term::Call { int: true, .. } | Term::Bin { int: true, .. } => ScalarType::Int,
         Term::Call { int: false, .. } | Term::Bin { int: false, .. } => ScalarType::Bool,
     }
@@ -757,7 +787,19 @@ fn term_type(term: &Term) -> ScalarType {
 
 fn term_is_evaluable(term: &Term, config: &ProjectionConfig) -> bool {
     match term {
-        Term::Int(_) | Term::Bool(_) | Term::Var { .. } | Term::Base { .. } => true,
+        Term::Int(_)
+        | Term::Bool(_)
+        | Term::Var { .. }
+        | Term::Base { .. }
+        | Term::Opaque { .. } => true,
+        Term::Relaxed { inner, .. } => term_is_evaluable(inner, config),
+        Term::Ite {
+            cond, then, els, ..
+        } => {
+            term_is_evaluable(cond, config)
+                && term_is_evaluable(then, config)
+                && term_is_evaluable(els, config)
+        }
         Term::Call { model, args, .. } => {
             config.models[*model].body.is_some()
                 && args.iter().all(|arg| term_is_evaluable(arg, config))
@@ -778,13 +820,25 @@ fn term_relations(term: &Term, out: &mut Vec<Relation>) {
                 term_relations(arg, out);
             }
         }
+        Term::Relaxed { inner, .. } => term_relations(inner, out),
+        Term::Ite {
+            cond, then, els, ..
+        } => {
+            term_relations(cond, out);
+            term_relations(then, out);
+            term_relations(els, out);
+        }
         Term::Not(arg) | Term::Neg(arg) => term_relations(arg, out),
         Term::Bin { lhs, rhs, .. } => {
             term_relations(lhs, out);
             term_relations(rhs, out);
         }
         Term::Quant { body, .. } => term_relations(body, out),
-        Term::Int(_) | Term::Bool(_) | Term::Var { .. } | Term::Base { .. } => {}
+        Term::Int(_)
+        | Term::Bool(_)
+        | Term::Var { .. }
+        | Term::Base { .. }
+        | Term::Opaque { .. } => {}
     }
 }
 
@@ -796,19 +850,73 @@ fn term_models(term: &Term, out: &mut BTreeSet<usize>) {
                 term_models(arg, out);
             }
         }
+        Term::Relaxed { inner, .. } => term_models(inner, out),
+        Term::Ite {
+            cond, then, els, ..
+        } => {
+            term_models(cond, out);
+            term_models(then, out);
+            term_models(els, out);
+        }
         Term::Not(arg) | Term::Neg(arg) => term_models(arg, out),
         Term::Bin { lhs, rhs, .. } => {
             term_models(lhs, out);
             term_models(rhs, out);
         }
         Term::Quant { body, .. } => term_models(body, out),
-        Term::Int(_) | Term::Bool(_) | Term::Var { .. } | Term::Base { .. } => {}
+        Term::Int(_)
+        | Term::Bool(_)
+        | Term::Var { .. }
+        | Term::Base { .. }
+        | Term::Opaque { .. } => {}
+    }
+}
+
+/// A structural relaxation is any abstraction that is not a declared model
+/// call: a fresh constructor token, a cast, `/` or `%` over the extended
+/// integer domain, or an uncovered `Match` else token. Such a clause is an
+/// over-approximation even when every declared model relation is `faithful`.
+fn term_structural_relaxation(term: &Term) -> bool {
+    match term {
+        Term::Opaque { .. } | Term::Relaxed { .. } => true,
+        Term::Ite {
+            cond, then, els, ..
+        } => {
+            term_structural_relaxation(cond)
+                || term_structural_relaxation(then)
+                || term_structural_relaxation(els)
+        }
+        Term::Call { args, .. } => args.iter().any(term_structural_relaxation),
+        Term::Not(arg) | Term::Neg(arg) => term_structural_relaxation(arg),
+        Term::Bin { lhs, rhs, .. } => {
+            term_structural_relaxation(lhs) || term_structural_relaxation(rhs)
+        }
+        Term::Quant { body, .. } => term_structural_relaxation(body),
+        Term::Int(_) | Term::Bool(_) | Term::Var { .. } | Term::Base { .. } => false,
+    }
+}
+
+fn term_has_quantifier(term: &Term) -> bool {
+    match term {
+        Term::Quant { .. } => true,
+        Term::Call { args, .. } => args.iter().any(term_has_quantifier),
+        Term::Relaxed { inner, .. } => term_has_quantifier(inner),
+        Term::Ite {
+            cond, then, els, ..
+        } => term_has_quantifier(cond) || term_has_quantifier(then) || term_has_quantifier(els),
+        Term::Not(arg) | Term::Neg(arg) => term_has_quantifier(arg),
+        Term::Bin { lhs, rhs, .. } => term_has_quantifier(lhs) || term_has_quantifier(rhs),
+        Term::Int(_)
+        | Term::Bool(_)
+        | Term::Var { .. }
+        | Term::Base { .. }
+        | Term::Opaque { .. } => false,
     }
 }
 
 fn collect_term_vars(term: &Term, bound: &mut BTreeSet<String>, out: &mut BTreeMap<String, bool>) {
     match term {
-        Term::Var { name, int } => {
+        Term::Var { name, int } | Term::Opaque { name, int } => {
             if !bound.contains(name) {
                 out.entry(name.clone()).or_insert(*int);
             }
@@ -817,6 +925,14 @@ fn collect_term_vars(term: &Term, bound: &mut BTreeSet<String>, out: &mut BTreeM
             if !bound.contains(name) {
                 out.entry(name.clone()).or_insert(true);
             }
+        }
+        Term::Relaxed { inner, .. } => collect_term_vars(inner, bound, out),
+        Term::Ite {
+            cond, then, els, ..
+        } => {
+            collect_term_vars(cond, bound, out);
+            collect_term_vars(then, bound, out);
+            collect_term_vars(els, bound, out);
         }
         Term::Call { args, .. } => {
             for arg in args {
@@ -848,7 +964,18 @@ fn render_term(term: &Term, config: &ProjectionConfig) -> String {
     match term {
         Term::Int(value) => value.to_string(),
         Term::Bool(value) => value.to_string(),
-        Term::Var { name, .. } | Term::Base { name, .. } => name.clone(),
+        Term::Var { name, .. } | Term::Base { name, .. } | Term::Opaque { name, .. } => {
+            name.clone()
+        }
+        Term::Relaxed { inner, .. } => render_term(inner, config),
+        Term::Ite {
+            cond, then, els, ..
+        } => format!(
+            "if {} {{ {} }} else {{ {} }}",
+            render_term(cond, config),
+            render_term(then, config),
+            render_term(els, config)
+        ),
         Term::Call { model, args, .. } => format!(
             "{}({})",
             config.models[*model].name,
@@ -908,9 +1035,16 @@ fn term_value(term: &Term, config: &ProjectionConfig) -> Option<Value> {
     match term {
         Term::Int(value) => Some(json!({"op": "int", "value": value})),
         Term::Bool(value) => Some(json!({"op": "bool", "value": value})),
-        Term::Var { name, .. } | Term::Base { name, .. } => {
+        Term::Var { name, .. } | Term::Base { name, .. } | Term::Opaque { name, .. } => {
             Some(json!({"op": "var", "name": name}))
         }
+        Term::Relaxed { inner, .. } => term_value(inner, config),
+        Term::Ite {
+            cond, then, els, ..
+        } => match term_value(cond, config)?.as_bool()? {
+            true => term_value(then, config),
+            false => term_value(els, config),
+        },
         Term::Call { model, args, .. } => {
             let body = config.models[*model].body.as_ref()?;
             let mut values = BTreeMap::new();
@@ -960,9 +1094,20 @@ struct TranslateCtx<'a> {
     model: &'a BTreeMap<String, ParamModel>,
     const_names: &'a mut BTreeMap<String, String>,
     used_names: &'a mut BTreeSet<String>,
-    scope: Vec<(String, String, bool)>,
+    scope: Vec<(String, Term)>,
     uses: &'a mut Vec<ProjectionUse>,
+    tuple_fields: &'a mut BTreeSet<String>,
     identity_uses: BTreeMap<String, String>,
+    fresh: usize,
+    extension_allowed: bool,
+}
+
+impl TranslateCtx<'_> {
+    fn fresh(&mut self, prefix: &str, int: bool) -> Term {
+        let name = format!("_{prefix}{}", self.fresh);
+        self.fresh += 1;
+        Term::Opaque { name, int }
+    }
 }
 
 fn apply_projection(
@@ -980,14 +1125,14 @@ fn apply_projection(
             args.len()
         ));
     }
-    for (arg, param) in args.iter().zip(&model.params) {
+    for (index, (arg, param)) in args.iter().zip(&model.params).enumerate() {
         let ty = term_type(arg);
         if ty != param.ty {
             return Err(format!(
-                "projection model {} argument type {} does not match {}",
+                "projection type conflict: model {} argument {index} expects {}, got {}",
                 model.name,
-                ty.as_verus(),
-                param.ty.as_verus()
+                param.ty.as_verus(),
+                ty.as_verus()
             ));
         }
     }
@@ -1053,13 +1198,8 @@ fn translate_expr(expression: &Value, ctx: &mut TranslateCtx) -> std::result::Re
             let name = expression["name"]
                 .as_str()
                 .ok_or_else(|| "variable expression has no name".to_owned())?;
-            if let Some((_, local, int)) =
-                ctx.scope.iter().rev().find(|(bound, _, _)| bound == name)
-            {
-                return Ok(Term::Var {
-                    name: local.clone(),
-                    int: *int,
-                });
+            if let Some((_, term)) = ctx.scope.iter().rev().find(|(bound, _)| bound == name) {
+                return Ok(term.clone());
             }
             let param = ctx
                 .params
@@ -1097,6 +1237,19 @@ fn translate_expr(expression: &Value, ctx: &mut TranslateCtx) -> std::result::Re
             Ok(Term::Var { name, int: true })
         }
         "old" | "final" | "read" | "deref" => translate_expr(&expression["arg"], ctx),
+        "cast" => {
+            if !ctx.extension_allowed {
+                return Err("unsupported expression node: cast".into());
+            }
+            let inner = translate_expr(&expression["arg"], ctx)?;
+            if term_type(&inner) != ScalarType::Int {
+                return Err("`as` cast expects an integer".into());
+            }
+            Ok(Term::Relaxed {
+                inner: Box::new(inner),
+                int: true,
+            })
+        }
         "not" => {
             let arg = translate_expr(&expression["arg"], ctx)?;
             if term_type(&arg) != ScalarType::Bool {
@@ -1131,11 +1284,19 @@ fn translate_expr(expression: &Value, ctx: &mut TranslateCtx) -> std::result::Re
                     int: false,
                 });
             }
-            if matches!(lhs, Term::Base { .. }) || matches!(rhs, Term::Base { .. }) {
-                return Err("a raw reference/ghost id may not be compared directly".into());
+            if matches!(lhs, Term::Base { .. } | Term::Opaque { .. })
+                || matches!(rhs, Term::Base { .. } | Term::Opaque { .. })
+            {
+                return Err(
+                    "a raw reference/ghost id or constructor token may not be used in arithmetic or ordering"
+                        .into(),
+                );
+            }
+            if matches!(sym, "/" | "%") && !ctx.extension_allowed {
+                return Err(format!("unsupported operator: {sym}"));
             }
             let int = match sym {
-                "+" | "-" | "*" => {
+                "+" | "-" | "*" | "/" | "%" => {
                     if lhs_ty != ScalarType::Int || rhs_ty != ScalarType::Int {
                         return Err(format!("`{sym}` expects integers"));
                     }
@@ -1161,24 +1322,44 @@ fn translate_expr(expression: &Value, ctx: &mut TranslateCtx) -> std::result::Re
                 }
                 other => return Err(format!("unsupported operator: {other}")),
             };
-            Ok(Term::Bin {
+            let term = Term::Bin {
                 sym: sym.to_owned(),
                 lhs: Box::new(lhs),
                 rhs: Box::new(rhs),
                 int,
-            })
+            };
+            if matches!(sym, "/" | "%") {
+                Ok(Term::Relaxed {
+                    inner: Box::new(term),
+                    int,
+                })
+            } else {
+                Ok(term)
+            }
         }
         "field" => {
             let root = translate_expr(&expression["root"], ctx)?;
             let datatype = expression["datatype"].as_str();
             let field = expression["field"].as_str();
+            let Some(datatype) = datatype else {
+                let name = field.unwrap_or("?");
+                if ctx.extension_allowed
+                    && !name.is_empty()
+                    && name.chars().all(|c| c.is_ascii_digit())
+                {
+                    ctx.tuple_fields.insert(name.to_owned());
+                    return Ok(ctx.fresh("t", true));
+                }
+                return Err(format!(
+                    "field without datatype: .{name} (tuple/struct projection cannot be matched to a field rule)"
+                ));
+            };
             let rule = ctx
                 .config
-                .matching_rule(ctx.function, None, datatype, field, None)
+                .matching_rule(ctx.function, None, Some(datatype), field, None)
                 .ok_or_else(|| {
                     format!(
-                        "unmodeled field: {}::{}",
-                        datatype.unwrap_or("<unknown>"),
+                        "unmodeled field: {datatype}::{}",
                         field.unwrap_or("<unknown>")
                     )
                 })?;
@@ -1211,7 +1392,13 @@ fn translate_expr(expression: &Value, ctx: &mut TranslateCtx) -> std::result::Re
                 let ty = binding["type"].as_str().unwrap_or("usize");
                 let int = !ty.contains("Bool");
                 let local = format!("q{}_{}", bindings.len(), sanitize_ident(name));
-                ctx.scope.push((name.to_owned(), local.clone(), int));
+                ctx.scope.push((
+                    name.to_owned(),
+                    Term::Var {
+                        name: local.clone(),
+                        int,
+                    },
+                ));
                 pushed.push(local.clone());
                 bindings.push((local, int));
             }
@@ -1228,7 +1415,37 @@ fn translate_expr(expression: &Value, ctx: &mut TranslateCtx) -> std::result::Re
                 body: Box::new(body),
             })
         }
-        "ctor" => Err("unmodeled constructor".into()),
+        "ctor" => {
+            if !ctx.extension_allowed {
+                return Err("unmodeled constructor".into());
+            }
+            Ok(ctx.fresh("c", true))
+        }
+        "block" => {
+            if !ctx.extension_allowed {
+                return Err("unsupported expression node: block".into());
+            }
+            let mut pushed = 0usize;
+            for binding in expression["bindings"].as_array().into_iter().flatten() {
+                let name = binding["name"]
+                    .as_str()
+                    .ok_or_else(|| "block binding has no name".to_owned())?;
+                let init = translate_expr(&binding["init"], ctx)?;
+                ctx.scope.push((name.to_owned(), init));
+                pushed += 1;
+            }
+            let body = translate_expr(&expression["body"], ctx);
+            for _ in 0..pushed {
+                ctx.scope.pop();
+            }
+            body
+        }
+        "match" => {
+            if !ctx.extension_allowed {
+                return Err("unsupported expression node: match".into());
+            }
+            translate_match(expression, ctx)
+        }
         "is_variant" => {
             let datatype = expression["datatype"].as_str();
             let variant = expression["variant"].as_str();
@@ -1263,6 +1480,144 @@ fn translate_expr(expression: &Value, ctx: &mut TranslateCtx) -> std::result::Re
     }
 }
 
+fn and_terms(lhs: Term, rhs: Term) -> Term {
+    match (lhs, rhs) {
+        (Term::Bool(true), rhs) => rhs,
+        (lhs, Term::Bool(true)) => lhs,
+        (lhs, rhs) => Term::Bin {
+            sym: "&&".to_owned(),
+            lhs: Box::new(lhs),
+            rhs: Box::new(rhs),
+            int: false,
+        },
+    }
+}
+
+fn or_terms(lhs: Term, rhs: Term) -> Term {
+    match (lhs, rhs) {
+        (Term::Bool(false), rhs) => rhs,
+        (lhs, Term::Bool(false)) => lhs,
+        (lhs, rhs) => Term::Bin {
+            sym: "||".to_owned(),
+            lhs: Box::new(lhs),
+            rhs: Box::new(rhs),
+            int: false,
+        },
+    }
+}
+
+fn pattern_condition(
+    pattern: &Value,
+    subject: &Term,
+    ctx: &mut TranslateCtx,
+    bindings: &mut Vec<(String, Term)>,
+) -> std::result::Result<Term, String> {
+    match pattern["kind"].as_str().unwrap_or("unsupported") {
+        "wildcard" => Ok(Term::Bool(true)),
+        "var" => {
+            let name = pattern["name"]
+                .as_str()
+                .ok_or_else(|| "match variable pattern has no name".to_owned())?;
+            bindings.push((name.to_owned(), subject.clone()));
+            Ok(Term::Bool(true))
+        }
+        "ctor" => {
+            let datatype = pattern["datatype"].as_str();
+            let variant = pattern["variant"].as_str();
+            let rule = ctx
+                .config
+                .matching_rule(ctx.function, None, datatype, None, variant)
+                .ok_or_else(|| {
+                    format!(
+                        "unmodeled match variant: {}::{}",
+                        datatype.unwrap_or("<unknown>"),
+                        variant.unwrap_or("<unknown>")
+                    )
+                })?;
+            let mut condition = apply_projection(rule, vec![subject.clone()], ctx)?;
+            for arg in pattern["args"].as_array().into_iter().flatten() {
+                if arg["kind"].as_str() == Some("wildcard") {
+                    continue;
+                }
+                let inner = ctx.fresh("p", true);
+                let sub = pattern_condition(arg, &inner, ctx, bindings)?;
+                condition = and_terms(condition, sub);
+            }
+            Ok(condition)
+        }
+        "or" => {
+            let mut condition = Term::Bool(false);
+            for sub in pattern["patterns"].as_array().into_iter().flatten() {
+                let before = bindings.len();
+                let term = pattern_condition(sub, subject, ctx, bindings)?;
+                if bindings.len() != before {
+                    return Err("match `or` patterns may not bind variables".into());
+                }
+                condition = or_terms(condition, term);
+            }
+            Ok(condition)
+        }
+        other => Err(format!("unsupported match pattern: {other}")),
+    }
+}
+
+fn translate_match(
+    expression: &Value,
+    ctx: &mut TranslateCtx,
+) -> std::result::Result<Term, String> {
+    let scrutinee = translate_expr(&expression["scrutinee"], ctx)?;
+    let arms = expression["arms"]
+        .as_array()
+        .ok_or_else(|| "match has no arms".to_owned())?;
+    if arms.is_empty() {
+        return Err("match has no arms".into());
+    }
+    let mut translated = Vec::new();
+    for arm in arms {
+        let mut bindings = Vec::new();
+        let mut condition = pattern_condition(&arm["pattern"], &scrutinee, ctx, &mut bindings)?;
+        if let Some(guard) = arm.get("guard").filter(|value| !value.is_null()) {
+            let guard = translate_expr(guard, ctx)?;
+            if term_type(&guard) != ScalarType::Bool {
+                return Err("match guard must be a bool".into());
+            }
+            condition = and_terms(condition, guard);
+        }
+        let pushed = bindings.len();
+        for (name, term) in bindings {
+            ctx.scope.push((name, term));
+        }
+        let body = translate_expr(&arm["body"], ctx)?;
+        for _ in 0..pushed {
+            ctx.scope.pop();
+        }
+        translated.push((condition, body));
+    }
+    let ty = term_type(&translated[0].1);
+    for (_, body) in &translated {
+        if term_type(body) != ty {
+            return Err("match arms have different types".into());
+        }
+    }
+    let mut result = if matches!(
+        translated.last().map(|(condition, _)| condition),
+        Some(Term::Bool(true))
+    ) {
+        translated.pop().expect("non-empty").1
+    } else {
+        ctx.fresh("m", ty.is_int())
+    };
+    while let Some((condition, body)) = translated.pop() {
+        result = Term::Ite {
+            cond: Box::new(condition),
+            then: Box::new(body),
+            els: Box::new(result),
+            int: ty.is_int(),
+        };
+    }
+    Ok(result)
+}
+
 /// Selected tiers and deterministic batching options.
 #[derive(Debug, Clone)]
 pub struct Options {
@@ -1272,6 +1627,8 @@ pub struct Options {
     pub batch: Option<usize>,
     pub batch_size: usize,
     pub config: Config,
+    /// Optional project-side pre-registration for E6 signals.
+    pub expectations: Option<crate::signals::Expectations>,
 }
 
 impl Default for Options {
@@ -1283,6 +1640,7 @@ impl Default for Options {
             batch: None,
             batch_size: 50,
             config: Config::default(),
+            expectations: None,
         }
     }
 }
@@ -1342,9 +1700,22 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
     let mut baseline_name_used = BTreeSet::new();
 
     for (index, function) in functions.iter().enumerate() {
-        let baseline = classify(function, index, &mut baseline_name_used, &Config::default());
+        let baseline = classify(
+            function,
+            index,
+            &mut baseline_name_used,
+            &Config::default(),
+            false,
+        );
         baselines.push((baseline.tier, baseline.reasons.clone()));
-        let decision = classify(function, index, &mut name_used, &options.config);
+        let extension_allowed = baseline.tier == Tier::C;
+        let decision = classify(
+            function,
+            index,
+            &mut name_used,
+            &options.config,
+            extension_allowed,
+        );
         decisions.push(decision);
     }
 
@@ -1434,12 +1805,20 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
             contract["witness"] = witness.clone();
         }
         contracts.push(contract);
+        let pre = options
+            .expectations
+            .as_ref()
+            .and_then(|expectations| expectations.entries.get(name));
         entries.push(json!({
             "name": name,
             "path": decision.path,
             "tier": decision.tier.as_str(),
             "expected": decision.expected,
             "expected_note": decision.expected_note,
+            "preregistered_expected": pre.map(|entry| entry.expected.clone()),
+            "preregistered_basis": pre.map(|entry| entry.basis.clone()),
+            "preregistered_scope": pre.map(|entry| entry.scope.clone()),
+            "preregistered_registry": pre.and_then(|entry| entry.registry.clone()),
             "params": entry["params"],
             "requires": entry["requires"],
             "witness": entry.get("witness"),
@@ -1502,10 +1881,41 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
             "unsupported_clauses": decision.unsupported,
             "entry": decision.entry.as_ref().map(|entry| entry["name"].clone()),
             "expected": decision.expected,
+            "preregistered_expected": decision.entry.as_ref().and_then(|entry| {
+                options.expectations.as_ref().and_then(|expectations| {
+                    expectations.entries.get(entry["name"].as_str().unwrap_or_default())
+                        .map(|pre| pre.expected.clone())
+                })
+            }),
             "selected": selected_set.contains(&decision.path),
             "modeling": decision.modeling,
         }));
     }
+
+    let entry_names = decisions
+        .iter()
+        .filter_map(|decision| Some(decision.entry.as_ref()?.get("name")?.as_str()?.to_owned()))
+        .collect::<BTreeSet<_>>();
+    let expectations = options.expectations.as_ref();
+    let matched_expectations = expectations
+        .map(|expectations| {
+            expectations
+                .entries
+                .keys()
+                .filter(|name| entry_names.contains(name.as_str()))
+                .count()
+        })
+        .unwrap_or(0);
+    let provided_expectations = expectations
+        .map(|expectations| expectations.entries.len())
+        .unwrap_or(0);
+    let expectations_report = json!({
+        "provided": expectations.is_some(),
+        "entries": provided_expectations,
+        "matched": matched_expectations,
+        "missing": entry_names.len().saturating_sub(matched_expectations),
+        "unmatched": provided_expectations.saturating_sub(matched_expectations),
+    });
 
     let report = json!({
         "schema": SCHEMA,
@@ -1559,6 +1969,7 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
             "selected": entries.len(),
         },
         "entries": entries,
+        "expectations": expectations_report,
         "functions": function_rows,
     });
 
@@ -1581,6 +1992,7 @@ fn classify(
     index: usize,
     name_used: &mut BTreeSet<String>,
     config: &Config,
+    extension_allowed: bool,
 ) -> Decision {
     let path = function["path"].as_str().unwrap_or("<unknown>").to_owned();
     let clauses = function["requires"].as_array().cloned().unwrap_or_default();
@@ -1688,6 +2100,7 @@ fn classify(
         .collect::<BTreeSet<_>>();
     let mut const_names: BTreeMap<String, String> = BTreeMap::new();
     let mut projection_uses: Vec<ProjectionUse> = Vec::new();
+    let mut tuple_fields: BTreeSet<String> = BTreeSet::new();
     let projection_enabled = !config.projection.is_empty();
     let mut plans = Vec::with_capacity(clauses.len());
     for clause in &clauses {
@@ -1703,7 +2116,10 @@ fn classify(
                 used_names: &mut used_names,
                 scope: Vec::new(),
                 uses: &mut projection_uses,
+                tuple_fields: &mut tuple_fields,
                 identity_uses: BTreeMap::new(),
+                fresh: 0,
+                extension_allowed,
             };
             match translate_expr(&clause["expr"], &mut ctx) {
                 Ok(term) => plans.push(ClausePlan::Projected(term)),
@@ -1875,6 +2291,16 @@ fn classify(
     modeling["projection_mapping"] = json!(projection_mapping);
     modeling["projection_models"] = json!(projection_models);
     modeling["projection_unmapped"] = json!(projection_unmapped);
+    modeling["tuple_field_projection"] = json!(
+        tuple_fields
+            .iter()
+            .map(|field| json!({
+                "field": field,
+                "relation": "over-approx",
+                "note": "tuple field access without a VIR datatype; fresh scalar token",
+            }))
+            .collect::<Vec<_>>()
+    );
     modeling["clause_modes"] = json!(clause_modes);
 
     let has_opaque_projection = plans.iter().any(|plan| {
@@ -1887,6 +2313,48 @@ fn classify(
     } else {
         Tier::A
     };
+
+    let structural_relaxed_clauses = plans
+        .iter()
+        .filter(
+            |plan| matches!(plan, ClausePlan::Projected(term) if term_structural_relaxation(term)),
+        )
+        .count();
+    let mut relation_counts = BTreeMap::new();
+    for relation in &relations {
+        *relation_counts
+            .entry(relation.as_str().to_owned())
+            .or_insert(0usize) += 1;
+    }
+    let under_approx = relation_counts.get("under-approx").copied().unwrap_or(0);
+    let faithful = relation_counts.get("faithful").copied().unwrap_or(0);
+    let over_approx = relation_counts.get("over-approx").copied().unwrap_or(0);
+    let vacuum_relation = if projected > 0 {
+        if under_approx > 0 {
+            "under-approx"
+        } else if structural_relaxed_clauses > 0 {
+            "over-approx"
+        } else if faithful > 0 && over_approx == 0 {
+            "faithful"
+        } else if faithful + over_approx > 0 {
+            "over-approx"
+        } else {
+            "undeclared"
+        }
+    } else if tier == Tier::A && unsupported == 0 {
+        "exact"
+    } else if tier == Tier::B {
+        "over-approx"
+    } else {
+        "undeclared"
+    };
+    modeling["projection_relations"] = json!({
+        "faithful": faithful,
+        "over-approx": over_approx,
+        "under-approx": under_approx,
+        "structural_relaxed_clauses": structural_relaxed_clauses,
+    });
+    modeling["vacuum_relation"] = json!(vacuum_relation);
 
     if tier == Tier::C {
         return Decision {
@@ -1956,10 +2424,21 @@ fn classify(
                     .collect::<Vec<_>>()
                     .join(", ");
                 let call_args = free.keys().cloned().collect::<Vec<_>>().join(", ");
-                spec_fns.push_str(&format!(
-                    "pub open spec fn p{index}_k{clause_index}({arglist}) -> bool {{\n    {}\n}}\n\n",
-                    render_term(term, &config.projection)
-                ));
+                if term_has_quantifier(term) {
+                    // The bounded witness search cannot decide quantifiers, and
+                    // Verus cannot always infer triggers for an arbitrary
+                    // projected quantifier. Keep the named constraint but
+                    // abstract its body: Tier B / CandidateInconclusive, as for
+                    // an opaque projection.
+                    spec_fns.push_str(&format!(
+                        "pub uninterp spec fn p{index}_k{clause_index}({arglist}) -> bool;\n\n"
+                    ));
+                } else {
+                    spec_fns.push_str(&format!(
+                        "pub open spec fn p{index}_k{clause_index}({arglist}) -> bool {{\n    {}\n}}\n\n",
+                        render_term(term, &config.projection)
+                    ));
+                }
                 terms.push(format!("p{index}_k{clause_index}({call_args})"));
                 if term_is_evaluable(term, &config.projection)
                     && let Some(value) = term_value(term, &config.projection)
@@ -2562,6 +3041,20 @@ fn search_witness(
                     "+" => json!(lhs.as_i64()? + rhs.as_i64()?),
                     "-" => json!(lhs.as_i64()? - rhs.as_i64()?),
                     "*" => json!(lhs.as_i64()? * rhs.as_i64()?),
+                    "/" => {
+                        let rhs = rhs.as_i64()?;
+                        if rhs == 0 {
+                            return None;
+                        }
+                        json!(lhs.as_i64()? / rhs)
+                    }
+                    "%" => {
+                        let rhs = rhs.as_i64()?;
+                        if rhs == 0 {
+                            return None;
+                        }
+                        json!(lhs.as_i64()? % rhs)
+                    }
                     "==" => json!(lhs == rhs),
                     "!=" => json!(lhs != rhs),
                     "<" => json!(lhs.as_i64()? < rhs.as_i64()?),
@@ -3532,7 +4025,11 @@ mod tests {
         .unwrap();
         assert_eq!(built["report"]["functions"][0]["tier"], "B");
         let preamble = built["manifest"]["preamble"].as_str().unwrap();
-        assert!(preamble.contains("forall|q0_i: int|"), "{preamble}");
+        assert!(
+            preamble.contains("pub uninterp spec fn p0_k0"),
+            "{preamble}"
+        );
+        assert!(!preamble.contains("forall|q0_i"), "{preamble}");
     }
 
     #[test]
@@ -3676,5 +4173,316 @@ mod tests {
             "_unused: usize"
         );
         assert!(built["manifest"]["contracts"][0].get("witness").is_none());
+    }
+
+    fn expression_config(models: Value, rules: Value) -> Config {
+        config(json!({
+            "schema": CONFIG_SCHEMA,
+            "reference": {"mode": "opaque"},
+            "ghost": {"mode": "opaque"},
+            "projection": {"models": models, "rules": rules}
+        }))
+    }
+
+    #[test]
+    fn constructor_argument_is_a_structural_token() {
+        let expr = json!({
+            "op": "bin", "sym": "&&",
+            "lhs": call_expr("p::inv", vec![var_expr("r")]),
+            "rhs": call_expr(
+                "p::consume",
+                vec![json!({
+                    "op": "ctor",
+                    "datatype": "Dt Tuple 0",
+                    "variant": "tuple%0",
+                    "args": []
+                })],
+            )
+        });
+        let options = Options {
+            config: expression_config(
+                json!([
+                    {"name": "inv", "params": ["a: usize"], "returns": "bool", "body": "true"},
+                    {"name": "consume", "params": ["a: usize"], "returns": "bool", "body": null}
+                ]),
+                json!([
+                    {"match": "*", "kind": "method", "callee": "p::inv", "model": "inv", "relation": "faithful"},
+                    {"match": "*", "kind": "method", "callee": "p::consume", "model": "consume", "relation": "over-approx"}
+                ]),
+            ),
+            ..Options::default()
+        };
+        let data = census(vec![function(
+            "p::f",
+            vec![param("r", "reference"), param("x", "int")],
+            0,
+            vec![projected_clause(expr, &[("r", "plain_root")])],
+        )]);
+        let built = build(&data, &options).unwrap();
+        let entry = &built["report"]["entries"][0];
+        assert_eq!(entry["tier"], "B");
+        assert_eq!(entry["projected_clauses"], 1);
+        assert_eq!(entry["modeling"]["vacuum_relation"], "over-approx");
+        assert_eq!(
+            entry["modeling"]["projection_relations"]["structural_relaxed_clauses"],
+            1
+        );
+        assert!(
+            built["manifest"]["preamble"]
+                .as_str()
+                .unwrap()
+                .contains("pub uninterp spec fn consume")
+        );
+    }
+
+    #[test]
+    fn block_with_let_is_translated_in_sequence() {
+        let expr = json!({
+            "op": "bin", "sym": "&&",
+            "lhs": call_expr("p::inv", vec![var_expr("r")]),
+            "rhs": {
+                "op": "block",
+                "bindings": [{
+                    "name": "y",
+                    "init": {"op": "bin", "sym": "+", "lhs": var_expr("x"), "rhs": {"op": "int", "value": 1}}
+                }],
+                "body": {"op": "bin", "sym": ">", "lhs": var_expr("y"), "rhs": {"op": "int", "value": 0}}
+            }
+        });
+        let options = Options {
+            config: expression_config(
+                json!([
+                    {"name": "inv", "params": ["a: usize"], "returns": "bool", "body": "true"}
+                ]),
+                json!([
+                    {"match": "*", "kind": "method", "callee": "p::inv", "model": "inv", "relation": "faithful"}
+                ]),
+            ),
+            ..Options::default()
+        };
+        let data = census(vec![function(
+            "p::f",
+            vec![param("r", "reference"), param("x", "int")],
+            0,
+            vec![projected_clause(expr, &[("r", "plain_root")])],
+        )]);
+        let built = build(&data, &options).unwrap();
+        let entry = &built["report"]["entries"][0];
+        assert_eq!(entry["tier"], "A");
+        assert_eq!(entry["expected"], "ConfirmedLive");
+        assert_eq!(entry["modeling"]["clause_modes"][0], "projected-evaluable");
+        assert!(
+            built["manifest"]["preamble"]
+                .as_str()
+                .unwrap()
+                .contains("x + 1")
+        );
+    }
+
+    #[test]
+    fn cast_and_div_mod_are_over_approx_relaxations() {
+        let expr = json!({
+            "op": "bin", "sym": "&&",
+            "lhs": call_expr("p::inv", vec![var_expr("r")]),
+            "rhs": {
+                "op": "bin", "sym": "==",
+                "lhs": {
+                    "op": "bin", "sym": "%",
+                    "lhs": {
+                        "op": "bin", "sym": "/",
+                        "lhs": {
+                            "op": "cast",
+                            "arg": {"op": "bin", "sym": "+", "lhs": var_expr("x"), "rhs": {"op": "int", "value": 1}}
+                        },
+                        "rhs": {"op": "int", "value": 2}
+                    },
+                    "rhs": {"op": "int", "value": 3}
+                },
+                "rhs": {"op": "int", "value": 0}
+            }
+        });
+        let options = Options {
+            config: expression_config(
+                json!([
+                    {"name": "inv", "params": ["a: usize"], "returns": "bool", "body": "true"}
+                ]),
+                json!([
+                    {"match": "*", "kind": "method", "callee": "p::inv", "model": "inv", "relation": "faithful"}
+                ]),
+            ),
+            ..Options::default()
+        };
+        let data = census(vec![function(
+            "p::f",
+            vec![param("r", "reference"), param("x", "int")],
+            0,
+            vec![projected_clause(expr, &[("r", "plain_root")])],
+        )]);
+        let built = build(&data, &options).unwrap();
+        let entry = &built["report"]["entries"][0];
+        assert_eq!(entry["tier"], "A");
+        assert_eq!(entry["modeling"]["vacuum_relation"], "over-approx");
+        assert!(
+            entry["modeling"]["projection_relations"]["structural_relaxed_clauses"]
+                .as_u64()
+                .unwrap()
+                >= 1
+        );
+        assert!(
+            built["manifest"]["preamble"]
+                .as_str()
+                .unwrap()
+                .contains("%")
+        );
+    }
+
+    #[test]
+    fn match_scalarizes_to_an_if_else_chain() {
+        let expr = json!({
+            "op": "bin", "sym": "&&",
+            "lhs": call_expr("p::inv", vec![var_expr("r")]),
+            "rhs": {
+                "op": "match",
+                "scrutinee": var_expr("x"),
+                "arms": [
+                    {
+                        "pattern": {"kind": "ctor", "datatype": "p::T", "variant": "A", "args": []},
+                        "guard": {"op": "bool", "value": true},
+                        "body": {"op": "bool", "value": true}
+                    },
+                    {
+                        "pattern": {"kind": "wildcard"},
+                        "guard": {"op": "bool", "value": true},
+                        "body": {"op": "bool", "value": false}
+                    }
+                ]
+            }
+        });
+        let options = Options {
+            config: expression_config(
+                json!([
+                    {"name": "inv", "params": ["a: usize"], "returns": "bool", "body": "true"},
+                    {"name": "is_a", "params": ["a: usize"], "returns": "bool", "body": null}
+                ]),
+                json!([
+                    {"match": "*", "kind": "method", "callee": "p::inv", "model": "inv", "relation": "faithful"},
+                    {"match": "*", "kind": "variant", "datatype": "p::T", "variant": "A", "model": "is_a", "relation": "over-approx"}
+                ]),
+            ),
+            ..Options::default()
+        };
+        let data = census(vec![function(
+            "p::f",
+            vec![param("r", "reference"), param("x", "int")],
+            0,
+            vec![projected_clause(expr, &[("r", "plain_root")])],
+        )]);
+        let built = build(&data, &options).unwrap();
+        let entry = &built["report"]["entries"][0];
+        assert_eq!(entry["tier"], "B");
+        assert_eq!(entry["modeling"]["clause_modes"][0], "projected-opaque");
+        assert!(
+            built["manifest"]["preamble"]
+                .as_str()
+                .unwrap()
+                .contains("if is_a(x) { true } else { false }")
+        );
+    }
+
+    #[test]
+    fn tuple_field_without_datatype_is_an_opaque_over_approx() {
+        let expr = json!({
+            "op": "bin", "sym": "&&",
+            "lhs": call_expr("p::inv", vec![var_expr("r")]),
+            "rhs": {
+                "op": "bin", "sym": "==",
+                "lhs": {"op": "field", "datatype": null, "field": "0", "root": var_expr("x")},
+                "rhs": {"op": "int", "value": 0}
+            }
+        });
+        let options = Options {
+            config: expression_config(
+                json!([
+                    {"name": "inv", "params": ["a: usize"], "returns": "bool", "body": "true"}
+                ]),
+                json!([
+                    {"match": "*", "kind": "method", "callee": "p::inv", "model": "inv", "relation": "faithful"}
+                ]),
+            ),
+            ..Options::default()
+        };
+        let data = census(vec![function(
+            "p::f",
+            vec![param("r", "reference"), param("x", "int")],
+            0,
+            vec![projected_clause(expr, &[("r", "plain_root")])],
+        )]);
+        let built = build(&data, &options).unwrap();
+        let entry = &built["report"]["entries"][0];
+        assert_eq!(entry["tier"], "A");
+        assert_eq!(entry["modeling"]["vacuum_relation"], "over-approx");
+        assert_eq!(entry["modeling"]["tuple_field_projection"][0]["field"], "0");
+    }
+
+    #[test]
+    fn field_without_datatype_has_an_explicit_diagnostic() {
+        let expr = json!({
+            "op": "field", "datatype": null, "field": "named", "root": var_expr("r")
+        });
+        let options = Options {
+            config: expression_config(
+                json!([
+                    {"name": "unused", "params": [], "returns": "bool", "body": "true"}
+                ]),
+                json!([]),
+            ),
+            ..Options::default()
+        };
+        let data = census(vec![function(
+            "p::f",
+            vec![param("r", "reference")],
+            0,
+            vec![projected_clause(expr, &[("r", "plain_root")])],
+        )]);
+        let built = build(&data, &options).unwrap();
+        let function = &built["report"]["functions"][0];
+        assert_eq!(function["tier"], "C");
+        assert!(
+            function["modeling"]["projection_unmapped"][0]["detail"]
+                .as_str()
+                .unwrap()
+                .contains("field without datatype")
+        );
+    }
+
+    #[test]
+    fn projection_type_conflict_is_explicit() {
+        let expr = call_expr("p::f", vec![var_expr("r")]);
+        let options = Options {
+            config: expression_config(
+                json!([
+                    {"name": "m", "params": ["a: bool"], "returns": "bool", "body": null}
+                ]),
+                json!([
+                    {"match": "*", "kind": "method", "callee": "p::f", "model": "m", "relation": "over-approx"}
+                ]),
+            ),
+            ..Options::default()
+        };
+        let data = census(vec![function(
+            "p::f",
+            vec![param("r", "reference")],
+            0,
+            vec![projected_clause(expr, &[("r", "plain_root")])],
+        )]);
+        let built = build(&data, &options).unwrap();
+        let function = &built["report"]["functions"][0];
+        assert_eq!(function["tier"], "C");
+        assert!(
+            function["modeling"]["projection_unmapped"][0]["detail"]
+                .as_str()
+                .unwrap()
+                .contains("projection type conflict")
+        );
     }
 }

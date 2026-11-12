@@ -1,0 +1,3627 @@
+{
+ "entries": {
+  "r0019_from_bytes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0020_from_bytes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0021_from_bytes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0022_from_bytes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0023_from_bytes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0024_from_bytes_prefix": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0025_from_bytes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0026_from_bytes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0028_lemma_path_pairs_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0068_lemma_eq_from_bits": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0069_lemma_from_bits_bits": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0106_lemma_encode_prop_flags_matches": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0111_lemma_x86_page_flags_wf": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0112_lemma_x86_priv_flags_wf": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0113_lemma_x86_set_prop_decode_bits": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0114_lemma_x86_set_prop_preserves_entry_bits": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0115_lemma_x86_set_prop_roundtrip": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0121_as_aligned": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0127_new": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0140_lemma_type_inv_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0144_add": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0145_add_all": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0146_clear": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0147_clear_nonexistent_cpu_bits": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0148_contains": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0149_count": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0150_is_empty": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0151_is_full": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0152_iter": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0155_remove": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0156_with_capacity_val": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0158_contains": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0159_load": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0160_new": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0162_store": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0163_lemma_empty_bits_imply_empty_set": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0164_lemma_full_bits_imply_full_set": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0165_lemma_mismatched_word_imply_not_full_set": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0166_lemma_u64_distinct_bits_differ": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0167_lemma_u64_nonzero_has_set_bit": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0168_lemma_u64_nonzero_has_set_bit_aux": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0169_lemma_u64_unit_bit_projection": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0185_check_and_insert_dma_mapping": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0190_daddr_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0191_map": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0192_nbytes_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0193_nframes_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0194_paddr_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0195_reader_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0196_writer_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0198_daddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0199_nbytes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0200_nframes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0201_paddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0202_reader": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0203_writer": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0212_daddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0216_reader": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0219_writer": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0220_daddr_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0221_direction_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0222_map": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0223_nbytes_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0224_nframes_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0225_paddr_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0226_reader_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0227_writer_inner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0229_daddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0230_direction": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0231_nbytes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0232_nframes": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0233_paddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0234_read_inner_vmio": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0235_reader": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0237_write_inner_vmio": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0238_writer": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0243_alloc_frame_with": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0246_from_raw": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0250_borrow_paddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0257_drop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0260_from_unused": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0262_from_in_use": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0263_borrow": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0264_borrow_with_permission": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0265_into_raw": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0267_reference_count": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0269_start_paddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0270_slot": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0271_from_raw": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0272_inc_frame_ref_count": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0275_contains": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0277_cursor_back_mut": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0278_cursor_front_mut": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0279_cursor_mut_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0280_is_empty": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0282_pop_back": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0283_pop_front": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0284_push_back": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0285_push_front": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0286_size": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0288_current_meta": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0289_insert_before": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0290_move_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0291_move_prev": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0292_take_current": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0300_lemma_insert_before_slot_distinct": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0301_lemma_meta_region_inv_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0304_on_drop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0306_addr_of": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0307_drop_last_in_place": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0309_frame_paddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0310_get_from_in_use": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0311_get_from_unused": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0312_inc_ref_count": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0313_write_meta": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0314_frame_to_meta": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0315_meta_to_frame": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0318_from_unused": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0320_size": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0322_into_raw": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0324_split": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0327_drop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0328_from_unused": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0329_meta": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0330_meta_mut": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0331_repurpose": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0335_from_raw": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0336_into_raw": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0338_slot": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0339_start_paddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0342_try_from_shared": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0347_reader": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0348_writer": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0350_read": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0351_read_bytes": {
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "expected": "ConfirmedVacuous",
+   "registry": "V-003",
+   "scope": "crate"
+  },
+  "r0352_read_slice": {
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "expected": "ConfirmedVacuous",
+   "registry": "V-003",
+   "scope": "crate"
+  },
+  "r0353_read_val": {
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "expected": "ConfirmedVacuous",
+   "registry": "V-003",
+   "scope": "crate"
+  },
+  "r0354_write": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0355_write_bytes": {
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "expected": "ConfirmedVacuous",
+   "registry": "V-003",
+   "scope": "crate"
+  },
+  "r0356_write_slice": {
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "expected": "ConfirmedVacuous",
+   "registry": "V-003",
+   "scope": "crate"
+  },
+  "r0357_write_val": {
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "expected": "ConfirmedVacuous",
+   "registry": "V-003",
+   "scope": "crate"
+  },
+  "r0358_write_vals": {
+   "basis": "P5 pre-registered: VmIo default fallback clause !Self::obeys_vmio_*_requires; the project model is true with a faithful crate-scope relation, so the conjunction is unsat. Predicted ConfirmedVacuous before the E6 run.",
+   "expected": "ConfirmedVacuous",
+   "registry": "V-003",
+   "scope": "crate"
+  },
+  "r0361_fill": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0364_write": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0365_write_once": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0366_write_val": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0367_read_fallible": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0368_read_fallible": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0369_read_fallible": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0370_write_fallible": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0371_write_fallible": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0372_write_fallible": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0375_read": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0376_read_once": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0377_read_val": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0379_collect": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0381_read_val": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0383_has_remain": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0384_limit": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0385_remain": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0386_skip": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0387_skip_in_place": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0388_avail": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0390_has_avail": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0391_limit": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0392_skip": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0393_fill_zeros": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0395_write_val": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0426_get_kernel_page_table": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0435_lemma_kernel_range_valid": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0436_sum_page_sizes_extend_right": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0437_sum_page_sizes_mono": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0438_paddr_to_vaddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0475_lemma_eq_from_bits": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0476_lemma_from_bits_bits": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0516_lemma_eq_from_bits": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0517_lemma_from_bits_bits": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0535_page_size": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0539_item_into_raw": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0540_lemma_clone_ensures_concrete": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0541_lemma_clone_requires_concrete": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0549_lemma_perm_well_formed_with_region_preserved": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0559_new_page": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0560_new_pt": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0563_set_prop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0564_clone": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0565_apply_sign_ext": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0568_cur_entry": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0569_cur_va_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0570_find_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0571_find_next_impl": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0572_jump": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0573_move_forward": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0575_pop_level": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0576_push_level": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0577_query": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0579_find_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0580_jump": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0581_map": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0582_map_branch_pt": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0583_map_loop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0585_protect_cur_entry": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0586_protect_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0587_query": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0588_replace_cur_entry": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0589_take_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0591_lemma_replace_cur_entry_mapping_sets": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0593_dfs_get_idx_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0594_dfs_mark_stray_and_unlock": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0597_try_traverse_and_lock_subtree_root": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0599_path_slot_as_mut": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0603_empty_with_owner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0614_create_user_page_table": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0616_is_valid_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0618_load_pte": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0619_from_pte": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0620_into_pte": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0622_from_pte": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0625_alloc_if_none": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0627_is_none": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0629_protect": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0630_replace": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0631_split_if_mapped_huge": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0633_alloc_absent_child": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0634_protect_child": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0635_replace_absent_with_frame": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0636_replace_child": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0637_alloc_if_none_metaregion_sound_preserved": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0638_lemma_allocated_node_preserves_disjoint_entries": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0641_alloc": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0648_read_pte": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0650_write_pte": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0651_lemma_coverage_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0652_lemma_uniqueness_at_pair": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0657_pte_index": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0658_pte_index_bit_offset": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0660_store_pte": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0664_dispatch_tlb_flush": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0681_default": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0683_new": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0684_reader": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0685_writer": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0686_find_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0687_jump": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0688_query": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0690_find_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0692_jump": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0693_map": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0694_protect_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0695_query": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0696_unmap": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0719_remove_reader": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0720_remove_writer": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0722_lemma_paddr_to_vaddr_aligned_for": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0723_lemma_paddr_to_vaddr_properties_for": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0724_lemma_vaddr_to_paddr_properties_for": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0731_lemma_meta_frame_vaddr_properties": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0732_lemma_paddr_to_vaddr_properties": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0733_lemma_vaddr_to_paddr_properties": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r0734_cursor_find_next_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0735_cursor_jump_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0736_cursor_mut_map_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0737_cursor_mut_regions_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0738_cursor_mut_unmap_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0739_cursor_protect_next_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0740_cursor_query_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0741_cursor_query_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0743_lemma_cursor_jump_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0744_map_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0745_open_cursor_mut_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0746_open_cursor_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0747_vm_space_cursor_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0748_vm_space_cursor_mut_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0749_drop_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0750_frame_drop_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0751_frame_from_in_use_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0752_frame_from_unused_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0753_from_in_use_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0754_from_unused_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0755_lemma_insert_cursor": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0756_lemma_insert_frame": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0757_lemma_insert_segment": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0758_lemma_insert_unique": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0759_lemma_insert_vm_io": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0760_lemma_insert_vm_space": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0761_tracked_extract_cursor": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0762_tracked_extract_frame": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0763_tracked_extract_segment": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0764_tracked_extract_unique": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0765_tracked_extract_vm_io": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0766_tracked_extract_vm_space": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0768_lemma_vm_writer_limit_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0769_lemma_vm_writer_skip_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0771_new_vm_io_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0772_read_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0774_tracked_vm_reader_read_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0775_tracked_vm_space_reader_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0776_tracked_vm_space_writer_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0778_vm_io_method_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0779_lemma_accounting_inv_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0780_lemma_accounting_inv_intro": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0781_lemma_accounting_preserved_by_pt_alloc": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0782_lemma_coverage_preserved_slots_eq": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0783_lemma_drop_segment_with_store_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0784_lemma_frame_drop_pre_derivable": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0791_lemma_handle_count_insert_fresh": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0792_lemma_handle_count_remove": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0793_lemma_segment_cover_contains": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0794_lemma_segment_cover_insert_inside": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0795_lemma_segment_cover_insert_outside": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0796_lemma_segment_cover_remove_inside": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0797_lemma_segment_cover_remove_outside": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0798_lemma_segment_cover_shrink_front": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0799_lemma_segment_cover_split": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0800_lemma_segment_cover_witness": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0801_lemma_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0802_lemma_step_drop_cursor": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0803_lemma_step_drop_vm_io": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0804_lemma_step_drop_vm_space": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0805_lemma_step_find_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0806_lemma_step_frame_drop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0807_lemma_step_frame_from_in_use": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0808_lemma_step_frame_from_unused": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0809_lemma_step_from_unique": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0810_lemma_step_jump": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0811_lemma_step_map": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0812_lemma_step_new_kernel_vm_io": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0813_lemma_step_new_vm_io": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0814_lemma_step_new_vm_space": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0815_lemma_step_open_cursor": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0816_lemma_step_open_cursor_mut": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0817_lemma_step_protect_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0818_lemma_step_query": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0819_lemma_step_read": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0820_lemma_step_segment_clone": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0821_lemma_step_segment_clone_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0822_lemma_step_segment_drop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0823_lemma_step_segment_from_unused": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0824_lemma_step_segment_from_unused_accounting": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0825_lemma_step_segment_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0826_lemma_step_segment_slice": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0827_lemma_step_segment_split": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0828_lemma_step_try_from_shared": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0829_lemma_step_unique_drop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0830_lemma_step_unique_from_unused": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0831_lemma_step_unmap": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0832_lemma_step_vm_io_method": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0833_lemma_step_write": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0834_lemma_structural_inv_cursor_frame": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0835_lemma_structural_inv_frame": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0836_lemma_structural_inv_segment": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0837_axiom_insert_before_at_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0838_axiom_list_drop_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0839_axiom_take_at_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0840_step_as_list": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0841_step_contains": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0842_step_current_meta": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0843_step_cursor_back_mut": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0844_step_cursor_drop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0845_step_cursor_front_mut": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0846_step_cursor_insert_before": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0847_step_cursor_mut_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0848_step_cursor_take_current": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0849_step_insert_before_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0850_step_is_empty": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0851_step_list_drop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0852_step_list_new": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0853_step_move_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0854_step_move_prev": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0855_step_pop_back": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0856_step_pop_front": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0857_step_push_back": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0858_step_push_front": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0859_step_size": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0860_step_take_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0862_lemma_push_back_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0863_push_front_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0865_tracked_pop_back_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0866_tracked_pop_front_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0867_drop_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0868_from_unused_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0869_lemma_segment_drop_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0870_segment_clone_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0871_segment_from_unused_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0872_segment_next_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0874_run": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0880_from_unique_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0881_try_from_shared_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0882_unique_drop_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0883_unique_from_unused_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0885_new_vm_space_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0886_vm_space_new_embedded": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0895_tracked_destroy_empty": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0901_tracked_list_insert": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0903_lemma_insert_old_slot_post_at_facts": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0904_lemma_insert_preserves_relate_region": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0905_lemma_length_le_max_meta_slots": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0906_lemma_length_lt_usize_max": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0907_lemma_pop_preserves_relate_region": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0908_lemma_relate_region_at_facts": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0909_lemma_relate_region_at_from_clauses": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0910_lemma_relate_region_at_index": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0911_lemma_relate_region_indices_distinct": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0912_lemma_relate_region_preserved_external_change": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0913_lemma_relate_region_shape": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0914_lemma_view_helper_insert": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0915_insert_owner_spec_implies_model_spec": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0916_remove_owner_spec_implies_model_spec": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0917_lemma_frame_to_index_injective": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0918_lemma_frame_to_meta_soundness": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0919_lemma_index_to_frame_biinjective": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0920_lemma_meta_to_frame_soundness": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0921_lemma_meta_to_paddr_biinjective": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0922_lemma_paddr_to_meta_biinjective": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0923_axiom_mmio_paddr_huge_page_closed": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0925_borrow_meta": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0926_borrow_meta_mut": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0934_tracked_borrow_metadata_perm": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0936_lemma_contains_valid_frame_paddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0937_tracked_borrow_mut_slot_owner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0938_tracked_borrow_slot": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0939_tracked_borrow_slot_owner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0942_tracked_borrow_mut_repr_perm": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0943_tracked_borrow_repr_perm": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0945_internal_invariants_imply_top_level_properties": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0948_advance": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0949_change_fallible": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0950_split": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0953_lemma_replace_preserves_cursor_inv_metaregion": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0954_lemma_replaced_child_preserves_map_full_tree": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0955_lemma_split_current_mappings": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0956_map_branch_none_inv_holds": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0957_map_branch_none_no_new_mappings": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0958_all_item_slots_preserved": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0959_item_slot_in_regions_facts": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0960_item_slot_in_regions_preserved": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0961_max_steps_partial_eq": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0962_move_forward_increases_va": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0963_move_forward_not_popped_too_high": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0964_move_forward_owner_decreases_steps": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0965_move_forward_owner_popped_too_high_decreases": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0966_move_forward_owner_preserves_mappings": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0967_move_forward_va_is_align_up": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0968_pop_level_owner_preserves_invs": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0969_pop_level_owner_preserves_mappings": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0970_push_level_owner_decreases_steps": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0971_push_level_owner_preserves_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0972_push_level_owner_preserves_invs": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0973_push_level_owner_preserves_mappings": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0974_tracked_push_level_owner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0975_subtree_unlock_upgrade": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0976_and_map_full_tree": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0977_metaregion_preserved_under_path_insert": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0978_metaregion_preserved_under_path_remove": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0979_no_frame_with_path_from_no_view_mapping": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0980_no_node_at_idx_from_slot_key": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0981_path_removable_from_no_node_and_no_frame_path": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0982_take_next_remove_path_preserves_metaregion": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0983_as_page_table_owner_preserves_view_mappings": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0984_view_mappings_put_child": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0985_view_mappings_take_child": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0986_as_page_table_owner_pt_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0987_as_subtree_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0988_as_page_table_owner_preserves_view_mappings": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0989_as_page_table_owner_view_non_overlapping": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0990_cur_subtree_eq_filtered_mappings": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0991_cur_subtree_eq_filtered_mappings_path": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0992_cur_va_in_cont_child_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0993_higher_level_children_disjoint": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0994_mapping_covering_cur_va_from_cur_subtree": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0995_subtree_va_in_ancestor_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0996_subtree_va_ranges_disjoint": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0997_view_mapping_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0998_view_mappings_replace_lowest": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r0999_do_inc_index": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1000_lemma_continuation_inv_holds_after_child_restore": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1001_lemma_inv_children_rel_unroll": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1002_lemma_inv_children_unroll": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1003_lemma_inv_children_unroll_all": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1004_lemma_map_children_unroll": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1005_lemma_pt_inv_children_unroll": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1008_lemma_view_mappings_intro": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1009_take_child_preserves_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1010_take_put_child": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1011_tracked_make_cont": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1014_tracked_put_child": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1015_tracked_restore": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1016_tracked_take_child": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1017_do_inc_index": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1018_lemma_children_not_locked_unroll": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1019_lemma_clone_item_preserves_invariants": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1020_lemma_cont_entry_metaregion_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1021_lemma_cur_entry_absent_not_present": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1022_lemma_cur_entry_frame_present": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1023_lemma_cur_frame_clone_requires": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1024_lemma_cur_subtree_empty_not_present": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1025_lemma_cur_subtree_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1026_lemma_in_locked_range_guard_index_eq_prefix": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1027_lemma_in_locked_range_level_le_guard_level": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1028_lemma_in_locked_range_top_index_lt_top_end": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1029_lemma_in_node_holds_at_top": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1030_lemma_inv_continuation": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1031_lemma_locked_range_page_aligned": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1032_lemma_locked_range_span": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1033_lemma_metaregion_preserved": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1034_lemma_metaregion_slot_owners_preserved": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1035_lemma_metaregion_slot_owners_rc_increment": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1036_lemma_never_drop_restores_children_not_locked": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1037_lemma_new_child_mappings_eq_target": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1038_lemma_prefix_aligned_to_guard_level": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1039_lemma_prefix_in_locked_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1040_lemma_prefix_plus_ps_no_overflow": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1041_lemma_va_plus_page_size_no_overflow": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1042_lemma_view_mappings_contains": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1043_lemma_view_mappings_intro": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1045_tracked_new_absent_subtree": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1047_view_non_overlapping": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1048_lemma_view_in_vaddr_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1049_lemma_view_in_vaddr_range_user": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1051_lemma_page_size_div_mul_eq": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1052_lemma_page_size_divides": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1053_lemma_page_size_ge_base": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1054_lemma_page_size_is_pow2_pte_index_bit_offset": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1055_lemma_page_size_monotone": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1056_lemma_page_size_next": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1057_lemma_page_size_ratio": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1059_lemma_split_sub_page_big_j": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1060_lemma_va_align_page_size": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1061_lemma_va_align_page_size_level_1": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1062_lemma_va_plus_page_size_no_overflow": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1063_lemma_query_mapping": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1064_lemma_split_index_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1065_lemma_split_while_huge_preserves_cur_va": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1066_lemma_split_while_huge_preserves_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1067_split_if_mapped_huge_spec_decreases_page_size": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1068_split_if_mapped_huge_spec_preserves_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1069_split_if_mapped_huge_spec_preserves_present": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1070_split_if_mapped_huge_spec_refinement": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1071_split_while_huge_compose": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1072_split_while_huge_disjoint": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1073_split_while_huge_locality": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1074_split_while_huge_noop_implies_page_size_le": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1075_split_while_huge_one_step": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1076_split_while_huge_refinement": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1077_find_next_split_push_equals_split_while_huge": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1078_query_mapping_from_subtree": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1079_split_while_huge_absent_noop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1080_split_while_huge_at_level_noop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1081_split_while_huge_node_noop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1082_as_subtree_restore": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1083_map_children_lift": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1084_map_children_lift_skip_idx": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1085_cur_entry_node_implies_level_gt_1": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1086_frame_not_fits_implies_level_gt_1": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1087_map_children_implies": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1088_cur_va_in_subtree_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1089_do_zero_below_level": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1090_inc_and_zero_increases_va": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1091_lemma_cur_pte_index": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1092_lemma_inc_index_va": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1093_lemma_locked_range_vaddr_prefix_match": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1094_tracked_set_vaddr_in_node": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1096_lemma_pte_index_matches_owner": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1097_lemma_align_down_indices": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1098_lemma_aligned_indices_zero": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1099_lemma_aligned_vaddr_slack": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1100_lemma_inc_slot_indices": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1101_lemma_lower_indices_aligned": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1102_lemma_next_slot_pte_index": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1103_lemma_pte_index_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1104_lemma_pte_index_spec_is_div_mod": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1105_lemma_same_node_pte_indices_match": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1106_lemma_same_node_vaddr_upper_bits_match": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1110_lemma_extend_empty_mapping_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1111_lemma_mapping_set_cardinality_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1112_lemma_mapping_set_cardinality_fits_usize": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1113_lemma_mapping_set_cardinality_in_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1114_lemma_sub_mapping_pa_compose": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1115_lemma_wf_subset": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1116_lemma_wf_union": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1117_axiom_frame_is_tracked_iff_not_mmio": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1118_frame_sub_pages_valid_preserved_at_own_slot": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1119_huge_frame_split_child_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1120_last_pte_implies_frame_match": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1121_lemma_active_entry_not_in_free_pool": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1122_lemma_metaregion_sound_frame_paths_changed": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1123_metaregion_sound_frame_prop_changed": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1124_metaregion_sound_one_slot_changed": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1125_metaregion_sound_slot_owners_only": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1126_tracked_borrow_mut_node": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1127_tracked_borrow_node": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1130_tracked_new_untracked_frame": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1131_tracked_put_frame_permission": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1133_tracked_set_frame_prop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1134_tracked_take_frame_permission": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1135_tracked_take_node": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1148_nr_children_absent_slot_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1149_nr_children_present_slot_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1150_lemma_count_consistent_after_update": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1151_lemma_count_present_upto_absent": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1152_lemma_count_present_upto_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1153_lemma_count_present_upto_monotone": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1154_lemma_count_present_upto_present": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1155_lemma_count_present_upto_unchanged": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1156_lemma_count_present_upto_update": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1157_lemma_count_present_upto_zero_all_absent": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1158_lemma_count_present_window_present": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1159_fresh_node_subtree_satisfies": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1163_lemma_fresh_node_pt_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1164_lemma_split_node_view": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1165_lemma_vaddr_path_alignment_and_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1166_lemma_vaddr_push_tail_eq": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1167_lemma_view_rec_contains": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1168_lemma_view_rec_contains_intro": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1169_metaregion_sound_preserved_one_slot_changed": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1170_metaregion_sound_preserved_one_slot_changed_subtree": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1171_metaregion_sound_preserved_slot_owners_eq": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1172_metaregion_sound_preserved_slot_owners_eq_subtree": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1173_neq_old_from_path_disjoint": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1174_no_frame_with_path_rec": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1175_non_node_pt_inv_at_depth": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1176_pt_inv_implies_path_correct": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1177_pt_inv_non_node": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1178_pt_inv_unroll": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1179_view_rec_absent_empty": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1180_view_rec_contains_choose": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1181_view_rec_disjoint_vaddrs": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1182_view_rec_mapping_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1183_view_rec_mapping_page_size": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1184_view_rec_node_page_size_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1185_view_rec_nr_children_zero_empty": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1186_view_rec_page_size_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1187_view_rec_top_index_va_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1188_view_rec_vaddr_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1189_lemma_allocated_child_facts_all": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1190_lemma_allocated_no_grandchildren_all": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1191_lemma_marked_borrowed_slots_index": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1192_lemma_rec_vaddr_aligned": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1193_lemma_rec_vaddr_push_tail": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1194_lemma_rec_vaddr_suffix_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1195_lemma_rec_vaddr_unfold": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1196_lemma_vaddr_make_eq_page_size": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1197_lemma_vaddr_of_eq_int": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1198_lemma_vaddr_path_aligned": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1199_lemma_vaddr_strict_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1200_lemma_vaddr_top_index_cell": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1201_mark_borrowed_children": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1202_mark_borrowed_children_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1203_rebase_freshly_allocated_children": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1204_rebase_freshly_allocated_children_at": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1205_sibling_paths_disjoint": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1206_lemma_idx_times_pow2_bound": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1207_lemma_pt_va_range_end_shift_facts": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1208_lemma_pt_va_range_end_wrapping_sub": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1209_lemma_pt_va_range_start_shift_facts": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1210_lemma_flush_preserves_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1211_lemma_update_preserves_consistent": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1212_tracked_flush": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1213_tracked_issue_tlb_flush": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1214_tracked_update": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1215_lemma_read_bytes_eq_pointwise": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1216_lemma_split_join_identity": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1217_lemma_split_preserves_read": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1218_lemma_split_preserves_transl": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1223_tracked_join": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1226_add": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1231_from_vaddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1236_split": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1237_sub": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1239_write": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1240_write_offset": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1241_write_volatile": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1242_lemma_va_mapping_unique": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1243_tracked_pt_map": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1244_tracked_pt_unmap": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1246_tracked_take_view": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1247_tracked_tlb_flush_vaddr": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1248_tracked_tlb_soft_fault": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1249_cpu_core_owns_cpu_local_points_to": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1250_tracked_restore": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1251_new": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1252_tracked_open": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1253_tracked_schedule_in": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1254_tracked_schedule_out": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1255_cpu_local_points_to_smoke_test": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1257_tracked_return": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1258_tracked_take": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1259_lemma_agree": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1260_lemma_distinct": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1261_lemma_same_cpu_has_distinct_auth": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1262_tracked_update": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1277_release_lock": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1279_unlock": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1280_new": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "ConfirmedLive",
+   "scope": "crate"
+  },
+  "r1302_update": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1303_compare_exchange": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1317_from_raw": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1320_borrow_perm_as_ref_perm": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1321_borrow_ref_perm": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1322_lemma_ref_perm_inv_impl_perm_inv": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1323_raw_as_ref": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1333_lemma_aligned_addr_clears_tag_bit": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1335_remove_bits": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1404_drop": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1405_new": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1408_release_lock": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1417_wait_until_or_cancelled": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1426_wait_until": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1432_get": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1433_set_anyway": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1434_set_if_is_none": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1435_set_to_none": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1452_lemma_range_difference_set": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1453_range_difference": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1455_alloc_specific": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1456_free": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1459_new": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1461_lemma_alloc_specific_model": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1462_lemma_alloc_suffix_model": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1464_lemma_free_set_contains_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1465_lemma_insert_free_range": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1466_lemma_merge_right_neighbor": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  },
+  "r1467_lemma_remove_left_neighbor": {
+   "basis": "M7e-projection archived baseline: tool expected (no divergence predicted); pre-registered before the E6 rerun.",
+   "expected": "CandidateInconclusive",
+   "scope": "crate"
+  }
+ },
+ "schema": "spec-check.expectations/1"
+}

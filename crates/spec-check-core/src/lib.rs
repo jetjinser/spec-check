@@ -53,6 +53,7 @@ pub mod review;
 pub mod runner;
 pub mod scope;
 pub mod set_state;
+pub mod signals;
 pub mod state;
 pub mod state_semantics;
 pub mod std_body;
