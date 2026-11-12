@@ -460,6 +460,35 @@ ledger"，不把离线合成器伪装成自动发现。验证：bash -n、既有
   {config-tierc.json,TIERC-EXPECTED.md,TIERC-RUN.md,screening-tierc.json,
   manifest-tierc.json,runs-tierc/,analysis-tierc/}`。commit 87657af + bd64101。
 
+### M7e-投影. 显式投影语义映射 —— 完成（2026-11-12）
+
+把剩余 Tier C 中可通过项目侧投影模型表达的 requires 升级为可判定探针：
+
+- **schema**：`projection.models[]`（name/params/returns/body；受限标量表达式，
+  `null`=uninterp）+ `projection.rules[]`（method/field/variant + model +
+  relation: faithful/over-approx/under-approx）。翻译：`x.method(args)`→模型
+  调用、`x.field`→field 模型、`x is Variant`→variant 模型；整体引用/ghost
+  只能作模型实参；`==`/`!=` 允许 id 比较（底层相等的过近似）；`old` 透明；
+  排序/算术、Ctor/Match/Block/未知节点保持未映射。
+- **健全性**：只有 faithful/over-approx 模型上的 `ConfirmedVacuous` 可作候选
+  证据；`ConfirmedLive` 一律只作模型相对可满足（不声称真实 liveness）。
+- Tier：774 全库 **A 9→28 / B 89→695 / C 676→51**（C→A 16、C→B 609，
+  剩余 C 51：未建模 call 26、ctor 15、Block 9、Match 6、unary/binary 等）。
+- 运行 723 条 / 15 批：**ConfirmedLive 22 / ConfirmedVacuous 7 /
+  CandidateInconclusive 694 / Anomaly 0**，与工具 expected 一致
+  716/723；7 条不一致全是预注册 P5 的 E6 信号（VmIo）。
+- **新发现 V-003**：`VmIo` 7 个 default fallback 方法的入口前置
+  `!Self::obeys_vmio_read/write_requires()` 在 ostd crate 内已知 impl 上恒假
+  （crate-scope 常量模型 faithful）→ 7/7 ConfirmedVacuous。边界已归档：
+  公开 trait 的外部 impl 未建模，不是全局结论；default 不可达也可能是刻意
+  安全网。
+- M1 5 接口对照：`MutexGuard::new` C→A **ConfirmedLive**（复现 M1 形状判定，
+  构造层 V-001/V-002 不变）；path_slot/vm_space×2/tracked_restore 保持 B
+  Inconclusive。
+- 归档：`docs/M7e-projection-mapping.md`、`examples/vostd-requires/
+  {config-projections.json,PROJECTION-EXPECTED.md,PROJECTION-RUN.md}`。
+  commits 64587a2；registry 129ebd20（V-003）。
+
 ## 维护纪律
 
 1. 主线进度只认本文件与 git 历史；会话记忆不作为状态来源。
