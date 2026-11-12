@@ -357,6 +357,50 @@ vostd 首站运行归档。
   Either 的 dual_spec 口径依赖调用形态；VmReader/VmWriter 的干净证据
   以 ghost owner 绑定为前提（编写期 v1 未绑定时全部 client 不可表达）。
 
+### M7b. ktest 断言 → 调用者义务提取 —— 完成（2026-11-12）
+
+`extract-ktest --source-root --out [--config] [--stats]`：Rust 侧词法 mask +
+结构匹配；相对原型消除闭包过近似、补控制流/解构/变体推断/函数推导。
+冻结源口径与原型完全复现（153 测试/139 候选/117 blocked/14 排除）。
+首站 2 条（push supported、try_lock gap），expect_match 2/2，baseline
+clean，216 文件 sha256 恢复。重要修正："22 可注入" ≠ "22 可合成"——实际
+仅 2 条跑通，其余卡 iterator/量化骨架、tracked owner、mock、闭包谓词。
+commit 83a1541；registry 3a59fa67（F-013 独立复现证据）。
+
+### M7c-扩展. 配方库扩充（iterator / 状态量化）—— 完成（2026-11-12）
+
+新增通用族 `iterator-sequence`（steps 逐步消费 + 引用断言）与
+`state-invariant`（bridge 变更 + 查询断言）；schema 扩展
+`candidate_interfaces`（按候选覆盖 interfaces）、`steps`、
+`obligation_family/family_basis`（骨架可不同于候选族但须审计依据）。
+20 条缺口逐条评估：**11 条可表达并运行**（9 条 range_difference + CpuSet/
+AtomicCpuSet），9 条阻断（页表 cursor tracked owners 不可铸造、私有
+test helper、MOCK_KERNEL_PT、external_body unimplemented）。注册运行
+1498v/10e、baseline clean、Supported 1 / Gap 10、expect_match 11/11；
+关键读数：9 条 range 失败均落在最终 assert（前置已证），缺口是 ensures
+把结论包在未建立的 iterator 前件下。独立副本 440 文件 sha256 恢复。
+commit 9513b91。
+
+### M7d. 台账自动化（ledger）—— 完成（2026-11-12）
+
+`ledger --registry --report... [--candidates...] [--map] --out`：证据归一化
+（verdict→kind 映射）、dedup（map→名称→dedup_key→规范化→语义 token）、
+四类提案（append/new/noop/unmatched）；status_suggestion 恒 null、
+requires_human=true；registry 只读并字节校验。首站对账 10 份 report /
+91 条证据：matched 64 / ambiguous 4 / unmatched 23；append 1（V-001
+construction_probe 合并 3 来源）、new 0、noop 63——F-013..F-017 与
+F-018..F-024 全部匹配既有条目、零误建。registry 现 26 条（19 + M7c 新增
+7）。commit 2b1644b。
+
+### CI 入口更新（census 可选通道）—— 完成（2026-11-12）
+
+`run-spec-check.sh` 新增 `SPEC_CHECK_CENSUS=1`（默认关）：`cargo dv focus
+--log vir` 导出 → `census` → `CHECK_OUT/census/`；缺 dv/vir/目录均清晰非零
+早退，census findings 不影响退出码。CI-WIRING.md 明确"夜班在线 =
+capture + check(+可选 census)；离线 = extract-ktest / synthesize /
+ledger"，不把离线合成器伪装成自动发现。验证：bash -n、既有 VIR 直跑 census
+（1468 函数）、git diff --check。commit 8dead7c。
+
 ## 维护纪律
 
 1. 主线进度只认本文件与 git 历史；会话记忆不作为状态来源。
