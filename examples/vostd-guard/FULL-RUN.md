@@ -100,7 +100,7 @@ Manifest 首轮即通过 cargo-verus 编译与触发推断（10 条目 40 个生
   满足、#5/#6 无标量约束、#7 等式可满足），恒假性只可能来自被抽象掉的
   权限/不变式结构（调用面上下文相关），属于 M2（tracked 建模）的范围。
 - **CandidateInconclusive 不计缺陷**（判据：验证器不完备）。
-- #7（`MutexGuard::new`）与形状运行（git ae0f897）结论一致：形状层
+- #7（`MutexGuard::new`）与形状运行（git 7a2afd7）结论一致：形状层
   ConfirmedLive，与 audit 判读的层级分歧已记录于 findings registry V-001
   （`rule_classified_probe_disputed`），本次运行不改变该状态。
 - 对照集全部按预期（2 阴性 ConfirmedLive、1 阳性 ConfirmedVacuous），

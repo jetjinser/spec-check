@@ -96,7 +96,7 @@
 
 ### M2. tracked 参数建模 —— 完成（2026-11-11）
 
-**生成器接入已完成**（M1/M2 分支合并后，commit fcfa3e3）：manifest v1.1
+**生成器接入已完成**（M1/M2 分支合并后，commit d2623af）：manifest v1.1
 （target_workspace 注入 + construction 条目）实现于 vacuity.rs，3/3 验证
 一致；`check` 流程端到端组合验证通过（wt-a 流程 + wt-b 能力零改动组合，
 报告 `examples/vostd-guard/tracked/integration-report.json`）。
@@ -374,7 +374,7 @@ vostd 首站运行归档。
 首站 2 条（push supported、try_lock gap），expect_match 2/2，baseline
 clean，216 文件 sha256 恢复。重要修正："22 可注入" ≠ "22 可合成"——实际
 仅 2 条跑通，其余卡 iterator/量化骨架、tracked owner、mock、闭包谓词。
-commit 83a1541；registry 3a59fa67（F-013 独立复现证据）。
+commit c25ea69；registry 3a59fa67（F-013 独立复现证据）。
 
 ### M7c-扩展. 配方库扩充（iterator / 状态量化）—— 完成（2026-11-12）
 
@@ -388,7 +388,7 @@ test helper、MOCK_KERNEL_PT、external_body unimplemented）。注册运行
 1498v/10e、baseline clean、Supported 1 / Gap 10、expect_match 11/11；
 关键读数：9 条 range 失败均落在最终 assert（前置已证），缺口是 ensures
 把结论包在未建立的 iterator 前件下。独立副本 440 文件 sha256 恢复。
-commit 9513b91。
+commit a04b953。
 
 ### M7d. 台账自动化（ledger）—— 完成（2026-11-12）
 
@@ -399,7 +399,7 @@ requires_human=true；registry 只读并字节校验。首站对账 10 份 repor
 91 条证据：matched 64 / ambiguous 4 / unmatched 23；append 1（V-001
 construction_probe 合并 3 来源）、new 0、noop 63——F-013..F-017 与
 F-018..F-024 全部匹配既有条目、零误建。registry 现 26 条（19 + M7c 新增
-7）。commit 2b1644b。
+7）。commit 4a039f0。
 
 ### M7e. census 全函数 requires 筛查 —— 完成（2026-11-12）
 
@@ -432,7 +432,7 @@ F-018..F-024 全部匹配既有条目、零误建。registry 现 26 条（19 + M
 早退，census findings 不影响退出码。CI-WIRING.md 明确"夜班在线 =
 capture + check(+可选 census)；离线 = extract-ktest / synthesize /
 ledger"，不把离线合成器伪装成自动发现。验证：bash -n、既有 VIR 直跑 census
-（1468 函数）、git diff --check。commit 8dead7c。
+（1468 函数）、git diff --check。commit 02efbd4。
 
 ### M7e-扩展. Tier C 建模（泛型/引用/ghost）—— 完成（2026-11-12）
 
@@ -458,7 +458,7 @@ ledger"，不把离线合成器伪装成自动发现。验证：bash -n、既有
   直接比较/整体传参，如 `perm.id() == self.cell_id()`）。
 - 归档：`docs/M7e-tierc-modeling.md`、`examples/vostd-requires/
   {config-tierc.json,TIERC-EXPECTED.md,TIERC-RUN.md,screening-tierc.json,
-  manifest-tierc.json,runs-tierc/,analysis-tierc/}`。commit 87657af + bd64101。
+  manifest-tierc.json,runs-tierc/,analysis-tierc/}`。commit ecd7124 + d1de31f。
 
 ### M7e-投影. 显式投影语义映射 —— 完成（2026-11-12）
 
@@ -487,7 +487,7 @@ ledger"，不把离线合成器伪装成自动发现。验证：bash -n、既有
   Inconclusive。
 - 归档：`docs/M7e-projection-mapping.md`、`examples/vostd-requires/
   {config-projections.json,PROJECTION-EXPECTED.md,PROJECTION-RUN.md}`。
-  commits 64587a2；registry 129ebd20（V-003）。
+  commits a2022c1；registry 129ebd20（V-003）。
 
 ### M7e-E6. 信号产品化 + 剩余 Tier C 表达式扩展 —— 完成（2026-11-13）
 

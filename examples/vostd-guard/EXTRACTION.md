@@ -31,7 +31,7 @@ manifest 支持，统一抽象为不透明 usize id。转写规则：
 
 对照集（非契约条目）：`mutex_new_any_value_control`、`arith_bounds_live_control`
 （阴性，带见证）、`arith_oob_vacuous_control`（阳性算术矛盾）。前两者沿用
-形状运行（git ae0f897）已验证的形状，`Mutex::new` 在冻结源中无显式 requires，
+形状运行（git 7a2afd7）已验证的形状，`Mutex::new` 在冻结源中无显式 requires，
 值域谓词是建模假设（非原文契约）。
 
 ---
@@ -207,7 +207,7 @@ perm.id() == mutex.cell_id(),
 |---|---|---|
 | `perm.id() == mutex.cell_id()` | `perm_matches_cell(perm_id, mutex_id)` := `perm_id == mutex_id` | 机械 |
 
-witness `(0,0)`（沿用形状运行）。**已知抽象损失（git ae0f897 已记录）**：
+witness `(0,0)`（沿用形状运行）。**已知抽象损失（git 7a2afd7 已记录）**：
 `PointsTo<T>` 是线性 ghost 权限，只能由 `PCell::new` 产出、不可伪造；
 抽象成 usize id 后相等谓词平凡可满足。audit 的"调用面恒假/不可达"是
 上下文相关判断，孤立形状探针无法确认也无法否证——此条目在 findings

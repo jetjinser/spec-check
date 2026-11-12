@@ -21,7 +21,7 @@ external-body-owner-audit）对 7 项 stub 的静态判读为**入口前置在�
 | 4 | `alloc_absent_child_shape` | **ConfirmedLive** | 16 条 requires 中 7 条机械可联立满足（witness `0,0,16,1,1,1,true,2,2,2,0,3,3`），其余 uninterp。同 #2。 |
 | 5 | `node_lock_shape` | **CandidateInconclusive** | requires 全为 uninterp（node_invariants、external_meta_wf、guards_unlocked），无机械标量内容，按 EXTRACTION.md 见证策略不给 witness：活性探针无法构造见证，空洞探针无法证 forall 否定（uninterp 谓词可取真）。双败 → 不可判定，不计缺陷。 |
 | 6 | `make_guard_unchecked_shape` | **CandidateInconclusive** | 与 #5 同形状（requires 完全相同），同预期。 |
-| 7 | `mutex_guard_new_shape` | **ConfirmedLive** | 与形状运行（git ae0f897 #1）完全同形：`perm_id == mutex_id` 抽象等式平凡可满足，witness `(0,0)`。形状运行已机器确认此结局；V-001 在 registry 保持 `rule_classified_probe_disputed` 不动。 |
+| 7 | `mutex_guard_new_shape` | **ConfirmedLive** | 与形状运行（git 7a2afd7 #1）完全同形：`perm_id == mutex_id` 抽象等式平凡可满足，witness `(0,0)`。形状运行已机器确认此结局；V-001 在 registry 保持 `rule_classified_probe_disputed` 不动。 |
 | 8 | `mutex_new_any_value_control`（阴性对照） | **ConfirmedLive** | `Mutex::new` 阴性对照，值域谓词 `val_id < 8`，见证 0。 |
 | 9 | `arith_bounds_live_control`（阴性对照） | **ConfirmedLive** | 算术前置 `i < len`，见证 `(0,1)`。 |
 | 10 | `arith_oob_vacuous_control`（阳性对照） | **ConfirmedVacuous** | `i < len && i >= len` 矛盾前置，恒假；spike 判据再现。 |

@@ -22,7 +22,7 @@ cargo-spec-check screen-requires --census /tmp/m7e-e6-census4/census.json \
   --batch K --batch-size 50 --cargo-verus ... --z3 ... --vstd ...
 ```
 
-- 723 基线复核使用 pre-E6 二进制（git HEAD `3386541` 的临时 worktree），以避免表达式
+- 723 基线复核使用 pre-E6 二进制（git HEAD `ee06213` 的临时 worktree），以避免表达式
   扩展改变历史条目；最终扩展运行使用本提交的新二进制。两者都用新的 `signals` 子命令/
   集成输出计算 E6 信号。
 - `cargo test --offline`：**全绿**（core lib 152 passed / 72 ignored；cargo-spec-check

@@ -1,7 +1,7 @@
 # M7d 台账自动化首站运行（vostd 研究台账对账）
 
 生成时间：2026-11-12。工具：`cargo-spec-check ledger`（spec-check master，
-基于 commit `83a1541` 的开发工作区）。**只读 registry，只产出提案**。
+基于 commit `c25ea69` 的开发工作区）。**只读 registry，只产出提案**。
 
 ## 1. 命令
 
