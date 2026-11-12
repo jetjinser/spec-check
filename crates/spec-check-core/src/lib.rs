@@ -14,6 +14,7 @@ pub mod borrowed_resource;
 pub mod callback;
 pub mod call_guidance;
 pub mod capture;
+pub mod census;
 pub mod client;
 pub mod conditional;
 pub mod conditional_check;

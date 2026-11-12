@@ -4,6 +4,7 @@ mod borrowed_resource;
 mod call_guidance;
 mod callback;
 mod capture;
+mod census;
 mod client;
 mod contract_scan;
 mod conditional;
@@ -150,6 +151,41 @@ fn check() -> Result<()> {
             return Err("conditional-scan --vir VIR --out NEW_DIRECTORY".into());
         }
         return conditional::run(Path::new(&args[2]), Path::new(&args[4]));
+    }
+    if args.first().is_some_and(|s| s == "census") {
+        let usage = "census --vir FILE --crate NAME --out DIRECTORY [--source-root DIRECTORY]";
+        let mut values = BTreeMap::new();
+        let mut iter = args.iter().skip(1);
+        while let Some(key) = iter.next() {
+            if !matches!(key.as_str(), "--vir" | "--crate" | "--out" | "--source-root") {
+                return Err(usage.into());
+            }
+            let value = iter.next().ok_or(usage)?.clone();
+            if values.insert(key.clone(), value).is_some() {
+                return Err(usage.into());
+            }
+        }
+        let get = |k: &str| values.get(k).map(String::as_str).ok_or("missing option");
+        let report = census::run(
+            Path::new(get("--vir")?),
+            get("--crate")?,
+            values.get("--source-root").map(Path::new),
+            Path::new(get("--out")?),
+        )?;
+        let counts = &report["counts"];
+        println!(
+            "census: {} functions ({} exec, {} proof), {} with postcondition ({} outputs, {} findings), {} without ({} outputs, {} findings)",
+            counts["functions"],
+            counts["exec"],
+            counts["proof"],
+            counts["with_postcondition"]["functions"],
+            counts["with_postcondition"]["outputs"],
+            counts["with_postcondition"]["findings"],
+            counts["without_postcondition"]["functions"],
+            counts["without_postcondition"]["outputs"],
+            counts["without_postcondition"]["findings"],
+        );
+        return Ok(());
     }
     if args.first().is_some_and(|s| s == "contract-scan") {
         if args.len() != 5 || args[1] != "--vir" || args[3] != "--out" {

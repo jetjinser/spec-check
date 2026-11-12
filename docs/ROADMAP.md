@@ -23,6 +23,14 @@
   分布性可达性"。见 `docs/M2-tracked-modeling.md`、
   `examples/tracked-modeling-spike/`。
 
+- M7a 规格普查已实现：`cargo-spec-check census --vir --crate --out`
+  从 VIR 枚举 Exec/Proof 函数的返回值、`#[verus_spec]` ghost 返回值与
+  `&mut` 输出，判定有效后置条件（含 trait declaration 继承、排除
+  `default_ensures`）是否提及，输出 `census.json`；纯分析、不注入、不验证。
+  设计 `docs/M7a-spec-census.md`，校准 `examples/vostd-census/`
+  （43da079 vs 同事 artifact：交集 1210 函数，输出数一致率 99.34%、
+  后置来源 99.42%、finding 集合 98.51%）。
+
 ## 主线条目（按优先级）
 
 ### M1. contract-vacuity 里程碑③：vostd 契约清单全量运行 —— 完成（2026-11-11）
@@ -220,6 +228,37 @@ fn stub 三种面形态自动选型 + 铸造策略表 + 叶证据 run 生成）�
   相对）；通道穷尽是文档化论证；alloc_absent stub 的
   `relate_guard(*old(self).node)` 为 rustc 可见形式偏差（语义保持，
   RUN 文档 §证据边界 4）。
+
+### M7a. 自研 VIR 规格普查（spec census）—— 完成（2026-11-12）
+
+自有漏斗顶端：对全函数枚举输出，判断有效后置条件是否提及，列出无后置
+条件/external_body/requires 清单，作为 M7b 需求提取、M7c 模板合成、M7d
+台账自动化的地基。事实层，不产出缺陷判定。
+
+- [x] 设计：`docs/M7a-spec-census.md`。语义逐条复刻同事
+      ensures-coverage：输出 = 返回值 + `#[verus_spec]` 注入的 ghost
+      返回值分量 + 每个 `&mut` 参数；提及 = ensures 中的名字或 `returns`，
+      `&mut` 仅认 `final(x)`；trait impl 合并 declaration 的 regular
+      ensures/returns；`default_ensures` 不算；类型不变式仅作注记。
+- [x] 实现：`spec-check-core::census` + `cargo-spec-check census` /
+      `spec-check-core census`。`::_VERUS_VERIFIED_` 规范化为声明路径，
+      以验证体记录为准；单位实际返回值不产生输出；`with` 参数中的
+      `Tracked<&mut _>`/`Ghost<&mut _>` 计为输出。纯 VIR、零项目专有
+      知识。7 个语义单测；全仓 100 测试通过。
+- [x] VIR 导出：43da079（`vostd-pr830`），Verus
+      0.2026.10.08.d128dda / Rust 1.98.1；
+      `cargo dv focus --targets ostd -- --no-verify --log vir`。
+- [x] 校准：`examples/vostd-census/`。交集 1210 函数：输出数一致率
+      99.34%、后置来源 99.42%、finding 集合 98.51%；21 个受影响函数
+      全部追溯到 b6db6df↔43da079 的签名/契约修订；无 D-MENTION/
+      D-NONE 规则差异。196 个 artifact 源码解析器缺口里 188 个由 VIR
+      普查覆盖（8 个因修订缺失）。汇总数字受修订影响：1468 vs 1502
+      函数、有后置 52 vs 42 findings、无后置 171 vs 193。
+- 已知边界：精确修订 b6db6df 的 VIR 需要 Rust 1.99.1 + Verus
+  0.2026.11.11，本地无该组合；校准按路径交集进行。`default_ensures_only`
+  注解会传播到继承该 default 的 impl（artifact 只在声明行标注），不影响
+  finding。6 个 `decl_unavailable` 均为自带后置条件的
+  `FallibleVm{Read,Write}` impl。
 
 ## 维护纪律
 

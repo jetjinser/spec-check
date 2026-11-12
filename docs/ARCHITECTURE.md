@@ -5,7 +5,7 @@
 - `spec-check-core` — the engine. Currently a verbatim port of the research
   lineage (flat module list). Target organisation, applied incrementally:
   - `capture/` — Rustc/Verus invocation, probe build, replay, inventory
-  - `scan/` — contract scan, demand census, guard-owner joins
+  - `scan/` — contract scan, demand census, spec census (VIR facts), guard-owner joins
   - `client/` — obligation/client generation
   - `findings/` — typed finding schema and report rendering
 - `spec-check-analyses` — pluggable analyses. Each analysis is a generic
