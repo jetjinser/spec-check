@@ -1,0 +1,2508 @@
+{
+  "schema": "spec-check.ledger-report/1",
+  "registry": {
+    "path": "/home/jinser/vie/work/AES/research/experiments/spec-quality-two-day/findings/registry.json",
+    "findings": 26,
+    "bytes": 31658,
+    "unchanged_after_run": true
+  },
+  "inputs": [
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "format": "vacuity-report",
+      "entries": 14,
+      "actionable": 3
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "format": "vacuity-report",
+      "entries": 28,
+      "actionable": 2
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7b-run1/report.json",
+      "format": "divergence-report",
+      "entries": 2,
+      "actionable": 1
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-promoted-run1/report.json",
+      "format": "divergence-report",
+      "entries": 3,
+      "actionable": 0
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-promoted-run2/report.json",
+      "format": "divergence-report",
+      "entries": 2,
+      "actionable": 2
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-promoted2-run1/report.json",
+      "format": "divergence-report",
+      "entries": 1,
+      "actionable": 1
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "format": "divergence-report",
+      "entries": 22,
+      "actionable": 21
+    },
+    {
+      "source": "/tmp/vostd-divergence-run1/report.json",
+      "format": "divergence-report",
+      "entries": 5,
+      "actionable": 4
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "format": "divergence-report",
+      "entries": 11,
+      "actionable": 8
+    },
+    {
+      "source": "examples/vostd-guard/tracked/integration-report.json#vacuity",
+      "format": "vacuity-report",
+      "entries": 3,
+      "actionable": 1
+    }
+  ],
+  "diagnostics": [],
+  "records": [
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "alloc_absent_child_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "alloc_if_none_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "make_guard_unchecked_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "mutex_guard_new_construction",
+      "verdict": "ConfirmedVacuous",
+      "evidence_kind": "construction_probe",
+      "actionable": true,
+      "control": false,
+      "detail": "construction: fabrication call rejected at expect_fail_requires (precondition not satisfied at ostd/src/spec_check_probes/mutex_guard_new_construction.rs:36; evidence: fabrication channel rejected + channel-exhaustion argument (documented, model-relative))",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 790,
+      "registry_id": "V-001",
+      "registry_dedup_key": "vacuity:mutex-guard-new-stub",
+      "match_candidates": [
+        {
+          "registry_id": "V-001",
+          "dedup_key": "vacuity:mutex-guard-new-stub",
+          "score": 790,
+          "tier": "function-interface"
+        },
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "append_evidence",
+      "reason": "new-source-evidence",
+      "sources": [
+        "/tmp/vac-construction-main6/report.json",
+        "/tmp/vac-vostd-full60-run1/report.json",
+        "examples/vostd-guard/tracked/integration-report.json#vacuity"
+      ],
+      "proposed_evidence": {
+        "kind": "construction_probe",
+        "ref": "spec-check ledger inputs: /tmp/vac-construction-main6/report.json; /tmp/vac-vostd-full60-run1/report.json; examples/vostd-guard/tracked/integration-report.json#vacuity",
+        "detail": "mutex_guard_new_construction ConfirmedVacuous; construction: fabrication call rejected at expect_fail_requires (precondition not satisfied at ostd/src/spec_check_probes/mutex_guard_new_construction.rs:36; evidence: fabrication channel rejected + channel-exhaustion argument (documented, model-relative))"
+      },
+      "status_suggestion": null,
+      "requires_human": true
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "mutex_guard_new_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 790,
+      "registry_id": "V-001",
+      "registry_dedup_key": "vacuity:mutex-guard-new-stub",
+      "match_candidates": [
+        {
+          "registry_id": "V-001",
+          "dedup_key": "vacuity:mutex-guard-new-stub",
+          "score": 790,
+          "tier": "function-interface"
+        },
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "node_lock_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "path_slot_as_mut_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "split_if_mapped_huge_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "tracked_restore_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "try_traverse_and_lock_subtree_root_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "vm_space_cursor_embedded_construction",
+      "verdict": "ConfirmedVacuous",
+      "evidence_kind": "construction_probe",
+      "actionable": true,
+      "control": false,
+      "detail": "construction: fabrication call rejected at expect_fail_requires (precondition not satisfied at ostd/src/spec_check_probes/vm_space_cursor_embedded_construction.rs:70; evidence: fabrication channel rejected + channel-exhaustion argument (documented, model-relative))",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "vm_space_cursor_embedded_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "vm_space_cursor_mut_embedded_construction",
+      "verdict": "ConfirmedVacuous",
+      "evidence_kind": "construction_probe",
+      "actionable": true,
+      "control": false,
+      "detail": "construction: fabrication call rejected at expect_fail_requires (precondition not satisfied at ostd/src/spec_check_probes/vm_space_cursor_mut_embedded_construction.rs:70; evidence: fabrication channel rejected + channel-exhaustion argument (documented, model-relative))",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-construction-main6/report.json",
+      "source_format": "vacuity-report",
+      "entry": "vm_space_cursor_mut_embedded_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "alloc_absent_child_shape",
+      "verdict": "CandidateInconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "detail": "vacuous_probe_failed=true live_probe_failed=true",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "alloc_if_none_shape",
+      "verdict": "CandidateInconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "detail": "vacuous_probe_failed=true live_probe_failed=true",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "arith_bounds_live_control",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": true,
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "control-entry",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "arith_oob_vacuous_control",
+      "verdict": "ConfirmedVacuous",
+      "evidence_kind": "probe_run",
+      "actionable": true,
+      "control": true,
+      "detail": "vacuous_probe_failed=false live_probe_failed=true",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "control-entry",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "make_guard_unchecked_shape",
+      "verdict": "CandidateInconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "detail": "vacuous_probe_failed=true live_probe_failed=true",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "mutex_guard_new_construction",
+      "verdict": "ConfirmedVacuous",
+      "evidence_kind": "construction_probe",
+      "actionable": true,
+      "control": false,
+      "detail": "construction: fabrication call rejected at expect_fail_requires (precondition not satisfied at ostd/src/spec_check_probes/mutex_guard_new_construction.rs:36; evidence: fabrication channel rejected + channel-exhaustion argument (documented, model-relative))",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 790,
+      "registry_id": "V-001",
+      "registry_dedup_key": "vacuity:mutex-guard-new-stub",
+      "match_candidates": [
+        {
+          "registry_id": "V-001",
+          "dedup_key": "vacuity:mutex-guard-new-stub",
+          "score": 790,
+          "tier": "function-interface"
+        },
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "merged-into-proposal",
+      "merged_into": "append:V-001:construction_probe:mutex-guard-new",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "mutex_guard_new_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 790,
+      "registry_id": "V-001",
+      "registry_dedup_key": "vacuity:mutex-guard-new-stub",
+      "match_candidates": [
+        {
+          "registry_id": "V-001",
+          "dedup_key": "vacuity:mutex-guard-new-stub",
+          "score": 790,
+          "tier": "function-interface"
+        },
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "mutex_guard_new_quantifier_shape",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 790,
+      "registry_id": "V-001",
+      "registry_dedup_key": "vacuity:mutex-guard-new-stub",
+      "match_candidates": [
+        {
+          "registry_id": "V-001",
+          "dedup_key": "vacuity:mutex-guard-new-stub",
+          "score": 790,
+          "tier": "function-interface"
+        },
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "mutex_guard_new_shape",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 790,
+      "registry_id": "V-001",
+      "registry_dedup_key": "vacuity:mutex-guard-new-stub",
+      "match_candidates": [
+        {
+          "registry_id": "V-001",
+          "dedup_key": "vacuity:mutex-guard-new-stub",
+          "score": 790,
+          "tier": "function-interface"
+        },
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "mutex_new_any_value_control",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": true,
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "control-entry",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "node_lock_shape",
+      "verdict": "CandidateInconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "detail": "vacuous_probe_failed=true live_probe_failed=true",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row00_read_inner",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row01_read_inner",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "function": "VmIoOwner::advance",
+      "candidate_dedup_key": "other:vmioowner-advance:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row04_path_slot_as_mut",
+      "verdict": "CandidateInconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "function": "Dmar::new",
+      "candidate_dedup_key": "vr:dmar-new:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row15_vm_space_cursor_embedded",
+      "verdict": "CandidateInconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "function": "ApicTimer::timer_current_count",
+      "candidate_dedup_key": "vr:apictimer-timer-current-count:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row16_vm_space_cursor_mut_embedded",
+      "verdict": "CandidateInconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "function": "X2Apic::new",
+      "candidate_dedup_key": "vr:x2apic-new:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row17_tracked_restore",
+      "verdict": "CandidateInconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "function": "X2Apic::enable",
+      "candidate_dedup_key": "fr:x2apic-enable:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row25_try_lock",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "function": "<XApic as ApicTimer>::timer_current_count",
+      "candidate_dedup_key": "vr:xapic-as-apictimer-timer-current-count:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row29_read",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "function": "AtomicCpuSet::new",
+      "candidate_dedup_key": "vr:atomiccpuset-new:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row37_try_read",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "function": "<DmaCoherent<M> as VmIoOnce>::write_once",
+      "candidate_dedup_key": "other:dmacoherent-m-as-vmioonce-write-once:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row39_try_write",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "function": "DmaStreamSlice<Dma, M>::sync",
+      "candidate_dedup_key": "other:dmastreamslice-dma-m-sync:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row44_try_upgrade",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "function": "DmaStream<M>::paddr",
+      "candidate_dedup_key": "vr:dmastream-m-paddr:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row47_try_read",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "function": "HasDaddr::daddr",
+      "candidate_dedup_key": "vr:hasdaddr-daddr:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row52_lock",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "function": "FrameAllocOptions::zeroed",
+      "candidate_dedup_key": "fr:frameallocoptions-zeroed:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row53_try_lock",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "function": "LinkedList<M>::new",
+      "candidate_dedup_key": "vr:linkedlist-m-new:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "row59_get_freelist_guard",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "function": "Link<M>::new",
+      "candidate_dedup_key": "vr:link-m-new:1",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "split_if_mapped_huge_shape",
+      "verdict": "CandidateInconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "detail": "vacuous_probe_failed=true live_probe_failed=true",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vac-vostd-full60-run1/report.json",
+      "source_format": "vacuity-report",
+      "entry": "try_traverse_and_lock_subtree_root_shape",
+      "verdict": "CandidateInconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "detail": "vacuous_probe_failed=true live_probe_failed=true",
+      "match_status": "matched",
+      "match_tier": "semantic-tokens",
+      "match_score": 600,
+      "registry_id": "V-002",
+      "registry_dedup_key": "vacuity:guard-entry-7",
+      "match_candidates": [
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7b-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c007_memoryregionarray_push",
+      "verdict": "ObligationSupported",
+      "evidence_kind": "obligation_supported",
+      "actionable": false,
+      "control": false,
+      "function": "MemoryRegionArray::push",
+      "candidate_dedup_key": "ktest:K007",
+      "detail": "obligation verified under the original contracts; baseline clean",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7b-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c131_mutex_try_lock",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "Mutex::try_lock",
+      "candidate_dedup_key": "ktest:K131",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c131_mutex_try_lock.rs:18); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-013",
+      "registry_dedup_key": "mutex-try-lock-is-none-demand",
+      "match_candidates": [
+        {
+          "registry_id": "F-013",
+          "dedup_key": "mutex-try-lock-is-none-demand",
+          "score": 1000,
+          "tier": "entry-anchor"
+        },
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-promoted-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c006_drhd_register_base_addr",
+      "verdict": "Inconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "function": "Drhd::register_base_addr",
+      "candidate_dedup_key": "vr:drhd-register-base-addr:1",
+      "detail": "obligation client did not compile in the precheck loop; see /tmp/vostd-divergence-m7c-promoted-run1/precheck-build.log; first failure: error[E0433]: cannot find `x86` in `arch`",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-promoted-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c103_asvirtptr_as_virt_ptr",
+      "verdict": "Inconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "function": "AsVirtPtr::as_virt_ptr",
+      "candidate_dedup_key": "vr:asvirtptr-as-virt-ptr:1",
+      "detail": "obligation client did not compile in the precheck loop; see /tmp/vostd-divergence-m7c-promoted-run1/precheck-build.log; first failure: error[E0433]: cannot find `x86` in `arch`",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-022",
+      "registry_dedup_key": "asvirtptr-slice-pointer-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-022",
+          "dedup_key": "asvirtptr-slice-pointer-readback",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-promoted-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c228_jiffies_elapsed",
+      "verdict": "Inconclusive",
+      "evidence_kind": "probe_inconclusive",
+      "actionable": false,
+      "control": false,
+      "function": "Jiffies::elapsed",
+      "candidate_dedup_key": "vr:jiffies-elapsed:1",
+      "detail": "obligation client did not compile in the precheck loop; see /tmp/vostd-divergence-m7c-promoted-run1/precheck-build.log; first failure: error[E0433]: cannot find `x86` in `arch`",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-023",
+      "registry_dedup_key": "jiffies-elapsed-monotonic",
+      "match_candidates": [
+        {
+          "registry_id": "F-023",
+          "dedup_key": "jiffies-elapsed-monotonic",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-promoted-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "c103_asvirtptr_as_virt_ptr",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "AsVirtPtr::as_virt_ptr",
+      "candidate_dedup_key": "vr:asvirtptr-as-virt-ptr:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c103_asvirtptr_as_virt_ptr.rs:18); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-022",
+      "registry_dedup_key": "asvirtptr-slice-pointer-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-022",
+          "dedup_key": "asvirtptr-slice-pointer-readback",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-promoted-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "c228_jiffies_elapsed",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "Jiffies::elapsed",
+      "candidate_dedup_key": "vr:jiffies-elapsed:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c228_jiffies_elapsed.rs:18); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-023",
+      "registry_dedup_key": "jiffies-elapsed-monotonic",
+      "match_candidates": [
+        {
+          "registry_id": "F-023",
+          "dedup_key": "jiffies-elapsed-monotonic",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-promoted2-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c127_pagetablepagemeta_new",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "PageTablePageMeta<C>::new",
+      "candidate_dedup_key": "vr:pagetablepagemeta-c-new:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c127_pagetablepagemeta_new.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-024",
+      "registry_dedup_key": "pagetablepagemeta-new-level-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-024",
+          "dedup_key": "pagetablepagemeta-new-level-readback",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c096_vmreader_has_remain",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "VmReader<'_, Fallibility>::has_remain",
+      "candidate_dedup_key": "demand:vmreader-fallibility-has-remain:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c096_vmreader_has_remain.rs:19); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-019",
+      "registry_dedup_key": "vmio-has-remain-has-avail-demand",
+      "match_candidates": [
+        {
+          "registry_id": "F-019",
+          "dedup_key": "vmio-has-remain-has-avail-demand",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c097_vmreader_limit",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "VmReader<'_, Fallibility>::limit",
+      "candidate_dedup_key": "fr:vmreader-fallibility-limit:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c097_vmreader_limit.rs:19); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-018",
+      "registry_dedup_key": "vmio-limit-skip-receiver-post-state",
+      "match_candidates": [
+        {
+          "registry_id": "F-018",
+          "dedup_key": "vmio-limit-skip-receiver-post-state",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c098_vmreader_skip",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "VmReader<'_, Fallibility>::skip",
+      "candidate_dedup_key": "fr:vmreader-fallibility-skip:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c098_vmreader_skip.rs:20); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-018",
+      "registry_dedup_key": "vmio-limit-skip-receiver-post-state",
+      "match_candidates": [
+        {
+          "registry_id": "F-018",
+          "dedup_key": "vmio-limit-skip-receiver-post-state",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c100_vmwriter_has_avail",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "VmWriter<'a, Fallibility>::has_avail",
+      "candidate_dedup_key": "demand:vmwriter-a-fallibility-has-avail:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c100_vmwriter_has_avail.rs:19); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-019",
+      "registry_dedup_key": "vmio-has-remain-has-avail-demand",
+      "match_candidates": [
+        {
+          "registry_id": "F-019",
+          "dedup_key": "vmio-has-remain-has-avail-demand",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c101_vmwriter_limit",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "VmWriter<'a, Fallibility>::limit",
+      "candidate_dedup_key": "fr:vmwriter-a-fallibility-limit:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c101_vmwriter_limit.rs:19); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-018",
+      "registry_dedup_key": "vmio-limit-skip-receiver-post-state",
+      "match_candidates": [
+        {
+          "registry_id": "F-018",
+          "dedup_key": "vmio-limit-skip-receiver-post-state",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c102_vmwriter_skip",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "VmWriter<'a, Fallibility>::skip",
+      "candidate_dedup_key": "fr:vmwriter-a-fallibility-skip:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c102_vmwriter_skip.rs:20); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-018",
+      "registry_dedup_key": "vmio-limit-skip-receiver-post-state",
+      "match_candidates": [
+        {
+          "registry_id": "F-018",
+          "dedup_key": "vmio-limit-skip-receiver-post-state",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c104_vmwriter_from",
+      "verdict": "ObligationSupported",
+      "evidence_kind": "obligation_supported",
+      "actionable": false,
+      "control": false,
+      "function": "VmWriter<'a, Infallible>::from",
+      "candidate_dedup_key": "fr:vmwriter-a-infallible-from:1",
+      "detail": "obligation verified under the original contracts; baseline clean",
+      "match_status": "unmatched",
+      "action": "unmatched",
+      "reason": "no-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c162_mutex_new",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "Mutex<T>::new",
+      "candidate_dedup_key": "vr:mutex-t-new:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c162_mutex_new.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-015",
+      "registry_dedup_key": "rwmutex-rwlock-value-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c167_rcuoption_new_none",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RcuOption<P>::new_none",
+      "candidate_dedup_key": "vr:rcuoption-p-new-none:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c167_rcuoption_new_none.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-017",
+      "registry_dedup_key": "rcu-option-read-get-value",
+      "match_candidates": [
+        {
+          "registry_id": "F-017",
+          "dedup_key": "rcu-option-read-get-value",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c169_rcuoption_read",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RcuOption<P>::read",
+      "candidate_dedup_key": "gi:rcuoption-p-read:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c169_rcuoption_read.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-017",
+      "registry_dedup_key": "rcu-option-read-get-value",
+      "match_candidates": [
+        {
+          "registry_id": "F-017",
+          "dedup_key": "rcu-option-read-get-value",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c170_rcuoptionreadguard_is_none",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RcuOptionReadGuard<'_, P>::is_none",
+      "candidate_dedup_key": "demand:rcuoptionreadguard-p-is-none:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c170_rcuoptionreadguard_is_none.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-017",
+      "registry_dedup_key": "rcu-option-read-get-value",
+      "match_candidates": [
+        {
+          "registry_id": "F-017",
+          "dedup_key": "rcu-option-read-get-value",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c177_rwarc_clone_ro",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RwArc<T>::clone_ro",
+      "candidate_dedup_key": "vr:rwarc-t-clone-ro:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c177_rwarc_clone_ro.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-014",
+      "registry_dedup_key": "rwarc-get-cloned-value",
+      "match_candidates": [
+        {
+          "registry_id": "F-014",
+          "dedup_key": "rwarc-get-cloned-value",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c178_rwarc_get_cloned",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RwArc<T>::get_cloned",
+      "candidate_dedup_key": "vr:rwarc-t-get-cloned:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c178_rwarc_get_cloned.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-014",
+      "registry_dedup_key": "rwarc-get-cloned-value",
+      "match_candidates": [
+        {
+          "registry_id": "F-014",
+          "dedup_key": "rwarc-get-cloned-value",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c180_rwlock_new",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RwLock<T, G>::new",
+      "candidate_dedup_key": "vr:rwlock-t-g-new:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c180_rwlock_new.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 800,
+      "registry_id": "F-015",
+      "registry_dedup_key": "rwmutex-rwlock-value-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 800,
+          "tier": "function-interface"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c181_rwlock_read",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RwLock<T, G>::read",
+      "candidate_dedup_key": "vr:rwlock-t-g-read:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c181_rwlock_read.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 800,
+      "registry_id": "F-015",
+      "registry_dedup_key": "rwmutex-rwlock-value-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 800,
+          "tier": "function-interface"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c184_rwlock_try_read",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RwLock<T, G>::try_read",
+      "candidate_dedup_key": "vr:rwlock-t-g-try-read:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c184_rwlock_try_read.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-015",
+      "registry_dedup_key": "rwmutex-rwlock-value-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 1000,
+          "tier": "entry-anchor"
+        },
+        {
+          "registry_id": "F-004",
+          "dedup_key": "guard-owner-rel:RwLock",
+          "score": 800,
+          "tier": "function-interface"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c195_rwmutex_new",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RwMutex<T>::new",
+      "candidate_dedup_key": "vr:rwmutex-t-new:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c195_rwmutex_new.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 800,
+      "registry_id": "F-015",
+      "registry_dedup_key": "rwmutex-rwlock-value-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 800,
+          "tier": "function-interface"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c196_rwmutex_read",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RwMutex<T>::read",
+      "candidate_dedup_key": "vr:rwmutex-t-read:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c196_rwmutex_read.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 800,
+      "registry_id": "F-015",
+      "registry_dedup_key": "rwmutex-rwlock-value-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 800,
+          "tier": "function-interface"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c199_rwmutex_try_read",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "RwMutex<T>::try_read",
+      "candidate_dedup_key": "vr:rwmutex-t-try-read:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c199_rwmutex_try_read.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-015",
+      "registry_dedup_key": "rwmutex-rwlock-value-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 1000,
+          "tier": "entry-anchor"
+        },
+        {
+          "registry_id": "F-005",
+          "dedup_key": "guard-owner-rel:RwMutex",
+          "score": 800,
+          "tier": "function-interface"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c216_waitqueue_wake_all",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "WaitQueue::wake_all",
+      "candidate_dedup_key": "vr:waitqueue-wake-all:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c216_waitqueue_wake_all.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-021",
+      "registry_dedup_key": "waitqueue-wake-all-empty-result",
+      "match_candidates": [
+        {
+          "registry_id": "F-021",
+          "dedup_key": "waitqueue-wake-all-empty-result",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c232_either_left",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "Either<L, R>::left",
+      "candidate_dedup_key": "vr:either-l-r-left:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c232_either_left.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-020",
+      "registry_dedup_key": "either-left-right-exec-value",
+      "match_candidates": [
+        {
+          "registry_id": "F-020",
+          "dedup_key": "either-left-right-exec-value",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-m7c-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "c233_either_right",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "function": "Either<L, R>::right",
+      "candidate_dedup_key": "vr:either-l-r-right:1",
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c233_either_right.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-020",
+      "registry_dedup_key": "either-left-right-exec-value",
+      "match_candidates": [
+        {
+          "registry_id": "F-020",
+          "dedup_key": "either-left-right-exec-value",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "mutex_lock_guard_identity",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/mutex_lock_guard_identity.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-002",
+      "registry_dedup_key": "guard-owner-rel:Mutex",
+      "match_candidates": [
+        {
+          "registry_id": "F-002",
+          "dedup_key": "guard-owner-rel:Mutex",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "mutex_try_lock_is_none_demand",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/mutex_try_lock_is_none_demand.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-013",
+      "registry_dedup_key": "mutex-try-lock-is-none-demand",
+      "match_candidates": [
+        {
+          "registry_id": "F-013",
+          "dedup_key": "mutex-try-lock-is-none-demand",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "mutex_try_lock_rel_cross_negative",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/mutex_try_lock_rel_cross_negative.rs:18); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "ambiguous",
+      "match_candidates": [
+        {
+          "registry_id": "F-013",
+          "dedup_key": "mutex-try-lock-is-none-demand",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "unmatched",
+      "reason": "ambiguous-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "mutex_try_lock_rel_supported",
+      "verdict": "ObligationSupported",
+      "evidence_kind": "obligation_supported",
+      "actionable": false,
+      "control": false,
+      "detail": "obligation verified under the original contracts; baseline clean",
+      "match_status": "ambiguous",
+      "match_candidates": [
+        {
+          "registry_id": "F-013",
+          "dedup_key": "mutex-try-lock-is-none-demand",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "unmatched",
+      "reason": "ambiguous-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run1/report.json",
+      "source_format": "divergence-report",
+      "entry": "rwarc_get_cloned_value",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/rwarc_get_cloned_value.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-014",
+      "registry_dedup_key": "rwarc-get-cloned-value",
+      "match_candidates": [
+        {
+          "registry_id": "F-014",
+          "dedup_key": "rwarc-get-cloned-value",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "mutex_lock_guard_identity",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/mutex_lock_guard_identity.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-002",
+      "registry_dedup_key": "guard-owner-rel:Mutex",
+      "match_candidates": [
+        {
+          "registry_id": "F-002",
+          "dedup_key": "guard-owner-rel:Mutex",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "mutex_try_lock_is_none_demand",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/mutex_try_lock_is_none_demand.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-013",
+      "registry_dedup_key": "mutex-try-lock-is-none-demand",
+      "match_candidates": [
+        {
+          "registry_id": "F-013",
+          "dedup_key": "mutex-try-lock-is-none-demand",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "mutex_try_lock_rel_cross_negative",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/mutex_try_lock_rel_cross_negative.rs:18); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "ambiguous",
+      "match_candidates": [
+        {
+          "registry_id": "F-013",
+          "dedup_key": "mutex-try-lock-is-none-demand",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "unmatched",
+      "reason": "ambiguous-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "mutex_try_lock_rel_supported",
+      "verdict": "ObligationSupported",
+      "evidence_kind": "obligation_supported",
+      "actionable": false,
+      "control": false,
+      "detail": "obligation verified under the original contracts; baseline clean",
+      "match_status": "ambiguous",
+      "match_candidates": [
+        {
+          "registry_id": "F-013",
+          "dedup_key": "mutex-try-lock-is-none-demand",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "unmatched",
+      "reason": "ambiguous-match",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "rcu_option_read_get_value",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/rcu_option_read_get_value.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-017",
+      "registry_dedup_key": "rcu-option-read-get-value",
+      "match_candidates": [
+        {
+          "registry_id": "F-017",
+          "dedup_key": "rcu-option-read-get-value",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "rwarc_get_cloned_value",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/rwarc_get_cloned_value.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-014",
+      "registry_dedup_key": "rwarc-get-cloned-value",
+      "match_candidates": [
+        {
+          "registry_id": "F-014",
+          "dedup_key": "rwarc-get-cloned-value",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "rwlock_try_read_view_value",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/rwlock_try_read_view_value.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-015",
+      "registry_dedup_key": "rwmutex-rwlock-value-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "rwmutex_try_read_view_value",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": false,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/rwmutex_try_read_view_value.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-015",
+      "registry_dedup_key": "rwmutex-rwlock-value-readback",
+      "match_candidates": [
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "evidence-already-present",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "spinlock_lock_constant_cross_negative",
+      "verdict": "ContractGapCandidate",
+      "evidence_kind": "obligation_fail",
+      "actionable": true,
+      "control": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/spinlock_lock_constant_cross_negative.rs:29); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-016",
+      "registry_dedup_key": "spinlock-constant-relation",
+      "match_candidates": [
+        {
+          "registry_id": "F-016",
+          "dedup_key": "spinlock-constant-relation",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "control-entry",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "spinlock_lock_constant_trivial_cross_control",
+      "verdict": "ObligationSupported",
+      "evidence_kind": "obligation_supported",
+      "actionable": false,
+      "control": true,
+      "detail": "obligation verified under the original contracts; baseline clean",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-016",
+      "registry_dedup_key": "spinlock-constant-relation",
+      "match_candidates": [
+        {
+          "registry_id": "F-016",
+          "dedup_key": "spinlock-constant-relation",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "control-entry",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "/tmp/vostd-divergence-run2/report.json",
+      "source_format": "divergence-report",
+      "entry": "spinlock_lock_value_readback",
+      "verdict": "ObligationSupported",
+      "evidence_kind": "obligation_supported",
+      "actionable": false,
+      "control": false,
+      "detail": "obligation verified under the original contracts; baseline clean",
+      "match_status": "matched",
+      "match_tier": "entry-anchor",
+      "match_score": 1000,
+      "registry_id": "F-016",
+      "registry_dedup_key": "spinlock-constant-relation",
+      "match_candidates": [
+        {
+          "registry_id": "F-016",
+          "dedup_key": "spinlock-constant-relation",
+          "score": 1000,
+          "tier": "entry-anchor"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "examples/vostd-guard/tracked/integration-report.json#vacuity",
+      "source_format": "vacuity-report",
+      "entry": "mutex_guard_new_construction",
+      "verdict": "ConfirmedVacuous",
+      "evidence_kind": "construction_probe",
+      "actionable": true,
+      "control": false,
+      "detail": "construction: fabrication call rejected at expect_fail_requires (precondition not satisfied at ostd/src/spec_check_probes/mutex_guard_new_construction.rs:36; evidence: fabrication channel rejected + channel-exhaustion argument (documented, model-relative))",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 790,
+      "registry_id": "V-001",
+      "registry_dedup_key": "vacuity:mutex-guard-new-stub",
+      "match_candidates": [
+        {
+          "registry_id": "V-001",
+          "dedup_key": "vacuity:mutex-guard-new-stub",
+          "score": 790,
+          "tier": "function-interface"
+        },
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "merged-into-proposal",
+      "merged_into": "append:V-001:construction_probe:mutex-guard-new",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "examples/vostd-guard/tracked/integration-report.json#vacuity",
+      "source_format": "vacuity-report",
+      "entry": "mutex_guard_new_holder_face",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "construction: construct face verified (call path satisfiable)",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 790,
+      "registry_id": "V-001",
+      "registry_dedup_key": "vacuity:mutex-guard-new-stub",
+      "match_candidates": [
+        {
+          "registry_id": "V-001",
+          "dedup_key": "vacuity:mutex-guard-new-stub",
+          "score": 790,
+          "tier": "function-interface"
+        },
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    },
+    {
+      "source": "examples/vostd-guard/tracked/integration-report.json#vacuity",
+      "source_format": "vacuity-report",
+      "entry": "mutex_guard_new_quantifier_shape",
+      "verdict": "ConfirmedLive",
+      "evidence_kind": "probe_run",
+      "actionable": false,
+      "control": false,
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "match_status": "matched",
+      "match_tier": "function-interface",
+      "match_score": 790,
+      "registry_id": "V-001",
+      "registry_dedup_key": "vacuity:mutex-guard-new-stub",
+      "match_candidates": [
+        {
+          "registry_id": "V-001",
+          "dedup_key": "vacuity:mutex-guard-new-stub",
+          "score": 790,
+          "tier": "function-interface"
+        },
+        {
+          "registry_id": "V-002",
+          "dedup_key": "vacuity:guard-entry-7",
+          "score": 600,
+          "tier": "semantic-tokens"
+        },
+        {
+          "registry_id": "F-015",
+          "dedup_key": "rwmutex-rwlock-value-readback",
+          "score": 600,
+          "tier": "semantic-tokens"
+        }
+      ],
+      "action": "noop",
+      "reason": "verdict-not-actionable",
+      "status_suggestion": null,
+      "requires_human": false
+    }
+  ],
+  "summary": {
+    "records": 91,
+    "actionable": 43,
+    "matched": 64,
+    "ambiguous": 4,
+    "unmatched": 23,
+    "append_evidence": 1,
+    "new_entry": 0,
+    "noop": 63,
+    "action_unmatched": 27,
+    "registry_findings": 26,
+    "appended_findings": 1
+  }
+}

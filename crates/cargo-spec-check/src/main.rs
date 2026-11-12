@@ -216,6 +216,82 @@ fn check() -> Result<()> {
         );
         return Ok(());
     }
+    if args.first().is_some_and(|s| s == "ledger") {
+        let usage = "ledger --registry FILE --report FILE... [--candidates FILE...] [--map FILE] --out DIRECTORY";
+        let mut registry: Option<String> = None;
+        let mut out: Option<String> = None;
+        let mut map: Option<String> = None;
+        let mut reports = Vec::new();
+        let mut candidates = Vec::new();
+        let mut iter = args.iter().skip(1);
+        while let Some(key) = iter.next() {
+            match key.as_str() {
+                "--registry" | "--out" | "--map" => {
+                    let value = iter.next().ok_or(usage)?.clone();
+                    let slot = match key.as_str() {
+                        "--registry" => &mut registry,
+                        "--out" => &mut out,
+                        _ => &mut map,
+                    };
+                    if slot.replace(value).is_some() {
+                        return Err(usage.into());
+                    }
+                },
+                "--report" => {
+                    let before = reports.len();
+                    while let Some(next) = iter.clone().next() {
+                        if next.starts_with("--") {
+                            break;
+                        }
+                        reports.push(iter.next().expect("peeked").clone());
+                    }
+                    if reports.len() == before {
+                        return Err(usage.into());
+                    }
+                },
+                "--candidates" => {
+                    let before = candidates.len();
+                    while let Some(next) = iter.clone().next() {
+                        if next.starts_with("--") {
+                            break;
+                        }
+                        candidates.push(iter.next().expect("peeked").clone());
+                    }
+                    if candidates.len() == before {
+                        return Err(usage.into());
+                    }
+                },
+                _ => return Err(usage.into()),
+            }
+        }
+        let registry = registry.ok_or(usage)?;
+        let out = out.ok_or(usage)?;
+        if reports.is_empty() {
+            return Err(usage.into());
+        }
+        let reports: Vec<PathBuf> = reports.into_iter().map(PathBuf::from).collect();
+        let candidates: Vec<PathBuf> = candidates.into_iter().map(PathBuf::from).collect();
+        let summary = spec_check_analyses::ledger::run(
+            Path::new(&registry),
+            &reports,
+            &candidates,
+            map.as_deref().map(Path::new),
+            Path::new(&out),
+        )?;
+        println!(
+            "ledger: {} records ({} actionable); matched {}, ambiguous {}, unmatched {}; append {}, new_entry {}, noop {}, unmatched {}",
+            summary.records,
+            summary.actionable,
+            summary.matched,
+            summary.ambiguous,
+            summary.unmatched,
+            summary.append_evidence,
+            summary.new_entry,
+            summary.noop,
+            summary.action_unmatched,
+        );
+        return Ok(());
+    }
     if args.first().is_some_and(|s| s == "check") {
         let keys = ["--project", "--cargo-verus", "--z3", "--vstd", "--out"];
         let usage = "check --project CONFIG --cargo-verus PATH --z3 PATH --vstd PATH --out NEW_DIRECTORY [--json]";

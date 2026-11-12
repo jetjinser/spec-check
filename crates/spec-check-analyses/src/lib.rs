@@ -14,6 +14,7 @@
 //!    is validated against a known-good and a known-bad case.
 
 pub mod divergence;
+pub mod ledger;
 mod probe_infra;
 pub mod synthesize;
 pub mod vacuity;
