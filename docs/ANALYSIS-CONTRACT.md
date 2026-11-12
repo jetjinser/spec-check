@@ -66,13 +66,40 @@ cargo-spec-check check --project CONFIG --cargo-verus P --z3 P --vstd P --out D
 ```
 
 - CONFIG（项目侧 JSON）：`capture`（project-capture 参数 + 输出目录，含缓存
-  判断）+ `analyses: [{ "name": "vacuity", "manifest": "..." }]`。
+  判断）+ `analyses: [{ "name": "...", "manifest": "..." }, ...]`。注册表
+  现有分析名：`vacuity`（quantifier + construction 一体）、`divergence`
+  （义务对照）。多分析并存 = analyses 数组多条声明，逐条按声明顺序运行。
 - 流程：capture 目录缺失/陈旧时运行 project-capture；逐个声明分析运行；
   终端输出人类可读摘要（逐契约判定 + 复现命令）；`--json` 输出机器格式。
 - 退出码：仅管道自身失败（capture/工具异常）非零；发现本身写报告。
-- **流程与分析解耦**：新增分析 = CONFIG 声明 + 对应模块实现，check 代码
-  不改。wt-a 第一版只接 quantifier vacuity（wt-b 的 construction 合并后
-  自动获得，check 代码零改动）。
+- **流程与分析解耦**：新增分析 = CONFIG 声明 + 对应适配器 + 注册表一行，
+  check 流程代码不改。
+
+## 活工作区注入语义（vacuity construction / divergence 共用）
+
+两条分析线的 target-workspace 探针（vacuity 的 construction 条目、
+divergence 的义务 client）共用同一注入机制（`probe_infra`），语义如下：
+
+1. **注入点在分析 manifest 里声明，check CONFIG 不感知**。每份 manifest
+   自带 `target_workspace`（manifest_path / inject_dir / gate_cfg /
+   extra_cfgs / target）；check 的 capture 与各分析可以（也允许）指向
+   不同的工作区路径——capture 是基线记录，注入分析需要的是 manifest
+   声明的**活工作区**（字节冻结的工作副本）。
+2. **注入 → 验证 → 恢复**。运行期向 `inject_dir` 写探针模块、向 crate 根
+   追加一行 cfg 门声明；运行结束（含失败路径，guard drop）恢复原字节；
+   replay 副本保留在分析输出目录。捕获步骤本身不改动目标工作区。
+3. **顺序组合**。一次 check 内多条注入分析按声明顺序执行，每条返回前
+   恢复工作区，后一条看到的是恢复后的同一字节态；探针产物互不串扰
+   （各自的 precheck/build 目录、日志、report 独立）。
+4. **同一构建内对照**。单条注入分析的基线（目标工作区除探针模块外的
+   验证）与探针证据出自同一构建日志——义务失败/构造拒绝与目标自身契约
+   验证互证，对应研究证据形态 "N pass / client fail"。
+5. **发现不落盘、不置红**。注入是临时的；判定只进报告，退出码契约
+   不变。
+6. **恢复以 guard drop 为路径**（正常返回/Err 均恢复）；进程被硬杀
+   （SIGKILL/超时强杀）时 guard 不运行，注入残留需按该分析 out 目录
+   `injections/replay.json` 的 restore 说明手工恢复（`lib.rs.orig` 逐字
+   节回写 + 删除创建的探针目录），已实测可行。
 
 ## 合并预期
 

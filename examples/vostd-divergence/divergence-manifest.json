@@ -41,6 +41,48 @@
       "obligation": "let arc = RwArc::new(5u64);\nlet value = arc.get_cloned();\nassert(value == 5);",
       "model_preamble": "use crate::sync::{Mutex, MutexGuard, RwArc};",
       "expect": "gap"
+    },
+    {
+      "name": "rwmutex_try_read_view_value",
+      "params": "",
+      "obligation": "let lock = RwMutex::<u64>::new(5);\nif let Some(g) = lock.try_read() {\n    assert(g.view() == 5);\n    let _held_guard = g;\n}",
+      "model_preamble": "use crate::sync::RwMutex;",
+      "expect": "gap"
+    },
+    {
+      "name": "rwlock_try_read_view_value",
+      "params": "",
+      "obligation": "let lock = RwLock::<u64, PreemptDisabled>::new(5);\nif let Some(g) = lock.try_read() {\n    assert(g.view() == 5);\n    let _held_guard = g;\n}",
+      "model_preamble": "use crate::sync::{RwLock, PreemptDisabled};",
+      "expect": "gap"
+    },
+    {
+      "name": "spinlock_lock_value_readback",
+      "params": "",
+      "obligation": "let lock = SpinLock::<u64, PreemptDisabled, ProbeValueInv>::new(5, Ghost(5), Tracked(()));\nlet guard = lock.lock();\nassert(guard.view() == 5);\nlet _held_guard = guard;",
+      "model_preamble": "use crate::sync::{SpinLock, PreemptDisabled};\nuse vstd_extra::resource_invariant::ResourceInvariant;\n\npub struct ProbeValueInv;\n\nimpl ResourceInvariant<u64> for ProbeValueInv {\n    type Constant = u64;\n    type Resource = ();\n\n    open spec fn inv(constant: u64, value: u64, _resource: ()) -> bool {\n        value == constant\n    }\n}",
+      "expect": "supported"
+    },
+    {
+      "name": "spinlock_lock_constant_cross_negative",
+      "params": "",
+      "obligation": "let lock1 = SpinLock::<u64, PreemptDisabled, ProbeValueInv>::new(5, Ghost(5), Tracked(()));\nlet lock2 = SpinLock::<u64, PreemptDisabled, ProbeValueInv>::new(7, Ghost(7), Tracked(()));\nlet guard = lock1.lock();\nassert(guard.constant() == lock2.constant());\nlet _held_guard = guard;",
+      "model_preamble": "use crate::sync::{SpinLock, PreemptDisabled};\nuse vstd_extra::resource_invariant::ResourceInvariant;\n\npub struct ProbeValueInv;\n\nimpl ResourceInvariant<u64> for ProbeValueInv {\n    type Constant = u64;\n    type Resource = ();\n\n    open spec fn inv(constant: u64, value: u64, _resource: ()) -> bool {\n        value == constant\n    }\n}",
+      "expect": "gap"
+    },
+    {
+      "name": "spinlock_lock_constant_trivial_cross_control",
+      "params": "",
+      "obligation": "let lock1 = SpinLock::<u64, PreemptDisabled, TrivialResourceInvariant>::new(5, Ghost(()), Tracked(()));\nlet lock2 = SpinLock::<u64, PreemptDisabled, TrivialResourceInvariant>::new(7, Ghost(()), Tracked(()));\nlet guard = lock1.lock();\nassert(guard.constant() == lock2.constant());\nlet _held_guard = guard;",
+      "model_preamble": "use crate::sync::{SpinLock, PreemptDisabled};\nuse vstd_extra::resource_invariant::TrivialResourceInvariant;",
+      "expect": "supported"
+    },
+    {
+      "name": "rcu_option_read_get_value",
+      "params": "",
+      "obligation": "let rcu = RcuOption::<alloc::boxed::Box<u64>>::new(Some(alloc::boxed::Box::new(5u64)));\nlet guard = rcu.read();\nlet __sq_is_none_0 = guard.is_none();\nassert(!__sq_is_none_0);\nlet _held_guard = guard;",
+      "model_preamble": "use crate::sync::RcuOption;",
+      "expect": "gap"
     }
   ]
 }

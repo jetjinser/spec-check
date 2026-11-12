@@ -31,6 +31,9 @@
 #   ANALYSIS_MANIFEST      vacuity manifest; default: the vostd-guard
 #                          shape manifest (examples/vostd-guard/manifest.json).
 #   ANALYSIS_NAME          registry name in CONFIG; default: vacuity.
+#   DIVERGENCE_MANIFEST    optional second analysis (registry name:
+#                          divergence); when set, CONFIG declares both
+#                          analyses and they run sequentially in one check.
 #   SPEC_CHECK_NO_NIX=1    run in the current environment, skip nix develop.
 #   SPEC_CHECK_CARGO_FLAGS extra cargo build flags (e.g. --offline).
 #   SPEC_CHECK_JSON=1      pass --json to the check command.
@@ -61,6 +64,8 @@ for path in \
   "$ANALYSIS_MANIFEST"; do
   [[ -e "$path" ]] || fail "missing $path (bootstrapped SDK needs 'cargo dv bootstrap' in vostd)"
 done
+[[ -z "${DIVERGENCE_MANIFEST:-}" || -e "$DIVERGENCE_MANIFEST" ]] \
+  || fail "missing $DIVERGENCE_MANIFEST"
 [[ -d "$VOSTD_DIR/nix" ]] || fail "$VOSTD_DIR/nix missing (flake devshell expected)"
 
 CAPTURE_CONFIG_FILE="${CAPTURE_CONFIG:-$CHECK_OUT/capture.json}"
@@ -84,6 +89,12 @@ else
 EOF
 fi
 
+ANALYSES_JSON="{\"name\": \"$ANALYSIS_NAME\", \"manifest\": \"$ANALYSIS_MANIFEST\"}"
+if [[ -n "${DIVERGENCE_MANIFEST:-}" ]]; then
+  DIVERGENCE_MANIFEST="$(readlink -f "$DIVERGENCE_MANIFEST")"
+  ANALYSES_JSON="$ANALYSES_JSON, {\"name\": \"divergence\", \"manifest\": \"$DIVERGENCE_MANIFEST\"}"
+fi
+
 cat > "$CHECK_OUT/project.json" <<EOF
 {
   "capture": {
@@ -93,7 +104,7 @@ cat > "$CHECK_OUT/project.json" <<EOF
     "out": "$CHECK_OUT/capture"
   },
   "analyses": [
-    {"name": "$ANALYSIS_NAME", "manifest": "$ANALYSIS_MANIFEST"}
+    $ANALYSES_JSON
   ]
 }
 EOF

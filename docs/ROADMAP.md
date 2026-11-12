@@ -162,11 +162,31 @@ vacuity 互补（vacuity 问 requires 侧是否空洞，divergence 问 ensures �
 - [x] registry：F-002 补机器探针证据；新增 F-013（Mutex::try_lock
       is_none 需求）/F-014（RwArc::get_cloned 文档值义务），均
       obligation_fail 级（无候选不虚构升级）；research 仓 commit 紧随。
-- 已知边界：RwLock/RwMutex/SpinLock guard 身份与 RCU owner 族义务的
-  谓词属研究侧建模态（冻结面无 rel_lock/owner 谓词、guard 字段模块
-  私有），不可机械转写，本站不覆盖；义务 fail 是证明论缺口候选，
-  非运行时反例；check 流程（capture 剖面）暂未接入 divergence
-  （需要活工作区注入，语义待定义）。
+- [x] 扩展轮：check 流程接入 + 义务族扩展（2026-11-12）：
+      (1) check CONFIG 双分析声明——`check_flow` registry 增
+      `divergence` adapter（与 vacuity 同构，manifest 各自声明
+      `target_workspace`，注入语义共用 `probe_infra`；CONFIG 中按声明
+      顺序依次运行，orchestration 不变）；`ANALYSIS-CONTRACT.md` 新增
+      §活工作区注入语义；`examples/ci/run-spec-check.sh` 增
+      `DIVERGENCE_MANIFEST` 可选第二分析。check 单测 5/5（含双声明
+      解析）。
+      (2) 首站条目 5→11（+6）：RwMutex/RwLock try_read 值读回（#6/#7）、
+      SpinLock constant 关联（#8/#9/#10，`ProbeValueInv` 项目侧模型
+      不变式）、RcuOption::read 值义务（#11）。扩展轮运行 11/11 与
+      预注册一致：**ContractGapCandidate 8 / ObligationSupported 3**，
+      目标 1500v/8e（8 error 恰为 8 个预期失败义务），baseline clean。
+      语义读数：#9 vs #10 同文本异判定演示了契约对 guard↔锁关联的
+      表达力依赖泛型不变式参数；#8 是有证明深度的 supported 面。
+      归档 `DIVERGENCE-RUN.md`、`DIVERGENCE-EXPECTED-EXT.md`
+      （预注册），产物 `/tmp/vostd-divergence-run2`。
+      (3) check 双分析端到端（`/tmp/spec-check-e2e`）：capture fresh
+      复用 → vacuity 10 条目 + divergence 11 条目单次 check，verdict
+      合并、退出码 0（发现不置红）。CI 夜班入口自此覆盖双分析线。
+- 已知边界：RwLock/RwMutex/SpinLock guard **身份**谓词与 RCU owner 族
+  的 owner 关系属研究侧建模态（冻结面无 rel_lock/owner 谓词、guard
+  字段模块私有），不可机械转写；本轮以各该族冻结面可表达的最强文档
+  义务（值读回/constant 关联）覆盖，身份谓词维持不覆盖。义务 fail 是
+  证明论缺口候选，非运行时反例。
 
 ### M6. tracked 契约构造探针批量生成器 —— 完成（2026-11-11）
 

@@ -5,22 +5,34 @@
 //! [`registry`]. Adding an analysis means a CONFIG declaration, an adapter
 //! here aligning the analysis' native signature to the uniform runner
 //! interface, and one registry line — the orchestration below never changes.
-//! The first adapter wraps `spec_check_analyses::vacuity::run`; wt-b's
-//! construction probes ride the same call once merged.
+//! The first adapter wraps `spec_check_analyses::vacuity::run`; the second
+//! wraps `spec_check_analyses::divergence::run` (same native signature).
+//!
+//! Live-workspace injection semantics (shared by vacuity construction
+//! probes and divergence obligation probes, docs/ANALYSIS-CONTRACT.md
+//! §注入语义): both analyses declare their own `target_workspace` inside
+//! their manifest and inject probe modules into that working copy for the
+//! duration of their run, restoring the original bytes afterwards (guard
+//! drop restores even on failure). Analyses declared in one CONFIG run
+//! sequentially in declaration order; the capture step itself never
+//! mutates the target workspace, so every analysis sees the same
+//! byte-frozen source state the capture recorded. Findings never alter the
+//! workspace persistently and never fail the pipeline.
 //!
 //! Exit-code contract: only pipeline failures (config, capture, tool,
 //! unknown analysis) return `Err` (non-zero via `main`); findings
-//! (vacuous/anomaly verdicts) only shape the report.
+//! (vacuous/gap/anomaly verdicts) only shape the report.
 //!
 //! Adapter-layer note (wt-a boundary): `spec-check-analyses` ships a
 //! `registry::builtin_registry` keyed on the `Analysis` trait, but the
-//! concrete `vacuity::run` — frozen for wt-b, must not be modified — does
-//! not implement that trait and carries toolchain paths instead of captured
-//! artifacts. Adapting it on the wt-a side keeps
+//! concrete analysis `run` fns — frozen for wt-b, must not be modified —
+//! do not implement that trait and carry toolchain paths instead of
+//! captured artifacts. Adapting them on the wt-a side keeps
 //! `crates/spec-check-analyses/` untouched.
 
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+use spec_check_analyses::divergence;
 use spec_check_analyses::vacuity;
 use spec_check_core::project;
 use spec_check_core::support::write_json;
@@ -87,7 +99,10 @@ pub type AnalysisRunner =
 /// Analysis registry: stable CONFIG name → runner. New analyses register
 /// here (one line); the orchestration in [`run`] is analysis-agnostic.
 pub fn registry() -> BTreeMap<&'static str, AnalysisRunner> {
-    BTreeMap::from([("vacuity", adapters::vacuity as AnalysisRunner)])
+    BTreeMap::from([
+        ("vacuity", adapters::vacuity as AnalysisRunner),
+        ("divergence", adapters::divergence as AnalysisRunner),
+    ])
 }
 
 mod adapters {
@@ -134,6 +149,44 @@ mod adapters {
         };
         Ok(outcome)
     }
+
+    pub(super) fn divergence(
+        spec: &AnalysisSpec,
+        ctx: &AnalysisContext,
+    ) -> std::result::Result<AnalysisOutcome, String> {
+        let raw = fs::read(&spec.manifest).map_err(|e| e.to_string())?;
+        let manifest: divergence::Manifest =
+            serde_json::from_slice(&raw).map_err(|e| format!("{}: {e}", spec.manifest.display()))?;
+        let out = ctx.check_out.join("analyses").join(&spec.name);
+        let report = divergence::run(&manifest, &ctx.cargo_verus, &ctx.z3, &ctx.vstd, &out)?;
+        write_json(&out.join("report.json"), &report).map_err(|e| e.to_string())?;
+        let outcome = AnalysisOutcome {
+            name: spec.name.clone(),
+            manifest: spec.manifest.clone(),
+            out,
+            report: serde_json::to_value(&report).map_err(|e| e.to_string())?,
+            summary: report
+                .verdicts
+                .iter()
+                .map(|v| {
+                    format!(
+                        "{}: {:?}  ({}) {}",
+                        v.name,
+                        v.verdict,
+                        v.detail,
+                        super::verdict_hint(&format!("{:?}", v.verdict)))
+                })
+                .collect(),
+            repro: vec![format!(
+                "cargo-spec-check analyses-divergence --manifest {} --cargo-verus {} --z3 {} --vstd {} --out NEW_DIRECTORY",
+                spec.manifest.display(),
+                ctx.cargo_verus.display(),
+                ctx.z3.display(),
+                ctx.vstd.display(),
+            )],
+        };
+        Ok(outcome)
+    }
 }
 
 /// One-line interpretation of a contract verdict, per the contract's
@@ -143,6 +196,12 @@ pub fn verdict_hint(verdict: &str) -> &'static str {
         "ConfirmedVacuous" => "confirmed vacuous: precondition unsatisfiable",
         "ConfirmedLive" => "confirmed live: precondition satisfiable",
         "CandidateInconclusive" => "candidate: verifier inconclusive; human review, not a defect",
+        "ObligationSupported" => "obligation supported: contract derives the client obligation",
+        "ContractGapCandidate" => {
+            "contract gap candidate: obligation not derivable under the original contracts; \
+             proof-theoretic, not a runtime counterexample"
+        },
+        "Inconclusive" => "inconclusive: obligation not decidable; human review, not a defect",
         "Anomaly" => "anomaly: contradictory probes; manual review required",
         _ => "",
     }
@@ -447,11 +506,15 @@ mod tests {
                 "verus_root": "/abs/sdk",
                 "out": "/abs/capture-out"
               },
-              "analyses": [{"name": "vacuity", "manifest": "manifest.json"}]
+              "analyses": [
+                {"name": "vacuity", "manifest": "manifest.json"},
+                {"name": "divergence", "manifest": "divergence-manifest.json"}
+              ]
             }"#,
         )
         .unwrap();
-        assert_eq!(config.analyses.len(), 1);
+        assert_eq!(config.analyses.len(), 2);
+        assert_eq!(config.analyses[1].name, "divergence");
         assert_eq!(config.capture.config, PathBuf::from("capture.json"));
     }
 
@@ -459,7 +522,24 @@ mod tests {
     fn registry_resolves_vacuity_and_rejects_unknown_names() {
         let registry = registry();
         assert!(registry.contains_key("vacuity"));
+        assert!(registry.contains_key("divergence"));
         assert!(registry.get("construction").is_none());
+    }
+
+    #[test]
+    fn verdict_hint_covers_all_registered_analysis_verdicts() {
+        for verdict in [
+            "ConfirmedVacuous",
+            "ConfirmedLive",
+            "CandidateInconclusive",
+            "ObligationSupported",
+            "ContractGapCandidate",
+            "Inconclusive",
+            "Anomaly",
+        ] {
+            assert!(!verdict_hint(verdict).is_empty(), "missing hint: {verdict}");
+        }
+        assert!(verdict_hint("SomethingElse").is_empty());
     }
 
     #[test]
