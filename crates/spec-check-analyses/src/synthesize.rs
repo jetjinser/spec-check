@@ -4,9 +4,10 @@
 //! The synthesizer is a pure transformation (no target-workspace access, no
 //! verification). It owns only generic semantics:
 //!
-//! - four obligation families with fixed Rust/Verus skeletons
+//! - six obligation families with fixed Rust/Verus skeletons
 //!   (`value-readback`, `is_none-demand`, `guard-identity`,
-//!   `final-relation`; `other` has no template and is skipped);
+//!   `final-relation`, `iterator-sequence`, `state-invariant`; `other` has
+//!   no template and is skipped);
 //! - `{recv}` / `{out}` / `{handle}` placeholders and per-family validation;
 //! - recipe schema (type constructor / imports / setup; interface call,
 //!   snapshot, probes, assertion, optional expectation override);
@@ -73,6 +74,11 @@ pub struct Recipes {
     pub types: BTreeMap<String, TypeRecipe>,
     #[serde(default)]
     pub interfaces: BTreeMap<String, InterfaceRecipe>,
+    /// Per-candidate interface overrides keyed by candidate id. Takes
+    /// precedence over `interfaces`, which is keyed by function and therefore
+    /// cannot distinguish several tests of the same function.
+    #[serde(default)]
+    pub candidate_interfaces: BTreeMap<String, InterfaceRecipe>,
 }
 
 /// How to build a receiver of one type family.
@@ -109,6 +115,14 @@ pub struct InterfaceRecipe {
     /// Cross-check against the candidate family (optional).
     #[serde(default)]
     pub family: Option<String>,
+    /// Skeleton family used for rendering. May differ from the candidate
+    /// `family` (e.g. an iterator obligation extracted as is_none-demand);
+    /// a differing value requires `family_basis`.
+    #[serde(default)]
+    pub obligation_family: Option<String>,
+    /// Audit basis for a differing `obligation_family`.
+    #[serde(default)]
+    pub family_basis: Option<String>,
     /// Per-interface constructor override (alternate constructors of one
     /// type recipe).
     #[serde(default)]
@@ -132,6 +146,10 @@ pub struct InterfaceRecipe {
     /// {out}.is_none();`). Avoids exec calls inside `assert` arguments.
     #[serde(default)]
     pub probes: Vec<String>,
+    /// `iterator-sequence` consumption steps, applied in order after
+    /// `let mut it = <call>;`. Each step may use `{it}`.
+    #[serde(default)]
+    pub steps: Vec<String>,
     /// Assertion expression.
     #[serde(rename = "assert")]
     pub assertion: String,
@@ -159,6 +177,8 @@ pub enum Family {
     FinalRelation,
     GuardIdentity,
     IsNoneDemand,
+    IteratorSequence,
+    StateInvariant,
     Other,
 }
 
@@ -169,6 +189,8 @@ impl Family {
             "final-relation" => Some(Family::FinalRelation),
             "guard-identity" => Some(Family::GuardIdentity),
             "is_none-demand" => Some(Family::IsNoneDemand),
+            "iterator-sequence" => Some(Family::IteratorSequence),
+            "state-invariant" => Some(Family::StateInvariant),
             "other" => Some(Family::Other),
             _ => None,
         }
@@ -180,6 +202,8 @@ impl Family {
             Family::FinalRelation => "final-relation",
             Family::GuardIdentity => "guard-identity",
             Family::IsNoneDemand => "is_none-demand",
+            Family::IteratorSequence => "iterator-sequence",
+            Family::StateInvariant => "state-invariant",
             Family::Other => "other",
         }
     }
@@ -201,7 +225,7 @@ fn substitute(template: &str, pairs: &[(&str, &str)]) -> Result<String, String> 
     for (placeholder, value) in pairs {
         out = out.replace(placeholder, value);
     }
-    for leftover in ["{recv}", "{out}", "{handle}"] {
+    for leftover in ["{recv}", "{out}", "{handle}", "{it}"] {
         if out.contains(leftover) {
             return Err(format!(
                 "placeholder {leftover} is not available in this obligation skeleton"
@@ -209,6 +233,38 @@ fn substitute(template: &str, pairs: &[(&str, &str)]) -> Result<String, String> 
         }
     }
     Ok(out)
+}
+
+/// Names bound by plain `let`/`let mut` steps (tuple patterns included).
+/// Used by `iterator-sequence` to require that the assertion observes at
+/// least one consumed value instead of only the iterator object.
+fn let_bindings(line: &str) -> Vec<String> {
+    let trimmed = line.trim();
+    let Some(rest) = trimmed.strip_prefix("let ") else {
+        return Vec::new();
+    };
+    let pattern = rest.split('=').next().unwrap_or(rest);
+    let mut names = Vec::new();
+    let mut word = String::new();
+    for ch in pattern.chars() {
+        if ch.is_alphanumeric() || ch == '_' {
+            word.push(ch);
+        } else if !word.is_empty() {
+            names.push(std::mem::take(&mut word));
+        }
+    }
+    if !word.is_empty() {
+        names.push(word);
+    }
+    names
+        .into_iter()
+        .filter(|name| name != "mut" && name != "ref")
+        .collect()
+}
+
+fn mentions_word(text: &str, word: &str) -> bool {
+    text.split(|ch: char| !(ch.is_alphanumeric() || ch == '_'))
+        .any(|token| token == word)
 }
 
 fn push_bind_attr(lines: &mut Vec<String>, ty: Option<&TypeRecipe>, has_receiver: bool) {
@@ -394,6 +450,93 @@ pub fn render(
             }
             lines.push(format!("assert({});", substitute(&ir.assertion, &pairs)?));
         },
+        Family::IteratorSequence => {
+            if call.is_empty() {
+                return Err(
+                    "family iterator-sequence requires a non-empty `call`".into(),
+                );
+            }
+            if ir.steps.is_empty() {
+                return Err(
+                    "family iterator-sequence requires at least one `steps` entry".into(),
+                );
+            }
+            push_bind_attr(&mut lines, ty, has_receiver);
+            if has_receiver {
+                let mut_kw = if ir.receiver_mut { "mut " } else { "" };
+                lines.push(format!("let {mut_kw}recv = {construct};"));
+            }
+            let recv_pairs: Vec<(&str, &str)> = if has_receiver {
+                vec![("{recv}", "recv")]
+            } else {
+                Vec::new()
+            };
+            push_block(&mut lines, ir.bridge.as_ref());
+            let bridged: Vec<String> = lines
+                .iter()
+                .map(|line| substitute(line, &recv_pairs))
+                .collect::<Result<_, _>>()?;
+            lines = bridged;
+            lines.push(format!("let mut it = {};", substitute(call, &recv_pairs)?));
+            let mut iter_pairs = recv_pairs.clone();
+            iter_pairs.push(("{it}", "it"));
+            let mut bound: Vec<String> = Vec::new();
+            for step in &ir.steps {
+                bound.extend(let_bindings(step));
+                lines.push(substitute(step, &iter_pairs)?);
+            }
+            for probe in &ir.probes {
+                lines.push(substitute(probe, &iter_pairs)?);
+            }
+            let observes_sequence = ir.assertion.contains("{it}")
+                || bound.iter().any(|name| mentions_word(&ir.assertion, name));
+            if !observes_sequence {
+                return Err(
+                    "iterator-sequence obligation consumes the iterator but its `assert` \
+                     references neither {it} nor a step binding"
+                        .into(),
+                );
+            }
+            lines.push(format!("assert({});", substitute(&ir.assertion, &iter_pairs)?));
+        },
+        Family::StateInvariant => {
+            if !has_receiver && call.is_empty() {
+                return Err(
+                    "family state-invariant requires a receiver or a non-empty `call`".into(),
+                );
+            }
+            push_bind_attr(&mut lines, ty, has_receiver);
+            if has_receiver {
+                let mut_kw = if ir.receiver_mut { "mut " } else { "" };
+                lines.push(format!("let {mut_kw}recv = {construct};"));
+            }
+            let mut pairs: Vec<(&str, &str)> = if has_receiver {
+                vec![("{recv}", "recv")]
+            } else {
+                Vec::new()
+            };
+            push_block(&mut lines, ir.bridge.as_ref());
+            let bridged: Vec<String> = lines
+                .iter()
+                .map(|line| substitute(line, &pairs))
+                .collect::<Result<_, _>>()?;
+            lines = bridged;
+            if !call.is_empty() {
+                lines.push(format!("let out = {};", substitute(call, &pairs)?));
+                pairs.push(("{out}", "out"));
+            }
+            for probe in &ir.probes {
+                lines.push(substitute(probe, &pairs)?);
+            }
+            let observes_state = (has_receiver && ir.assertion.contains("{recv}"))
+                || (!call.is_empty() && ir.assertion.contains("{out}"));
+            if !observes_state {
+                return Err(
+                    "state-invariant obligation references neither {recv} nor {out}".into(),
+                );
+            }
+            lines.push(format!("assert({});", substitute(&ir.assertion, &pairs)?));
+        },
         Family::Other => {
             return Err("family `other` has no obligation skeleton".into());
         },
@@ -424,6 +567,10 @@ pub struct EntryAudit {
     pub dedup_key: String,
     pub entry_name: String,
     pub receiver_type: Option<String>,
+    /// Skeleton family actually rendered (may differ from `family`).
+    pub obligation_family: String,
+    /// Audit basis for a differing family; `None` when unchanged.
+    pub family_basis: Option<String>,
     pub expect: Option<String>,
     pub expect_source: String,
     pub expect_basis: Option<String>,
@@ -555,6 +702,9 @@ fn resolve_interface<'a>(
     recipes: &'a Recipes,
     candidate: &'a Candidate,
 ) -> Option<(&'a str, &'a InterfaceRecipe)> {
+    if let Some(ir) = recipes.candidate_interfaces.get(&candidate.id) {
+        return Some((candidate.id.as_str(), ir));
+    }
     if let Some(ir) = recipes.interfaces.get(&candidate.function) {
         return Some((candidate.function.as_str(), ir));
     }
@@ -707,7 +857,38 @@ pub fn synthesize(
             None => None,
         };
 
-        let rendered = render(family, ty, ir)?;
+        let (obligation_family, family_basis) = match &ir.obligation_family {
+            None => (family, None),
+            Some(raw) => {
+                let parsed = Family::parse(raw).ok_or_else(|| {
+                    format!(
+                        "interface recipe for {} has unknown obligation_family {raw:?}",
+                        candidate.function
+                    )
+                })?;
+                if parsed == family {
+                    (family, None)
+                } else {
+                    let basis = ir
+                        .family_basis
+                        .as_deref()
+                        .map(str::trim)
+                        .filter(|s| !s.is_empty())
+                        .ok_or_else(|| {
+                            format!(
+                                "interface recipe for {} changes obligation_family \
+                                 {:?} -> {:?} without `family_basis`",
+                                candidate.function,
+                                family.as_str(),
+                                raw
+                            )
+                        })?;
+                    (parsed, Some(basis.to_string()))
+                }
+            },
+        };
+
+        let rendered = render(obligation_family, ty, ir)?;
         let name = entry_name(candidate);
         if !seen_names.insert(name.clone()) {
             return Err(format!("duplicate synthesized entry name {name:?}"));
@@ -726,6 +907,8 @@ pub fn synthesize(
             dedup_key: dedup_key.clone(),
             entry_name: name.clone(),
             receiver_type: ir.receiver_type.clone(),
+            obligation_family: obligation_family.as_str().to_string(),
+            family_basis,
             expect: expect.map(|e| match e {
                 Expectation::Gap => "gap".into(),
                 Expectation::Supported => "supported".into(),
@@ -1219,6 +1402,188 @@ mod tests {
             .call = String::new();
         let err = synthesize(&candidates, &recipes, &[]).unwrap_err();
         assert!(err.contains("requires a non-empty `call`"));
+    }
+
+    #[test]
+    fn renders_iterator_sequence_with_steps() {
+        let ty: TypeRecipe = serde_json::from_value(serde_json::json!({
+            "imports": ["use demo::range_difference;"],
+            "construct": ""
+        }))
+        .unwrap();
+        let ir: InterfaceRecipe = serde_json::from_value(serde_json::json!({
+            "receiver_type": "Range",
+            "obligation_family": "iterator-sequence",
+            "call": "range_difference(&(0u64..10u64), &(3u64..7u64))",
+            "steps": [
+                "let r0 = {it}.next();",
+                "let r1 = {it}.next();",
+                "let r2 = {it}.next();"
+            ],
+            "assert": "r0 == Some(0u64..3u64) && r1 == Some(7u64..10u64) && r2.is_none()"
+        }))
+        .unwrap();
+        let rendered = render(Family::IteratorSequence, Some(&ty), &ir).unwrap();
+        assert_eq!(
+            rendered.obligation,
+            "let mut it = range_difference(&(0u64..10u64), &(3u64..7u64));\nlet r0 = it.next();\nlet r1 = it.next();\nlet r2 = it.next();\nassert(r0 == Some(0u64..3u64) && r1 == Some(7u64..10u64) && r2.is_none());"
+        );
+    }
+
+    #[test]
+    fn iterator_sequence_validation() {
+        let ty: TypeRecipe = serde_json::from_value(serde_json::json!({
+            "construct": ""
+        }))
+        .unwrap();
+        let no_steps: InterfaceRecipe = serde_json::from_value(serde_json::json!({
+            "call": "iter()",
+            "assert": "true"
+        }))
+        .unwrap();
+        let err = render(Family::IteratorSequence, Some(&ty), &no_steps).unwrap_err();
+        assert!(err.contains("steps"));
+
+        let unobserved: InterfaceRecipe = serde_json::from_value(serde_json::json!({
+            "call": "iter()",
+            "steps": ["let r0 = {it}.next();"],
+            "assert": "true"
+        }))
+        .unwrap();
+        let err = render(Family::IteratorSequence, Some(&ty), &unobserved).unwrap_err();
+        assert!(err.contains("references neither"));
+
+        let mut old_family = unobserved.clone();
+        old_family.assertion = "{it}.len() == 0".into();
+        let err = render(Family::ValueReadback, Some(&ty), &old_family).unwrap_err();
+        assert!(err.contains("{it}"));
+    }
+
+    #[test]
+    fn renders_state_invariant_with_query_output() {
+        let ty: TypeRecipe = serde_json::from_value(serde_json::json!({
+            "imports": ["use demo::Flags;"],
+            "construct": "Flags::empty()"
+        }))
+        .unwrap();
+        let ir: InterfaceRecipe = serde_json::from_value(serde_json::json!({
+            "receiver_type": "Flags",
+            "obligation_family": "state-invariant",
+            "family_basis": "candidate family is final-relation but the checked fact is a query output",
+            "bridge": "{recv}.insert(1);",
+            "call": "{recv}.contains(1)",
+            "assert": "{out}"
+        }))
+        .unwrap();
+        let rendered = render(Family::StateInvariant, Some(&ty), &ir).unwrap();
+        assert_eq!(
+            rendered.obligation,
+            "let recv = Flags::empty();\nrecv.insert(1);\nlet out = recv.contains(1);\nassert(out);"
+        );
+
+        let bad: InterfaceRecipe = serde_json::from_value(serde_json::json!({
+            "receiver_type": "Flags",
+            "call": "{recv}.contains(1)",
+            "assert": "true"
+        }))
+        .unwrap();
+        let err = render(Family::StateInvariant, Some(&ty), &bad).unwrap_err();
+        assert!(err.contains("neither {recv} nor {out}"));
+    }
+
+    #[test]
+    fn candidate_interfaces_distinguish_same_function() {
+        let candidates: Vec<Candidate> = serde_json::from_value(serde_json::json!([
+            {
+                "id": "K900",
+                "function": "range_difference",
+                "family": "is_none-demand",
+                "constructibility": "needs-recipe",
+                "dedup_key": "ktest:K900"
+            },
+            {
+                "id": "K901",
+                "function": "range_difference",
+                "family": "is_none-demand",
+                "constructibility": "needs-recipe",
+                "dedup_key": "ktest:K901"
+            }
+        ]))
+        .unwrap();
+        let recipes: Recipes = serde_json::from_value(serde_json::json!({
+            "target_workspace": {
+                "manifest_path": "/tmp/target/Cargo.toml",
+                "inject_dir": "demo/src/probes",
+                "gate_cfg": "ktest",
+                "extra_cfgs": [],
+                "target": "x86_64-unknown-none"
+            },
+            "types": {
+                "Range": { "construct": "" }
+            },
+            "candidate_interfaces": {
+                "K900": {
+                    "receiver_type": "Range",
+                    "obligation_family": "iterator-sequence",
+                    "family_basis": "iterator obligation",
+                    "call": "range_difference(&(0u64..10u64), &(3u64..7u64))",
+                    "steps": ["let r0 = {it}.next();", "let r1 = {it}.next();"],
+                    "assert": "r0 == Some(0u64..3u64) && r1 == Some(7u64..10u64)"
+                },
+                "K901": {
+                    "receiver_type": "Range",
+                    "obligation_family": "iterator-sequence",
+                    "family_basis": "iterator obligation",
+                    "call": "range_difference(&(0u64..10u64), &(0u64..10u64))",
+                    "steps": ["let r0 = {it}.next();"],
+                    "assert": "r0.is_none()"
+                }
+            }
+        }))
+        .unwrap();
+        let synthesis = synthesize(&candidates, &recipes, &[]).unwrap();
+        assert_eq!(synthesis.manifest.contracts.len(), 2);
+        assert!(synthesis.manifest.contracts[0]
+            .obligation
+            .contains("Some(0u64..3u64)"));
+        assert!(synthesis.manifest.contracts[1]
+            .obligation
+            .contains("r0.is_none()"));
+        assert_eq!(
+            synthesis.report.entries[0].obligation_family,
+            "iterator-sequence"
+        );
+        assert_eq!(
+            synthesis.report.entries[0].family_basis.as_deref(),
+            Some("iterator obligation")
+        );
+    }
+
+    #[test]
+    fn obligation_family_override_requires_basis() {
+        let candidates = candidates_json();
+        let mut recipes = recipes_json();
+        let ir = recipes
+            .interfaces
+            .get_mut("Widget<'_, Mode>::limit")
+            .unwrap();
+        ir.obligation_family = Some("state-invariant".into());
+        ir.family_basis = None;
+        let err = synthesize(&candidates, &recipes, &[]).unwrap_err();
+        assert!(err.contains("family_basis"));
+
+        let ir = recipes
+            .interfaces
+            .get_mut("Widget<'_, Mode>::limit")
+            .unwrap();
+        ir.family_basis = Some("test-only basis".into());
+        let ir = recipes
+            .interfaces
+            .get_mut("Widget<'_, Mode>::limit")
+            .unwrap();
+        ir.obligation_family = Some("other".into());
+        let err = synthesize(&candidates, &recipes, &[]).unwrap_err();
+        assert!(err.contains("no obligation skeleton"));
     }
 
     #[test]

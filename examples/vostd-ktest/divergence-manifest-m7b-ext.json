@@ -1,0 +1,90 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan-b/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": [
+      "ktest_capture_gap"
+    ],
+    "target": "x86_64-unknown-none"
+  },
+  "contracts": [
+    {
+      "name": "c150_range_difference",
+      "params": "",
+      "obligation": "let mut it = range_difference(&(0usize..0usize), &(0usize..10usize));\nlet r0 = it.next();\nassert(r0.is_none());",
+      "model_preamble": "use crate::util::ops::range_difference;",
+      "expect": "gap"
+    },
+    {
+      "name": "c151_range_difference",
+      "params": "",
+      "obligation": "let mut it = range_difference(&(0usize..0usize), &(0usize..0usize));\nlet r0 = it.next();\nassert(r0.is_none());",
+      "model_preamble": "use crate::util::ops::range_difference;",
+      "expect": "gap"
+    },
+    {
+      "name": "c146_range_difference",
+      "params": "",
+      "obligation": "let mut it = range_difference(&(0usize..10usize), &(0usize..10usize));\nlet r0 = it.next();\nassert(r0.is_none());",
+      "model_preamble": "use crate::util::ops::range_difference;",
+      "expect": "gap"
+    },
+    {
+      "name": "c149_range_difference",
+      "params": "",
+      "obligation": "let mut it = range_difference(&(0usize..10usize), &(0usize..0usize));\nlet r0 = it.next();\nlet r1 = it.next();\nassert(r0 == Some(0usize..10usize) && r1.is_none());",
+      "model_preamble": "use crate::util::ops::range_difference;",
+      "expect": "gap"
+    },
+    {
+      "name": "c145_range_difference",
+      "params": "",
+      "obligation": "let mut it = range_difference(&(0usize..10usize), &(3usize..7usize));\nlet r0 = it.next();\nlet r1 = it.next();\nlet r2 = it.next();\nassert(r0 == Some(0usize..3usize) && r1 == Some(7usize..10usize) && r2.is_none());",
+      "model_preamble": "use crate::util::ops::range_difference;",
+      "expect": "gap"
+    },
+    {
+      "name": "c152_range_difference",
+      "params": "",
+      "obligation": "let mut it = range_difference(&(5usize..10usize), &(0usize..6usize));\nlet r0 = it.next();\nlet r1 = it.next();\nassert(r0 == Some(6usize..10usize) && r1.is_none());",
+      "model_preamble": "use crate::util::ops::range_difference;",
+      "expect": "gap"
+    },
+    {
+      "name": "c147_range_difference",
+      "params": "",
+      "obligation": "let mut it = range_difference(&(0usize..10usize), &(0usize..5usize));\nlet r0 = it.next();\nlet r1 = it.next();\nassert(r0 == Some(5usize..10usize) && r1.is_none());",
+      "model_preamble": "use crate::util::ops::range_difference;",
+      "expect": "gap"
+    },
+    {
+      "name": "c153_range_difference",
+      "params": "",
+      "obligation": "let mut it = range_difference(&(5usize..10usize), &(6usize..12usize));\nlet r0 = it.next();\nlet r1 = it.next();\nassert(r0 == Some(5usize..6usize) && r1.is_none());",
+      "model_preamble": "use crate::util::ops::range_difference;",
+      "expect": "gap"
+    },
+    {
+      "name": "c148_range_difference",
+      "params": "",
+      "obligation": "let mut it = range_difference(&(0usize..10usize), &(5usize..10usize));\nlet r0 = it.next();\nlet r1 = it.next();\nassert(r0 == Some(0usize..5usize) && r1.is_none());",
+      "model_preamble": "use crate::util::ops::range_difference;",
+      "expect": "gap"
+    },
+    {
+      "name": "c014_atomiccpuset_contains",
+      "params": "",
+      "obligation": "let recv = AtomicCpuSet::new(CpuSet::new_empty());\nrecv.add(CpuId::try_from(0usize).unwrap(), Ordering::Relaxed);\nlet out = recv.contains(CpuId::try_from(0usize).unwrap(), Ordering::Relaxed);\nassert(out);",
+      "model_preamble": "use crate::cpu::{AtomicCpuSet, CpuId, CpuSet};\nuse core::sync::atomic::Ordering;\nbroadcast use crate::cpu::axiom_cpu_count_bounds;",
+      "expect": "gap"
+    },
+    {
+      "name": "c012_cpu_set_test_test_empty_cpu_set_iter_is_empty",
+      "params": "",
+      "obligation": "let mut recv = CpuSet::new_empty();\nassert(recv@.len() == 0);",
+      "model_preamble": "use crate::cpu::CpuSet;",
+      "expect": "supported"
+    }
+  ]
+}

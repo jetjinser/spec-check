@@ -1,0 +1,84 @@
+{
+  "verdicts": [
+    {
+      "name": "c150_range_difference",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c150_range_difference.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "c151_range_difference",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c151_range_difference.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "c146_range_difference",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c146_range_difference.rs:16); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "c149_range_difference",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c149_range_difference.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "c145_range_difference",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c145_range_difference.rs:18); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "c152_range_difference",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c152_range_difference.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "c147_range_difference",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c147_range_difference.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "c153_range_difference",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c153_range_difference.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "c148_range_difference",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c148_range_difference.rs:17); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "c014_atomiccpuset_contains",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c014_atomiccpuset_contains.rs:19); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "c012_cpu_set_test_test_empty_cpu_set_iter_is_empty",
+      "verdict": "ObligationSupported",
+      "expect": "supported",
+      "expect_match": true,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    }
+  ],
+  "dependency_summary": "1908 verified, 0 errors",
+  "target_summary": "1498 verified, 10 errors",
+  "baseline_clean": true
+}

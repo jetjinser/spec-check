@@ -1,0 +1,1333 @@
+{
+  "candidates_total": 153,
+  "candidates_selected": 11,
+  "synthesized": 11,
+  "skipped": 142,
+  "entries": [
+    {
+      "candidate_id": "K150",
+      "function": "range_difference",
+      "family": "is_none-demand",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K150",
+      "entry_name": "c150_range_difference",
+      "receiver_type": "RangeDifferenceUsize",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K150 range_difference_a_empty：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "expect": "gap",
+      "expect_source": "recipe-override",
+      "expect_basis": "同上：will_return_none() 未由 ensures 建立，空序列的 next() == None 不可推出。",
+      "obligation": "let mut it = range_difference(&(0usize..0usize), &(0usize..10usize));\nlet r0 = it.next();\nassert(r0.is_none());",
+      "obligation_draft": "assert_eq!(res.next(), Some(val))\nassert!(res.next().is_none())"
+    },
+    {
+      "candidate_id": "K151",
+      "function": "range_difference",
+      "family": "is_none-demand",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K151",
+      "entry_name": "c151_range_difference",
+      "receiver_type": "RangeDifferenceUsize",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K151 range_difference_all_empty：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "expect": "gap",
+      "expect_source": "recipe-override",
+      "expect_basis": "同上：will_return_none() 未由 ensures 建立，空序列的 next() == None 不可推出。",
+      "obligation": "let mut it = range_difference(&(0usize..0usize), &(0usize..0usize));\nlet r0 = it.next();\nassert(r0.is_none());",
+      "obligation_draft": "assert_eq!(res.next(), Some(val))\nassert!(res.next().is_none())"
+    },
+    {
+      "candidate_id": "K146",
+      "function": "range_difference",
+      "family": "is_none-demand",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K146",
+      "entry_name": "c146_range_difference",
+      "receiver_type": "RangeDifferenceUsize",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K146 range_difference_all_same：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "expect": "gap",
+      "expect_source": "recipe-override",
+      "expect_basis": "range_difference 的 ensures 是 `ret.obeys_prophetic_iter_laws() && ret.will_return_none() ==> {...}`；will_return_none() 未被建立，空序列的 next() == None 不可由契约推出。",
+      "obligation": "let mut it = range_difference(&(0usize..10usize), &(0usize..10usize));\nlet r0 = it.next();\nassert(r0.is_none());",
+      "obligation_draft": "assert_eq!(res.next(), Some(val))\nassert!(res.next().is_none())"
+    },
+    {
+      "candidate_id": "K149",
+      "function": "range_difference",
+      "family": "is_none-demand",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K149",
+      "entry_name": "c149_range_difference",
+      "receiver_type": "RangeDifferenceUsize",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K149 range_difference_b_empty：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "expect": "gap",
+      "expect_source": "recipe-override",
+      "expect_basis": "同上：obeys_prophetic_iter_laws()/will_return_none() 均未由 ensures 建立，单元素序列不可推出。",
+      "obligation": "let mut it = range_difference(&(0usize..10usize), &(0usize..0usize));\nlet r0 = it.next();\nlet r1 = it.next();\nassert(r0 == Some(0usize..10usize) && r1.is_none());",
+      "obligation_draft": "assert_eq!(res.next(), Some(val))\nassert!(res.next().is_none())"
+    },
+    {
+      "candidate_id": "K145",
+      "function": "range_difference",
+      "family": "is_none-demand",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K145",
+      "entry_name": "c145_range_difference",
+      "receiver_type": "RangeDifferenceUsize",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K145 range_difference_contained：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "expect": "gap",
+      "expect_source": "recipe-override",
+      "expect_basis": "range_difference 的 ensures 是 `ret.obeys_prophetic_iter_laws() && ret.will_return_none() ==> { remaining() == range_difference_spec(...) ... }`；两个前件都没有被 ensures 建立，因此 next() 的具体序列不可由契约推出。",
+      "obligation": "let mut it = range_difference(&(0usize..10usize), &(3usize..7usize));\nlet r0 = it.next();\nlet r1 = it.next();\nlet r2 = it.next();\nassert(r0 == Some(0usize..3usize) && r1 == Some(7usize..10usize) && r2.is_none());",
+      "obligation_draft": "assert_eq!(res.next(), Some(val))\nassert!(res.next().is_none())"
+    },
+    {
+      "candidate_id": "K152",
+      "function": "range_difference",
+      "family": "is_none-demand",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K152",
+      "entry_name": "c152_range_difference",
+      "receiver_type": "RangeDifferenceUsize",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K152 range_difference_left_intersected：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "expect": "gap",
+      "expect_source": "recipe-override",
+      "expect_basis": "同上：obeys_prophetic_iter_laws()/will_return_none() 均未由 ensures 建立，单元素序列不可推出。",
+      "obligation": "let mut it = range_difference(&(5usize..10usize), &(0usize..6usize));\nlet r0 = it.next();\nlet r1 = it.next();\nassert(r0 == Some(6usize..10usize) && r1.is_none());",
+      "obligation_draft": "assert_eq!(res.next(), Some(val))\nassert!(res.next().is_none())"
+    },
+    {
+      "candidate_id": "K147",
+      "function": "range_difference",
+      "family": "is_none-demand",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K147",
+      "entry_name": "c147_range_difference",
+      "receiver_type": "RangeDifferenceUsize",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K147 range_difference_left_same：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "expect": "gap",
+      "expect_source": "recipe-override",
+      "expect_basis": "同上：obeys_prophetic_iter_laws()/will_return_none() 均未由 ensures 建立，单元素序列不可推出。",
+      "obligation": "let mut it = range_difference(&(0usize..10usize), &(0usize..5usize));\nlet r0 = it.next();\nlet r1 = it.next();\nassert(r0 == Some(5usize..10usize) && r1.is_none());",
+      "obligation_draft": "assert_eq!(res.next(), Some(val))\nassert!(res.next().is_none())"
+    },
+    {
+      "candidate_id": "K153",
+      "function": "range_difference",
+      "family": "is_none-demand",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K153",
+      "entry_name": "c153_range_difference",
+      "receiver_type": "RangeDifferenceUsize",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K153 range_difference_right_intersected：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "expect": "gap",
+      "expect_source": "recipe-override",
+      "expect_basis": "同上：obeys_prophetic_iter_laws()/will_return_none() 均未由 ensures 建立，单元素序列不可推出。",
+      "obligation": "let mut it = range_difference(&(5usize..10usize), &(6usize..12usize));\nlet r0 = it.next();\nlet r1 = it.next();\nassert(r0 == Some(5usize..6usize) && r1.is_none());",
+      "obligation_draft": "assert_eq!(res.next(), Some(val))\nassert!(res.next().is_none())"
+    },
+    {
+      "candidate_id": "K148",
+      "function": "range_difference",
+      "family": "is_none-demand",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K148",
+      "entry_name": "c148_range_difference",
+      "receiver_type": "RangeDifferenceUsize",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K148 range_difference_right_same：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "expect": "gap",
+      "expect_source": "recipe-override",
+      "expect_basis": "同上：obeys_prophetic_iter_laws()/will_return_none() 均未由 ensures 建立，单元素序列不可推出。",
+      "obligation": "let mut it = range_difference(&(0usize..10usize), &(5usize..10usize));\nlet r0 = it.next();\nlet r1 = it.next();\nassert(r0 == Some(0usize..5usize) && r1.is_none());",
+      "obligation_draft": "assert_eq!(res.next(), Some(val))\nassert!(res.next().is_none())"
+    },
+    {
+      "candidate_id": "K014",
+      "function": "AtomicCpuSet::contains",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K014",
+      "entry_name": "c014_atomiccpuset_contains",
+      "receiver_type": "AtomicCpuSet",
+      "obligation_family": "state-invariant",
+      "family_basis": "K014：候选族是 final-relation，但可执行义务是 add() 后 contains() 的布尔查询；AtomicCpuSet 没有可写的接收者后状态谓词，因此用 state-invariant（变更 + 查询输出）骨架。",
+      "expect": "gap",
+      "expect_source": "recipe-override",
+      "expect_basis": "AtomicCpuSet::contains 的 ensures 只有 `cpu_id@ / 64 >= self.num_parts() ==> ret == false`；AtomicCpuSet::add 没有后置条件，因此 add(CPU0) 后 contains(CPU0) == true 不能由契约推出。义务只覆盖循环体的一个实例（CPU0），不覆盖 10 种容量的 %3 循环。",
+      "obligation": "let recv = AtomicCpuSet::new(CpuSet::new_empty());\nrecv.add(CpuId::try_from(0usize).unwrap(), Ordering::Relaxed);\nlet out = recv.contains(CpuId::try_from(0usize).unwrap(), Ordering::Relaxed);\nassert(out);",
+      "obligation_draft": "assert!(!atomic_set.contains(cpu_id, Ordering::Relaxed))\nassert!(loaded.contains(cpu_id))\nassert!(!loaded.contains(cpu_id))\nassert!(!atomic_set.contains(cpu_id, Ordering::Relaxed))"
+    },
+    {
+      "candidate_id": "K012",
+      "function": "cpu::set::test::test_empty_cpu_set_iter_is_empty",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "ktest:K012",
+      "entry_name": "c012_cpu_set_test_test_empty_cpu_set_iter_is_empty",
+      "receiver_type": "CpuSet",
+      "obligation_family": "final-relation",
+      "family_basis": null,
+      "expect": "supported",
+      "expect_source": "recipe-override",
+      "expect_basis": "CpuSet::new_empty 的 ensures 是 `ret@ == Set::empty() && ret.inv()`，View 为 Set<int>；因此构造后集合视图长度为 0 是契约字面可推。原测试额外做了 iter().collect()，本义务只覆盖集合空性，不覆盖迭代器适配器。",
+      "obligation": "let mut recv = CpuSet::new_empty();\nassert(recv@.len() == 0);",
+      "obligation_draft": "assert!(set_cpus.is_empty())"
+    }
+  ],
+  "skipped_candidates": [
+    {
+      "candidate_id": "K007",
+      "function": "MemoryRegionArray::push",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K131",
+      "function": "Mutex::try_lock",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K078",
+      "function": "query",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K071",
+      "function": "PageTable::cursor_mut",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K070",
+      "function": "PageTable::cursor_mut",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K073",
+      "function": "page_walk",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K072",
+      "function": "page_walk",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K080",
+      "function": "find_next",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K016",
+      "function": "IoMemAllocator::acquire",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K136",
+      "function": "RwArc::get",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K015",
+      "function": "IoMemAllocator::acquire",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K040",
+      "function": "Frame::clone",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K093",
+      "function": "VmReader::read_val",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K109",
+      "function": "VmReader::read_val",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K075",
+      "function": "disable_preempt",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K031",
+      "function": "DmaStream::reader",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K030",
+      "function": "DmaStream::reader",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K045",
+      "function": "LinkedList::contains",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K046",
+      "function": "current_meta",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K044",
+      "function": "current_meta",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K084",
+      "function": "PageTable::page_walk",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K092",
+      "function": "FrameAllocOptions::new",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K125",
+      "function": "Arc::cursor_mut",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K043",
+      "function": "Result::is_ok",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K056",
+      "function": "Result::is_ok",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K055",
+      "function": "Result::is_ok",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K107",
+      "function": "mm::test::io::partial_read_fallible",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K108",
+      "function": "mm::test::io::partial_write_fallible",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K120",
+      "function": "query",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K133",
+      "function": "Either::Left",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K134",
+      "function": "Either::Right",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K041",
+      "function": "FrameAllocOptions::new",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K068",
+      "function": "start_paddr",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K079",
+      "function": "query",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K076",
+      "function": "PageTable::cursor_mut",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K111",
+      "function": "mm::test::io::collect_partial_fallible",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K127",
+      "function": "jump",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K128",
+      "function": "VmSpace::cursor",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K121",
+      "function": "VmSpace::cursor",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K008",
+      "function": "cpu::local::test::test_cpu_local",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K089",
+      "function": "FrameAllocOptions::new",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K124",
+      "function": "VmSpace::cursor",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K123",
+      "function": "Arc::as_ptr",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K119",
+      "function": "VmSpace::cursor",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K135",
+      "function": "RcuOption::read",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K142",
+      "function": "wake_up",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K143",
+      "function": "IrqLine::alloc_specific",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K033",
+      "function": "DmaStream::paddr",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K065",
+      "function": "KVirtArea::start",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K085",
+      "function": "PageTable::cursor",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K086",
+      "function": "PageTable::page_walk",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K122",
+      "function": "VmSpace::cursor_mut",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K027",
+      "function": "DmaStream::is_err",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K026",
+      "function": "FrameAllocOptions::start_paddr",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K037",
+      "function": "DmaStreamSlice::new",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K036",
+      "function": "DmaStreamSlice::new",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K061",
+      "function": "FrameAllocOptions::reference_count",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K049",
+      "function": "mm::frame::test::segment::empty_segment_creation",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K064",
+      "function": "KVirtArea::query",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K087",
+      "function": "PageTable::cursor_mut",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K126",
+      "function": "VmSpace::cursor",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K141",
+      "function": "wake_up",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K139",
+      "function": "wake_up",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K004",
+      "function": "arch::riscv::cpu::extension::tests::isa_extensions_list_basic",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K006",
+      "function": "arch::riscv::cpu::extension::tests::isa_extensions_list_unknown_extensions",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K002",
+      "function": "arch::riscv::cpu::extension::tests::isa_string_edge_cases",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K003",
+      "function": "arch::riscv::cpu::extension::tests::isa_string_unknown_extensions",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K001",
+      "function": "arch::riscv::cpu::extension::tests::isa_string_with_basic",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K025",
+      "function": "DmaCoherent::write_bytes",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K024",
+      "function": "DmaCoherent::read_bytes",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K039",
+      "function": "FrameAllocOptions::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K063",
+      "function": "FrameAllocOptions::default",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K066",
+      "function": "KVirtArea::start",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K069",
+      "function": "entry",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K081",
+      "function": "PageTable::cursor_mut",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K140",
+      "function": "wake_up",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K018",
+      "function": "FrameAllocOptions::start_paddr",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K062",
+      "function": "Frame::meta",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K057",
+      "function": "FrameAllocOptions::meta",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K058",
+      "function": "FrameAllocOptions::alloc_segment",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K059",
+      "function": "FrameAllocOptions::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K060",
+      "function": "FrameAllocOptions::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K082",
+      "function": "PageTable::cursor_mut",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K106",
+      "function": "VmReader::read_val",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K098",
+      "function": "VmWriter::avail",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K101",
+      "function": "remain",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K115",
+      "function": "FrameAllocOptions::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K005",
+      "function": "arch::riscv::cpu::extension::tests::isa_extensions_list_edge_cases",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K010",
+      "function": "cpu::set::test::test_full_cpu_set_iter_is_all",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K017",
+      "function": "FrameAllocOptions::start_paddr",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K047",
+      "function": "mm::frame::test::segment::segment_creation",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K053",
+      "function": "meta",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K052",
+      "function": "FrameAllocOptions::start_paddr",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K051",
+      "function": "FrameAllocOptions::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K088",
+      "function": "PageTable::cursor_mut",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K113",
+      "function": "mm::test::io::invalid_args_read_write_fallible",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K114",
+      "function": "mm::test::io::invalid_read_write_infallible",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K102",
+      "function": "avail",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K094",
+      "function": "mm::test::io::read_write_slice_infallible",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K103",
+      "function": "mm::test::io::read_write_slice_vmio_infallible",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K132",
+      "function": "sync::rcu::non_null::either::test::alignment",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K023",
+      "function": "DmaCoherent::paddr",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K019",
+      "function": "FrameAllocOptions::into",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K020",
+      "function": "DmaCoherent::read_bytes",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K021",
+      "function": "DmaCoherent::read_once",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K022",
+      "function": "FrameAllocOptions::into",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K028",
+      "function": "DmaStream::read_bytes",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K029",
+      "function": "DmaStream::reader",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K032",
+      "function": "DmaStream::read_bytes",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K034",
+      "function": "DmaStreamSlice::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K035",
+      "function": "DmaStreamSlice::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K038",
+      "function": "DmaStreamSlice::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K042",
+      "function": "UFrame::size",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K067",
+      "function": "mm::kspace::test::manual_paddr_to_vaddr",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K083",
+      "function": "FrameAllocOptions::into",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K110",
+      "function": "VmReader::collect",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K112",
+      "function": "VmWriter::fill_zeros",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K118",
+      "function": "FrameAllocOptions::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K117",
+      "function": "FrameAllocOptions::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K104",
+      "function": "VmReader::read_once",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K095",
+      "function": "VmReader::read_val",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K099",
+      "function": "mm::test::io::skip_read_infallible",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K100",
+      "function": "mm::test::io::skip_write_infallible",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K116",
+      "function": "FrameAllocOptions::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K105",
+      "function": "VmWriter::write_val",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K013",
+      "function": "CpuSet::contains",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K011",
+      "function": "CpuSet::contains",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K050",
+      "function": "FrameAllocOptions::new",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K009",
+      "function": "cpu::local::test::test_cpu_local_cell",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K054",
+      "function": "FrameAllocOptions::new",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K048",
+      "function": "mm::frame::test::segment::max_segment_creation",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K090",
+      "function": "FrameAllocOptions::new",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K091",
+      "function": "FrameAllocOptions::new",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K077",
+      "function": "PageTable::cursor_mut",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K074",
+      "function": "mm::page_table::test::range_checks::overflow_boundary_mapping",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K096",
+      "function": "VmReader::read_val",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K097",
+      "function": "VmWriter::write_val",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K130",
+      "function": "VmSpace::cursor_mut",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K129",
+      "function": "VmSpace::cursor_mut",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K138",
+      "function": "sync::wait::test::queue_wake_all",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K137",
+      "function": "sync::wait::test::queue_wake_one",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "K144",
+      "function": "IrqLine::alloc_specific",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    }
+  ]
+}

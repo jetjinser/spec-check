@@ -1,0 +1,178 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan-b/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": [
+      "ktest_capture_gap"
+    ],
+    "target": "x86_64-unknown-none"
+  },
+  "types": {
+    "RangeDifferenceUsize": {
+      "imports": [
+        "use crate::util::ops::range_difference;"
+      ],
+      "construct": ""
+    },
+    "CpuSet": {
+      "imports": [
+        "use crate::cpu::CpuSet;"
+      ],
+      "construct": "CpuSet::new_empty()"
+    },
+    "AtomicCpuSet": {
+      "imports": [
+        "use crate::cpu::{AtomicCpuSet, CpuId, CpuSet};",
+        "use core::sync::atomic::Ordering;"
+      ],
+      "construct": "AtomicCpuSet::new(CpuSet::new_empty())",
+      "model_preamble": "broadcast use crate::cpu::axiom_cpu_count_bounds;"
+    }
+  },
+  "candidate_interfaces": {
+    "K145": {
+      "receiver_type": "RangeDifferenceUsize",
+      "family": "is_none-demand",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K145 range_difference_contained：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "call": "range_difference(&(0usize..10usize), &(3usize..7usize))",
+      "steps": [
+        "let r0 = {it}.next();",
+        "let r1 = {it}.next();",
+        "let r2 = {it}.next();"
+      ],
+      "assert": "r0 == Some(0usize..3usize) && r1 == Some(7usize..10usize) && r2.is_none()",
+      "expect": "gap",
+      "expect_basis": "range_difference 的 ensures 是 `ret.obeys_prophetic_iter_laws() && ret.will_return_none() ==> { remaining() == range_difference_spec(...) ... }`；两个前件都没有被 ensures 建立，因此 next() 的具体序列不可由契约推出。"
+    },
+    "K146": {
+      "receiver_type": "RangeDifferenceUsize",
+      "family": "is_none-demand",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K146 range_difference_all_same：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "call": "range_difference(&(0usize..10usize), &(0usize..10usize))",
+      "steps": [
+        "let r0 = {it}.next();"
+      ],
+      "assert": "r0.is_none()",
+      "expect": "gap",
+      "expect_basis": "range_difference 的 ensures 是 `ret.obeys_prophetic_iter_laws() && ret.will_return_none() ==> {...}`；will_return_none() 未被建立，空序列的 next() == None 不可由契约推出。"
+    },
+    "K147": {
+      "receiver_type": "RangeDifferenceUsize",
+      "family": "is_none-demand",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K147 range_difference_left_same：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "call": "range_difference(&(0usize..10usize), &(0usize..5usize))",
+      "steps": [
+        "let r0 = {it}.next();",
+        "let r1 = {it}.next();"
+      ],
+      "assert": "r0 == Some(5usize..10usize) && r1.is_none()",
+      "expect": "gap",
+      "expect_basis": "同上：obeys_prophetic_iter_laws()/will_return_none() 均未由 ensures 建立，单元素序列不可推出。"
+    },
+    "K148": {
+      "receiver_type": "RangeDifferenceUsize",
+      "family": "is_none-demand",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K148 range_difference_right_same：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "call": "range_difference(&(0usize..10usize), &(5usize..10usize))",
+      "steps": [
+        "let r0 = {it}.next();",
+        "let r1 = {it}.next();"
+      ],
+      "assert": "r0 == Some(0usize..5usize) && r1.is_none()",
+      "expect": "gap",
+      "expect_basis": "同上：obeys_prophetic_iter_laws()/will_return_none() 均未由 ensures 建立，单元素序列不可推出。"
+    },
+    "K149": {
+      "receiver_type": "RangeDifferenceUsize",
+      "family": "is_none-demand",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K149 range_difference_b_empty：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "call": "range_difference(&(0usize..10usize), &(0usize..0usize))",
+      "steps": [
+        "let r0 = {it}.next();",
+        "let r1 = {it}.next();"
+      ],
+      "assert": "r0 == Some(0usize..10usize) && r1.is_none()",
+      "expect": "gap",
+      "expect_basis": "同上：obeys_prophetic_iter_laws()/will_return_none() 均未由 ensures 建立，单元素序列不可推出。"
+    },
+    "K150": {
+      "receiver_type": "RangeDifferenceUsize",
+      "family": "is_none-demand",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K150 range_difference_a_empty：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "call": "range_difference(&(0usize..0usize), &(0usize..10usize))",
+      "steps": [
+        "let r0 = {it}.next();"
+      ],
+      "assert": "r0.is_none()",
+      "expect": "gap",
+      "expect_basis": "同上：will_return_none() 未由 ensures 建立，空序列的 next() == None 不可推出。"
+    },
+    "K151": {
+      "receiver_type": "RangeDifferenceUsize",
+      "family": "is_none-demand",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K151 range_difference_all_empty：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "call": "range_difference(&(0usize..0usize), &(0usize..0usize))",
+      "steps": [
+        "let r0 = {it}.next();"
+      ],
+      "assert": "r0.is_none()",
+      "expect": "gap",
+      "expect_basis": "同上：will_return_none() 未由 ensures 建立，空序列的 next() == None 不可推出。"
+    },
+    "K152": {
+      "receiver_type": "RangeDifferenceUsize",
+      "family": "is_none-demand",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K152 range_difference_left_intersected：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "call": "range_difference(&(5usize..10usize), &(0usize..6usize))",
+      "steps": [
+        "let r0 = {it}.next();",
+        "let r1 = {it}.next();"
+      ],
+      "assert": "r0 == Some(6usize..10usize) && r1.is_none()",
+      "expect": "gap",
+      "expect_basis": "同上：obeys_prophetic_iter_laws()/will_return_none() 均未由 ensures 建立，单元素序列不可推出。"
+    },
+    "K153": {
+      "receiver_type": "RangeDifferenceUsize",
+      "family": "is_none-demand",
+      "obligation_family": "iterator-sequence",
+      "family_basis": "K153 range_difference_right_intersected：候选族的语义是迭代器 next() 序列（assert_range_difference helper），is_none-demand 只覆盖一次布尔调用；改用迭代器序列骨架。",
+      "call": "range_difference(&(5usize..10usize), &(6usize..12usize))",
+      "steps": [
+        "let r0 = {it}.next();",
+        "let r1 = {it}.next();"
+      ],
+      "assert": "r0 == Some(5usize..6usize) && r1.is_none()",
+      "expect": "gap",
+      "expect_basis": "同上：obeys_prophetic_iter_laws()/will_return_none() 均未由 ensures 建立，单元素序列不可推出。"
+    },
+    "K012": {
+      "receiver_type": "CpuSet",
+      "family": "final-relation",
+      "call": "",
+      "assert": "{recv}@.len() == 0",
+      "expect": "supported",
+      "expect_basis": "CpuSet::new_empty 的 ensures 是 `ret@ == Set::empty() && ret.inv()`，View 为 Set<int>；因此构造后集合视图长度为 0 是契约字面可推。原测试额外做了 iter().collect()，本义务只覆盖集合空性，不覆盖迭代器适配器。"
+    },
+    "K014": {
+      "receiver_type": "AtomicCpuSet",
+      "family": "final-relation",
+      "obligation_family": "state-invariant",
+      "family_basis": "K014：候选族是 final-relation，但可执行义务是 add() 后 contains() 的布尔查询；AtomicCpuSet 没有可写的接收者后状态谓词，因此用 state-invariant（变更 + 查询输出）骨架。",
+      "bridge": "{recv}.add(CpuId::try_from(0usize).unwrap(), Ordering::Relaxed);",
+      "call": "{recv}.contains(CpuId::try_from(0usize).unwrap(), Ordering::Relaxed)",
+      "assert": "{out}",
+      "expect": "gap",
+      "expect_basis": "AtomicCpuSet::contains 的 ensures 只有 `cpu_id@ / 64 >= self.num_parts() ==> ret == false`；AtomicCpuSet::add 没有后置条件，因此 add(CPU0) 后 contains(CPU0) == true 不能由契约推出。义务只覆盖循环体的一个实例（CPU0），不覆盖 10 种容量的 %3 循环。"
+    }
+  }
+}
