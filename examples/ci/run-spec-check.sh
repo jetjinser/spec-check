@@ -12,6 +12,8 @@
 #     capture.json      capture profile plan (generated default or override)
 #     capture/          project-capture output (report.json, changed_inputs)
 #     check/            check output (report.json, analyses/<name>/...)
+#     census/           census output (census.json); only when SPEC_CHECK_CENSUS=1
+#     census-vir/       VIR export input (crate.vir, ~100 MB); same condition
 #     run.log           full stdout/stderr of this run
 #
 # Exit-code contract mirrors `cargo-spec-check check`: only pipeline
@@ -37,6 +39,19 @@
 #   SPEC_CHECK_NO_NIX=1    run in the current environment, skip nix develop.
 #   SPEC_CHECK_CARGO_FLAGS extra cargo build flags (e.g. --offline).
 #   SPEC_CHECK_JSON=1      pass --json to the check command.
+#   SPEC_CHECK_CENSUS=1    optional census pass (default off). Exports VIR with
+#                          `cargo dv focus --targets ... -- --no-verify --log
+#                          vir` (minutes, ~100 MB) and runs
+#                          `cargo-spec-check census` into CHECK_OUT/census/.
+#                          Census output is facts, never a failure verdict; a
+#                          missing export capability or VIR is a pipeline error.
+#   CENSUS_CRATE           crate name passed to census --crate; default: ostd.
+#   CENSUS_TARGET          dv target to export; default: $CENSUS_CRATE.
+#   CENSUS_VIR             existing VIR file; when set, export is skipped.
+#   CENSUS_VIR_DIR         export destination (cleared first); default:
+#                          $CHECK_OUT/census-vir. Point outside CHECK_OUT to
+#                          keep the artifact small.
+#   CENSUS_SOURCE_ROOT     optional census --source-root (relative file paths).
 set -euo pipefail
 
 fail() { printf 'run-spec-check: %s\n' "$1" >&2; exit 2; }
@@ -52,6 +67,15 @@ CHECK_OUT="${CHECK_OUT:-$SPEC_CHECK_DIR/target/spec-check-ci}"
 CAPTURE_MANIFEST="${CAPTURE_MANIFEST:-$VOSTD_DIR/Cargo.toml}"
 ANALYSIS_MANIFEST="${ANALYSIS_MANIFEST:-$SPEC_CHECK_DIR/examples/vostd-guard/manifest.json}"
 ANALYSIS_NAME="${ANALYSIS_NAME:-vacuity}"
+SPEC_CHECK_CENSUS="${SPEC_CHECK_CENSUS:-0}"
+CENSUS_CRATE="${CENSUS_CRATE:-ostd}"
+CENSUS_TARGET="${CENSUS_TARGET:-$CENSUS_CRATE}"
+CENSUS_VIR_DIR="${CENSUS_VIR_DIR:-$CHECK_OUT/census-vir}"
+
+if [[ "$SPEC_CHECK_CENSUS" == "1" && -n "${CENSUS_VIR:-}" ]]; then
+  [[ -f "$CENSUS_VIR" ]] || fail "CENSUS_VIR does not exist: $CENSUS_VIR"
+  CENSUS_VIR="$(readlink -f "$CENSUS_VIR")"
+fi
 
 mkdir -p "$CHECK_OUT"
 exec > >(tee "$CHECK_OUT/run.log") 2>&1
@@ -115,6 +139,55 @@ INNER='
 set -euo pipefail
 cargo build --manifest-path "$SPEC_CHECK_DIR/Cargo.toml" ${SPEC_CHECK_CARGO_FLAGS:-}
 cargo fetch --manifest-path "$CAPTURE_MANIFEST"
+
+# Optional census: pure VIR analysis, not a check analysis. It needs a VIR
+# export (minutes, ~100 MB) and therefore stays opt-in; findings are facts.
+if [[ "${SPEC_CHECK_CENSUS:-0}" == "1" ]]; then
+  export VERUS_USE_RUSTUP="${VERUS_USE_RUSTUP:-0}"
+  export VERUS_Z3_PATH="${VERUS_Z3_PATH:-$VERUS_SDK/z3}"
+  export RUSTC_BOOTSTRAP="${RUSTC_BOOTSTRAP:-1}"
+  if [[ -n "${CENSUS_VIR:-}" ]]; then
+    census_vir="$CENSUS_VIR"
+  else
+    if [[ ! -f "$VOSTD_DIR/dv/Cargo.toml" ]] \
+      || ! grep -Eq '^[[:space:]]*dv[[:space:]]*=' "$VOSTD_DIR/.cargo/config.toml" 2>/dev/null; then
+      printf '%s\n' \
+        "run-spec-check: SPEC_CHECK_CENSUS=1 needs VIR export, but '$VOSTD_DIR' has no 'cargo dv' alias (dv submodule missing)." \
+        "  Export once, then rerun with CENSUS_VIR=<dir>/crate.vir:" \
+        "    (cd $VOSTD_DIR && cargo dv focus --targets $CENSUS_TARGET -- --no-verify --log vir --log-dir <dir>)" >&2
+      exit 2
+    fi
+    if [[ -z "$CENSUS_VIR_DIR" || "$CENSUS_VIR_DIR" == "/" ]]; then
+      echo "run-spec-check: refusing to clear CENSUS_VIR_DIR='$CENSUS_VIR_DIR'" >&2
+      exit 2
+    fi
+    rm -rf "$CENSUS_VIR_DIR"
+    mkdir -p "$CENSUS_VIR_DIR"
+    CENSUS_VIR_DIR="$(readlink -f "$CENSUS_VIR_DIR")"
+    ( cd "$VOSTD_DIR" && cargo dv focus --targets "$CENSUS_TARGET" -- \
+        --no-verify --log vir --log-dir "$CENSUS_VIR_DIR" )
+    census_vir="$CENSUS_VIR_DIR/crate.vir"
+    if [[ ! -f "$census_vir" ]]; then
+      printf '%s\n' \
+        "run-spec-check: VIR export produced no $census_vir." \
+        "  Use a fresh CENSUS_VIR_DIR (cargo may skip writing an unchanged crate), or pass CENSUS_VIR=<existing crate.vir>." >&2
+      exit 2
+    fi
+  fi
+  census_tmp="$CHECK_OUT/.census.tmp"
+  rm -rf "$census_tmp"
+  census_args=(--vir "$census_vir" --crate "$CENSUS_CRATE" --out "$census_tmp")
+  if [[ -n "${CENSUS_SOURCE_ROOT:-}" ]]; then
+    census_args+=(--source-root "$CENSUS_SOURCE_ROOT")
+  fi
+  if ! "$SPEC_CHECK_DIR/target/debug/cargo-spec-check" census "${census_args[@]}"; then
+    rm -rf "$census_tmp"
+    exit 2
+  fi
+  rm -rf "$CHECK_OUT/census"
+  mv "$census_tmp" "$CHECK_OUT/census"
+fi
+
 exec "$SPEC_CHECK_DIR/target/debug/cargo-spec-check" check \
   --project "$CHECK_OUT/project.json" \
   --cargo-verus "$VERUS_SDK/target-verus/release/cargo-verus" \
@@ -124,7 +197,9 @@ exec "$SPEC_CHECK_DIR/target/debug/cargo-spec-check" check \
 '
 
 export SPEC_CHECK_DIR CHECK_OUT VERUS_SDK CAPTURE_MANIFEST \
-  SPEC_CHECK_CARGO_FLAGS SPEC_CHECK_JSON
+  SPEC_CHECK_CARGO_FLAGS SPEC_CHECK_JSON \
+  SPEC_CHECK_CENSUS CENSUS_CRATE CENSUS_TARGET CENSUS_VIR CENSUS_VIR_DIR \
+  CENSUS_SOURCE_ROOT VOSTD_DIR
 
 if [[ "${SPEC_CHECK_NO_NIX:-0}" == "1" ]] || ! command -v nix >/dev/null 2>&1; then
   bash -c "$INNER"
