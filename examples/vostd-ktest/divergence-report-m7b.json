@@ -1,0 +1,21 @@
+{
+  "verdicts": [
+    {
+      "name": "c007_memoryregionarray_push",
+      "verdict": "ObligationSupported",
+      "expect": "supported",
+      "expect_match": true,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    },
+    {
+      "name": "c131_mutex_try_lock",
+      "verdict": "ContractGapCandidate",
+      "expect": "gap",
+      "expect_match": true,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/c131_mutex_try_lock.rs:18); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    }
+  ],
+  "dependency_summary": "1908 verified, 0 errors",
+  "target_summary": "1498 verified, 1 errors",
+  "baseline_clean": true
+}

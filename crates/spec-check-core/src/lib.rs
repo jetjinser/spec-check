@@ -32,6 +32,7 @@ pub mod guidance;
 pub mod handoff;
 pub mod helper;
 pub mod ir;
+pub mod ktest;
 pub mod link;
 pub mod literal;
 pub mod obligation;

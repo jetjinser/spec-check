@@ -1,0 +1,85 @@
+{
+  "all_assertions_extracted": 459,
+  "all_demands_extracted": 311,
+  "assertions_via_helper_tests": 10,
+  "by_assertion_category": {
+    "demand:Err": 2,
+    "demand:Ok": 77,
+    "demand:Some": 36,
+    "demand:Some or Ok": 187,
+    "excluded_private_observation": 3,
+    "excluded_test_assumption": 2,
+    "existence_acquisition": 115,
+    "invariant_consistency": 37,
+    "value_readback": 294
+  },
+  "by_category": {
+    "existence_acquisition": 37,
+    "invariant_consistency": 15,
+    "state_transition": 26,
+    "value_readback": 61
+  },
+  "by_control_flow": {
+    "assertion:if": 4,
+    "assertion:if-let": 2,
+    "assertion:iterator": 9,
+    "assertion:loop": 30,
+    "assertion:none": 414,
+    "demand:if": 1,
+    "demand:iterator": 2,
+    "demand:let-else": 14,
+    "demand:loop": 6,
+    "demand:none": 288
+  },
+  "by_demand_variant": {
+    "Err": 2,
+    "Ok": 82,
+    "Some": 36,
+    "Some or Ok": 191
+  },
+  "by_demand_variant_source": {
+    "constructor": 14,
+    "method-table": 96,
+    "pattern": 10,
+    "unknown": 191
+  },
+  "by_function_source": {
+    "associated-call": 26,
+    "bare-call": 10,
+    "method-name-only": 18,
+    "override": 1,
+    "receiver-type-inference": 71,
+    "unknown": 27
+  },
+  "by_rating": {
+    "blocked": 117,
+    "direct": 8,
+    "excluded": 14,
+    "needs_model_helper": 10,
+    "needs_model_quantified": 4
+  },
+  "by_scope": {
+    "assertion:quantified": 42,
+    "assertion:single": 417,
+    "demand:quantified": 12,
+    "demand:single": 299
+  },
+  "candidates": 139,
+  "capture_gap_tests": 117,
+  "config": "examples/vostd-ktest/extract-config.json",
+  "disconnected_tests": 8,
+  "excluded": 14,
+  "kept_assertions": 446,
+  "model_requirements": {
+    "control-flow-model": 12,
+    "helper-inline": 10,
+    "quantified-model": 24,
+    "variant-disambiguation": 79
+  },
+  "schema": "spec-check.ktest-stats/1",
+  "should_panic_tests": 10,
+  "source_root": "/tmp/vostd-43da079-ktest-chan/ostd/src",
+  "success_demands": 302,
+  "tests_seen": 153,
+  "unknown_function": 27
+}

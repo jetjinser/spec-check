@@ -39,6 +39,18 @@
   设计 `docs/M7a-spec-census.md`，校准 `examples/vostd-census/`
   （43da079 vs 同事 artifact：交集 1210 函数，输出数一致率 99.34%、
   后置来源 99.42%、finding 集合 98.51%）。
+- M7b ktest 义务提取已实现：`cargo-spec-check extract-ktest
+  --source-root --out [--config] [--stats]` 从 `#[ktest]` 测试提取断言/
+  成功需求/调用序列，输出与 `synthesize --candidates` 兼容的裸数组；
+  43da079 冻结源复现原型 **153 测试 / 139 候选 / 22 非 blocked
+  （8 direct + 10 helper + 4 quantified）/ 117 blocked / 14 excluded**
+  的全部评级与类别计数，断言 446/459 一致；类型变体推断把 292 条
+  `Some or Ok` 降到 191 条未知，闭包/控制流/解构模式显式标注。首站
+  只运行 2 条（K007 `MemoryRegionArray::push` supported、K131
+  `Mutex::try_lock` gap），expect_match 2/2、baseline clean；117 blocked
+  = 105 capture-gap + 8 断连 + 4 环境。设计
+  `docs/M7b-ktest-obligation-extraction.md`，归档
+  `examples/vostd-ktest/`。
 
 ## 主线条目（按优先级）
 
@@ -269,6 +281,34 @@ fn stub 三种面形态自动选型 + 铸造策略表 + 叶证据 run 生成）�
   finding。6 个 `decl_unavailable` 均为自带后置条件的
   `FallibleVm{Read,Write}` impl。
 
+
+### M7b. ktest 断言 → 调用者义务提取 —— 完成（2026-11-12）
+
+- [x] 设计：`docs/M7b-ktest-obligation-extraction.md`——提取架构
+      （mask/字节偏移、测试发现、三层门控、断言/需求/调用序列、函数
+      推导、helper 归因）、与 synthesize 的接口、可回放性分级
+      （direct/needs-model/blocked）、断言→模板族映射、排除规则、降级
+      策略、预注册边界。
+- [x] 实现：`spec-check-core::ktest` + CLI `extract-ktest`；无新 crate
+      （regex + serde）。项目侧配置 `examples/vostd-ktest/extract-config.json`
+      （私有观察/环境依赖/门控 cfg/方法变体表/研究锚点/函数覆盖）。
+      单测 8 条：mask 偏移、断言分类、变体推断、闭包/循环作用域、
+      端到端确定性、helper 内联、capture-gap/断连、解构模式。
+- [x] 提取：冻结源 153 测试 → 139 候选；`by_rating`/`by_category` 与
+      原型逐项一致；断言 446/459 一致；需求 311/302 vs 原型 310/301
+      （+1 = 元组解构 `let (va, Some(item))`，原型漏检）。117 blocked
+      = 105 capture-gap + 8 断连 + 4 环境；22 非 blocked 但只有 2 条
+      现有骨架可直接合成，其余 20 条缺 iterator/量化/ghost/集合模型。
+- [x] 首站：K007 `MemoryRegionArray::push`（value-readback）与 K131
+      `Mutex::try_lock`（is_none-demand）合成并注入；vstd 1908/0、
+      target 1498/1、baseline clean；ObligationSupported 1 /
+      ContractGapCandidate 1，**expect_match 2/2**。预检 v1 的
+      `E0596`（`let recv` 非 mut）修正为合成器通用 `receiver_mut`
+      recipe 字段，预注册 §6 记录、预测未改。
+- [x] 归档：`examples/vostd-ktest/KTEST-RUN-M7B.md`、
+      `KTEST-EXPECTED-M7B.md`、`extracted-candidates.json`、
+      `recipes-m7b.json`、`divergence-manifest-m7b.json`、`extract-stats.json`；
+      运行前后 216 个源文件 sha256 逐字节一致。
 
 ### M7c. 义务 client 合成器（obligation synthesizer）—— 完成（2026-11-12）
 

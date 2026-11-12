@@ -1,0 +1,27 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": [
+      "ktest_capture_gap"
+    ],
+    "target": "x86_64-unknown-none"
+  },
+  "contracts": [
+    {
+      "name": "c007_memoryregionarray_push",
+      "params": "",
+      "obligation": "let mut recv = MemoryRegionArray::<64>::new();\nlet _ = recv.push(MemoryRegion::new(0usize, 4097usize, MemoryRegionType::Usable)).unwrap();\nlet _ = recv.push(MemoryRegion::new(4095usize, 4098usize, MemoryRegionType::Usable)).unwrap();\nlet _ = recv.push(MemoryRegion::new(8192usize, 20480usize, MemoryRegionType::Usable)).unwrap();\nlet _ = recv.push(MemoryRegion::new(12289usize, 4094usize, MemoryRegionType::BadMemory)).unwrap();\nlet out = recv.push(MemoryRegion::new(36864usize, 8192usize, MemoryRegionType::Usable));\nlet flag = out.is_ok();\nassert(flag && recv@.len() == 5usize);",
+      "model_preamble": "use crate::boot::memory_region::{MemoryRegion, MemoryRegionArray, MemoryRegionType};",
+      "expect": "supported"
+    },
+    {
+      "name": "c131_mutex_try_lock",
+      "params": "",
+      "obligation": "let recv = Mutex::<u64>::new(0u64);\nlet _guard = recv.lock();\nlet out = recv.try_lock();\nlet flag = out.is_none();\nassert(flag);",
+      "model_preamble": "use crate::sync::Mutex;",
+      "expect": "gap"
+    }
+  ]
+}

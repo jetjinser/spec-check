@@ -1,0 +1,162 @@
+{
+  "test_attributes": [
+    "ktest"
+  ],
+  "capture_gap_cfgs": [
+    "ktest_capture_gap"
+  ],
+  "crate_root_file": "lib.rs",
+  "top_level_module_exclusions": [
+    "specs"
+  ],
+  "arch_rules": [
+    {
+      "module": "arch",
+      "excluded_prefix": "riscv",
+      "selected_path_regex": "#\\[path\\s*=\\s*\"arch/riscv/mod\\.rs\"\\]\\s*\\n\\s*pub\\s+mod\\s+arch"
+    }
+  ],
+  "exclude_file_suffixes": [
+    "lib.rs"
+  ],
+  "private_observation_patterns": [
+    "\\.lock\\.load\\b",
+    "INNERS\\s*\\[",
+    "\\.callbacks\\b",
+    "\\.root\\b",
+    "\\.inner\\b",
+    "\\.tracked_perm\\b",
+    "\\.0\\.data\\b",
+    "BAR\\.load\\s*\\(",
+    "FOO\\.get_with\\b",
+    "\\.atomic\\b",
+    "\\.data\\b"
+  ],
+  "environment_patterns": [
+    "\\bTaskOptions\\b",
+    "\\bspawn\\s*\\(",
+    "\\.wait\\s*\\(",
+    "wake_up\\s*\\(",
+    "\\ball_cpus\\b",
+    "\\bnum_cpus\\b",
+    "KERNEL_PAGE_TABLE",
+    "\\.activate\\s*\\(",
+    "get_activated_vm_space",
+    "cpu_local",
+    "IrqLine",
+    "\\.reader\\s*\\(\\s*\\)",
+    "\\.writer\\s*\\(\\s*\\)"
+  ],
+  "loop_patterns": [
+    "\\bfor\\b",
+    "\\bwhile\\b",
+    "\\.iter\\s*\\(",
+    "\\.into_iter\\s*\\(",
+    "\\.collect\\s*\\(",
+    "\\.zip\\s*\\("
+  ],
+  "helper_prefixes": [
+    "assert",
+    "check"
+  ],
+  "helper_hint_patterns": [
+    "assert_range_difference",
+    "check_map_with_property"
+  ],
+  "state_name_patterns": [
+    "try_lock",
+    "wake",
+    "twice",
+    "again",
+    "reorder",
+    "unmap",
+    "alloc_and_free",
+    "dealloc",
+    "_drop",
+    "activ",
+    "flusher",
+    "map_twice",
+    "lockless"
+  ],
+  "invariant_field_patterns": [
+    "reference_count",
+    "start_paddr",
+    "end_paddr",
+    "as_ptr",
+    "offset",
+    "nframes",
+    "direction",
+    "daddr",
+    "paddr",
+    "level",
+    "size",
+    "count",
+    "typ",
+    "flags",
+    "cache",
+    "meta",
+    "virt_addr",
+    "remain",
+    "avail",
+    "len\\s*\\("
+  ],
+  "allocator_reuse_patterns": [
+    "start_paddr.*_before",
+    "paddr_before"
+  ],
+  "iterator_methods": [
+    "map",
+    "filter_map",
+    "filter",
+    "for_each",
+    "any",
+    "all",
+    "find_map",
+    "flat_map",
+    "inspect"
+  ],
+  "method_variants": {
+    "try_lock": "option",
+    "try_read": "option",
+    "try_write": "option",
+    "try_upread": "option",
+    "try_upgrade": "option",
+    "try_downgrade": "option",
+    "acquire": "option",
+    "get": "option",
+    "find": "option",
+    "first": "option",
+    "last": "option",
+    "pop": "option",
+    "next": "option",
+    "find_next": "option",
+    "from_bits": "option",
+    "page_walk": "option",
+    "push": "result",
+    "write_val": "result",
+    "read_val": "result",
+    "write_fallible": "result",
+    "read_fallible": "result",
+    "write_bytes": "result",
+    "read_bytes": "result",
+    "write_slice": "result",
+    "read_slice": "result",
+    "cursor_mut": "result",
+    "jump": "result",
+    "query": "result"
+  },
+  "research_anchors": {
+    "sync::mutex::test::test_mutex_try_lock_does_not_unlock": "mutex-try-lock-demand",
+    "boot::memory_region::test::test_sort_full_non_overlapping": "memory-region-push-test",
+    "io::io_mem::allocator::test::conflict_region": "range-allocator-alloc-specific",
+    "io::io_mem::allocator::test::illegal_region": "range-allocator-alloc-specific (negative controls)",
+    "sync::rwarc::test::lockless_get": "divergence-manifest rwarc family (get_cloned adjacent)",
+    "mm::test::io::read_write_val_fallible": "vmio-fallible-write full trace",
+    "mm::test::io::read_write_u32_infallible": "vmio-fallible-write infallible control",
+    "mm::frame::test::frame::frame_clone": "frame/refcount identity family"
+  },
+  "function_overrides": {
+    "mm::frame::test::frame::frame_clone": "Frame::clone"
+  },
+  "cross_file_helpers": false
+}

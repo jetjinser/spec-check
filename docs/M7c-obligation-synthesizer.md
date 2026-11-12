@@ -136,6 +136,7 @@ external_body、proof-only 等）不进入合成 manifest，进报告
   "interfaces": {
     "<function 原文或去泛型 Type::method>": {
       "receiver_type": "<types 键>",
+      "receiver_mut": false,            // 可选：true => `let mut recv = ...`（&mut self 方法）
       "family": "value-readback",       // 可选：与候选 family 交叉校验
       "bridge": "let ro = {recv}.clone_ro();", // 可选：接收者与调用之间
       "call": "{recv}.limit(4)",        // value/is_none/guard 必填；final 可空
@@ -153,6 +154,8 @@ external_body、proof-only 等）不进入合成 manifest，进报告
 约束（合成期校验，失败即整体报错）：
 
 - `receiver_type` 必须存在；`types` 中未引用的块允许存在（便于共享）。
+- `receiver_mut = true` 只影响接收者绑定（`let mut recv`），用于
+  `&mut self` 方法；final-relation 骨架本来就用 `let mut recv`。
 - 接口 `family`（若给）必须与候选 `family` 一致。
 - 三个族骨架的必填项与非空校验见 §3；占位符必须在该族可用集合内。
 - `expect` 覆盖必须带 `expect_basis`；该字段进入报告，便于审计

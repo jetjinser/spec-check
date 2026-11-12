@@ -103,6 +103,9 @@ pub struct InterfaceRecipe {
     /// Type recipe key used for construction and imports.
     #[serde(default)]
     pub receiver_type: Option<String>,
+    /// Bind the receiver as `let mut recv = ...` (methods taking `&mut self`).
+    #[serde(default)]
+    pub receiver_mut: bool,
     /// Cross-check against the candidate family (optional).
     #[serde(default)]
     pub family: Option<String>,
@@ -294,7 +297,8 @@ pub fn render(
             }
             push_bind_attr(&mut lines, ty, has_receiver);
             if has_receiver {
-                lines.push(format!("let recv = {construct};"));
+                let mut_kw = if ir.receiver_mut { "mut " } else { "" };
+                lines.push(format!("let {mut_kw}recv = {construct};"));
             }
             let binding = if family == Family::GuardIdentity {
                 "handle"
@@ -1140,6 +1144,23 @@ mod tests {
         .unwrap();
         let err = render(Family::FinalRelation, Some(ty), &ir).unwrap_err();
         assert!(err.contains("{out}"));
+    }
+
+    #[test]
+    fn mutable_receiver_binding_is_supported() {
+        let ty: TypeRecipe = serde_json::from_value(serde_json::json!({
+            "construct": "Cache::<u64>::new(5u64)"
+        }))
+        .unwrap();
+        let ir: InterfaceRecipe = serde_json::from_value(serde_json::json!({
+            "receiver_type": "Cache",
+            "receiver_mut": true,
+            "call": "{recv}.update()",
+            "assert": "true"
+        }))
+        .unwrap();
+        let rendered = render(Family::ValueReadback, Some(&ty), &ir).unwrap();
+        assert!(rendered.obligation.contains("let mut recv = Cache::<u64>::new(5u64);"));
     }
 
     #[test]

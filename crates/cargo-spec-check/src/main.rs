@@ -151,6 +151,36 @@ fn check() -> Result<()> {
         );
         return Ok(());
     }
+    if args.first().is_some_and(|s| s == "extract-ktest") {
+        let usage = "extract-ktest --source-root DIR --out FILE [--config FILE] [--stats FILE]";
+        let mut values = BTreeMap::new();
+        let mut iter = args.iter().skip(1);
+        while let Some(key) = iter.next() {
+            if !matches!(key.as_str(), "--source-root" | "--out" | "--config" | "--stats") {
+                return Err(usage.into());
+            }
+            let value = iter.next().ok_or(usage)?.clone();
+            if values.insert(key.clone(), value).is_some() {
+                return Err(usage.into());
+            }
+        }
+        let get = |k: &str| values.get(k).map(String::as_str).ok_or("missing option");
+        let stats = spec_check_core::ktest::run(
+            Path::new(get("--source-root")?),
+            values.get("--config").map(Path::new),
+            Path::new(get("--out")?),
+            values.get("--stats").map(Path::new),
+        )?;
+        println!(
+            "extract-ktest: {} tests, {} candidates ({} excluded), {} kept assertions, {} success demands",
+            stats["tests_seen"],
+            stats["candidates"],
+            stats["excluded"],
+            stats["kept_assertions"],
+            stats["success_demands"],
+        );
+        return Ok(());
+    }
     if args.first().is_some_and(|s| s == "census") {
         let usage = "census --vir FILE --crate NAME --out DIRECTORY [--source-root DIRECTORY]";
         let mut values = BTreeMap::new();
