@@ -1,0 +1,4082 @@
+{
+ "schema": "spec-check.requires-config/1",
+ "generic_instances": [
+  {
+   "match": "*",
+   "types": {
+    "*": "u64"
+   }
+  }
+ ],
+ "reference": {
+  "mode": "opaque"
+ },
+ "ghost": {
+  "mode": "opaque"
+ },
+ "projection": {
+  "models": [
+   {
+    "name": "proj_ostd_mm_io_VmIo_obeys_vmio_write_requires",
+    "params": [],
+    "returns": "bool",
+    "body": "true"
+   },
+   {
+    "name": "proj_ostd_mm_io_VmIo_obeys_vmio_read_requires",
+    "params": [],
+    "returns": "bool",
+    "body": "true"
+   },
+   {
+    "name": "proj_ostd_specs_task_cpu_local_impl_3_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_ostd_specs_task_cpu_local_impl_5_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_ostd_sync_mutex_impl_2_cell_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_ostd_util_range_alloc_impl_2_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_vstd_cell_pcell_impl_2_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_vstd_cell_pcell_impl_3_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_vstd_cell_pcell_maybe_uninit_impl_0_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_vstd_extra_resource_ghost_resource_count_auth_impl_2_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_vstd_extra_resource_ghost_resource_count_auth_impl_4_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_vstd_extra_resource_range_impl_0_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_addr_of_value",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": "a0"
+   },
+   {
+    "name": "proj_alloc_vec_impl_1_len",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_core_mem_size_of",
+    "params": [],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_arch_mm_impl_38_new_page_req",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_frame_frame_ref_NonNullPtr_ptr_perm_match",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_frame_meta_mapping_frame_to_meta",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_frame_segment_impl_2_size",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_frame_segment_impl_3_page_in_range_saturated",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_frame_segment_impl_9_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_io_VmIo_read_requires",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize",
+     "a3: usize",
+     "a4: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_io_VmIo_write_requires",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize",
+     "a3: usize",
+     "a4: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_kspace_impl_2_TOP_LEVEL_INDEX_RANGE",
+    "params": [],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_kspace_kvirt_area_impl_5_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_kspace_kvirt_area_impl_6_map_frames_bounds_panic_condition",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_kspace_kvirt_area_impl_6_map_untracked_frames_bounds_panic_condition",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_kspace_kvirt_area_impl_6_untracked_range_slots_in_regions",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_kspace_kvirt_area_kvirt_alloc_oom_condition",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_size",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_PageTableConfig_LOCKED_END_BOUND_spec",
+    "params": [],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_PageTableConfig_TOP_LEVEL_CAN_UNMAP_spec",
+    "params": [],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_PageTableConfig_item_from_raw",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize",
+     "a3: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_PageTableConfig_item_into_raw",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_PageTableConfig_item_well_formed",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_PageTableConfig_perm_well_formed_with_region",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_PageTableConfig_raw_item_well_formed",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_PageTableEntryTrait_new_page_req",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_PageTableEntryTrait_prop",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_RCClone_clone_requires",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_impl_10_relates_owner",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_impl_9_create_user_pt_panic_condition",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_node_child_specs_impl_0_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_node_child_specs_impl_4_pte_invariants",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_page_table_node_entry_specs_impl_0_invariants",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_vm_space_vm_space_specs_impl_0_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_mm_vm_space_vm_space_specs_impl_4_item_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize",
+     "a3: usize",
+     "a4: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_arch_valid_frame_paddr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_embedding_list_store_impl_0_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_frame_specs_impl_0_slot_vaddr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_frame_specs_impl_1_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_frame_specs_impl_2_ptr_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_frame_specs_impl_3_external_meta_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_frame_specs_impl_5_index",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_13_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_19_wf_region",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_20_wf_region",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_22_wf_with_region",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_8_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_9_relate_region",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_mapping_frame_to_index",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_meta_owners_impl_5_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_meta_owners_typed_meta_value",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_meta_owners_typed_meta_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_meta_region_owners_impl_0_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_meta_region_owners_impl_1_contains",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_meta_region_owners_impl_1_slot_owner",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_meta_specs_impl_0_frame_paddr_safety_cond",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_meta_specs_impl_0_perms_related",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_segment_impl_0_relate_regions",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_unique_impl_0_index",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_unique_impl_0_ptr_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_unique_impl_1_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_unique_impl_2_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_unique_impl_3_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_unique_impl_4_meta_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_frame_unique_impl_4_wf_with_region",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_io_impl_2_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_io_impl_3_disjoint",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_io_impl_4_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_io_impl_5_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_io_impl_6_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_io_impl_7_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_cursor_fn_specs_impl_0_invariants",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize",
+     "a3: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_cursor_fn_specs_impl_1_item_slot_in_regions",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_cursor_fn_specs_impl_1_item_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_cursor_fn_specs_impl_1_map_panic_conditions",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_0_child",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_0_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_0_level",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_0_path",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_1_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_cur_entry_owner",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_in_locked_range",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_metaregion_sound",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_node_unlocked",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_nodes_locked",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_only_current_locked",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_8_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_cursor_owners_impl_9_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_frame",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_is_frame",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_is_node",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_match_pte",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_metaregion_sound",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_node",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_2_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_3_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_impl_0_lock_held",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_impl_0_unlocked",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_owners_impl_2_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_owners_impl_3_level",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_owners_impl_3_meta_value",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_owners_impl_3_metaregion_sound_node",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_owners_impl_3_slot_vaddr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_node_owners_impl_7_invariants",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_owners_impl_1_metaregion_sound",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_owners_impl_2_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_page_table_owners_marked_borrowed_slots",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_tlb_impl_0_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_virt_mem_impl_1_addr_transl",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_virt_mem_impl_2_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_mm_virt_mem_impl_5_is_valid",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_specs_task_cpu_local_impl_5_cpu",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_sync_rcu_impl_4_is_nullable",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_sync_rcu_non_null_NonNullPtr_ptr_perm_match",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_sync_rcu_non_null_NonNullPtrRef_ref_perm_view_permission",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_sync_rwlock_impl_13_view",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_sync_spin_impl_0_resource",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_sync_spin_impl_0_value",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_sync_spin_impl_4_constant",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_task_scheduler_info_impl_1_inv_value",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_task_scheduler_info_impl_1_patomic_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_ostd_util_range_alloc_impl_1_view",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_array_impl_2_spec_index",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_atomic_impl_19_view",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_atomic_impl_21_id",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_cell_pcell_maybe_uninit_impl_0_is_init",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_map_impl_0_dom",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_map_impl_0_spec_index",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_map_lib_impl_0_contains_key",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_pervasive_impl_0_ensures",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_pervasive_impl_0_requires",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_seq_Seq_len",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_seq_impl_2_spec_index",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_set_Set_contains",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_simple_pptr_impl_0_addr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_simple_pptr_impl_1_addr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_simple_pptr_impl_1_is_init",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_simple_pptr_impl_1_pptr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_simple_pptr_impl_1_value",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_std_specs_manually_drop_impl_1_view",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_std_specs_option_impl_0_arrow_0",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_std_specs_vec_impl_0_spec_index",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_view_impl_10_view",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_array_ptr_impl_3_addr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_array_ptr_impl_4_addr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_array_ptr_impl_4_is_init",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_array_ptr_impl_4_value",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_atomic_data_impl_4_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_cast_ptr_impl_6_addr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_external_nonnull_impl_0_view_ptr_mut",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ghost_tree_impl_0_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ghost_tree_impl_0_len",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ghost_tree_impl_0_push_tail",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ghost_tree_impl_1_has_child",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ghost_tree_impl_1_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ghost_tree_impl_1_level",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ghost_tree_impl_1_new_val",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ghost_tree_impl_1_subtree_satisfies",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: bool"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ghost_tree_impl_1_value",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ownership_Inv_inv",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_ownership_OwnerOf_wf",
+    "params": [
+     "a0: usize",
+     "a1: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_panic_may_panic",
+    "params": [],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_resource_ghost_resource_count_auth_impl_2_frac",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_resource_ghost_resource_count_auth_impl_2_resource",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_resource_range_impl_0_range",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_vstd_extra_resource_invariant_ResourceInvariant_inv",
+    "params": [
+     "a0: usize",
+     "a1: usize",
+     "a2: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_field_core_ops_range_Range_end",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_core_ops_range_Range_start",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_frame_Frame_ptr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_frame_Frame_tracked_slot_perm",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_frame_frame_ref_FrameRef_inner",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_frame_meta_MetaSlot_in_list",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_frame_meta_MetaSlot_ref_count",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_frame_meta_MetaSlot_storage",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_frame_meta_MetaSlot_vtable_ptr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_kspace_kvirt_area_KVirtAreaOwner_pt_owner",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_page_table_PageTable_root",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_page_table_cursor_Cursor_level",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_page_table_cursor_Cursor_path",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_page_table_cursor_CursorMut_p_0",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_page_table_node_PageTablePageMeta_nr_children",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_page_table_node_PageTablePageMeta_stray",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_page_table_node_entry_Entry_idx",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_page_table_node_entry_Entry_node",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_page_table_node_entry_Entry_pte",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_page_table_node_entry_PageTableGuard_inner",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_vm_space_CursorMut_pt_cursor",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_vm_space_VmSpace_pt",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_vm_space_vm_space_specs_VmSpaceOwner_active",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_vm_space_vm_space_specs_VmSpaceOwner_readers",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_mm_vm_space_vm_space_specs_VmSpaceOwner_writers",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_embedding_list_store_ListStore_cursors",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_embedding_list_store_ListStore_lists",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_frame_meta_owners_MetaSlotOwner_in_list_perm",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_frame_meta_owners_MetaSlotOwner_metadata_perm",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_frame_meta_owners_MetaSlotOwner_usage",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_frame_meta_owners_MetadataPerm_storage_perm",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_frame_meta_owners_MetadataPerm_vtable_ptr_perm",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_frame_meta_region_owners_MetaRegionOwners_slot_owners",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_frame_meta_region_owners_MetaRegionOwners_slots",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_frame_unique_UniqueFrameOwner_slot_index",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_io_VmIoOwner_mem_view",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorContinuation_idx",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorContinuation_tree_level",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorOwner_continuations",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorOwner_guard_level",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorOwner_level",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorOwner_popped_too_high",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_node_entry_owners_EntryOwner_parent_level",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_node_entry_owners_EntryOwner_path",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_node_entry_owners_FrameEntryOwner_prop",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_node_owners_NodeOwner_children_perm",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_node_owners_NodeOwner_frame_permission",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_node_owners_NodeOwner_meta_own",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_node_owners_NodeOwner_slot_index",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_node_owners_NodeOwner_tree_level",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_node_owners_PageMetaOwner_nr_children",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_page_table_owners_PageTableOwner_p_0",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_virt_mem_FrameContents_contents",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_virt_mem_MemView_memory",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_virt_mem_VirtPtr_range",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_specs_mm_virt_mem_VirtPtr_vaddr",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_sync_spin_SpinLock_inner",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_sync_spin_SpinLockInner_val",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_ostd_sync_spin_SpinLockResource_perm",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_vstd_atomic_PermissionDataU32_patomic",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_vstd_atomic_PermissionDataU32_value",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_field_vstd_extra_array_ptr_ArrayPtr_index",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "usize",
+    "body": null
+   },
+   {
+    "name": "proj_variant_core_option_Option_None",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_variant_core_option_Option_Some",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_variant_ostd_specs_mm_frame_meta_owners_PageUsage_Unused",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   },
+   {
+    "name": "proj_variant_vstd_raw_ptr_MemContents_Init",
+    "params": [
+     "a0: usize"
+    ],
+    "returns": "bool",
+    "body": null
+   }
+  ],
+  "rules": [
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_io_VmIo_obeys_vmio_write_requires",
+    "relation": "faithful",
+    "note": "crate-scope: every ostd impl of the VmIo hooks returns true; external impls are not modeled",
+    "callee": "ostd::mm::io::VmIo::obeys_vmio_write_requires"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_io_VmIo_obeys_vmio_read_requires",
+    "relation": "faithful",
+    "note": "crate-scope: every ostd impl of the VmIo hooks returns true; external impls are not modeled",
+    "callee": "ostd::mm::io::VmIo::obeys_vmio_read_requires"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_task_cpu_local_impl_3_id",
+    "relation": "faithful",
+    "note": "id-valued projection; the probe id is chosen to be this projection value",
+    "callee": "ostd::specs::task::cpu_local::impl&%3::id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_task_cpu_local_impl_5_id",
+    "relation": "faithful",
+    "note": "id-valued projection; the probe id is chosen to be this projection value",
+    "callee": "ostd::specs::task::cpu_local::impl&%5::id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_sync_mutex_impl_2_cell_id",
+    "relation": "faithful",
+    "note": "id-valued projection; the probe id is chosen to be this projection value",
+    "callee": "ostd::sync::mutex::impl&%2::cell_id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_util_range_alloc_impl_2_id",
+    "relation": "faithful",
+    "note": "id-valued projection; the probe id is chosen to be this projection value",
+    "callee": "ostd::util::range_alloc::impl&%2::id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_cell_pcell_impl_2_id",
+    "relation": "faithful",
+    "note": "id-valued projection; the probe id is chosen to be this projection value",
+    "callee": "vstd::cell::pcell::impl&%2::id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_cell_pcell_impl_3_id",
+    "relation": "faithful",
+    "note": "id-valued projection; the probe id is chosen to be this projection value",
+    "callee": "vstd::cell::pcell::impl&%3::id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_cell_pcell_maybe_uninit_impl_0_id",
+    "relation": "faithful",
+    "note": "id-valued projection; the probe id is chosen to be this projection value",
+    "callee": "vstd::cell::pcell_maybe_uninit::impl&%0::id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_resource_ghost_resource_count_auth_impl_2_id",
+    "relation": "faithful",
+    "note": "id-valued projection; the probe id is chosen to be this projection value",
+    "callee": "vstd_extra::resource::ghost_resource::count_auth::impl&%2::id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_resource_ghost_resource_count_auth_impl_4_id",
+    "relation": "faithful",
+    "note": "id-valued projection; the probe id is chosen to be this projection value",
+    "callee": "vstd_extra::resource::ghost_resource::count_auth::impl&%4::id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_resource_range_impl_0_id",
+    "relation": "faithful",
+    "note": "id-valued projection; the probe id is chosen to be this projection value",
+    "callee": "vstd_extra::resource::range::impl&%0::id"
+   },
+   {
+    "match": "ostd::mm::frame::meta::impl&%1::addr_of",
+    "kind": "method",
+    "model": "proj_addr_of_value",
+    "relation": "faithful",
+    "note": "PointsTo::value equals the pointed-to MetaSlot; the probe id is that slot",
+    "callee": "vstd::simple_pptr::impl&%1::value"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_alloc_vec_impl_1_len",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "alloc::vec::impl&%1::len"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_core_mem_size_of",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "core::mem::size_of"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_arch_mm_impl_38_new_page_req",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::arch::mm::impl&%38::new_page_req"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_frame_frame_ref_NonNullPtr_ptr_perm_match",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::frame::frame_ref::NonNullPtr::ptr_perm_match"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_frame_meta_mapping_frame_to_meta",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::frame::meta::mapping::frame_to_meta"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_frame_segment_impl_2_size",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::frame::segment::impl&%2::size"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_frame_segment_impl_3_page_in_range_saturated",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::frame::segment::impl&%3::page_in_range_saturated"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_frame_segment_impl_9_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::frame::segment::impl&%9::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_io_VmIo_read_requires",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::io::VmIo::read_requires"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_io_VmIo_write_requires",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::io::VmIo::write_requires"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_kspace_impl_2_TOP_LEVEL_INDEX_RANGE",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::kspace::impl&%2::TOP_LEVEL_INDEX_RANGE"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_kspace_kvirt_area_impl_5_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::kspace::kvirt_area::impl&%5::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_kspace_kvirt_area_impl_6_map_frames_bounds_panic_condition",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::kspace::kvirt_area::impl&%6::map_frames_bounds_panic_condition"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_kspace_kvirt_area_impl_6_map_untracked_frames_bounds_panic_condition",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::kspace::kvirt_area::impl&%6::map_untracked_frames_bounds_panic_condition"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_kspace_kvirt_area_impl_6_untracked_range_slots_in_regions",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::kspace::kvirt_area::impl&%6::untracked_range_slots_in_regions"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_kspace_kvirt_area_kvirt_alloc_oom_condition",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::kspace::kvirt_area::kvirt_alloc_oom_condition"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_size",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_size"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_PageTableConfig_LOCKED_END_BOUND_spec",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::PageTableConfig::LOCKED_END_BOUND_spec"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_PageTableConfig_TOP_LEVEL_CAN_UNMAP_spec",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::PageTableConfig::TOP_LEVEL_CAN_UNMAP_spec"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_PageTableConfig_item_from_raw",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::PageTableConfig::item_from_raw"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_PageTableConfig_item_into_raw",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::PageTableConfig::item_into_raw"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_PageTableConfig_item_well_formed",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::PageTableConfig::item_well_formed"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_PageTableConfig_perm_well_formed_with_region",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::PageTableConfig::perm_well_formed_with_region"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_PageTableConfig_raw_item_well_formed",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::PageTableConfig::raw_item_well_formed"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_PageTableEntryTrait_new_page_req",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::PageTableEntryTrait::new_page_req"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_PageTableEntryTrait_prop",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::PageTableEntryTrait::prop"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_RCClone_clone_requires",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::RCClone::clone_requires"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_impl_10_relates_owner",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::impl&%10::relates_owner"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_impl_9_create_user_pt_panic_condition",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::impl&%9::create_user_pt_panic_condition"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_node_child_specs_impl_0_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::node::child_specs::impl&%0::wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_node_child_specs_impl_4_pte_invariants",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::node::child_specs::impl&%4::pte_invariants"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_page_table_node_entry_specs_impl_0_invariants",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::page_table::node::entry_specs::impl&%0::invariants"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_vm_space_vm_space_specs_impl_0_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::vm_space::vm_space_specs::impl&%0::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_mm_vm_space_vm_space_specs_impl_4_item_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::mm::vm_space::vm_space_specs::impl&%4::item_wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_arch_valid_frame_paddr",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::arch::valid_frame_paddr"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_embedding_list_store_impl_0_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::embedding::list_store::impl&%0::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_frame_specs_impl_0_slot_vaddr",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::frame_specs::impl&%0::slot_vaddr"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_frame_specs_impl_1_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::frame_specs::impl&%1::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_frame_specs_impl_2_ptr_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::frame_specs::impl&%2::ptr_inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_frame_specs_impl_3_external_meta_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::frame_specs::impl&%3::external_meta_wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_frame_specs_impl_5_index",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::frame_specs::impl&%5::index"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_13_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::linked_list::linked_list_owners::impl&%13::wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_19_wf_region",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::linked_list::linked_list_owners::impl&%19::wf_region"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_20_wf_region",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::linked_list::linked_list_owners::impl&%20::wf_region"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_22_wf_with_region",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::linked_list::linked_list_owners::impl&%22::wf_with_region"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_8_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::linked_list::linked_list_owners::impl&%8::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_linked_list_linked_list_owners_impl_9_relate_region",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::linked_list::linked_list_owners::impl&%9::relate_region"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_mapping_frame_to_index",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::mapping::frame_to_index"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_meta_owners_impl_5_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::meta_owners::impl&%5::wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_meta_owners_typed_meta_value",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::meta_owners::typed_meta_value"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_meta_owners_typed_meta_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::meta_owners::typed_meta_wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_meta_region_owners_impl_0_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::meta_region_owners::impl&%0::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_meta_region_owners_impl_1_contains",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::meta_region_owners::impl&%1::contains"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_meta_region_owners_impl_1_slot_owner",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::meta_region_owners::impl&%1::slot_owner"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_meta_specs_impl_0_frame_paddr_safety_cond",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::meta_specs::impl&%0::frame_paddr_safety_cond"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_meta_specs_impl_0_perms_related",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::meta_specs::impl&%0::perms_related"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_segment_impl_0_relate_regions",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::segment::impl&%0::relate_regions"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_unique_impl_0_index",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::unique::impl&%0::index"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_unique_impl_0_ptr_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::unique::impl&%0::ptr_inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_unique_impl_1_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::unique::impl&%1::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_unique_impl_2_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::unique::impl&%2::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_unique_impl_3_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::unique::impl&%3::wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_unique_impl_4_meta_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::unique::impl&%4::meta_wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_frame_unique_impl_4_wf_with_region",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::frame::unique::impl&%4::wf_with_region"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_io_impl_2_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::io::impl&%2::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_io_impl_3_disjoint",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::io::impl&%3::disjoint"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_io_impl_4_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::io::impl&%4::wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_io_impl_5_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::io::impl&%5::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_io_impl_6_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::io::impl&%6::wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_io_impl_7_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::io::impl&%7::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_cursor_fn_specs_impl_0_invariants",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::cursor_fn_specs::impl&%0::invariants"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_cursor_fn_specs_impl_1_item_slot_in_regions",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::cursor_fn_specs::impl&%1::item_slot_in_regions"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_cursor_fn_specs_impl_1_item_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::cursor_fn_specs::impl&%1::item_wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_cursor_fn_specs_impl_1_map_panic_conditions",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::cursor_fn_specs::impl&%1::map_panic_conditions"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_0_child",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%0::child"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_0_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%0::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_0_level",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%0::level"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_0_path",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%0::path"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_1_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%1::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_cur_entry_owner",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%2::cur_entry_owner"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_in_locked_range",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%2::in_locked_range"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_metaregion_sound",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%2::metaregion_sound"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_node_unlocked",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%2::node_unlocked"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_nodes_locked",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%2::nodes_locked"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_2_only_current_locked",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%2::only_current_locked"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_8_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%8::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_cursor_owners_impl_9_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::cursor::owners::impl&%9::wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_frame",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::entry_owners::impl&%1::frame"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_is_frame",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::entry_owners::impl&%1::is_frame"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_is_node",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::entry_owners::impl&%1::is_node"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_match_pte",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::entry_owners::impl&%1::match_pte"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_metaregion_sound",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::entry_owners::impl&%1::metaregion_sound"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_1_node",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::entry_owners::impl&%1::node"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_2_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::entry_owners::impl&%2::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_entry_owners_impl_3_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::entry_owners::impl&%3::wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_impl_0_lock_held",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::impl&%0::lock_held"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_impl_0_unlocked",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::impl&%0::unlocked"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_owners_impl_2_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::owners::impl&%2::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_owners_impl_3_level",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::owners::impl&%3::level"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_owners_impl_3_meta_value",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::owners::impl&%3::meta_value"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_owners_impl_3_metaregion_sound_node",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::owners::impl&%3::metaregion_sound_node"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_owners_impl_3_slot_vaddr",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::owners::impl&%3::slot_vaddr"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_node_owners_impl_7_invariants",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::node::owners::impl&%7::invariants"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_owners_impl_1_metaregion_sound",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::owners::impl&%1::metaregion_sound"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_owners_impl_2_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::owners::impl&%2::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_page_table_owners_marked_borrowed_slots",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::page_table::owners::marked_borrowed_slots"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_tlb_impl_0_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::tlb::impl&%0::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_virt_mem_impl_1_addr_transl",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::virt_mem::impl&%1::addr_transl"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_virt_mem_impl_2_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::virt_mem::impl&%2::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_mm_virt_mem_impl_5_is_valid",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::mm::virt_mem::impl&%5::is_valid"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_specs_task_cpu_local_impl_5_cpu",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::specs::task::cpu_local::impl&%5::cpu"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_sync_rcu_impl_4_is_nullable",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::sync::rcu::impl&%4::is_nullable"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_sync_rcu_non_null_NonNullPtr_ptr_perm_match",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::sync::rcu::non_null::NonNullPtr::ptr_perm_match"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_sync_rcu_non_null_NonNullPtrRef_ref_perm_view_permission",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::sync::rcu::non_null::NonNullPtrRef::ref_perm_view_permission"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_sync_rwlock_impl_13_view",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::sync::rwlock::impl&%13::view"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_sync_spin_impl_0_resource",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::sync::spin::impl&%0::resource"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_sync_spin_impl_0_value",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::sync::spin::impl&%0::value"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_sync_spin_impl_4_constant",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::sync::spin::impl&%4::constant"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_task_scheduler_info_impl_1_inv_value",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::task::scheduler::info::impl&%1::inv_value"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_task_scheduler_info_impl_1_patomic_id",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::task::scheduler::info::impl&%1::patomic_id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_ostd_util_range_alloc_impl_1_view",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "ostd::util::range_alloc::impl&%1::view"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_array_impl_2_spec_index",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::array::impl&%2::spec_index"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_atomic_impl_19_view",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::atomic::impl&%19::view"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_atomic_impl_21_id",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::atomic::impl&%21::id"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_cell_pcell_maybe_uninit_impl_0_is_init",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::cell::pcell_maybe_uninit::impl&%0::is_init"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_map_impl_0_dom",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::map::impl&%0::dom"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_map_impl_0_spec_index",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::map::impl&%0::spec_index"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_map_lib_impl_0_contains_key",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::map_lib::impl&%0::contains_key"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_pervasive_impl_0_ensures",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::pervasive::impl&%0::ensures"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_pervasive_impl_0_requires",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::pervasive::impl&%0::requires"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_seq_Seq_len",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::seq::Seq::len"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_seq_impl_2_spec_index",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::seq::impl&%2::spec_index"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_set_Set_contains",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::set::Set::contains"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_simple_pptr_impl_0_addr",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::simple_pptr::impl&%0::addr"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_simple_pptr_impl_1_addr",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::simple_pptr::impl&%1::addr"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_simple_pptr_impl_1_is_init",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::simple_pptr::impl&%1::is_init"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_simple_pptr_impl_1_pptr",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::simple_pptr::impl&%1::pptr"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_simple_pptr_impl_1_value",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::simple_pptr::impl&%1::value"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_std_specs_manually_drop_impl_1_view",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::std_specs::manually_drop::impl&%1::view"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_std_specs_option_impl_0_arrow_0",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::std_specs::option::impl&%0::arrow_0"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_std_specs_vec_impl_0_spec_index",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::std_specs::vec::impl&%0::spec_index"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_view_impl_10_view",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd::view::impl&%10::view"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_array_ptr_impl_3_addr",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::array_ptr::impl&%3::addr"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_array_ptr_impl_4_addr",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::array_ptr::impl&%4::addr"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_array_ptr_impl_4_is_init",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::array_ptr::impl&%4::is_init"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_array_ptr_impl_4_value",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::array_ptr::impl&%4::value"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_atomic_data_impl_4_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::atomic_data::impl&%4::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_cast_ptr_impl_6_addr",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::cast_ptr::impl&%6::addr"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_external_nonnull_impl_0_view_ptr_mut",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::external::nonnull::impl&%0::view_ptr_mut"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ghost_tree_impl_0_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ghost_tree::impl&%0::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ghost_tree_impl_0_len",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ghost_tree::impl&%0::len"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ghost_tree_impl_0_push_tail",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ghost_tree::impl&%0::push_tail"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ghost_tree_impl_1_has_child",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ghost_tree::impl&%1::has_child"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ghost_tree_impl_1_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ghost_tree::impl&%1::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ghost_tree_impl_1_level",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ghost_tree::impl&%1::level"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ghost_tree_impl_1_new_val",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ghost_tree::impl&%1::new_val"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ghost_tree_impl_1_subtree_satisfies",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ghost_tree::impl&%1::subtree_satisfies"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ghost_tree_impl_1_value",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ghost_tree::impl&%1::value"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ownership_Inv_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ownership::Inv::inv"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_ownership_OwnerOf_wf",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::ownership::OwnerOf::wf"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_panic_may_panic",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::panic::may_panic"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_resource_ghost_resource_count_auth_impl_2_frac",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::resource::ghost_resource::count_auth::impl&%2::frac"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_resource_ghost_resource_count_auth_impl_2_resource",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::resource::ghost_resource::count_auth::impl&%2::resource"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_resource_range_impl_0_range",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::resource::range::impl&%0::range"
+   },
+   {
+    "match": "*",
+    "kind": "method",
+    "model": "proj_vstd_extra_resource_invariant_ResourceInvariant_inv",
+    "relation": "over-approx",
+    "note": "uninterpreted projection: no constraints; vacuity-only over-approximation",
+    "callee": "vstd_extra::resource_invariant::ResourceInvariant::inv"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_core_ops_range_Range_end",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "core::ops::range::Range",
+    "field": "end"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_core_ops_range_Range_start",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "core::ops::range::Range",
+    "field": "start"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_frame_Frame_ptr",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::frame::Frame",
+    "field": "ptr"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_frame_Frame_tracked_slot_perm",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::frame::Frame",
+    "field": "tracked_slot_perm"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_frame_frame_ref_FrameRef_inner",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::frame::frame_ref::FrameRef",
+    "field": "inner"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_frame_meta_MetaSlot_in_list",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::frame::meta::MetaSlot",
+    "field": "in_list"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_frame_meta_MetaSlot_ref_count",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::frame::meta::MetaSlot",
+    "field": "ref_count"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_frame_meta_MetaSlot_storage",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::frame::meta::MetaSlot",
+    "field": "storage"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_frame_meta_MetaSlot_vtable_ptr",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::frame::meta::MetaSlot",
+    "field": "vtable_ptr"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_kspace_kvirt_area_KVirtAreaOwner_pt_owner",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::kspace::kvirt_area::KVirtAreaOwner",
+    "field": "pt_owner"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_page_table_PageTable_root",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::page_table::PageTable",
+    "field": "root"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_page_table_cursor_Cursor_level",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::page_table::cursor::Cursor",
+    "field": "level"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_page_table_cursor_Cursor_path",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::page_table::cursor::Cursor",
+    "field": "path"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_page_table_cursor_CursorMut_p_0",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::page_table::cursor::CursorMut",
+    "field": "0"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_page_table_node_PageTablePageMeta_nr_children",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::page_table::node::PageTablePageMeta",
+    "field": "nr_children"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_page_table_node_PageTablePageMeta_stray",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::page_table::node::PageTablePageMeta",
+    "field": "stray"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_page_table_node_entry_Entry_idx",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::page_table::node::entry::Entry",
+    "field": "idx"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_page_table_node_entry_Entry_node",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::page_table::node::entry::Entry",
+    "field": "node"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_page_table_node_entry_Entry_pte",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::page_table::node::entry::Entry",
+    "field": "pte"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_page_table_node_entry_PageTableGuard_inner",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::page_table::node::entry::PageTableGuard",
+    "field": "inner"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_vm_space_CursorMut_pt_cursor",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::vm_space::CursorMut",
+    "field": "pt_cursor"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_vm_space_VmSpace_pt",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::vm_space::VmSpace",
+    "field": "pt"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_vm_space_vm_space_specs_VmSpaceOwner_active",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::vm_space::vm_space_specs::VmSpaceOwner",
+    "field": "active"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_vm_space_vm_space_specs_VmSpaceOwner_readers",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::vm_space::vm_space_specs::VmSpaceOwner",
+    "field": "readers"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_mm_vm_space_vm_space_specs_VmSpaceOwner_writers",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::mm::vm_space::vm_space_specs::VmSpaceOwner",
+    "field": "writers"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_embedding_list_store_ListStore_cursors",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::embedding::list_store::ListStore",
+    "field": "cursors"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_embedding_list_store_ListStore_lists",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::embedding::list_store::ListStore",
+    "field": "lists"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_frame_meta_owners_MetaSlotOwner_in_list_perm",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::frame::meta_owners::MetaSlotOwner",
+    "field": "in_list_perm"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_frame_meta_owners_MetaSlotOwner_metadata_perm",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::frame::meta_owners::MetaSlotOwner",
+    "field": "metadata_perm"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_frame_meta_owners_MetaSlotOwner_usage",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::frame::meta_owners::MetaSlotOwner",
+    "field": "usage"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_frame_meta_owners_MetadataPerm_storage_perm",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::frame::meta_owners::MetadataPerm",
+    "field": "storage_perm"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_frame_meta_owners_MetadataPerm_vtable_ptr_perm",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::frame::meta_owners::MetadataPerm",
+    "field": "vtable_ptr_perm"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_frame_meta_region_owners_MetaRegionOwners_slot_owners",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::frame::meta_region_owners::MetaRegionOwners",
+    "field": "slot_owners"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_frame_meta_region_owners_MetaRegionOwners_slots",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::frame::meta_region_owners::MetaRegionOwners",
+    "field": "slots"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_frame_unique_UniqueFrameOwner_slot_index",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::frame::unique::UniqueFrameOwner",
+    "field": "slot_index"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_io_VmIoOwner_mem_view",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::io::VmIoOwner",
+    "field": "mem_view"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorContinuation_idx",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::cursor::owners::CursorContinuation",
+    "field": "idx"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorContinuation_tree_level",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::cursor::owners::CursorContinuation",
+    "field": "tree_level"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorOwner_continuations",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::cursor::owners::CursorOwner",
+    "field": "continuations"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorOwner_guard_level",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::cursor::owners::CursorOwner",
+    "field": "guard_level"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorOwner_level",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::cursor::owners::CursorOwner",
+    "field": "level"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_cursor_owners_CursorOwner_popped_too_high",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::cursor::owners::CursorOwner",
+    "field": "popped_too_high"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_node_entry_owners_EntryOwner_parent_level",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::node::entry_owners::EntryOwner",
+    "field": "parent_level"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_node_entry_owners_EntryOwner_path",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::node::entry_owners::EntryOwner",
+    "field": "path"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_node_entry_owners_FrameEntryOwner_prop",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::node::entry_owners::FrameEntryOwner",
+    "field": "prop"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_node_owners_NodeOwner_children_perm",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::node::owners::NodeOwner",
+    "field": "children_perm"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_node_owners_NodeOwner_frame_permission",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::node::owners::NodeOwner",
+    "field": "frame_permission"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_node_owners_NodeOwner_meta_own",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::node::owners::NodeOwner",
+    "field": "meta_own"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_node_owners_NodeOwner_slot_index",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::node::owners::NodeOwner",
+    "field": "slot_index"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_node_owners_NodeOwner_tree_level",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::node::owners::NodeOwner",
+    "field": "tree_level"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_node_owners_PageMetaOwner_nr_children",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::node::owners::PageMetaOwner",
+    "field": "nr_children"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_page_table_owners_PageTableOwner_p_0",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::page_table::owners::PageTableOwner",
+    "field": "0"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_virt_mem_FrameContents_contents",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::virt_mem::FrameContents",
+    "field": "contents"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_virt_mem_MemView_memory",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::virt_mem::MemView",
+    "field": "memory"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_virt_mem_VirtPtr_range",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::virt_mem::VirtPtr",
+    "field": "range"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_specs_mm_virt_mem_VirtPtr_vaddr",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::virt_mem::VirtPtr",
+    "field": "vaddr"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_sync_spin_SpinLock_inner",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::sync::spin::SpinLock",
+    "field": "inner"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_sync_spin_SpinLockInner_val",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::sync::spin::SpinLockInner",
+    "field": "val"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_ostd_sync_spin_SpinLockResource_perm",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::sync::spin::SpinLockResource",
+    "field": "perm"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_vstd_atomic_PermissionDataU32_patomic",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "vstd::atomic::PermissionDataU32",
+    "field": "patomic"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_vstd_atomic_PermissionDataU32_value",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "vstd::atomic::PermissionDataU32",
+    "field": "value"
+   },
+   {
+    "match": "*",
+    "kind": "field",
+    "model": "proj_field_vstd_extra_array_ptr_ArrayPtr_index",
+    "relation": "over-approx",
+    "note": "uninterpreted field projection: no constraints; vacuity-only over-approximation",
+    "datatype": "vstd_extra::array_ptr::ArrayPtr",
+    "field": "index"
+   },
+   {
+    "match": "*",
+    "kind": "variant",
+    "model": "proj_variant_core_option_Option_None",
+    "relation": "over-approx",
+    "note": "uninterpreted enum discriminant projection: no constraints; vacuity-only over-approximation",
+    "datatype": "core::option::Option",
+    "variant": "None"
+   },
+   {
+    "match": "*",
+    "kind": "variant",
+    "model": "proj_variant_core_option_Option_Some",
+    "relation": "over-approx",
+    "note": "uninterpreted enum discriminant projection: no constraints; vacuity-only over-approximation",
+    "datatype": "core::option::Option",
+    "variant": "Some"
+   },
+   {
+    "match": "*",
+    "kind": "variant",
+    "model": "proj_variant_ostd_specs_mm_frame_meta_owners_PageUsage_Unused",
+    "relation": "over-approx",
+    "note": "uninterpreted enum discriminant projection: no constraints; vacuity-only over-approximation",
+    "datatype": "ostd::specs::mm::frame::meta_owners::PageUsage",
+    "variant": "Unused"
+   },
+   {
+    "match": "*",
+    "kind": "variant",
+    "model": "proj_variant_vstd_raw_ptr_MemContents_Init",
+    "relation": "over-approx",
+    "note": "uninterpreted enum discriminant projection: no constraints; vacuity-only over-approximation",
+    "datatype": "vstd::raw_ptr::MemContents",
+    "variant": "Init"
+   }
+  ]
+ }
+}

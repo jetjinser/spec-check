@@ -42,12 +42,110 @@ pub struct Config {
     pub generic_instances: Vec<GenericRule>,
     pub reference_opaque: bool,
     pub ghost_opaque: bool,
+    pub projection: ProjectionConfig,
 }
 
 #[derive(Debug, Clone)]
 pub struct GenericRule {
     pub pattern: String,
     pub types: BTreeMap<String, String>,
+}
+
+/// Explicit, project-side scalar projection models (M7e-projection).
+#[derive(Debug, Clone, Default)]
+pub struct ProjectionConfig {
+    pub models: Vec<ModelDef>,
+    pub rules: Vec<ProjectionRule>,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ScalarType {
+    Int,
+    Bool,
+}
+
+impl ScalarType {
+    fn as_verus(self) -> &'static str {
+        match self {
+            // Model bodies use Verus mathematical integers. Probe entries that
+            // contain a projected clause also use `int` parameters so that
+            // arithmetic results and model calls type-check; entries with no
+            // projected clause keep the M7e `usize` rendering.
+            Self::Int => "int",
+            Self::Bool => "bool",
+        }
+    }
+
+    fn is_int(self) -> bool {
+        matches!(self, Self::Int)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ModelParam {
+    pub name: String,
+    pub ty: ScalarType,
+}
+
+#[derive(Debug, Clone)]
+pub struct ModelDef {
+    pub name: String,
+    pub params: Vec<ModelParam>,
+    pub returns: ScalarType,
+    /// `None` is an `uninterp` model. Otherwise a restricted scalar
+    /// expression over the formal names.
+    pub body: Option<ScalarExpr>,
+}
+
+#[derive(Debug, Clone)]
+pub enum ProjectionKind {
+    Method { callee: String },
+    Field { datatype: String, field: String },
+    Variant { datatype: String, variant: String },
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+pub enum Relation {
+    Faithful,
+    OverApprox,
+    UnderApprox,
+}
+
+impl Relation {
+    fn as_str(self) -> &'static str {
+        match self {
+            Self::Faithful => "faithful",
+            Self::OverApprox => "over-approx",
+            Self::UnderApprox => "under-approx",
+        }
+    }
+
+    fn vacuum_evidence(self) -> bool {
+        !matches!(self, Self::UnderApprox)
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct ProjectionRule {
+    pub function_match: String,
+    pub kind: ProjectionKind,
+    /// Index into [`ProjectionConfig::models`].
+    pub model: usize,
+    pub relation: Relation,
+    pub note: String,
+}
+
+/// Restricted scalar expression language for model bodies. Only literals,
+/// formal variables, `!`, unary `-`, `+ - *`, comparisons, `&& || ==>`, and
+/// parentheses are accepted. Anything else is a config load error.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum ScalarExpr {
+    Var(String),
+    Int(i64),
+    Bool(bool),
+    Not(Box<Self>),
+    Neg(Box<Self>),
+    Bin(String, Box<Self>, Box<Self>),
 }
 
 impl Config {
@@ -93,6 +191,7 @@ impl Config {
             "opaque" => true,
             other => return Err(format!("unsupported ghost mode: {other}").into()),
         };
+        config.projection = ProjectionConfig::from_value(&value["projection"])?;
         Ok(config)
     }
 
@@ -103,7 +202,463 @@ impl Config {
     }
 
     fn is_default(&self) -> bool {
-        self.generic_instances.is_empty() && !self.reference_opaque && !self.ghost_opaque
+        self.generic_instances.is_empty()
+            && !self.reference_opaque
+            && !self.ghost_opaque
+            && self.projection.models.is_empty()
+            && self.projection.rules.is_empty()
+    }
+}
+
+impl ProjectionConfig {
+    fn from_value(value: &Value) -> Result<Self> {
+        let mut config = Self::default();
+        let Some(object) = value.as_object() else {
+            if value.is_null() {
+                return Ok(config);
+            }
+            return Err("projection must be an object".into());
+        };
+        for model in object
+            .get("models")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            let name = model["name"]
+                .as_str()
+                .ok_or("projection model needs a name")?
+                .to_owned();
+            if name.is_empty()
+                || !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '_')
+                || name.as_bytes()[0].is_ascii_digit()
+            {
+                return Err(format!("invalid projection model name: {name}").into());
+            }
+            if config.models.iter().any(|existing| existing.name == name) {
+                return Err(format!("duplicate projection model name: {name}").into());
+            }
+            let mut params = Vec::new();
+            for param in model["params"]
+                .as_array()
+                .ok_or("projection model needs a params array")?
+            {
+                let source = param
+                    .as_str()
+                    .ok_or("projection model param must be a string")?;
+                let (param_name, ty) = source
+                    .split_once(':')
+                    .ok_or("projection model param must be `name: type`")?;
+                let param_name = param_name.trim().to_owned();
+                if param_name.is_empty()
+                    || params
+                        .iter()
+                        .any(|existing: &ModelParam| existing.name == param_name)
+                {
+                    return Err(format!("invalid or duplicate model param: {param_name}").into());
+                }
+                params.push(ModelParam {
+                    name: param_name,
+                    ty: parse_scalar_type(ty.trim())?,
+                });
+            }
+            let returns = parse_scalar_type(
+                model["returns"]
+                    .as_str()
+                    .ok_or("projection model needs a returns type")?,
+            )?;
+            let body = match model.get("body") {
+                None | Some(Value::Null) => None,
+                Some(Value::String(source)) => {
+                    let body = parse_scalar_expr(source)
+                        .map_err(|error| format!("model {name} body: {error}"))?;
+                    let mut formals = BTreeMap::new();
+                    for param in &params {
+                        formals.insert(param.name.clone(), param.ty);
+                    }
+                    let inferred = infer_scalar_expr(&body, &formals)
+                        .map_err(|error| format!("model {name} body: {error}"))?;
+                    if inferred != returns {
+                        return Err(format!(
+                            "model {name} body type {} does not match returns {}",
+                            inferred.as_verus(),
+                            returns.as_verus()
+                        )
+                        .into());
+                    }
+                    Some(body)
+                }
+                Some(_) => return Err(format!("model {name} body must be a string or null").into()),
+            };
+            config.models.push(ModelDef {
+                name,
+                params,
+                returns,
+                body,
+            });
+        }
+        for rule in object
+            .get("rules")
+            .and_then(Value::as_array)
+            .into_iter()
+            .flatten()
+        {
+            let function_match = rule["match"].as_str().unwrap_or("*").to_owned();
+            let kind = match rule["kind"].as_str() {
+                Some("method") => ProjectionKind::Method {
+                    callee: rule["callee"]
+                        .as_str()
+                        .ok_or("method projection rule needs a callee")?
+                        .to_owned(),
+                },
+                Some("field") => ProjectionKind::Field {
+                    datatype: rule["datatype"]
+                        .as_str()
+                        .ok_or("field projection rule needs a datatype")?
+                        .to_owned(),
+                    field: rule["field"]
+                        .as_str()
+                        .ok_or("field projection rule needs a field")?
+                        .to_owned(),
+                },
+                Some("variant") => ProjectionKind::Variant {
+                    datatype: rule["datatype"]
+                        .as_str()
+                        .ok_or("variant projection rule needs a datatype")?
+                        .to_owned(),
+                    variant: rule["variant"]
+                        .as_str()
+                        .ok_or("variant projection rule needs a variant")?
+                        .to_owned(),
+                },
+                Some(other) => return Err(format!("unsupported projection kind: {other}").into()),
+                None => return Err("projection rule needs a kind".into()),
+            };
+            if matches!(
+                kind,
+                ProjectionKind::Field { .. } | ProjectionKind::Variant { .. }
+            ) {
+                // Field models take exactly one root argument. Enforce this
+                // here so a stale rule cannot silently change arity.
+                let model_name = rule["model"]
+                    .as_str()
+                    .ok_or("projection rule needs a model")?;
+                let model = config
+                    .models
+                    .iter()
+                    .find(|model| model.name == model_name)
+                    .ok_or_else(|| format!("unknown projection model: {model_name}"))?;
+                if model.params.len() != 1 {
+                    return Err(format!(
+                        "field projection model {} must take exactly one argument",
+                        model.name
+                    )
+                    .into());
+                }
+            }
+            let model = {
+                let name = rule["model"]
+                    .as_str()
+                    .ok_or("projection rule needs a model")?;
+                config
+                    .models
+                    .iter()
+                    .position(|model| model.name == name)
+                    .ok_or_else(|| format!("unknown projection model: {name}"))?
+            };
+            let relation = match rule["relation"].as_str() {
+                Some("faithful") => Relation::Faithful,
+                Some("over-approx") => Relation::OverApprox,
+                Some("under-approx") => Relation::UnderApprox,
+                Some(other) => return Err(format!("unsupported relation: {other}").into()),
+                None => return Err("projection rule needs a relation".into()),
+            };
+            let note = rule["note"].as_str().unwrap_or("").to_owned();
+            config.rules.push(ProjectionRule {
+                function_match,
+                kind,
+                model,
+                relation,
+                note,
+            });
+        }
+        Ok(config)
+    }
+
+    fn is_empty(&self) -> bool {
+        self.models.is_empty() && self.rules.is_empty()
+    }
+
+    fn matching_rule(
+        &self,
+        function: &str,
+        callee: Option<&str>,
+        datatype: Option<&str>,
+        field: Option<&str>,
+        variant: Option<&str>,
+    ) -> Option<usize> {
+        self.rules.iter().position(|rule| {
+            if !glob_match(&rule.function_match, function) {
+                return false;
+            }
+            match &rule.kind {
+                ProjectionKind::Method { callee: pattern } => {
+                    callee.is_some_and(|callee| glob_match(pattern, callee))
+                }
+                ProjectionKind::Field {
+                    datatype: datatype_pattern,
+                    field: field_pattern,
+                } => {
+                    datatype.is_some_and(|datatype| glob_match(datatype_pattern, datatype))
+                        && field.is_some_and(|field| glob_match(field_pattern, field))
+                }
+                ProjectionKind::Variant {
+                    datatype: datatype_pattern,
+                    variant: variant_pattern,
+                } => {
+                    datatype.is_some_and(|datatype| glob_match(datatype_pattern, datatype))
+                        && variant.is_some_and(|variant| glob_match(variant_pattern, variant))
+                }
+            }
+        })
+    }
+}
+
+fn parse_scalar_type(text: &str) -> Result<ScalarType> {
+    match text {
+        "usize" | "int" | "nat" | "u8" | "u16" | "u32" | "u64" | "u128" => Ok(ScalarType::Int),
+        "bool" => Ok(ScalarType::Bool),
+        other => Err(format!("unsupported scalar type: {other}").into()),
+    }
+}
+
+struct ScalarParser<'a> {
+    bytes: &'a [u8],
+    pos: usize,
+}
+
+impl ScalarParser<'_> {
+    fn skip(&mut self) {
+        while self.pos < self.bytes.len() && self.bytes[self.pos].is_ascii_whitespace() {
+            self.pos += 1;
+        }
+    }
+
+    fn peek(&mut self, token: &str) -> bool {
+        self.skip();
+        self.bytes[self.pos..].starts_with(token.as_bytes())
+    }
+
+    fn eat(&mut self, token: &str) -> bool {
+        if self.peek(token) {
+            self.pos += token.len();
+            true
+        } else {
+            false
+        }
+    }
+
+    fn expression(&mut self) -> Result<ScalarExpr> {
+        self.implies()
+    }
+
+    fn implies(&mut self) -> Result<ScalarExpr> {
+        let mut lhs = self.or()?;
+        while self.eat("==>") {
+            let rhs = self.implies()?;
+            lhs = ScalarExpr::Bin("==>".into(), Box::new(lhs), Box::new(rhs));
+        }
+        Ok(lhs)
+    }
+
+    fn or(&mut self) -> Result<ScalarExpr> {
+        let mut lhs = self.and()?;
+        while self.eat("||") {
+            let rhs = self.and()?;
+            lhs = ScalarExpr::Bin("||".into(), Box::new(lhs), Box::new(rhs));
+        }
+        Ok(lhs)
+    }
+
+    fn and(&mut self) -> Result<ScalarExpr> {
+        let mut lhs = self.compare()?;
+        while self.eat("&&") {
+            let rhs = self.compare()?;
+            lhs = ScalarExpr::Bin("&&".into(), Box::new(lhs), Box::new(rhs));
+        }
+        Ok(lhs)
+    }
+
+    fn compare(&mut self) -> Result<ScalarExpr> {
+        let lhs = self.sum()?;
+        for op in ["==", "!=", "<=", ">=", "<", ">"] {
+            if self.eat(op) {
+                let rhs = self.sum()?;
+                return Ok(ScalarExpr::Bin(op.into(), Box::new(lhs), Box::new(rhs)));
+            }
+        }
+        Ok(lhs)
+    }
+
+    fn sum(&mut self) -> Result<ScalarExpr> {
+        let mut lhs = self.product()?;
+        loop {
+            if self.eat("+") {
+                let rhs = self.product()?;
+                lhs = ScalarExpr::Bin("+".into(), Box::new(lhs), Box::new(rhs));
+            } else if self.eat("-") {
+                let rhs = self.product()?;
+                lhs = ScalarExpr::Bin("-".into(), Box::new(lhs), Box::new(rhs));
+            } else {
+                return Ok(lhs);
+            }
+        }
+    }
+
+    fn product(&mut self) -> Result<ScalarExpr> {
+        let mut lhs = self.unary()?;
+        while self.eat("*") {
+            let rhs = self.unary()?;
+            lhs = ScalarExpr::Bin("*".into(), Box::new(lhs), Box::new(rhs));
+        }
+        Ok(lhs)
+    }
+
+    fn unary(&mut self) -> Result<ScalarExpr> {
+        if self.eat("!") {
+            return Ok(ScalarExpr::Not(Box::new(self.unary()?)));
+        }
+        if self.eat("-") {
+            return Ok(ScalarExpr::Neg(Box::new(self.unary()?)));
+        }
+        self.atom()
+    }
+
+    fn atom(&mut self) -> Result<ScalarExpr> {
+        self.skip();
+        if self.eat("(") {
+            let expression = self.expression()?;
+            if !self.eat(")") {
+                return Err("expected `)` in model body".into());
+            }
+            return Ok(expression);
+        }
+        let start = self.pos;
+        if self.pos < self.bytes.len() && self.bytes[self.pos].is_ascii_digit() {
+            while self.pos < self.bytes.len() && self.bytes[self.pos].is_ascii_digit() {
+                self.pos += 1;
+            }
+            let text = std::str::from_utf8(&self.bytes[start..self.pos])?;
+            return Ok(ScalarExpr::Int(text.parse::<i64>()?));
+        }
+        if self.pos < self.bytes.len()
+            && (self.bytes[self.pos].is_ascii_alphabetic() || self.bytes[self.pos] == b'_')
+        {
+            while self.pos < self.bytes.len()
+                && (self.bytes[self.pos].is_ascii_alphanumeric() || self.bytes[self.pos] == b'_')
+            {
+                self.pos += 1;
+            }
+            let text = std::str::from_utf8(&self.bytes[start..self.pos])?;
+            return match text {
+                "true" => Ok(ScalarExpr::Bool(true)),
+                "false" => Ok(ScalarExpr::Bool(false)),
+                _ => Ok(ScalarExpr::Var(text.to_owned())),
+            };
+        }
+        Err("expected an integer, `true`/`false`, a formal name, or `(`".into())
+    }
+}
+
+fn parse_scalar_expr(text: &str) -> Result<ScalarExpr> {
+    let mut parser = ScalarParser {
+        bytes: text.as_bytes(),
+        pos: 0,
+    };
+    let expression = parser.expression()?;
+    parser.skip();
+    if parser.pos != parser.bytes.len() {
+        return Err(format!(
+            "unexpected trailing input at byte {} of model body",
+            parser.pos
+        )
+        .into());
+    }
+    Ok(expression)
+}
+
+fn infer_scalar_expr(
+    expression: &ScalarExpr,
+    formals: &BTreeMap<String, ScalarType>,
+) -> Result<ScalarType> {
+    match expression {
+        ScalarExpr::Var(name) => formals
+            .get(name)
+            .copied()
+            .ok_or_else(|| format!("unknown formal in model body: {name}").into()),
+        ScalarExpr::Int(_) => Ok(ScalarType::Int),
+        ScalarExpr::Bool(_) => Ok(ScalarType::Bool),
+        ScalarExpr::Not(arg) => {
+            let ty = infer_scalar_expr(arg, formals)?;
+            if ty != ScalarType::Bool {
+                return Err("`!` expects a bool".into());
+            }
+            Ok(ScalarType::Bool)
+        }
+        ScalarExpr::Neg(arg) => {
+            let ty = infer_scalar_expr(arg, formals)?;
+            if ty != ScalarType::Int {
+                return Err("unary `-` expects an integer".into());
+            }
+            Ok(ScalarType::Int)
+        }
+        ScalarExpr::Bin(sym, lhs, rhs) => {
+            let lhs = infer_scalar_expr(lhs, formals)?;
+            let rhs = infer_scalar_expr(rhs, formals)?;
+            match sym.as_str() {
+                "+" | "-" | "*" => {
+                    if lhs != ScalarType::Int || rhs != ScalarType::Int {
+                        return Err(format!("`{sym}` expects integers").into());
+                    }
+                    Ok(ScalarType::Int)
+                }
+                "<" | "<=" | ">" | ">=" => {
+                    if lhs != ScalarType::Int || rhs != ScalarType::Int {
+                        return Err(format!("`{sym}` expects integers").into());
+                    }
+                    Ok(ScalarType::Bool)
+                }
+                "==" | "!=" => {
+                    if lhs != rhs {
+                        return Err(format!("`{sym}` expects operands of the same type").into());
+                    }
+                    Ok(ScalarType::Bool)
+                }
+                "&&" | "||" | "==>" => {
+                    if lhs != ScalarType::Bool || rhs != ScalarType::Bool {
+                        return Err(format!("`{sym}` expects booleans").into());
+                    }
+                    Ok(ScalarType::Bool)
+                }
+                other => Err(format!("unsupported model body operator: {other}").into()),
+            }
+        }
+    }
+}
+
+fn render_scalar_expr(expression: &ScalarExpr) -> String {
+    match expression {
+        ScalarExpr::Var(name) => name.clone(),
+        ScalarExpr::Int(value) => value.to_string(),
+        ScalarExpr::Bool(value) => value.to_string(),
+        ScalarExpr::Not(arg) => format!("!({})", render_scalar_expr(arg)),
+        ScalarExpr::Neg(arg) => format!("-({})", render_scalar_expr(arg)),
+        ScalarExpr::Bin(sym, lhs, rhs) => format!(
+            "({} {} {})",
+            render_scalar_expr(lhs),
+            sym,
+            render_scalar_expr(rhs)
+        ),
     }
 }
 
@@ -118,6 +673,593 @@ fn glob_match(pattern: &str, text: &str) -> bool {
                 && text.starts_with(prefix)
                 && text.ends_with(suffix)
         }
+    }
+}
+
+/// A translated projected clause term. `Base` is an opaque reference/ghost
+/// id and may only be consumed by a model call; every other variant is a
+/// scalar term.
+#[derive(Debug, Clone)]
+enum Term {
+    Int(i64),
+    Bool(bool),
+    Var {
+        name: String,
+        int: bool,
+    },
+    Base {
+        param: String,
+        name: String,
+    },
+    Call {
+        model: usize,
+        args: Vec<Term>,
+        int: bool,
+        relation: Relation,
+    },
+    Quant {
+        forall: bool,
+        bindings: Vec<(String, bool)>,
+        body: Box<Term>,
+    },
+    Not(Box<Term>),
+    Neg(Box<Term>),
+    Bin {
+        sym: String,
+        lhs: Box<Term>,
+        rhs: Box<Term>,
+        int: bool,
+    },
+}
+
+#[derive(Debug, Clone)]
+enum ClausePlan {
+    Mechanical,
+    Projected(Term),
+    Unsupported(String),
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+struct ProjectionUse {
+    param: String,
+    kind: &'static str,
+    target: String,
+    model: String,
+    relation: Relation,
+    identity: bool,
+}
+
+impl ProjectionUse {
+    fn value(&self) -> Value {
+        json!({
+            "param": self.param,
+            "kind": self.kind,
+            "target": self.target,
+            "model": self.model,
+            "relation": self.relation.as_str(),
+            "identity": self.identity,
+        })
+    }
+}
+
+fn term_type(term: &Term) -> ScalarType {
+    match term {
+        Term::Int(_) | Term::Neg(_) | Term::Base { .. } | Term::Var { int: true, .. } => {
+            ScalarType::Int
+        }
+        Term::Bool(_) | Term::Not(_) | Term::Quant { .. } | Term::Var { int: false, .. } => {
+            ScalarType::Bool
+        }
+        Term::Call { int: true, .. } | Term::Bin { int: true, .. } => ScalarType::Int,
+        Term::Call { int: false, .. } | Term::Bin { int: false, .. } => ScalarType::Bool,
+    }
+}
+
+fn term_is_evaluable(term: &Term, config: &ProjectionConfig) -> bool {
+    match term {
+        Term::Int(_) | Term::Bool(_) | Term::Var { .. } | Term::Base { .. } => true,
+        Term::Call { model, args, .. } => {
+            config.models[*model].body.is_some()
+                && args.iter().all(|arg| term_is_evaluable(arg, config))
+        }
+        Term::Quant { .. } => false,
+        Term::Not(arg) | Term::Neg(arg) => term_is_evaluable(arg, config),
+        Term::Bin { lhs, rhs, .. } => {
+            term_is_evaluable(lhs, config) && term_is_evaluable(rhs, config)
+        }
+    }
+}
+
+fn term_relations(term: &Term, out: &mut Vec<Relation>) {
+    match term {
+        Term::Call { args, relation, .. } => {
+            out.push(*relation);
+            for arg in args {
+                term_relations(arg, out);
+            }
+        }
+        Term::Not(arg) | Term::Neg(arg) => term_relations(arg, out),
+        Term::Bin { lhs, rhs, .. } => {
+            term_relations(lhs, out);
+            term_relations(rhs, out);
+        }
+        Term::Quant { body, .. } => term_relations(body, out),
+        Term::Int(_) | Term::Bool(_) | Term::Var { .. } | Term::Base { .. } => {}
+    }
+}
+
+fn term_models(term: &Term, out: &mut BTreeSet<usize>) {
+    match term {
+        Term::Call { model, args, .. } => {
+            out.insert(*model);
+            for arg in args {
+                term_models(arg, out);
+            }
+        }
+        Term::Not(arg) | Term::Neg(arg) => term_models(arg, out),
+        Term::Bin { lhs, rhs, .. } => {
+            term_models(lhs, out);
+            term_models(rhs, out);
+        }
+        Term::Quant { body, .. } => term_models(body, out),
+        Term::Int(_) | Term::Bool(_) | Term::Var { .. } | Term::Base { .. } => {}
+    }
+}
+
+fn collect_term_vars(term: &Term, bound: &mut BTreeSet<String>, out: &mut BTreeMap<String, bool>) {
+    match term {
+        Term::Var { name, int } => {
+            if !bound.contains(name) {
+                out.entry(name.clone()).or_insert(*int);
+            }
+        }
+        Term::Base { name, .. } => {
+            if !bound.contains(name) {
+                out.entry(name.clone()).or_insert(true);
+            }
+        }
+        Term::Call { args, .. } => {
+            for arg in args {
+                collect_term_vars(arg, bound, out);
+            }
+        }
+        Term::Not(arg) | Term::Neg(arg) => collect_term_vars(arg, bound, out),
+        Term::Bin { lhs, rhs, .. } => {
+            collect_term_vars(lhs, bound, out);
+            collect_term_vars(rhs, bound, out);
+        }
+        Term::Quant { bindings, body, .. } => {
+            let mut added = Vec::new();
+            for (name, _) in bindings {
+                if bound.insert(name.clone()) {
+                    added.push(name.clone());
+                }
+            }
+            collect_term_vars(body, bound, out);
+            for name in added {
+                bound.remove(&name);
+            }
+        }
+        Term::Int(_) | Term::Bool(_) => {}
+    }
+}
+
+fn render_term(term: &Term, config: &ProjectionConfig) -> String {
+    match term {
+        Term::Int(value) => value.to_string(),
+        Term::Bool(value) => value.to_string(),
+        Term::Var { name, .. } | Term::Base { name, .. } => name.clone(),
+        Term::Call { model, args, .. } => format!(
+            "{}({})",
+            config.models[*model].name,
+            args.iter()
+                .map(|arg| render_term(arg, config))
+                .collect::<Vec<_>>()
+                .join(", ")
+        ),
+        Term::Quant {
+            forall,
+            bindings,
+            body,
+        } => format!(
+            "{}|{}| {}",
+            if *forall { "forall" } else { "exists" },
+            bindings
+                .iter()
+                .map(|(name, int)| format!("{name}: {}", if *int { "int" } else { "bool" }))
+                .collect::<Vec<_>>()
+                .join(", "),
+            render_term(body, config)
+        ),
+        Term::Not(arg) => format!("!({})", render_term(arg, config)),
+        Term::Neg(arg) => format!("-({})", render_term(arg, config)),
+        Term::Bin { sym, lhs, rhs, .. } => format!(
+            "({} {} {})",
+            render_term(lhs, config),
+            sym,
+            render_term(rhs, config)
+        ),
+    }
+}
+
+fn scalar_expr_value(expression: &ScalarExpr, args: &BTreeMap<String, Value>) -> Option<Value> {
+    match expression {
+        ScalarExpr::Var(name) => args.get(name).cloned(),
+        ScalarExpr::Int(value) => Some(json!({"op": "int", "value": value})),
+        ScalarExpr::Bool(value) => Some(json!({"op": "bool", "value": value})),
+        ScalarExpr::Not(arg) => Some(json!({
+            "op": "not",
+            "arg": scalar_expr_value(arg, args)?,
+        })),
+        ScalarExpr::Neg(arg) => Some(json!({
+            "op": "neg",
+            "arg": scalar_expr_value(arg, args)?,
+        })),
+        ScalarExpr::Bin(sym, lhs, rhs) => Some(json!({
+            "op": "bin",
+            "sym": sym,
+            "lhs": scalar_expr_value(lhs, args)?,
+            "rhs": scalar_expr_value(rhs, args)?,
+        })),
+    }
+}
+
+fn term_value(term: &Term, config: &ProjectionConfig) -> Option<Value> {
+    match term {
+        Term::Int(value) => Some(json!({"op": "int", "value": value})),
+        Term::Bool(value) => Some(json!({"op": "bool", "value": value})),
+        Term::Var { name, .. } | Term::Base { name, .. } => {
+            Some(json!({"op": "var", "name": name}))
+        }
+        Term::Call { model, args, .. } => {
+            let body = config.models[*model].body.as_ref()?;
+            let mut values = BTreeMap::new();
+            for (param, arg) in config.models[*model].params.iter().zip(args) {
+                values.insert(param.name.clone(), term_value(arg, config)?);
+            }
+            scalar_expr_value(body, &values)
+        }
+        Term::Quant { .. } => None,
+        Term::Not(arg) => Some(json!({"op": "not", "arg": term_value(arg, config)?})),
+        Term::Neg(arg) => Some(json!({"op": "neg", "arg": term_value(arg, config)?})),
+        Term::Bin { sym, lhs, rhs, .. } => Some(json!({
+            "op": "bin",
+            "sym": sym,
+            "lhs": term_value(lhs, config)?,
+            "rhs": term_value(rhs, config)?,
+        })),
+    }
+}
+
+fn model_source(model: &ModelDef) -> String {
+    let params = model
+        .params
+        .iter()
+        .map(|param| format!("{}: {}", param.name, param.ty.as_verus()))
+        .collect::<Vec<_>>()
+        .join(", ");
+    match &model.body {
+        Some(body) => format!(
+            "pub open spec fn {}({params}) -> {} {{\n    {}\n}}\n",
+            model.name,
+            model.returns.as_verus(),
+            render_scalar_expr(body)
+        ),
+        None => format!(
+            "pub uninterp spec fn {}({params}) -> {};\n",
+            model.name,
+            model.returns.as_verus()
+        ),
+    }
+}
+
+struct TranslateCtx<'a> {
+    config: &'a ProjectionConfig,
+    function: &'a str,
+    params: &'a [ParamInfo],
+    model: &'a BTreeMap<String, ParamModel>,
+    const_names: &'a mut BTreeMap<String, String>,
+    used_names: &'a mut BTreeSet<String>,
+    scope: Vec<(String, String, bool)>,
+    uses: &'a mut Vec<ProjectionUse>,
+    identity_uses: BTreeMap<String, String>,
+}
+
+fn apply_projection(
+    rule_index: usize,
+    args: Vec<Term>,
+    ctx: &mut TranslateCtx,
+) -> std::result::Result<Term, String> {
+    let rule = &ctx.config.rules[rule_index];
+    let model = &ctx.config.models[rule.model];
+    if args.len() != model.params.len() {
+        return Err(format!(
+            "projection model {} expects {} arguments, got {}",
+            model.name,
+            model.params.len(),
+            args.len()
+        ));
+    }
+    for (arg, param) in args.iter().zip(&model.params) {
+        let ty = term_type(arg);
+        if ty != param.ty {
+            return Err(format!(
+                "projection model {} argument type {} does not match {}",
+                model.name,
+                ty.as_verus(),
+                param.ty.as_verus()
+            ));
+        }
+    }
+    let target = match &rule.kind {
+        ProjectionKind::Method { callee } => callee.clone(),
+        ProjectionKind::Field { datatype, field } => format!("{datatype}::{field}"),
+        ProjectionKind::Variant { datatype, variant } => format!("{datatype}::{variant}"),
+    };
+    let identity = args.len() == 1
+        && matches!(
+            model.body.as_ref(),
+            Some(ScalarExpr::Var(name)) if name == &model.params[0].name
+        );
+    for arg in &args {
+        if let Term::Base { param, .. } = arg {
+            if identity {
+                if let Some(previous) = ctx.identity_uses.get(param)
+                    && previous != &model.name
+                {
+                    return Err(format!(
+                        "multiple identity projections of `{param}`: {previous} and {}",
+                        model.name
+                    ));
+                }
+                ctx.identity_uses.insert(param.clone(), model.name.clone());
+            }
+            ctx.uses.push(ProjectionUse {
+                param: param.clone(),
+                kind: match &rule.kind {
+                    ProjectionKind::Method { .. } => "method",
+                    ProjectionKind::Field { .. } => "field",
+                    ProjectionKind::Variant { .. } => "variant",
+                },
+                target: target.clone(),
+                model: model.name.clone(),
+                relation: rule.relation,
+                identity,
+            });
+        }
+    }
+    Ok(Term::Call {
+        model: rule.model,
+        args,
+        int: model.returns.is_int(),
+        relation: rule.relation,
+    })
+}
+
+fn translate_expr(expression: &Value, ctx: &mut TranslateCtx) -> std::result::Result<Term, String> {
+    let op = expression["op"]
+        .as_str()
+        .ok_or_else(|| "expression has no op".to_owned())?;
+    match op {
+        "int" => expression["value"]
+            .as_i64()
+            .map(Term::Int)
+            .ok_or_else(|| "invalid integer literal".to_owned()),
+        "bool" => expression["value"]
+            .as_bool()
+            .map(Term::Bool)
+            .ok_or_else(|| "invalid boolean literal".to_owned()),
+        "var" => {
+            let name = expression["name"]
+                .as_str()
+                .ok_or_else(|| "variable expression has no name".to_owned())?;
+            if let Some((_, local, int)) =
+                ctx.scope.iter().rev().find(|(bound, _, _)| bound == name)
+            {
+                return Ok(Term::Var {
+                    name: local.clone(),
+                    int: *int,
+                });
+            }
+            let param = ctx
+                .params
+                .iter()
+                .find(|param| param.name == name)
+                .ok_or_else(|| format!("unknown variable: {name}"))?;
+            let model = ctx.model.get(name);
+            match param.kind.as_str() {
+                "bool" => Ok(Term::Var {
+                    name: model.map_or_else(|| sanitize_ident(name), |entry| entry.probe.clone()),
+                    int: false,
+                }),
+                "int" => Ok(Term::Var {
+                    name: model.map_or_else(|| sanitize_ident(name), |entry| entry.probe.clone()),
+                    int: true,
+                }),
+                "reference" | "ghost" | "opaque" => {
+                    let probe = model.map_or_else(
+                        || format!("{}_id", sanitize_ident(name)),
+                        |entry| entry.probe.clone(),
+                    );
+                    Ok(Term::Base {
+                        param: name.to_owned(),
+                        name: probe,
+                    })
+                }
+                other => Err(format!("unsupported parameter kind: {other}")),
+            }
+        }
+        "const" => {
+            let path = expression["path"]
+                .as_str()
+                .ok_or_else(|| "constant expression has no path".to_owned())?;
+            let name = lift_const(path, ctx.const_names, ctx.used_names);
+            Ok(Term::Var { name, int: true })
+        }
+        "old" | "final" | "read" | "deref" => translate_expr(&expression["arg"], ctx),
+        "not" => {
+            let arg = translate_expr(&expression["arg"], ctx)?;
+            if term_type(&arg) != ScalarType::Bool {
+                return Err("`!` expects a bool".into());
+            }
+            Ok(Term::Not(Box::new(arg)))
+        }
+        "neg" => {
+            let arg = translate_expr(&expression["arg"], ctx)?;
+            if term_type(&arg) != ScalarType::Int {
+                return Err("unary `-` expects an integer".into());
+            }
+            Ok(Term::Neg(Box::new(arg)))
+        }
+        "bin" => {
+            let lhs = translate_expr(&expression["lhs"], ctx)?;
+            let rhs = translate_expr(&expression["rhs"], ctx)?;
+            let sym = expression["sym"].as_str().unwrap_or("&&");
+            let (lhs_ty, rhs_ty) = (term_type(&lhs), term_type(&rhs));
+            // Whole-value equality of a reference/ghost id with a scalar
+            // projection is an over-approximation of equality of the
+            // underlying values; ordering and arithmetic on raw ids remain
+            // unmapped.
+            if matches!(sym, "==" | "!=") {
+                if lhs_ty != rhs_ty {
+                    return Err(format!("`{sym}` expects operands of the same type"));
+                }
+                return Ok(Term::Bin {
+                    sym: sym.to_owned(),
+                    lhs: Box::new(lhs),
+                    rhs: Box::new(rhs),
+                    int: false,
+                });
+            }
+            if matches!(lhs, Term::Base { .. }) || matches!(rhs, Term::Base { .. }) {
+                return Err("a raw reference/ghost id may not be compared directly".into());
+            }
+            let int = match sym {
+                "+" | "-" | "*" => {
+                    if lhs_ty != ScalarType::Int || rhs_ty != ScalarType::Int {
+                        return Err(format!("`{sym}` expects integers"));
+                    }
+                    true
+                }
+                "<" | "<=" | ">" | ">=" => {
+                    if lhs_ty != ScalarType::Int || rhs_ty != ScalarType::Int {
+                        return Err(format!("`{sym}` expects integers"));
+                    }
+                    false
+                }
+                "==" | "!=" => {
+                    if lhs_ty != rhs_ty {
+                        return Err(format!("`{sym}` expects operands of the same type"));
+                    }
+                    false
+                }
+                "&&" | "||" | "==>" => {
+                    if lhs_ty != ScalarType::Bool || rhs_ty != ScalarType::Bool {
+                        return Err(format!("`{sym}` expects booleans"));
+                    }
+                    false
+                }
+                other => return Err(format!("unsupported operator: {other}")),
+            };
+            Ok(Term::Bin {
+                sym: sym.to_owned(),
+                lhs: Box::new(lhs),
+                rhs: Box::new(rhs),
+                int,
+            })
+        }
+        "field" => {
+            let root = translate_expr(&expression["root"], ctx)?;
+            let datatype = expression["datatype"].as_str();
+            let field = expression["field"].as_str();
+            let rule = ctx
+                .config
+                .matching_rule(ctx.function, None, datatype, field, None)
+                .ok_or_else(|| {
+                    format!(
+                        "unmodeled field: {}::{}",
+                        datatype.unwrap_or("<unknown>"),
+                        field.unwrap_or("<unknown>")
+                    )
+                })?;
+            apply_projection(rule, vec![root], ctx)
+        }
+        "call" => {
+            let callee = expression["callee"]
+                .as_str()
+                .ok_or_else(|| "call expression has no callee".to_owned())?;
+            let args = expression["args"]
+                .as_array()
+                .ok_or_else(|| "call expression has no args".to_owned())?
+                .iter()
+                .map(|arg| translate_expr(arg, ctx))
+                .collect::<std::result::Result<Vec<_>, _>>()?;
+            let rule = ctx
+                .config
+                .matching_rule(ctx.function, Some(callee), None, None, None)
+                .ok_or_else(|| format!("unmodeled call: {callee}"))?;
+            apply_projection(rule, args, ctx)
+        }
+        "quant" => {
+            let forall = expression["forall"].as_bool().unwrap_or(true);
+            let mut bindings = Vec::new();
+            let mut pushed = Vec::new();
+            for binding in expression["bindings"].as_array().into_iter().flatten() {
+                let name = binding["name"]
+                    .as_str()
+                    .ok_or_else(|| "quantifier binding has no name".to_owned())?;
+                let ty = binding["type"].as_str().unwrap_or("usize");
+                let int = !ty.contains("Bool");
+                let local = format!("q{}_{}", bindings.len(), sanitize_ident(name));
+                ctx.scope.push((name.to_owned(), local.clone(), int));
+                pushed.push(local.clone());
+                bindings.push((local, int));
+            }
+            let body = translate_expr(&expression["body"], ctx)?;
+            for _ in &pushed {
+                ctx.scope.pop();
+            }
+            if term_type(&body) != ScalarType::Bool {
+                return Err("quantifier body must be a bool".into());
+            }
+            Ok(Term::Quant {
+                forall,
+                bindings,
+                body: Box::new(body),
+            })
+        }
+        "ctor" => Err("unmodeled constructor".into()),
+        "is_variant" => {
+            let datatype = expression["datatype"].as_str();
+            let variant = expression["variant"].as_str();
+            let arg = expression
+                .get("arg")
+                .filter(|value| !value.is_null())
+                .ok_or_else(|| {
+                    format!(
+                        "unmodeled `is` discriminant: {}::{} (no subject)",
+                        datatype.unwrap_or("<unknown>"),
+                        variant.unwrap_or("<unknown>")
+                    )
+                })?;
+            let arg = translate_expr(arg, ctx)?;
+            let rule = ctx
+                .config
+                .matching_rule(ctx.function, None, datatype, None, variant)
+                .ok_or_else(|| {
+                    format!(
+                        "unmodeled `is` discriminant: {}::{}",
+                        datatype.unwrap_or("<unknown>"),
+                        variant.unwrap_or("<unknown>")
+                    )
+                })?;
+            apply_projection(rule, vec![arg], ctx)
+        }
+        "opaque" => Err(format!(
+            "opaque VIR node: {}",
+            expression["tag"].as_str().unwrap_or("unknown")
+        )),
+        other => Err(format!("unsupported expression node: {other}")),
     }
 }
 
@@ -184,6 +1326,7 @@ struct Decision {
     expected_note: Option<String>,
     clauses: usize,
     mechanical: usize,
+    projected: usize,
     unsupported: usize,
     modeling: Value,
 }
@@ -252,6 +1395,7 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
          // to probe parameters (documented abstraction).\n\n",
     );
     let mut entries = Vec::new();
+    let mut emitted_models = BTreeSet::new();
     for decision in &decisions {
         if !selected_set.contains(&decision.path) {
             continue;
@@ -261,6 +1405,20 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
             .as_ref()
             .expect("selected decision has entry");
         let name = entry["name"].as_str().unwrap_or_default();
+        if let Some(models) = entry["models"].as_array() {
+            for model in models {
+                let Some(model_name) = model["name"].as_str() else {
+                    continue;
+                };
+                if !emitted_models.insert(model_name.to_owned()) {
+                    continue;
+                }
+                if let Some(source) = model["source"].as_str() {
+                    preamble.push_str(source);
+                    preamble.push('\n');
+                }
+            }
+        }
         if let Some(fns) = entry["preamble"].as_str() {
             preamble.push_str(fns);
             preamble.push('\n');
@@ -287,6 +1445,7 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
             "witness": entry.get("witness"),
             "clauses": decision.clauses,
             "mechanical_clauses": decision.mechanical,
+            "projected_clauses": decision.projected,
             "unsupported_clauses": decision.unsupported,
             "origin": entry["origin"],
             "modeling": decision.modeling,
@@ -339,6 +1498,7 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
             "baseline_reasons": baseline_reasons,
             "clauses": decision.clauses,
             "mechanical_clauses": decision.mechanical,
+            "projected_clauses": decision.projected,
             "unsupported_clauses": decision.unsupported,
             "entry": decision.entry.as_ref().map(|entry| entry["name"].clone()),
             "expected": decision.expected,
@@ -365,6 +1525,11 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
                 "generic_instances": options.config.generic_instances.len(),
                 "reference": if options.config.reference_opaque { "opaque" } else { "off" },
                 "ghost": if options.config.ghost_opaque { "opaque" } else { "off" },
+                "projection": {
+                    "models": options.config.projection.models.len(),
+                    "rules": options.config.projection.rules.len(),
+                    "is_empty": options.config.projection.is_empty(),
+                },
             },
         },
         "counts": {
@@ -435,7 +1600,6 @@ fn classify(
         .iter()
         .filter(|clause| clause["class"].as_str() == Some("mechanical"))
         .count();
-    let unsupported = clauses.len().saturating_sub(mechanical);
     let origin = json!({
         "external_body": function["external_body"],
         "kind": function["kind"],
@@ -461,6 +1625,7 @@ fn classify(
             expected_note: None,
             clauses: 0,
             mechanical: 0,
+            projected: 0,
             unsupported: 0,
             modeling,
         };
@@ -512,8 +1677,59 @@ fn classify(
         }
     }
 
-    // R/H rules: only parameters referenced by a clause can constrain it.
+    // R/H rules. A referenced reference/ghost parameter is mappable if the
+    // old safe-use rule holds, or if every clause mentioning it has an
+    // explicit project-side projection translation.
     let referenced = referenced_names(&clauses, &raw_params);
+    let model = param_models(&params, &referenced);
+    let mut used_names = model
+        .values()
+        .map(|p| p.probe.clone())
+        .collect::<BTreeSet<_>>();
+    let mut const_names: BTreeMap<String, String> = BTreeMap::new();
+    let mut projection_uses: Vec<ProjectionUse> = Vec::new();
+    let projection_enabled = !config.projection.is_empty();
+    let mut plans = Vec::with_capacity(clauses.len());
+    for clause in &clauses {
+        if clause["class"].as_str() == Some("mechanical") {
+            plans.push(ClausePlan::Mechanical);
+        } else if projection_enabled && clause.get("expr").is_some_and(|value| !value.is_null()) {
+            let mut ctx = TranslateCtx {
+                config: &config.projection,
+                function: &path,
+                params: &params,
+                model: &model,
+                const_names: &mut const_names,
+                used_names: &mut used_names,
+                scope: Vec::new(),
+                uses: &mut projection_uses,
+                identity_uses: BTreeMap::new(),
+            };
+            match translate_expr(&clause["expr"], &mut ctx) {
+                Ok(term) => plans.push(ClausePlan::Projected(term)),
+                Err(detail) => plans.push(ClausePlan::Unsupported(detail)),
+            }
+        } else if projection_enabled {
+            plans.push(ClausePlan::Unsupported(
+                "no expression tree (old census); projection not attempted".into(),
+            ));
+        } else {
+            plans.push(ClausePlan::Unsupported(
+                "projection models are not configured; M7e behavior retained".into(),
+            ));
+        }
+    }
+    projection_uses.sort();
+    projection_uses.dedup();
+    let projected = plans
+        .iter()
+        .filter(|plan| matches!(plan, ClausePlan::Projected(_)))
+        .count();
+    let unsupported = plans
+        .iter()
+        .filter(|plan| matches!(plan, ClausePlan::Unsupported(_)))
+        .count();
+
     let mut reference_mapping = Vec::new();
     let mut ghost_mapping = Vec::new();
     for param in &params {
@@ -522,8 +1738,11 @@ fn classify(
         }
         match param.kind.as_str() {
             "ghost" => {
-                if config.ghost_opaque && param_is_mappable(&param.name, &clauses) {
-                    ghost_mapping.push(mapping_json(param, &clauses));
+                if config.ghost_opaque
+                    && (param_is_mappable(&param.name, &clauses)
+                        || param_projection_covered(&param.name, &clauses, &plans))
+                {
+                    ghost_mapping.push(mapping_json(param, &clauses, &projection_uses));
                 } else {
                     let kind = if config.ghost_opaque {
                         "ghost_param_unmapped"
@@ -534,8 +1753,11 @@ fn classify(
                 }
             }
             "reference" => {
-                if config.reference_opaque && param_is_mappable(&param.name, &clauses) {
-                    reference_mapping.push(mapping_json(param, &clauses));
+                if config.reference_opaque
+                    && (param_is_mappable(&param.name, &clauses)
+                        || param_projection_covered(&param.name, &clauses, &plans))
+                {
+                    reference_mapping.push(mapping_json(param, &clauses, &projection_uses));
                 } else {
                     let kind = if config.reference_opaque {
                         "reference_param_unmapped"
@@ -548,12 +1770,119 @@ fn classify(
             _ => {}
         }
     }
+
+    let blocker_names = params
+        .iter()
+        .filter(|param| matches!(param.kind.as_str(), "reference" | "ghost"))
+        .map(|param| param.name.as_str())
+        .collect::<BTreeSet<_>>();
+    let mut projection_unmapped = Vec::new();
+    for (clause_index, (clause, plan)) in clauses.iter().zip(&plans).enumerate() {
+        let ClausePlan::Unsupported(detail) = plan else {
+            continue;
+        };
+        let mentioned = clause["vars"]
+            .as_array()
+            .into_iter()
+            .flatten()
+            .filter_map(Value::as_str)
+            .filter(|name| blocker_names.contains(name))
+            .collect::<Vec<_>>();
+        if !mentioned.is_empty() {
+            projection_unmapped.push(json!({
+                "clause": clause_index,
+                "detail": detail,
+                "params": mentioned,
+                "text": clause["text"],
+            }));
+        }
+    }
+
+    let mut clause_modes = Vec::with_capacity(plans.len());
+    let mut relations = Vec::new();
+    for plan in &plans {
+        match plan {
+            ClausePlan::Mechanical => clause_modes.push("mechanical"),
+            ClausePlan::Projected(term) => {
+                term_relations(term, &mut relations);
+                if term_is_evaluable(term, &config.projection) {
+                    clause_modes.push("projected-evaluable");
+                } else {
+                    clause_modes.push("projected-opaque");
+                }
+            }
+            ClausePlan::Unsupported(_) => clause_modes.push("unsupported"),
+        }
+    }
+    let vacuum_evidence = relations.iter().all(|relation| relation.vacuum_evidence());
+    let has_projection = projected > 0;
+
+    let mut used_models = BTreeSet::new();
+    for plan in &plans {
+        if let ClausePlan::Projected(term) = plan {
+            term_models(term, &mut used_models);
+        }
+    }
+    let projection_models = used_models
+        .iter()
+        .map(|model_index| {
+            let model = &config.projection.models[*model_index];
+            json!({
+                "name": model.name,
+                "params": model.params.iter().map(|param| {
+                    json!({"name": param.name, "type": param.ty.as_verus()})
+                }).collect::<Vec<_>>(),
+                "returns": model.returns.as_verus(),
+                "body": model.body.as_ref().map(render_scalar_expr),
+                "opaque": model.body.is_none(),
+                "source": model_source(model),
+            })
+        })
+        .collect::<Vec<_>>();
+    let projection_model_sources = projection_models
+        .iter()
+        .map(|model| {
+            json!({
+                "name": model["name"],
+                "source": model["source"],
+            })
+        })
+        .collect::<Vec<_>>();
+    let projection_mapping = params
+        .iter()
+        .filter_map(|param| {
+            let uses = projection_uses
+                .iter()
+                .filter(|entry| entry.param == param.name)
+                .map(ProjectionUse::value)
+                .collect::<Vec<_>>();
+            if uses.is_empty() {
+                return None;
+            }
+            Some(json!({
+                "param": param.name,
+                "base_id": model.get(&param.name).map_or_else(
+                    || format!("{}_id", sanitize_ident(&param.name)),
+                    |entry| entry.probe.clone(),
+                ),
+                "uses": uses,
+            }))
+        })
+        .collect::<Vec<_>>();
+
     modeling["reference_mapping"] = json!(reference_mapping);
     modeling["ghost_mapping"] = json!(ghost_mapping);
+    modeling["projection_mapping"] = json!(projection_mapping);
+    modeling["projection_models"] = json!(projection_models);
+    modeling["projection_unmapped"] = json!(projection_unmapped);
+    modeling["clause_modes"] = json!(clause_modes);
 
+    let has_opaque_projection = plans.iter().any(|plan| {
+        matches!(plan, ClausePlan::Projected(term) if !term_is_evaluable(term, &config.projection))
+    });
     let tier = if !reasons.is_empty() {
         Tier::C
-    } else if unsupported > 0 {
+    } else if unsupported > 0 || has_opaque_projection {
         Tier::B
     } else {
         Tier::A
@@ -569,25 +1898,25 @@ fn classify(
             expected_note: None,
             clauses: clauses.len(),
             mechanical,
+            projected,
             unsupported,
             modeling,
         };
     }
 
-    let model = param_models(&params, &referenced);
+    let use_int = projected > 0;
     let mut spec_fns = String::new();
     let mut terms = Vec::new();
     let mut constraints = Vec::new();
     let mut param_order: Vec<String> = Vec::new();
-    let mut const_names: BTreeMap<String, String> = BTreeMap::new();
-    let mut used_names = model
+    let mut param_types: BTreeMap<String, bool> = model
         .values()
-        .map(|p| p.probe.clone())
-        .collect::<BTreeSet<_>>();
+        .map(|entry| (entry.probe.clone(), entry.int))
+        .collect();
 
-    for (clause_index, clause) in clauses.iter().enumerate() {
-        match clause["class"].as_str() {
-            Some("mechanical") => {
+    for (clause_index, (clause, plan)) in clauses.iter().zip(&plans).enumerate() {
+        match plan {
+            ClausePlan::Mechanical => {
                 let ast = &clause["ast"];
                 let rewritten = rewrite_consts(ast, &mut const_names, &mut used_names);
                 let mut vars = BTreeSet::new();
@@ -600,6 +1929,7 @@ fn classify(
                     &args,
                     &rewritten,
                     &model,
+                    use_int,
                 );
                 terms.push(format!(
                     "p{index}_k{clause_index}({})",
@@ -610,7 +1940,34 @@ fn classify(
                 ));
                 constraints.push(rewritten);
             }
-            _ => {
+            ClausePlan::Projected(term) => {
+                let mut free = BTreeMap::new();
+                let mut bound = BTreeSet::new();
+                collect_term_vars(term, &mut bound, &mut free);
+                for (name, int) in &free {
+                    if !param_order.contains(name) {
+                        param_order.push(name.clone());
+                    }
+                    param_types.insert(name.clone(), *int);
+                }
+                let arglist = free
+                    .iter()
+                    .map(|(name, int)| format!("{name}: {}", if *int { "int" } else { "bool" }))
+                    .collect::<Vec<_>>()
+                    .join(", ");
+                let call_args = free.keys().cloned().collect::<Vec<_>>().join(", ");
+                spec_fns.push_str(&format!(
+                    "pub open spec fn p{index}_k{clause_index}({arglist}) -> bool {{\n    {}\n}}\n\n",
+                    render_term(term, &config.projection)
+                ));
+                terms.push(format!("p{index}_k{clause_index}({call_args})"));
+                if term_is_evaluable(term, &config.projection)
+                    && let Some(value) = term_value(term, &config.projection)
+                {
+                    constraints.push(value);
+                }
+            }
+            ClausePlan::Unsupported(_) => {
                 let args = unsupported_args(
                     clause,
                     &params,
@@ -629,7 +1986,14 @@ fn classify(
                     args.iter()
                         .map(|(name, _)| {
                             let int = model.get(name).map_or(true, |entry| entry.int);
-                            format!("{name}: {}", if int { "usize" } else { "bool" })
+                            format!(
+                                "{name}: {}",
+                                if int {
+                                    if use_int { "int" } else { "usize" }
+                                } else {
+                                    "bool"
+                                }
+                            )
                         })
                         .collect::<Vec<_>>()
                         .join(", ")
@@ -643,14 +2007,13 @@ fn classify(
         param_order.push("_unused".into());
         used_names.insert("_unused".into());
     }
-    let mut param_types: BTreeMap<String, bool> = BTreeMap::new();
-    for model in model.values() {
-        param_types.insert(model.probe.clone(), model.int);
-    }
     for name in &param_order {
         param_types.entry(name.clone()).or_insert(true);
     }
 
+    // A projected clause with an opaque model or quantifier may not have a
+    // witness. Tier A means every clause is evaluable, so the search is
+    // complete for the abstraction's scalar core.
     let witness = if tier == Tier::A {
         search_witness(&constraints, &param_order, &param_types)
     } else {
@@ -658,19 +2021,37 @@ fn classify(
     };
     let witness_source = witness
         .as_ref()
-        .map(|values| render_witness(values, &param_order, &param_types));
+        .map(|values| render_witness(values, &param_order, &param_types, use_int));
     let expected = if tier == Tier::A && witness_source.is_some() {
         "ConfirmedLive"
     } else {
         "CandidateInconclusive"
     };
-    let expected_note = if tier == Tier::A && witness_source.is_none() {
-        Some(
-            "no bounded witness; a ConfirmedVacuous verdict here is an E6 true positive that must be replicated"
-                .into(),
-        )
+    let expected_note = if tier == Tier::A {
+        if witness_source.is_some() {
+            has_projection.then(|| {
+                "projection models are model-relative: ConfirmedLive is not real liveness"
+                    .to_owned()
+            })
+        } else if vacuum_evidence {
+            Some(
+                "no bounded witness over projection models; a ConfirmedVacuous verdict is model-relative candidate evidence and must be replicated (E6)"
+                    .to_owned(),
+            )
+        } else {
+            Some("under-approx projection present: ConfirmedVacuous is not evidence".to_owned())
+        }
     } else if tier == Tier::B {
-        Some("uninterp clauses: verifier incompleteness expected; not a defect".into())
+        if has_projection {
+            Some(if vacuum_evidence {
+                "projected clause includes opaque/quantified models: verifier incompleteness expected; ConfirmedLive is model-relative and ConfirmedVacuous is model-relative candidate evidence"
+                    .to_owned()
+            } else {
+                "under-approx projection present: ConfirmedVacuous is not evidence".to_owned()
+            })
+        } else {
+            Some("uninterp clauses: verifier incompleteness expected; not a defect".to_owned())
+        }
     } else {
         None
     };
@@ -679,7 +2060,7 @@ fn classify(
         .iter()
         .map(|name| {
             let typ = if param_types.get(name).copied().unwrap_or(true) {
-                "usize"
+                if use_int { "int" } else { "usize" }
             } else {
                 "bool"
             };
@@ -708,6 +2089,7 @@ fn classify(
         "requires": if terms.is_empty() { "true".to_owned() } else { terms.join(" && ") },
         "witness": witness_source,
         "preamble": spec_fns,
+        "models": projection_model_sources,
         "origin": origin,
     });
 
@@ -720,6 +2102,7 @@ fn classify(
         expected_note,
         clauses: clauses.len(),
         mechanical,
+        projected,
         unsupported,
         modeling,
     }
@@ -838,7 +2221,7 @@ fn param_is_mappable(name: &str, clauses: &[Value]) -> bool {
     seen
 }
 
-fn mapping_json(param: &ParamInfo, clauses: &[Value]) -> Value {
+fn mapping_json(param: &ParamInfo, clauses: &[Value], projection_uses: &[ProjectionUse]) -> Value {
     let uses = clauses
         .iter()
         .flat_map(|clause| param_uses(clause, &param.name))
@@ -851,11 +2234,33 @@ fn mapping_json(param: &ParamInfo, clauses: &[Value]) -> Value {
             })
         })
         .collect::<Vec<_>>();
+    let projections = projection_uses
+        .iter()
+        .filter(|entry| entry.param == param.name)
+        .map(ProjectionUse::value)
+        .collect::<Vec<_>>();
     json!({
         "param": param.name,
         "id": format!("{}_id", sanitize_ident(&param.name)),
         "uses": uses,
+        "projections": projections,
     })
+}
+
+fn param_projection_covered(name: &str, clauses: &[Value], plans: &[ClausePlan]) -> bool {
+    let mut seen = false;
+    for (clause, plan) in clauses.iter().zip(plans) {
+        let occurrences = clause["param_occurrences"][name].as_u64().unwrap_or(0) as usize;
+        let uses = param_uses(clause, name);
+        if occurrences == 0 && uses.is_empty() {
+            continue;
+        }
+        seen = true;
+        if !matches!(plan, ClausePlan::Projected(_)) {
+            return false;
+        }
+    }
+    seen
 }
 
 fn referenced_names(clauses: &[Value], params: &[Value]) -> BTreeSet<String> {
@@ -1068,12 +2473,20 @@ fn render_mech_fn(
     args: &[(String, String)],
     ast: &Value,
     model: &BTreeMap<String, ParamModel>,
+    use_int: bool,
 ) {
     let arglist = args
         .iter()
         .map(|(name, _)| {
             let int = model.get(name).map_or(true, |entry| entry.int);
-            format!("{name}: {}", if int { "usize" } else { "bool" })
+            format!(
+                "{name}: {}",
+                if int {
+                    if use_int { "int" } else { "usize" }
+                } else {
+                    "bool"
+                }
+            )
         })
         .collect::<Vec<_>>()
         .join(", ");
@@ -1233,13 +2646,18 @@ fn render_witness(
     values: &[Value],
     param_order: &[String],
     param_types: &BTreeMap<String, bool>,
+    use_int: bool,
 ) -> String {
     let parts = values
         .iter()
         .zip(param_order)
         .map(|(value, name)| {
             if param_types.get(name).copied().unwrap_or(true) {
-                format!("{}usize", value.as_i64().unwrap_or(0))
+                if use_int {
+                    value.as_i64().unwrap_or(0).to_string()
+                } else {
+                    format!("{}usize", value.as_i64().unwrap_or(0))
+                }
             } else {
                 value.as_bool().unwrap_or(false).to_string()
             }
@@ -1781,6 +3199,462 @@ mod tests {
         let first = build(&data, &options).unwrap();
         let second = build(&data, &options).unwrap();
         assert_eq!(first, second);
+    }
+
+    fn projected_clause(expr: Value, uses: &[(&str, &str)]) -> Value {
+        let vars = uses.iter().map(|(name, _)| *name).collect::<Vec<_>>();
+        let mut clause = clause(0, "unsupported", Value::Null, &vars);
+        clause["expr"] = expr;
+        let mut occurrences = serde_json::Map::new();
+        let mut details = Vec::new();
+        for (name, kind) in uses {
+            occurrences.insert((*name).to_owned(), json!(1));
+            details.push(json!({
+                "name": name,
+                "kind": kind,
+                "callee": null,
+                "field": null,
+                "argc": null,
+            }));
+        }
+        clause["param_occurrences"] = Value::Object(occurrences);
+        clause["param_uses"] = json!(details);
+        clause
+    }
+
+    fn call_expr(callee: &str, args: Vec<Value>) -> Value {
+        json!({"op": "call", "callee": callee, "dynamic": false, "args": args})
+    }
+
+    fn var_expr(name: &str) -> Value {
+        json!({"op": "var", "name": name})
+    }
+
+    fn projection_config(rules: Value) -> Config {
+        config(json!({
+            "schema": CONFIG_SCHEMA,
+            "reference": {"mode": "opaque"},
+            "ghost": {"mode": "opaque"},
+            "projection": {
+                "models": [
+                    {"name": "pcell_id", "params": ["recv: usize"], "returns": "usize", "body": "recv"},
+                    {"name": "cell_id", "params": ["recv: usize"], "returns": "usize", "body": "recv"},
+                    {"name": "inv", "params": ["recv: usize"], "returns": "bool", "body": null},
+                    {"name": "idx", "params": ["recv: usize"], "returns": "usize", "body": null}
+                ],
+                "rules": rules
+            }
+        }))
+    }
+
+    fn mutex_expr() -> Value {
+        json!({
+            "op": "bin", "sym": "==",
+            "lhs": call_expr("vstd::cell::pcell::impl&%2::id", vec![var_expr("perm")]),
+            "rhs": call_expr("ostd::sync::mutex::impl&%2::cell_id", vec![var_expr("mutex")])
+        })
+    }
+
+    #[test]
+    fn identity_projection_makes_id_equality_mechanical_and_live() {
+        let data = census(vec![typed_function(
+            "p::new",
+            &[],
+            vec![param("mutex", "reference"), param("perm", "ghost")],
+            vec![projected_clause(
+                mutex_expr(),
+                &[("mutex", "plain_root"), ("perm", "plain_root")],
+            )],
+        )]);
+        let configured = projection_config(json!([
+            {"match": "p::new", "kind": "method", "callee": "vstd::cell::pcell::impl&%2::id", "model": "pcell_id", "relation": "faithful", "note": "CellId is the permission identity"},
+            {"match": "p::new", "kind": "method", "callee": "ostd::sync::mutex::impl&%2::cell_id", "model": "cell_id", "relation": "faithful", "note": "CellId projection"}
+        ]));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        let row = &built["report"]["functions"][0];
+        assert_eq!(row["tier"], "A");
+        assert_eq!(row["baseline_tier"], "C");
+        assert_eq!(
+            row["modeling"]["projection_mapping"]
+                .as_array()
+                .unwrap()
+                .len(),
+            2
+        );
+        assert_eq!(
+            row["modeling"]["clause_modes"],
+            json!(["projected-evaluable"])
+        );
+        let contract = &built["manifest"]["contracts"][0];
+        assert_eq!(contract["params"], "mutex_id: int, perm_id: int");
+        assert_eq!(contract["requires"], "p0_k0(mutex_id, perm_id)");
+        assert_eq!(contract["witness"], "(0, 0)");
+        let preamble = built["manifest"]["preamble"].as_str().unwrap();
+        assert!(preamble.contains("pub open spec fn pcell_id(recv: int) -> int"));
+        assert!(preamble.contains("pub open spec fn cell_id(recv: int) -> int"));
+        assert_eq!(built["report"]["entries"][0]["expected"], "ConfirmedLive");
+        assert!(
+            built["report"]["entries"][0]["expected_note"]
+                .as_str()
+                .unwrap()
+                .contains("model-relative")
+        );
+    }
+
+    #[test]
+    fn unmodeled_projection_keeps_tier_c() {
+        let data = census(vec![typed_function(
+            "p::new",
+            &[],
+            vec![param("mutex", "reference"), param("perm", "ghost")],
+            vec![projected_clause(
+                mutex_expr(),
+                &[("mutex", "plain_root"), ("perm", "plain_root")],
+            )],
+        )]);
+        let configured = projection_config(json!([]));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        let row = &built["report"]["functions"][0];
+        assert_eq!(row["tier"], "C");
+        assert_eq!(
+            row["reasons"],
+            json!([
+                "reference_param_unmapped:mutex",
+                "ghost_param_unmapped:perm"
+            ])
+        );
+        assert_eq!(
+            row["modeling"]["projection_unmapped"][0]["detail"],
+            "unmodeled call: vstd::cell::pcell::impl&%2::id"
+        );
+        assert!(
+            built["manifest"]["contracts"]
+                .as_array()
+                .unwrap()
+                .is_empty()
+        );
+    }
+
+    #[test]
+    fn opaque_projection_is_tier_b_and_not_real_liveness() {
+        let data = census(vec![typed_function(
+            "p::m",
+            &[],
+            vec![param("self", "reference")],
+            vec![projected_clause(
+                call_expr("p::inv", vec![var_expr("self")]),
+                &[("self", "plain_root")],
+            )],
+        )]);
+        let configured = projection_config(json!([
+            {"match": "*", "kind": "method", "callee": "p::inv", "model": "inv", "relation": "over-approx", "note": "invariant predicate"}
+        ]));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        let row = &built["report"]["functions"][0];
+        assert_eq!(row["tier"], "B");
+        assert_eq!(row["modeling"]["clause_modes"], json!(["projected-opaque"]));
+        let preamble = built["manifest"]["preamble"].as_str().unwrap();
+        assert!(preamble.contains("pub uninterp spec fn inv(recv: int) -> bool;"));
+        assert_eq!(
+            built["report"]["entries"][0]["expected"],
+            "CandidateInconclusive"
+        );
+        assert!(
+            built["report"]["entries"][0]["expected_note"]
+                .as_str()
+                .unwrap()
+                .contains("model-relative")
+        );
+    }
+
+    #[test]
+    fn constant_projection_without_witness_expects_inconclusive_vacuous_candidate() {
+        let data = census(vec![typed_function(
+            "p::m",
+            &[],
+            vec![param("self", "reference")],
+            vec![projected_clause(
+                call_expr("p::obeys", vec![var_expr("self")]),
+                &[("self", "receiver_root")],
+            )],
+        )]);
+        let configured = config(json!({
+            "schema": CONFIG_SCHEMA,
+            "reference": {"mode": "opaque"},
+            "projection": {
+                "models": [{"name": "obeys", "params": ["recv: usize"], "returns": "bool", "body": "false"}],
+                "rules": [{"match": "*", "kind": "method", "callee": "p::obeys", "model": "obeys", "relation": "faithful", "note": "crate-scope all implementations return true"}]
+            }
+        }));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        let row = &built["report"]["functions"][0];
+        assert_eq!(row["tier"], "A");
+        assert!(built["manifest"]["contracts"][0].get("witness").is_none());
+        assert_eq!(
+            built["report"]["entries"][0]["expected"],
+            "CandidateInconclusive"
+        );
+        assert!(
+            built["report"]["entries"][0]["expected_note"]
+                .as_str()
+                .unwrap()
+                .contains("E6")
+        );
+    }
+
+    #[test]
+    fn under_approx_projection_is_never_vacuous_evidence() {
+        let data = census(vec![typed_function(
+            "p::m",
+            &[],
+            vec![param("self", "reference")],
+            vec![projected_clause(
+                call_expr("p::obeys", vec![var_expr("self")]),
+                &[("self", "receiver_root")],
+            )],
+        )]);
+        let configured = config(json!({
+            "schema": CONFIG_SCHEMA,
+            "reference": {"mode": "opaque"},
+            "projection": {
+                "models": [{"name": "obeys", "params": ["recv: usize"], "returns": "bool", "body": "false"}],
+                "rules": [{"match": "*", "kind": "method", "callee": "p::obeys", "model": "obeys", "relation": "under-approx", "note": "known weaker"}]
+            }
+        }));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        assert!(
+            built["report"]["entries"][0]["expected_note"]
+                .as_str()
+                .unwrap()
+                .contains("under-approx")
+        );
+    }
+
+    #[test]
+    fn field_projection_records_datatype_and_field() {
+        let expr = json!({
+            "op": "bin", "sym": "<",
+            "lhs": {"op": "field", "datatype": "p::Owner", "field": "idx", "root": var_expr("self")},
+            "rhs": {"op": "int", "value": 4}
+        });
+        let data = census(vec![typed_function(
+            "p::m",
+            &[],
+            vec![param("self", "ghost")],
+            vec![projected_clause(expr, &[("self", "plain_root")])],
+        )]);
+        let configured = projection_config(json!([
+            {"match": "*", "kind": "field", "datatype": "p::Owner", "field": "idx", "model": "idx", "relation": "over-approx", "note": "field projection"}
+        ]));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        let row = &built["report"]["functions"][0];
+        assert_eq!(row["tier"], "B");
+        assert_eq!(
+            row["modeling"]["projection_mapping"][0]["uses"][0]["kind"],
+            "field"
+        );
+        assert_eq!(
+            row["modeling"]["projection_mapping"][0]["uses"][0]["target"],
+            "p::Owner::idx"
+        );
+    }
+
+    #[test]
+    fn quantifier_projection_is_tier_b() {
+        let expr = json!({
+            "op": "quant",
+            "forall": true,
+            "bindings": [{"name": "i", "type": "usize"}],
+            "body": json!({
+                "op": "bin", "sym": "&&",
+                "lhs": call_expr("p::inv", vec![var_expr("self")]),
+                "rhs": {"op": "bin", "sym": "<", "lhs": var_expr("i"), "rhs": {"op": "int", "value": 4}}
+            })
+        });
+        let data = census(vec![typed_function(
+            "p::m",
+            &[],
+            vec![param("self", "reference")],
+            vec![projected_clause(expr, &[("self", "plain_root")])],
+        )]);
+        let configured = projection_config(json!([
+            {"match": "*", "kind": "method", "callee": "p::inv", "model": "inv", "relation": "over-approx", "note": "invariant"}
+        ]));
+        let built = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        assert_eq!(built["report"]["functions"][0]["tier"], "B");
+        let preamble = built["manifest"]["preamble"].as_str().unwrap();
+        assert!(preamble.contains("forall|q0_i: int|"), "{preamble}");
+    }
+
+    #[test]
+    fn projection_config_rejects_missing_relation_and_bad_body() {
+        let error = Config::from_value(&json!({
+            "schema": CONFIG_SCHEMA,
+            "projection": {
+                "models": [{"name": "m", "params": ["recv: usize"], "returns": "usize", "body": "recv"}],
+                "rules": [{"match": "*", "kind": "method", "callee": "p::m", "model": "m"}]
+            }
+        }))
+        .unwrap_err();
+        assert!(error.to_string().contains("relation"), "{error}");
+
+        let error = Config::from_value(&json!({
+            "schema": CONFIG_SCHEMA,
+            "projection": {
+                "models": [{"name": "m", "params": ["recv: usize"], "returns": "bool", "body": "recv"}],
+                "rules": []
+            }
+        }))
+        .unwrap_err();
+        assert!(error.to_string().contains("body type"), "{error}");
+
+        let error = Config::from_value(&json!({
+            "schema": CONFIG_SCHEMA,
+            "projection": {
+                "models": [{"name": "m", "params": ["recv: usize"], "returns": "usize", "body": "recv >> 1"}],
+                "rules": []
+            }
+        }))
+        .unwrap_err();
+        assert!(error.to_string().contains("body"), "{error}");
+
+        let error = Config::from_value(&json!({
+            "schema": CONFIG_SCHEMA,
+            "projection": {
+                "models": [
+                    {"name": "m", "params": ["recv: usize"], "returns": "usize", "body": null},
+                    {"name": "m", "params": ["recv: usize"], "returns": "usize", "body": null}
+                ],
+                "rules": []
+            }
+        }))
+        .unwrap_err();
+        assert!(error.to_string().contains("duplicate"), "{error}");
+    }
+
+    #[test]
+    fn field_model_arity_is_validated_at_config_load() {
+        let error = Config::from_value(&json!({
+            "schema": CONFIG_SCHEMA,
+            "projection": {
+                "models": [{"name": "m", "params": ["a: usize", "b: usize"], "returns": "usize", "body": null}],
+                "rules": [{"match": "*", "kind": "field", "datatype": "p::T", "field": "f", "model": "m", "relation": "over-approx"}]
+            }
+        }))
+        .unwrap_err();
+        assert!(
+            error.to_string().contains("exactly one argument"),
+            "{error}"
+        );
+    }
+
+    #[test]
+    fn projection_recomputation_is_deterministic() {
+        let data = census(vec![typed_function(
+            "p::new",
+            &[],
+            vec![param("mutex", "reference"), param("perm", "ghost")],
+            vec![projected_clause(
+                mutex_expr(),
+                &[("mutex", "plain_root"), ("perm", "plain_root")],
+            )],
+        )]);
+        let configured = projection_config(json!([
+            {"match": "p::new", "kind": "method", "callee": "vstd::cell::pcell::impl&%2::id", "model": "pcell_id", "relation": "faithful", "note": ""},
+            {"match": "p::new", "kind": "method", "callee": "ostd::sync::mutex::impl&%2::cell_id", "model": "cell_id", "relation": "faithful", "note": ""}
+        ]));
+        let options = Options {
+            config: configured,
+            ..Options::default()
+        };
+        assert_eq!(
+            build(&data, &options).unwrap(),
+            build(&data, &options).unwrap()
+        );
+    }
+
+    #[test]
+    fn projection_disabled_preserves_m7e_unsupported_classification() {
+        let data = census(vec![typed_function(
+            "p::f",
+            &[],
+            vec![param("x", "int")],
+            vec![projected_clause(
+                json!({
+                    "op": "bin", "sym": "==",
+                    "lhs": {"op": "int", "value": 1},
+                    "rhs": {"op": "int", "value": 1}
+                }),
+                &[],
+            )],
+        )]);
+        let baseline = build(&data, &Options::default()).unwrap();
+        assert_eq!(baseline["report"]["functions"][0]["tier"], "B");
+        let configured = config(json!({
+            "schema": CONFIG_SCHEMA,
+            "projection": {
+                "models": [{"name": "m", "params": ["a: int"], "returns": "int", "body": "a"}],
+                "rules": []
+            }
+        }));
+        let projected = build(
+            &data,
+            &Options {
+                config: configured,
+                ..Options::default()
+            },
+        )
+        .unwrap();
+        assert_eq!(projected["report"]["functions"][0]["tier"], "A");
     }
 
     #[test]

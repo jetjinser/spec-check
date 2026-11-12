@@ -720,6 +720,344 @@ fn mech_vars(node: &Mech, names: &mut BTreeSet<String>) {
     node.vars(names);
 }
 
+/// Split a VIR expression node into its tag and the remaining fields,
+/// stripping the `@`/`@@` source-span wrapper and the leading `>` marker.
+fn expr_parts(node: &Node) -> Option<(&str, &[Node])> {
+    let node = node.unwrap();
+    let items = node.list()?;
+    if items.first().and_then(Node::atom) == Some(">") {
+        Some((items.get(1)?.atom()?, &items[2..]))
+    } else {
+        Some((items.first()?.atom()?, &items[1..]))
+    }
+}
+
+fn dt_path(node: &Node) -> Option<String> {
+    let items = node.unwrap().list()?;
+    if items.first().and_then(Node::atom) != Some("Dt")
+        || items.get(1).and_then(Node::atom) != Some("Path")
+    {
+        return None;
+    }
+    items.get(2).and_then(Node::atom).map(str::to_owned)
+}
+
+fn expr_var_ident(node: &Node) -> Option<String> {
+    let items = node.unwrap().list()?;
+    if items.first().and_then(Node::atom) != Some("VarIdent") {
+        return None;
+    }
+    items.get(1).and_then(Node::atom).map(str::to_owned)
+}
+
+fn place_expr(node: &Node) -> Value {
+    let Some((tag, rest)) = expr_parts(node) else {
+        return json!({"op": "opaque", "tag": "place"});
+    };
+    match tag {
+        "Place" => match rest.first().and_then(Node::atom) {
+            Some("Local") => rest.get(1).and_then(expr_var_ident).map_or_else(
+                || json!({"op": "opaque", "tag": "place"}),
+                |name| json!({"op": "var", "name": name}),
+            ),
+            Some("Field") => {
+                let field = rest
+                    .get(1)
+                    .and_then(|op| op.field("field"))
+                    .and_then(Node::atom)
+                    .map(str::to_owned);
+                let datatype = rest
+                    .get(1)
+                    .and_then(|op| op.field("datatype"))
+                    .and_then(dt_path);
+                let root = rest
+                    .get(2)
+                    .map_or_else(|| json!({"op": "opaque", "tag": "field-root"}), place_expr);
+                json!({
+                    "op": "field",
+                    "datatype": datatype,
+                    "field": field,
+                    "root": root,
+                })
+            }
+            Some("Deref" | "DerefMut") => json!({
+                "op": "deref",
+                "arg": rest.get(1).map_or_else(
+                    || json!({"op": "opaque", "tag": "deref"}),
+                    place_expr,
+                ),
+            }),
+            Some("Temporary") => rest
+                .get(1)
+                .map_or_else(|| json!({"op": "opaque", "tag": "temporary"}), clause_expr),
+            _ => json!({"op": "opaque", "tag": "place"}),
+        },
+        "Var" => rest.first().and_then(expr_var_ident).map_or_else(
+            || json!({"op": "opaque", "tag": "var"}),
+            |name| json!({"op": "var", "name": name}),
+        ),
+        _ => json!({"op": "opaque", "tag": tag}),
+    }
+}
+
+fn const_expr(node: &Node, rest: &[Node]) -> Value {
+    if let Some(items) = rest.first().and_then(Node::list)
+        && items.first().and_then(Node::atom) == Some("Constant")
+    {
+        let value = items.get(2).and_then(Node::atom).unwrap_or("");
+        match items.get(1).and_then(Node::atom) {
+            Some("Int") => {
+                if let Ok(value) = value.parse::<i64>() {
+                    return json!({"op": "int", "value": value});
+                }
+            }
+            Some("Bool") => match value {
+                "true" => return json!({"op": "bool", "value": true}),
+                "false" => return json!({"op": "bool", "value": false}),
+                _ => {}
+            },
+            _ => {}
+        }
+    }
+    if let Some(value) = rest.first().and_then(Node::atom) {
+        if let Ok(value) = value.parse::<i64>() {
+            return json!({"op": "int", "value": value});
+        }
+        match value {
+            "true" => return json!({"op": "bool", "value": true}),
+            "false" => return json!({"op": "bool", "value": false}),
+            _ => {}
+        }
+    }
+    let path = rest
+        .first()
+        .and_then(|fun| fun.field("path"))
+        .and_then(Node::atom)
+        .or_else(|| node.field("path").and_then(Node::atom));
+    if let Some(path) = path {
+        return json!({"op": "const", "path": path});
+    }
+    json!({"op": "opaque", "tag": "const"})
+}
+
+fn inequality_sym(node: &Node) -> Option<&'static str> {
+    let items = node.unwrap().list()?;
+    match items.get(1).and_then(Node::atom)? {
+        "Lt" => Some("<"),
+        "Le" => Some("<="),
+        "Gt" => Some(">"),
+        "Ge" => Some(">="),
+        "Eq" => Some("=="),
+        "Ne" => Some("!="),
+        _ => None,
+    }
+}
+
+fn binary_sym(op: &Node) -> Option<&'static str> {
+    let items = op.unwrap().list()?;
+    match items.first().and_then(Node::atom)? {
+        "BinaryOp" => match items.get(1).and_then(Node::atom)? {
+            "Eq" => Some("=="),
+            "Inequality" => inequality_sym(items.get(2)?),
+            "Arith" => match items.get(2).and_then(Node::list)?.get(1)?.atom()? {
+                "Add" => Some("+"),
+                "Sub" => Some("-"),
+                "Mul" => Some("*"),
+                _ => None,
+            },
+            _ => None,
+        },
+        "LogicalOp" => match items.get(1).and_then(Node::atom)? {
+            "And" => Some("&&"),
+            "Or" => Some("||"),
+            "Implies" => Some("==>"),
+            _ => None,
+        },
+        "ChainedOp" => inequality_sym(items.get(2)?),
+        "InequalityOp" => inequality_sym(op),
+        _ => None,
+    }
+}
+
+/// Generic, best-effort expression tree for a requires clause. This is the
+/// input to the project-side projection translation in `requires`; it is not
+/// a judgement and it never interprets a project path.
+fn clause_expr(node: &Node) -> Value {
+    let Some((tag, rest)) = expr_parts(node) else {
+        return json!({"op": "opaque", "tag": "atom"});
+    };
+    match tag {
+        "Const" | "ConstVar" => const_expr(node.unwrap(), rest),
+        "Var" => rest.first().and_then(expr_var_ident).map_or_else(
+            || json!({"op": "opaque", "tag": "var"}),
+            |name| json!({"op": "var", "name": name}),
+        ),
+        "Place" => place_expr(node),
+        "ReadPlace" => json!({
+            "op": "read",
+            "arg": rest.first().map_or_else(
+                || json!({"op": "opaque", "tag": "read"}),
+                place_expr,
+            ),
+        }),
+        "Old" => json!({
+            "op": "old",
+            "arg": rest.first().map_or_else(
+                || json!({"op": "opaque", "tag": "old"}),
+                clause_expr,
+            ),
+        }),
+        "Unary" => {
+            let op = rest.first().and_then(Node::list).unwrap_or_default();
+            let arg = rest.get(1).map(clause_expr);
+            match op.get(1).and_then(Node::atom) {
+                Some("Not") => json!({"op": "not", "arg": arg}),
+                Some("Neg") => json!({"op": "neg", "arg": arg}),
+                Some("Trigger" | "CoerceMode" | "Cast") => {
+                    arg.unwrap_or_else(|| json!({"op": "opaque", "tag": "unary"}))
+                }
+                Some("MutRefFuture") => json!({"op": "final", "arg": arg}),
+                Some("IsVariant") => json!({
+                    "op": "is_variant",
+                    "datatype": node.unwrap().field("datatype").and_then(dt_path),
+                    "variant": node.unwrap().field("variant").and_then(Node::atom),
+                    "arg": arg,
+                }),
+                _ => json!({"op": "opaque", "tag": "unary"}),
+            }
+        }
+        "UnaryOpr" => {
+            let op_node = rest.first();
+            let op = op_node.and_then(Node::list).unwrap_or_default();
+            match op.get(1).and_then(Node::atom) {
+                Some("IsVariant") => json!({
+                    "op": "is_variant",
+                    "datatype": op_node.and_then(|op| op.field("datatype")).and_then(dt_path),
+                    "variant": op_node.and_then(|op| op.field("variant")).and_then(Node::atom),
+                    "arg": rest.get(1).map(clause_expr),
+                }),
+                Some("IntegerTypeBound") => json!({
+                    "op": "const",
+                    "path": format!("$integer_type_bound[{}]", op.get(2).map(render_compact).unwrap_or_default()),
+                }),
+                other => json!({"op": "opaque", "tag": other.unwrap_or("unary_opr")}),
+            }
+        }
+        "Binary" => {
+            let lhs = rest.get(1).map(clause_expr);
+            let rhs = rest.get(2).map(clause_expr);
+            match (rest.first().and_then(binary_sym), lhs, rhs) {
+                (Some(sym), Some(lhs), Some(rhs)) => {
+                    json!({"op": "bin", "sym": sym, "lhs": lhs, "rhs": rhs})
+                }
+                _ => json!({"op": "opaque", "tag": "binary"}),
+            }
+        }
+        "Logical" => {
+            let lhs = rest.get(1).map(clause_expr);
+            let rhs = rest.get(2).map(clause_expr);
+            match (rest.first().and_then(binary_sym), lhs, rhs) {
+                (Some(sym), Some(lhs), Some(rhs)) => {
+                    json!({"op": "bin", "sym": sym, "lhs": lhs, "rhs": rhs})
+                }
+                _ => json!({"op": "opaque", "tag": "logical"}),
+            }
+        }
+        "Multi" => {
+            let op = rest.first().and_then(Node::list).unwrap_or_default();
+            if op.get(1).and_then(Node::atom) != Some("Chained") {
+                return json!({"op": "opaque", "tag": "multi"});
+            }
+            let ops = op.get(2).and_then(Node::list).unwrap_or_default();
+            let operands = rest.get(1).and_then(Node::list).unwrap_or_default();
+            if operands.len() != ops.len() + 1 {
+                return json!({"op": "opaque", "tag": "multi"});
+            }
+            let mut result: Option<Value> = None;
+            for (index, chained) in ops.iter().enumerate() {
+                let sym = binary_sym(chained);
+                let Some(sym) = sym else {
+                    return json!({"op": "opaque", "tag": "multi"});
+                };
+                let lhs = clause_expr(operands.get(index).unwrap_or(&Node::Atom(String::new())));
+                let rhs = clause_expr(
+                    operands
+                        .get(index + 1)
+                        .unwrap_or(&Node::Atom(String::new())),
+                );
+                let term = json!({"op": "bin", "sym": sym, "lhs": lhs, "rhs": rhs});
+                result = Some(match result {
+                    None => term,
+                    Some(previous) => {
+                        json!({"op": "bin", "sym": "&&", "lhs": previous, "rhs": term})
+                    }
+                });
+            }
+            result.unwrap_or_else(|| json!({"op": "opaque", "tag": "multi"}))
+        }
+        "WithTriggers" => rest.last().map_or_else(
+            || json!({"op": "opaque", "tag": "with_triggers"}),
+            clause_expr,
+        ),
+        "Call" => {
+            let args = node
+                .field("args")
+                .and_then(Node::list)
+                .unwrap_or_default()
+                .iter()
+                .map(clause_expr)
+                .collect::<Vec<_>>();
+            json!({
+                "op": "call",
+                "callee": call_path(node),
+                "dynamic": call_is_dynamic(node),
+                "args": args,
+            })
+        }
+        "Ctor" => {
+            let fields = rest.get(2).and_then(Node::list).unwrap_or_default();
+            let mut args = Vec::new();
+            for field in fields {
+                let items = field.unwrap().list().unwrap_or_default();
+                if items.first().and_then(Node::atom) == Some("->")
+                    && let Some(value) = items.get(2)
+                {
+                    args.push(clause_expr(value));
+                }
+            }
+            json!({
+                "op": "ctor",
+                "datatype": rest.first().map(render_compact),
+                "variant": rest.get(1).and_then(Node::atom),
+                "args": args,
+            })
+        }
+        "Quant" => {
+            let forall = rest.first().and_then(Node::atom) == Some("Forall");
+            let mut bindings = Vec::new();
+            if let Some(items) = rest.get(1).and_then(Node::list) {
+                for binding in items {
+                    let fields = binding.unwrap().list().unwrap_or_default();
+                    if let Some(name) = fields.get(1).and_then(expr_var_ident) {
+                        let typ = fields.get(2).map(render_compact).unwrap_or_default();
+                        bindings.push(json!({"name": name, "type": typ}));
+                    }
+                }
+            }
+            json!({
+                "op": "quant",
+                "forall": forall,
+                "bindings": bindings,
+                "body": rest.get(2).map_or_else(
+                    || json!({"op": "opaque", "tag": "quant-body"}),
+                    clause_expr,
+                ),
+            })
+        }
+        other => json!({"op": "opaque", "tag": other}),
+    }
+}
+
 #[derive(Debug, Default)]
 struct ClauseFeatures {
     call: bool,
@@ -1096,6 +1434,7 @@ fn requires_facts(
                 "text": clause_source(span, source_root, cache),
                 "class": if parsed.is_some() { "mechanical" } else { "unsupported" },
                 "ast": parsed.as_ref().map(Mech::value),
+                "expr": clause_expr(clause),
                 "ast_vars": expression_vars,
                 "ast_consts": expression_consts,
                 "vars": vars,
@@ -1777,6 +2116,16 @@ mod tests {
         assert_eq!(uses[0]["field"], "fld");
         assert_eq!(uses[1]["kind"], "plain_root");
         assert_eq!(uses[1]["name"], "fld");
+        assert_eq!(clauses[0]["expr"]["op"], "call");
+        assert_eq!(clauses[0]["expr"]["callee"], "p::inv");
+        assert_eq!(clauses[0]["expr"]["args"][0]["op"], "read");
+        assert_eq!(clauses[1]["expr"]["op"], "bin");
+        assert_eq!(clauses[1]["expr"]["sym"], "==");
+        assert_eq!(clauses[1]["expr"]["lhs"]["op"], "read");
+        assert_eq!(clauses[1]["expr"]["lhs"]["arg"]["op"], "field");
+        assert_eq!(clauses[1]["expr"]["lhs"]["arg"]["field"], "fld");
+        assert_eq!(clauses[1]["expr"]["lhs"]["arg"]["datatype"], "p::T");
+        assert_eq!(clauses[1]["expr"]["rhs"]["op"], "read");
     }
 
     #[test]
