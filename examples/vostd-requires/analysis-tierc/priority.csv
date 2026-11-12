@@ -1,0 +1,21 @@
+rank,function,blockers,requires_shape,recipe_group,recipe_code,expected_tier,cost,benefit,benefit_per_cost,registry,evidence
+1,ostd::mm::io::VmIo::read_bytes,G,call,A-type-level,G1-instantiate-concrete-impl + type-level-eval,A,1,3,3.0,io-family,new true-positive candidate: all crate impls obeys=true -> !obeys=false
+2,ostd::mm::io::VmIo::write_bytes,G,call,A-type-level,G1-instantiate-concrete-impl + type-level-eval,A,1,3,3.0,io-family,same cluster (7 fallback methods)
+3,ostd::sync::mutex::impl&%7::new,GRT,call,A-shape-construction,G1-instantiate + R1-id-projection + construction-probe,A,1,3,3.0,V-001,V-001 disputed: shape Live vs construction Vacuous
+4,ostd::specs::mm::embedding::cursor::vm_space_cursor_embedded,R,call,A-construction-model,R2-invariant-id + construction-probe,A,2,3,1.5,V-002,V-002: construction ConfirmedVacuous (M6)
+5,ostd::specs::mm::embedding::cursor::vm_space_cursor_mut_embedded,R,call,A-construction-model,R2-invariant-id + construction-probe,A,2,3,1.5,V-002,V-002: construction ConfirmedVacuous (M6)
+6,ostd::util::ops::range_difference,G,quantifier,A-type-axiom,G2-type-choice + type-axiom-eval,A,2,3,1.5,F-025,F-025: type axioms; instantiate T=usize
+7,ostd::util::ops::lemma_range_difference_set,G,call,A-type-axiom,G2-type-choice + type-axiom-eval,A,2,2,1.0,F-025,F-025 companion lemma
+8,ostd::util::range_alloc::impl&%4::alloc_specific,R,call,A-projection-scalar,R1-scalar-projection (+G1/G2 instantiation),A,1,2,2.0,F-009,F-009: scalar range projections
+9,ostd::util::range_alloc::impl&%4::free,RT,call,A-projection-scalar,R1-scalar-projection (+G1/G2 instantiation),A,1,2,2.0,F-009,F-009: range projections + id equality
+10,ostd::mm::page_table::cursor::path_slot_as_mut,GR,call,A-shape-array,G1-instantiate + R1-array-element-model,A,2,2,1.0,M1-row04,M1 row04: upgrade Inconclusive -> Live with array model
+11,ostd::specs::mm::page_table::cursor::owners::impl&%0::tracked_restore,GR,call,A-projection-scalar,R1-scalar-projection (+G1/G2 instantiation),A,1,2,2.0,M1-row17,M1 row17: idx/len scalar projection
+12,ostd::sync::mutex::impl&%3::release_lock,GRT,call,A-projection-id,G1-instantiate + R1-id-projection,A,1,2,2.0,F-002(adjacent),F-002 adjacent: perm/cell id equality
+13,ostd::sync::mutex::impl&%3::unlock,GRT,call,A-projection-id,G1-instantiate + R1-id-projection,A,1,2,2.0,F-002(adjacent),same
+14,ostd::cpu::set::impl&%6::add,R,call,A-inv-model,R2-invariant-id + concrete-inv-model,A,2,2,1.0,F-026(adjacent),F-026 adjacent: CpuSet.inv over bitset
+15,ostd::cpu::set::impl&%6::contains,R,call,A-inv-model,R2-invariant-id + concrete-inv-model,A,2,2,1.0,F-026(adjacent),same inv model; cluster of 9
+16,ostd::sync::rcu::impl&%6::update,GR,call,A-shape-property,G2-type-choice + R1-bool/option-projection,A,1,2,2.0,rcu-family,RCU family: nullable/Option projection
+17,ostd::mm::page_table::pte_index,G,call,A-projection-typeconst,G1-instantiate-C + R1-scalar-projection,A,1,1,1.0,,cheap A; level range
+18,ostd::mm::page_size,G,call,A-projection-typeconst,G1-instantiate-C + R1-scalar-projection,A,1,1,1.0,,cheap A; 8-lemma family
+19,ostd::specs::mm::page_table::cursor::owners::impl&%2::lemma_view_mappings_contains,G,field_access,A-projection-scalar,R1-scalar-projection (+G1/G2 instantiation),A,1,1,1.0,,cheap A; level scalar field
+20,ostd::specs::mm::page_table::node::entry_owners::impl&%1::tracked_borrow_node,GR,field_access,A-projection-tag,G1-instantiate + R1-enum-tag-projection,A,1,1,1.0,,4-function tag family
