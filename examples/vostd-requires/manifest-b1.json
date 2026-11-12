@@ -1,0 +1,1130 @@
+{
+  "contracts": [
+    {
+      "name": "r0028_lemma_path_pairs_step",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/arch/x86/kernel/acpi/remapping.rs",
+          "line": 522,
+          "span": "ostd/src/arch/x86/kernel/acpi/remapping.rs:522:7: 522:69 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::arch::kernel::acpi::remapping\""
+        }
+      },
+      "params": "bytes_id: usize, start: usize, end: usize",
+      "probe": "quantifier",
+      "requires": "p28_k0(bytes_id, start, end) && p28_k1(start, end)"
+    },
+    {
+      "name": "r0068_lemma_eq_from_bits",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "verified_libs/bitflags/src/lib.rs",
+          "line": 157,
+          "span": "verified_libs/bitflags/src/lib.rs:157:13: 339:74 (#696)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "left_id: usize, right_id: usize",
+      "probe": "quantifier",
+      "requires": "p68_k0(left_id, right_id)"
+    },
+    {
+      "name": "r0069_lemma_from_bits_bits",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "verified_libs/bitflags/src/lib.rs",
+          "line": 157,
+          "span": "verified_libs/bitflags/src/lib.rs:157:13: 331:61 (#696)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "bits: usize",
+      "probe": "quantifier",
+      "requires": "p69_k0(bits)"
+    },
+    {
+      "name": "r0111_lemma_x86_page_flags_wf",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/arch/x86/mm/mod.rs",
+          "line": 1106,
+          "span": "ostd/src/arch/x86/mm/mod.rs:1106:7: 1106:57 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::arch::mm\""
+        }
+      },
+      "params": "v: usize, flags: usize",
+      "probe": "quantifier",
+      "requires": "p111_k0(v, flags)"
+    },
+    {
+      "name": "r0112_lemma_x86_priv_flags_wf",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/arch/x86/mm/mod.rs",
+          "line": 1144,
+          "span": "ostd/src/arch/x86/mm/mod.rs:1144:7: 1144:62 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::arch::mm\""
+        }
+      },
+      "params": "v: usize, priv_flags: usize",
+      "probe": "quantifier",
+      "requires": "p112_k0(v, priv_flags)"
+    },
+    {
+      "name": "r0113_lemma_x86_set_prop_decode_bits",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/arch/x86/mm/mod.rs",
+          "line": 1239,
+          "span": "ostd/src/arch/x86/mm/mod.rs:1239:7: 1245:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::arch::mm\""
+        }
+      },
+      "params": "pbits: usize, priv_bits: usize, cache_flags: usize, flags: usize",
+      "probe": "quantifier",
+      "requires": "p113_k0(pbits) && p113_k1(priv_bits) && p113_k2(cache_flags) && p113_k3(flags, pbits, priv_bits, cache_flags)"
+    },
+    {
+      "name": "r0114_lemma_x86_set_prop_preserves_entry_bits",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/arch/x86/mm/mod.rs",
+          "line": 1338,
+          "span": "ostd/src/arch/x86/mm/mod.rs:1338:7: 1338:95 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::arch::mm\""
+        }
+      },
+      "params": "old_raw: usize, new_raw: usize, flags: usize, phys_addr_mask: usize",
+      "probe": "quantifier",
+      "requires": "p114_k0(old_raw, new_raw, flags, phys_addr_mask) && p114_k1(flags, phys_addr_mask) && p114_k2(flags)"
+    },
+    {
+      "name": "r0115_lemma_x86_set_prop_roundtrip",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/arch/x86/mm/mod.rs",
+          "line": 1290,
+          "span": "ostd/src/arch/x86/mm/mod.rs:1290:7: 1290:88 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::arch::mm\""
+        }
+      },
+      "params": "prop_id: usize, flags: usize",
+      "probe": "quantifier",
+      "requires": "p115_k0(prop_id) && p115_k1(prop_id) && p115_k2(prop_id) && p115_k3(flags, prop_id)"
+    },
+    {
+      "name": "r0140_lemma_type_inv_range",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/cpu/mod.rs",
+          "line": 160,
+          "span": "ostd/src/cpu/mod.rs:160:1: 160:59 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "cpu_id_id: usize",
+      "probe": "quantifier",
+      "requires": "p140_k0(cpu_id_id)"
+    },
+    {
+      "name": "r0156_with_capacity_val",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "exec",
+        "source": {
+          "file": "ostd/src/cpu/set.rs",
+          "line": 461,
+          "span": "ostd/src/cpu/set.rs:461:5: 461:66 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::cpu::set\""
+        }
+      },
+      "params": "num_cpus: usize",
+      "probe": "quantifier",
+      "requires": "p156_k0(num_cpus) && p156_k1(num_cpus)"
+    },
+    {
+      "name": "r0158_contains",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "exec",
+        "source": {
+          "file": "ostd/src/cpu/set.rs",
+          "line": 618,
+          "span": "ostd/src/cpu/set.rs:618:5: 618:70 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "ordering_id: usize",
+      "probe": "quantifier",
+      "requires": "p158_k0(ordering_id) && p158_k1(ordering_id)"
+    },
+    {
+      "name": "r0159_load",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "exec",
+        "source": {
+          "file": "ostd/src/cpu/set.rs",
+          "line": 558,
+          "span": "ostd/src/cpu/set.rs:558:5: 558:53 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "ordering_id: usize",
+      "probe": "quantifier",
+      "requires": "p159_k0(ordering_id)"
+    },
+    {
+      "name": "r0160_new",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "exec",
+        "source": {
+          "file": "ostd/src/cpu/set.rs",
+          "line": 537,
+          "span": "ostd/src/cpu/set.rs:537:5: 537:38 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "value_id: usize",
+      "probe": "quantifier",
+      "requires": "p160_k0(value_id)"
+    },
+    {
+      "name": "r0162_store",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "exec",
+        "source": {
+          "file": "ostd/src/cpu/set.rs",
+          "line": 581,
+          "span": "ostd/src/cpu/set.rs:581:5: 581:60 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "ordering_id: usize",
+      "probe": "quantifier",
+      "requires": "p162_k0(ordering_id) && p162_k1(ordering_id)"
+    },
+    {
+      "name": "r0168_lemma_u64_nonzero_has_set_bit_aux",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/cpu/set.rs",
+          "line": 663,
+          "span": "ostd/src/cpu/set.rs:663:7: 663:62 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::cpu::set\""
+        }
+      },
+      "params": "word: usize, n: usize",
+      "probe": "quantifier",
+      "requires": "p168_k0(word) && p168_k1(n) && p168_k2(word, n)"
+    },
+    {
+      "name": "r0185_check_and_insert_dma_mapping",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "exec",
+        "source": {
+          "file": "ostd/src/mm/dma/mod.rs",
+          "line": 111,
+          "span": "ostd/src/mm/dma/mod.rs:111:1: 111:78 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::mm::dma\""
+        }
+      },
+      "params": "start_paddr: usize, num_pages: usize, page_size: usize",
+      "probe": "quantifier",
+      "requires": "p185_k0(start_paddr, num_pages, page_size)"
+    },
+    {
+      "name": "r0301_lemma_meta_region_inv_at",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/mm/frame/linked_list.rs",
+          "line": 142,
+          "span": "ostd/src/mm/frame/linked_list.rs:142:7: 142:69 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::mm::frame::linked_list\""
+        }
+      },
+      "params": "regions_id: usize, i: usize",
+      "probe": "quantifier",
+      "requires": "p301_k0(regions_id) && p301_k1(regions_id, i)"
+    },
+    {
+      "name": "r0314_frame_to_meta",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "exec",
+        "source": {
+          "file": "ostd/src/mm/frame/meta.rs",
+          "line": 40,
+          "span": "ostd/src/mm/frame/meta.rs:40:5: 40:60 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "paddr: usize",
+      "probe": "quantifier",
+      "requires": "p314_k0(paddr)"
+    },
+    {
+      "name": "r0315_meta_to_frame",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "exec",
+        "source": {
+          "file": "ostd/src/mm/frame/meta.rs",
+          "line": 59,
+          "span": "ostd/src/mm/frame/meta.rs:59:5: 59:60 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "vaddr: usize, frame_metadata_range: usize, meta_slot_size: usize",
+      "probe": "quantifier",
+      "requires": "p315_k0(vaddr, frame_metadata_range) && p315_k1(vaddr, meta_slot_size)"
+    },
+    {
+      "name": "r0435_lemma_kernel_range_valid",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/mm/kspace/kvirt_area.rs",
+          "line": 284,
+          "span": "ostd/src/mm/kspace/kvirt_area.rs:284:1: 284:66 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "r_id: usize, kernel_base_vaddr: usize, kernel_end_vaddr: usize, page_size: usize",
+      "probe": "quantifier",
+      "requires": "p435_k0(r_id, kernel_base_vaddr, kernel_end_vaddr) && p435_k1(r_id, page_size) && p435_k2(r_id, page_size)"
+    },
+    {
+      "name": "r0436_sum_page_sizes_extend_right",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/mm/kspace/kvirt_area.rs",
+          "line": 158,
+          "span": "ostd/src/mm/kspace/kvirt_area.rs:158:7: 158:82 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::mm::kspace::kvirt_area\""
+        }
+      },
+      "params": "elems_id: usize, from: usize, to: usize",
+      "probe": "quantifier",
+      "requires": "p436_k0(elems_id, from, to)"
+    },
+    {
+      "name": "r0437_sum_page_sizes_mono",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/mm/kspace/kvirt_area.rs",
+          "line": 176,
+          "span": "ostd/src/mm/kspace/kvirt_area.rs:176:7: 176:85 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::mm::kspace::kvirt_area\""
+        }
+      },
+      "params": "elems_id: usize, from: usize, to1: usize, to2: usize",
+      "probe": "quantifier",
+      "requires": "p437_k0(elems_id, from, to1, to2)"
+    },
+    {
+      "name": "r0438_paddr_to_vaddr",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "exec",
+        "source": {
+          "file": "ostd/src/mm/kspace/mod.rs",
+          "line": 146,
+          "span": "ostd/src/mm/kspace/mod.rs:146:1: 146:42 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "pa: usize, linear_mapping_base_vaddr: usize",
+      "probe": "quantifier",
+      "requires": "p438_k0(pa, linear_mapping_base_vaddr)"
+    },
+    {
+      "name": "r0475_lemma_eq_from_bits",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "verified_libs/bitflags/src/lib.rs",
+          "line": 157,
+          "span": "verified_libs/bitflags/src/lib.rs:157:13: 339:74 (#4368)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "left_id: usize, right_id: usize",
+      "probe": "quantifier",
+      "requires": "p475_k0(left_id, right_id)"
+    },
+    {
+      "name": "r0476_lemma_from_bits_bits",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "verified_libs/bitflags/src/lib.rs",
+          "line": 157,
+          "span": "verified_libs/bitflags/src/lib.rs:157:13: 331:61 (#4368)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "bits: usize",
+      "probe": "quantifier",
+      "requires": "p476_k0(bits)"
+    },
+    {
+      "name": "r0516_lemma_eq_from_bits",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "verified_libs/bitflags/src/lib.rs",
+          "line": 157,
+          "span": "verified_libs/bitflags/src/lib.rs:157:13: 339:74 (#4568)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "left_id: usize, right_id: usize",
+      "probe": "quantifier",
+      "requires": "p516_k0(left_id, right_id)"
+    },
+    {
+      "name": "r0517_lemma_from_bits_bits",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "verified_libs/bitflags/src/lib.rs",
+          "line": 157,
+          "span": "verified_libs/bitflags/src/lib.rs:157:13: 331:61 (#4568)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "bits: usize",
+      "probe": "quantifier",
+      "requires": "p517_k0(bits)"
+    },
+    {
+      "name": "r0591_lemma_replace_cur_entry_mapping_sets",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/mm/page_table/cursor/mod.rs",
+          "line": 169,
+          "span": "ostd/src/mm/page_table/cursor/mod.rs:169:7: 175:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::mm::page_table::cursor\""
+        }
+      },
+      "params": "all_id: usize, current_id: usize, old_subtree_id: usize, replacement_id: usize, new_subtree_id: usize",
+      "probe": "quantifier",
+      "requires": "p591_k0(all_id, current_id) && p591_k1(current_id, old_subtree_id) && p591_k2(current_id, replacement_id, old_subtree_id, new_subtree_id)"
+    },
+    {
+      "name": "r0731_lemma_meta_frame_vaddr_properties",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/arch/x86/mod.rs",
+          "line": 118,
+          "span": "ostd/src/../specs/arch/x86/mod.rs:118:1: 118:70 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "meta: usize, meta_slot_size: usize, max_nr_pages: usize, frame_metadata_range: usize",
+      "probe": "quantifier",
+      "requires": "p731_k0(meta, meta_slot_size) && p731_k1(meta, max_nr_pages, meta_slot_size, frame_metadata_range)"
+    },
+    {
+      "name": "r0779_lemma_accounting_inv_at",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 916,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:916:7: 916:67 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::specs::mm::embedding\""
+        }
+      },
+      "params": "s_id: usize, idx: usize",
+      "probe": "quantifier",
+      "requires": "p779_k0(s_id) && p779_k1(idx)"
+    },
+    {
+      "name": "r0780_lemma_accounting_inv_intro",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 1895,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:1895:7: 1895:64 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::specs::mm::embedding\""
+        }
+      },
+      "params": "store_id: usize, ref_count_unused: usize, ref_count_unique: usize",
+      "probe": "quantifier",
+      "requires": "p780_k0(store_id, ref_count_unused) && p780_k1(store_id, ref_count_unique, ref_count_unused) && p780_k2(store_id, ref_count_unique, ref_count_unused)"
+    },
+    {
+      "name": "r0781_lemma_accounting_preserved_by_pt_alloc",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 1051,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:1051:7: 1051:98 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::specs::mm::embedding\""
+        }
+      },
+      "params": "s_old_id: usize, s_new_id: usize, ref_count_unused: usize",
+      "probe": "quantifier",
+      "requires": "p781_k0(s_old_id) && p781_k1(s_old_id, s_new_id) && p781_k2(s_old_id, s_new_id) && p781_k3(s_old_id, s_new_id, ref_count_unused)"
+    },
+    {
+      "name": "r0782_lemma_coverage_preserved_slots_eq",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 1104,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:1104:7: 1104:93 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::specs::mm::embedding\""
+        }
+      },
+      "params": "s_old_id: usize, s_new_id: usize",
+      "probe": "quantifier",
+      "requires": "p782_k0(s_old_id) && p782_k1(s_old_id, s_new_id) && p782_k2(s_old_id, s_new_id)"
+    },
+    {
+      "name": "r0784_lemma_frame_drop_pre_derivable",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 215,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:215:1: 215:82 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "s_id: usize, fid: usize",
+      "probe": "quantifier",
+      "requires": "p784_k0(s_id) && p784_k1(s_id, fid) && p784_k2(s_id, fid)"
+    },
+    {
+      "name": "r0791_lemma_handle_count_insert_fresh",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 164,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:164:1: 169:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "frames_id: usize, id: usize",
+      "probe": "quantifier",
+      "requires": "p791_k0(frames_id, id)"
+    },
+    {
+      "name": "r0792_lemma_handle_count_remove",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 193,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:193:1: 193:97 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "frames_id: usize, fid: usize",
+      "probe": "quantifier",
+      "requires": "p792_k0(frames_id, fid)"
+    },
+    {
+      "name": "r0793_lemma_segment_cover_contains",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 2844,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:2844:1: 2848:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "segments_id: usize, sid: usize, paddr: usize",
+      "probe": "quantifier",
+      "requires": "p793_k0(segments_id, sid) && p793_k1(segments_id, sid, paddr)"
+    },
+    {
+      "name": "r0794_lemma_segment_cover_insert_inside",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 2794,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:2794:1: 2799:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "segments_id: usize, sid: usize, entry_id: usize, paddr: usize",
+      "probe": "quantifier",
+      "requires": "p794_k0(segments_id, sid) && p794_k1(entry_id, paddr)"
+    },
+    {
+      "name": "r0795_lemma_segment_cover_insert_outside",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 2819,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:2819:1: 2824:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "segments_id: usize, sid: usize, entry_id: usize, paddr: usize",
+      "probe": "quantifier",
+      "requires": "p795_k0(segments_id, sid) && p795_k1(entry_id, paddr)"
+    },
+    {
+      "name": "r0796_lemma_segment_cover_remove_inside",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 2863,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:2863:1: 2867:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "segments_id: usize, sid: usize, paddr: usize",
+      "probe": "quantifier",
+      "requires": "p796_k0(segments_id, sid) && p796_k1(segments_id, sid, paddr)"
+    },
+    {
+      "name": "r0797_lemma_segment_cover_remove_outside",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 3050,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:3050:1: 3054:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "segments_id: usize, sid: usize, paddr: usize",
+      "probe": "quantifier",
+      "requires": "p797_k0(segments_id, sid) && p797_k1(segments_id, sid, paddr)"
+    },
+    {
+      "name": "r0798_lemma_segment_cover_shrink_front",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 2893,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:2893:1: 2898:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "segments_id: usize, sid: usize, page_size: usize, max_paddr: usize, new_entry_id: usize, paddr_check: usize",
+      "probe": "quantifier",
+      "requires": "p798_k0(segments_id, sid) && p798_k1(segments_id, sid) && p798_k2(segments_id, sid, page_size) && p798_k3(segments_id, sid, page_size, max_paddr) && p798_k4(segments_id, sid, new_entry_id, page_size) && p798_k5(segments_id, sid, new_entry_id) && p798_k6(new_entry_id) && p798_k7(paddr_check, page_size)"
+    },
+    {
+      "name": "r0799_lemma_segment_cover_split",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 2986,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:2986:1: 2994:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "segments_id: usize, sid: usize, new_left: usize, new_right: usize, entry_left_id: usize, entry_right_id: usize",
+      "probe": "quantifier",
+      "requires": "p799_k0(segments_id, sid) && p799_k1(sid, new_left) && p799_k2(sid, new_right) && p799_k3(new_left, new_right) && p799_k4(segments_id, sid, new_left) && p799_k5(segments_id, sid, new_right) && p799_k6(segments_id, sid, entry_left_id) && p799_k7(entry_left_id, entry_right_id) && p799_k8(segments_id, sid, entry_right_id) && p799_k9(entry_left_id) && p799_k10(entry_right_id)"
+    },
+    {
+      "name": "r0800_lemma_segment_cover_witness",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 136,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:136:1: 139:21 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "segments_id: usize, paddr: usize",
+      "probe": "quantifier",
+      "requires": "p800_k0(segments_id, paddr)"
+    },
+    {
+      "name": "r0824_lemma_step_segment_from_unused_accounting",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/embedding/mod.rs",
+          "line": 1765,
+          "span": "ostd/src/../specs/mm/embedding/mod.rs:1765:7: 1771:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::specs::mm::embedding\""
+        }
+      },
+      "params": "s_after_id: usize, old_store_id: usize, id: usize, entry_id: usize, range_id: usize, page_size: usize, max_paddr: usize, ref_count_unused: usize",
+      "probe": "quantifier",
+      "requires": "p824_k0(s_after_id) && p824_k1(s_after_id, old_store_id) && p824_k2(old_store_id, id) && p824_k3(s_after_id, old_store_id, id, entry_id) && p824_k4(range_id, entry_id) && p824_k5(range_id, page_size) && p824_k6(range_id, page_size) && p824_k7(range_id) && p824_k8(range_id, max_paddr) && p824_k9(old_store_id) && p824_k10(old_store_id) && p824_k11(s_after_id, range_id, page_size) && p824_k12(s_after_id, old_store_id, range_id) && p824_k13(old_store_id, range_id, page_size, ref_count_unused)"
+    }
+  ],
+  "preamble": "// Generated by spec-check screen-requires (M7e).\n// Requires clauses are wrapped as named spec fns (quantifier-trigger\n// discipline). Mechanical clauses are open spec bodies; clauses over\n// ghost structure are uninterp spec fns (constraint structure kept by\n// name, body abstracted). Constants referenced by requires are lifted\n// to probe parameters (documented abstraction).\n\npub uninterp spec fn p28_k0(bytes_id: usize, start: usize, end: usize) -> bool;\n\npub uninterp spec fn p28_k1(start: usize, end: usize) -> bool;\n\n\npub uninterp spec fn p68_k0(left_id: usize, right_id: usize) -> bool;\n\n\npub uninterp spec fn p69_k0(bits: usize) -> bool;\n\n\npub uninterp spec fn p111_k0(v: usize, flags: usize) -> bool;\n\n\npub uninterp spec fn p112_k0(v: usize, priv_flags: usize) -> bool;\n\n\npub uninterp spec fn p113_k0(pbits: usize) -> bool;\n\npub uninterp spec fn p113_k1(priv_bits: usize) -> bool;\n\npub open spec fn p113_k2(cache_flags: usize) -> bool {\n    (((cache_flags == 0) || (cache_flags == 8)) || (cache_flags == 16))\n}\n\npub uninterp spec fn p113_k3(flags: usize, pbits: usize, priv_bits: usize, cache_flags: usize) -> bool;\n\n\npub uninterp spec fn p114_k0(old_raw: usize, new_raw: usize, flags: usize, phys_addr_mask: usize) -> bool;\n\npub uninterp spec fn p114_k1(flags: usize, phys_addr_mask: usize) -> bool;\n\npub uninterp spec fn p114_k2(flags: usize) -> bool;\n\n\npub uninterp spec fn p115_k0(prop_id: usize) -> bool;\n\npub uninterp spec fn p115_k1(prop_id: usize) -> bool;\n\npub uninterp spec fn p115_k2(prop_id: usize) -> bool;\n\npub uninterp spec fn p115_k3(flags: usize, prop_id: usize) -> bool;\n\n\npub uninterp spec fn p140_k0(cpu_id_id: usize) -> bool;\n\n\npub uninterp spec fn p156_k0(num_cpus: usize) -> bool;\n\npub uninterp spec fn p156_k1(num_cpus: usize) -> bool;\n\n\npub uninterp spec fn p158_k0(ordering_id: usize) -> bool;\n\npub uninterp spec fn p158_k1(ordering_id: usize) -> bool;\n\n\npub uninterp spec fn p159_k0(ordering_id: usize) -> bool;\n\n\npub uninterp spec fn p160_k0(value_id: usize) -> bool;\n\n\npub uninterp spec fn p162_k0(ordering_id: usize) -> bool;\n\npub uninterp spec fn p162_k1(ordering_id: usize) -> bool;\n\n\npub open spec fn p168_k0(word: usize) -> bool {\n    !((word == 0))\n}\n\npub open spec fn p168_k1(n: usize) -> bool {\n    ((0 <= n) && (n <= 64))\n}\n\npub uninterp spec fn p168_k2(word: usize, n: usize) -> bool;\n\n\npub uninterp spec fn p185_k0(start_paddr: usize, num_pages: usize, page_size: usize) -> bool;\n\n\npub uninterp spec fn p301_k0(regions_id: usize) -> bool;\n\npub uninterp spec fn p301_k1(regions_id: usize, i: usize) -> bool;\n\n\npub uninterp spec fn p314_k0(paddr: usize) -> bool;\n\n\npub uninterp spec fn p315_k0(vaddr: usize, frame_metadata_range: usize) -> bool;\n\npub uninterp spec fn p315_k1(vaddr: usize, meta_slot_size: usize) -> bool;\n\n\npub uninterp spec fn p435_k0(r_id: usize, kernel_base_vaddr: usize, kernel_end_vaddr: usize) -> bool;\n\npub uninterp spec fn p435_k1(r_id: usize, page_size: usize) -> bool;\n\npub uninterp spec fn p435_k2(r_id: usize, page_size: usize) -> bool;\n\n\npub uninterp spec fn p436_k0(elems_id: usize, from: usize, to: usize) -> bool;\n\n\npub uninterp spec fn p437_k0(elems_id: usize, from: usize, to1: usize, to2: usize) -> bool;\n\n\npub uninterp spec fn p438_k0(pa: usize, linear_mapping_base_vaddr: usize) -> bool;\n\n\npub uninterp spec fn p475_k0(left_id: usize, right_id: usize) -> bool;\n\n\npub uninterp spec fn p476_k0(bits: usize) -> bool;\n\n\npub uninterp spec fn p516_k0(left_id: usize, right_id: usize) -> bool;\n\n\npub uninterp spec fn p517_k0(bits: usize) -> bool;\n\n\npub uninterp spec fn p591_k0(all_id: usize, current_id: usize) -> bool;\n\npub uninterp spec fn p591_k1(current_id: usize, old_subtree_id: usize) -> bool;\n\npub uninterp spec fn p591_k2(current_id: usize, replacement_id: usize, old_subtree_id: usize, new_subtree_id: usize) -> bool;\n\n\npub uninterp spec fn p731_k0(meta: usize, meta_slot_size: usize) -> bool;\n\npub uninterp spec fn p731_k1(meta: usize, max_nr_pages: usize, meta_slot_size: usize, frame_metadata_range: usize) -> bool;\n\n\npub uninterp spec fn p779_k0(s_id: usize) -> bool;\n\npub uninterp spec fn p779_k1(idx: usize) -> bool;\n\n\npub uninterp spec fn p780_k0(store_id: usize, ref_count_unused: usize) -> bool;\n\npub uninterp spec fn p780_k1(store_id: usize, ref_count_unique: usize, ref_count_unused: usize) -> bool;\n\npub uninterp spec fn p780_k2(store_id: usize, ref_count_unique: usize, ref_count_unused: usize) -> bool;\n\n\npub uninterp spec fn p781_k0(s_old_id: usize) -> bool;\n\npub uninterp spec fn p781_k1(s_old_id: usize, s_new_id: usize) -> bool;\n\npub uninterp spec fn p781_k2(s_old_id: usize, s_new_id: usize) -> bool;\n\npub uninterp spec fn p781_k3(s_old_id: usize, s_new_id: usize, ref_count_unused: usize) -> bool;\n\n\npub uninterp spec fn p782_k0(s_old_id: usize) -> bool;\n\npub uninterp spec fn p782_k1(s_old_id: usize, s_new_id: usize) -> bool;\n\npub uninterp spec fn p782_k2(s_old_id: usize, s_new_id: usize) -> bool;\n\n\npub uninterp spec fn p784_k0(s_id: usize) -> bool;\n\npub uninterp spec fn p784_k1(s_id: usize, fid: usize) -> bool;\n\npub uninterp spec fn p784_k2(s_id: usize, fid: usize) -> bool;\n\n\npub uninterp spec fn p791_k0(frames_id: usize, id: usize) -> bool;\n\n\npub uninterp spec fn p792_k0(frames_id: usize, fid: usize) -> bool;\n\n\npub uninterp spec fn p793_k0(segments_id: usize, sid: usize) -> bool;\n\npub uninterp spec fn p793_k1(segments_id: usize, sid: usize, paddr: usize) -> bool;\n\n\npub uninterp spec fn p794_k0(segments_id: usize, sid: usize) -> bool;\n\npub uninterp spec fn p794_k1(entry_id: usize, paddr: usize) -> bool;\n\n\npub uninterp spec fn p795_k0(segments_id: usize, sid: usize) -> bool;\n\npub uninterp spec fn p795_k1(entry_id: usize, paddr: usize) -> bool;\n\n\npub uninterp spec fn p796_k0(segments_id: usize, sid: usize) -> bool;\n\npub uninterp spec fn p796_k1(segments_id: usize, sid: usize, paddr: usize) -> bool;\n\n\npub uninterp spec fn p797_k0(segments_id: usize, sid: usize) -> bool;\n\npub uninterp spec fn p797_k1(segments_id: usize, sid: usize, paddr: usize) -> bool;\n\n\npub uninterp spec fn p798_k0(segments_id: usize, sid: usize) -> bool;\n\npub uninterp spec fn p798_k1(segments_id: usize, sid: usize) -> bool;\n\npub uninterp spec fn p798_k2(segments_id: usize, sid: usize, page_size: usize) -> bool;\n\npub uninterp spec fn p798_k3(segments_id: usize, sid: usize, page_size: usize, max_paddr: usize) -> bool;\n\npub uninterp spec fn p798_k4(segments_id: usize, sid: usize, new_entry_id: usize, page_size: usize) -> bool;\n\npub uninterp spec fn p798_k5(segments_id: usize, sid: usize, new_entry_id: usize) -> bool;\n\npub uninterp spec fn p798_k6(new_entry_id: usize) -> bool;\n\npub uninterp spec fn p798_k7(paddr_check: usize, page_size: usize) -> bool;\n\n\npub uninterp spec fn p799_k0(segments_id: usize, sid: usize) -> bool;\n\npub open spec fn p799_k1(sid: usize, new_left: usize) -> bool {\n    !((new_left == sid))\n}\n\npub open spec fn p799_k2(sid: usize, new_right: usize) -> bool {\n    !((new_right == sid))\n}\n\npub open spec fn p799_k3(new_left: usize, new_right: usize) -> bool {\n    !((new_left == new_right))\n}\n\npub uninterp spec fn p799_k4(segments_id: usize, sid: usize, new_left: usize) -> bool;\n\npub uninterp spec fn p799_k5(segments_id: usize, sid: usize, new_right: usize) -> bool;\n\npub uninterp spec fn p799_k6(segments_id: usize, sid: usize, entry_left_id: usize) -> bool;\n\npub uninterp spec fn p799_k7(entry_left_id: usize, entry_right_id: usize) -> bool;\n\npub uninterp spec fn p799_k8(segments_id: usize, sid: usize, entry_right_id: usize) -> bool;\n\npub uninterp spec fn p799_k9(entry_left_id: usize) -> bool;\n\npub uninterp spec fn p799_k10(entry_right_id: usize) -> bool;\n\n\npub uninterp spec fn p800_k0(segments_id: usize, paddr: usize) -> bool;\n\n\npub uninterp spec fn p824_k0(s_after_id: usize) -> bool;\n\npub uninterp spec fn p824_k1(s_after_id: usize, old_store_id: usize) -> bool;\n\npub uninterp spec fn p824_k2(old_store_id: usize, id: usize) -> bool;\n\npub uninterp spec fn p824_k3(s_after_id: usize, old_store_id: usize, id: usize, entry_id: usize) -> bool;\n\npub uninterp spec fn p824_k4(range_id: usize, entry_id: usize) -> bool;\n\npub uninterp spec fn p824_k5(range_id: usize, page_size: usize) -> bool;\n\npub uninterp spec fn p824_k6(range_id: usize, page_size: usize) -> bool;\n\npub uninterp spec fn p824_k7(range_id: usize) -> bool;\n\npub uninterp spec fn p824_k8(range_id: usize, max_paddr: usize) -> bool;\n\npub uninterp spec fn p824_k9(old_store_id: usize) -> bool;\n\npub uninterp spec fn p824_k10(old_store_id: usize) -> bool;\n\npub uninterp spec fn p824_k11(s_after_id: usize, range_id: usize, page_size: usize) -> bool;\n\npub uninterp spec fn p824_k12(s_after_id: usize, old_store_id: usize, range_id: usize) -> bool;\n\npub uninterp spec fn p824_k13(old_store_id: usize, range_id: usize, page_size: usize, ref_count_unused: usize) -> bool;\n\n\n"
+}

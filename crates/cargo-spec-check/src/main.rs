@@ -39,6 +39,7 @@ use spec_check_core::permission_guidance;
 use spec_check_core::prefix;
 use spec_check_core::project;
 use spec_check_core::reader;
+use spec_check_core::requires;
 use spec_check_core::resource;
 use spec_check_core::resource_flow;
 use spec_check_core::resource_project;
@@ -214,6 +215,141 @@ fn check() -> Result<()> {
             counts["without_postcondition"]["outputs"],
             counts["without_postcondition"]["findings"],
         );
+        return Ok(());
+    }
+    if args.first().is_some_and(|s| s == "screen-requires") {
+        let usage = "screen-requires --census FILE --out DIRECTORY [--tier A,B] [--filter SUBSTRING] [--limit N] [--batch N] [--batch-size N] [--cargo-verus PATH --z3 PATH --vstd PATH]";
+        let mut values = BTreeMap::new();
+        let mut iter = args.iter().skip(1);
+        while let Some(key) = iter.next() {
+            if !matches!(
+                key.as_str(),
+                "--census"
+                    | "--out"
+                    | "--tier"
+                    | "--filter"
+                    | "--limit"
+                    | "--batch"
+                    | "--batch-size"
+                    | "--cargo-verus"
+                    | "--z3"
+                    | "--vstd"
+            ) {
+                return Err(usage.into());
+            }
+            let value = iter.next().ok_or(usage)?.clone();
+            if values.insert(key.clone(), value).is_some() {
+                return Err(usage.into());
+            }
+        }
+        let get = |k: &str| values.get(k).map(String::as_str).ok_or("missing option");
+        let tiers = values
+            .get("--tier")
+            .map(|value| {
+                let mut tiers = std::collections::BTreeSet::new();
+                for tier in value.split(',').map(|tier| tier.trim().to_ascii_uppercase()) {
+                    if !matches!(tier.as_str(), "A" | "B" | "C") {
+                        return Err("--tier accepts a comma-separated subset of A,B,C");
+                    }
+                    tiers.insert(tier);
+                }
+                Ok(tiers)
+            })
+            .transpose()?
+            .unwrap_or_else(|| ["A", "B"].into_iter().map(str::to_owned).collect());
+        let options = requires::Options {
+            tiers,
+            filter: values.get("--filter").cloned(),
+            limit: values
+                .get("--limit")
+                .map(|value| value.parse::<usize>())
+                .transpose()
+                .map_err(|_| "--limit must be a non-negative integer")?,
+            batch: values
+                .get("--batch")
+                .map(|value| value.parse::<usize>())
+                .transpose()
+                .map_err(|_| "--batch must be a non-negative integer")?,
+            batch_size: values
+                .get("--batch-size")
+                .map(|value| value.parse::<usize>())
+                .transpose()
+                .map_err(|_| "--batch-size must be a non-negative integer")?
+                .unwrap_or(50),
+        };
+        let out = Path::new(get("--out")?);
+        let built = requires::run(Path::new(get("--census")?), out, &options)?;
+        let counts = &built["report"]["counts"];
+        println!(
+            "screen-requires: {} functions, {} with requires ({} A / {} B / {} C), {} no-requires; candidates {} selected {}",
+            counts["functions"],
+            counts["with_requires"],
+            counts["tier_a"],
+            counts["tier_b"],
+            counts["tier_c"],
+            counts["no_requires"],
+            counts["candidates"],
+            counts["selected"],
+        );
+        let run_paths = [
+            values.get("--cargo-verus"),
+            values.get("--z3"),
+            values.get("--vstd"),
+        ];
+        if run_paths.iter().any(Option::is_some) {
+            let cargo_verus = run_paths[0].ok_or("--cargo-verus required to run probes")?;
+            let z3 = run_paths[1].ok_or("--z3 required to run probes")?;
+            let vstd = run_paths[2].ok_or("--vstd required to run probes")?;
+            let manifest: spec_check_analyses::vacuity::Manifest =
+                serde_json::from_value(built["manifest"].clone())?;
+            let run_out = out.join("run");
+            let report = spec_check_analyses::vacuity::run(
+                &manifest,
+                Path::new(cargo_verus),
+                Path::new(z3),
+                Path::new(vstd),
+                &run_out,
+            )?;
+            write_json(&run_out.join("report.json"), &report)?;
+            let expected = built["report"]["entries"]
+                .as_array()
+                .into_iter()
+                .flatten()
+                .filter_map(|entry| {
+                    Some((
+                        entry["name"].as_str()?.to_owned(),
+                        entry["expected"].as_str()?.to_owned(),
+                    ))
+                })
+                .collect::<BTreeMap<_, _>>();
+            let mut matches = Vec::new();
+            for verdict in &report.verdicts {
+                let expect = expected.get(&verdict.name).cloned();
+                let actual = format!("{:?}", verdict.verdict);
+                matches.push(json!({
+                    "name": verdict.name,
+                    "verdict": actual,
+                    "expected": expect,
+                    "match": expect.as_deref() == Some(actual.as_str()),
+                    "detail": verdict.detail,
+                }));
+            }
+            write_json(&run_out.join("verdicts.json"), &json!({
+                "dependency_summary": report.dependency_summary,
+                "probe_summary": report.probe_summary,
+                "target_summary": report.target_summary,
+                "entries": matches,
+                "distribution": {
+                    "confirmed_vacuous": report.verdicts.iter().filter(|v| matches!(v.verdict, spec_check_analyses::vacuity::Verdict::ConfirmedVacuous)).count(),
+                    "confirmed_live": report.verdicts.iter().filter(|v| matches!(v.verdict, spec_check_analyses::vacuity::Verdict::ConfirmedLive)).count(),
+                    "candidate_inconclusive": report.verdicts.iter().filter(|v| matches!(v.verdict, spec_check_analyses::vacuity::Verdict::CandidateInconclusive)).count(),
+                    "anomaly": report.verdicts.iter().filter(|v| matches!(v.verdict, spec_check_analyses::vacuity::Verdict::Anomaly)).count(),
+                },
+            }))?;
+            for verdict in &report.verdicts {
+                println!("{}: {:?}", verdict.name, verdict.verdict);
+            }
+        }
         return Ok(());
     }
     if args.first().is_some_and(|s| s == "ledger") {

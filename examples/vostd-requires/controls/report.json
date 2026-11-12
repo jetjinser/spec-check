@@ -1,0 +1,22 @@
+{
+  "verdicts": [
+    {
+      "name": "constant_false",
+      "verdict": "ConfirmedVacuous",
+      "detail": "vacuous_probe_failed=false live_probe_failed=true"
+    },
+    {
+      "name": "bool_sat",
+      "verdict": "ConfirmedLive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=false"
+    },
+    {
+      "name": "bool_unsat",
+      "verdict": "ConfirmedVacuous",
+      "detail": "vacuous_probe_failed=false live_probe_failed=true"
+    }
+  ],
+  "dependency_summary": "verification results:: 2060 verified, 0 errors",
+  "probe_summary": "verification results:: 6 verified, 3 errors",
+  "target_summary": null
+}

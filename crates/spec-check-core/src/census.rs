@@ -376,6 +376,499 @@ fn source(span: Option<&str>) -> Value {
     }
 }
 
+fn type_decoration(node: &Node) -> Option<&str> {
+    let items = node.list()?;
+    if items.first().and_then(Node::atom) != Some("Typ")
+        || items.get(1).and_then(Node::atom) != Some("Decorate")
+    {
+        return None;
+    }
+    items
+        .get(2)
+        .and_then(Node::list)
+        .and_then(|d| d.get(1))
+        .and_then(Node::atom)
+}
+
+fn type_is_reference(node: &Node) -> bool {
+    let Some(items) = node.list() else {
+        return false;
+    };
+    if items.first().and_then(Node::atom) != Some("Typ") {
+        return false;
+    }
+    match items.get(1).and_then(Node::atom) {
+        Some("MutRef") => true,
+        Some("Decorate") => type_decoration(node) == Some("Ref"),
+        _ => false,
+    }
+}
+
+fn type_kind(node: Option<&Node>) -> &'static str {
+    let Some(node) = node else {
+        return "opaque";
+    };
+    if is_ghost_type(node) {
+        return "ghost";
+    }
+    if type_is_reference(node) {
+        return "reference";
+    }
+    let Some(items) = node.list() else {
+        return "opaque";
+    };
+    if items.first().and_then(Node::atom) != Some("Typ") {
+        return "opaque";
+    }
+    match items.get(1).and_then(Node::atom) {
+        Some("Int") => "int",
+        Some("Bool") => "bool",
+        Some("Char") => "char",
+        _ => "opaque",
+    }
+}
+
+fn int_range_name(items: &[Node]) -> Option<String> {
+    let range = items.get(2)?.list()?;
+    match range.get(1)?.atom()? {
+        "USize" => Some("usize".into()),
+        "ISize" => Some("isize".into()),
+        "Int" => Some("int".into()),
+        "Nat" => Some("nat".into()),
+        "U" => Some(format!("u{}", range.get(2)?.atom()?)),
+        "I" => Some(format!("i{}", range.get(2)?.atom()?)),
+        other => Some(other.to_owned()),
+    }
+}
+
+fn render_type(node: &Node) -> String {
+    let Some(items) = node.list() else {
+        return render_compact(node);
+    };
+    if items.first().and_then(Node::atom) != Some("Typ") {
+        return render_compact(node);
+    }
+    match items.get(1).and_then(Node::atom) {
+        Some("Int") => int_range_name(items).unwrap_or_else(|| render_compact(node)),
+        Some("Bool") => "bool".into(),
+        Some("Char") => "char".into(),
+        Some("MutRef") => items
+            .get(2)
+            .map(|inner| format!("&mut {}", render_type(inner)))
+            .unwrap_or_else(|| render_compact(node)),
+        Some("Decorate") => {
+            let inner = items.get(4).map(render_type).unwrap_or_default();
+            match type_decoration(node) {
+                Some("Tracked") => format!("Tracked<{inner}>"),
+                Some("Ghost") => format!("Ghost<{inner}>"),
+                Some("Ref") => format!("&{inner}"),
+                _ => render_compact(node),
+            }
+        },
+        Some("Datatype") => {
+            let dt = items.get(2).and_then(Node::list);
+            let path = dt
+                .and_then(|d| d.get(2))
+                .and_then(Node::atom)
+                .unwrap_or("?");
+            let args = items.get(3).and_then(Node::list).unwrap_or_default();
+            if args.is_empty() {
+                path.replace("&%", "impl ")
+            } else {
+                let rendered = args.iter().map(render_type).collect::<Vec<_>>().join(", ");
+                format!("{}<{rendered}>", path.replace("&%", "impl "))
+            }
+        },
+        _ => render_compact(node),
+    }
+}
+
+fn type_param_names(function: &Node) -> Vec<String> {
+    function
+        .field("typ_params")
+        .and_then(Node::list)
+        .map(|params| {
+            params
+                .iter()
+                .filter_map(|param| {
+                    param
+                        .atom()
+                        .map(str::to_owned)
+                        .or_else(|| param.field("name").and_then(Node::atom).map(str::to_owned))
+                        .or_else(|| param.unwrap().field("name").and_then(Node::atom).map(str::to_owned))
+                })
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+fn param_facts(function: &Node) -> Vec<Value> {
+    function
+        .field("params")
+        .and_then(Node::list)
+        .unwrap_or_default()
+        .iter()
+        .filter_map(|parameter| {
+            let name = param_name(parameter)?;
+            let typ = typ(Some(parameter));
+            Some(json!({
+                "name": name,
+                "type": typ.map(render_type),
+                "kind": type_kind(typ),
+                "mode": parameter.field("mode").and_then(Node::atom).unwrap_or("").to_lowercase(),
+            }))
+        })
+        .collect()
+}
+
+// ---------------------------------------------------------------------------
+// Requires expression facts (M7e screening input)
+// ---------------------------------------------------------------------------
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+enum Mech {
+    Int(i64),
+    Bool(bool),
+    Var(String),
+    Const(String),
+    Not(Box<Mech>),
+    Neg(Box<Mech>),
+    Bin(&'static str, Box<Mech>, Box<Mech>),
+}
+
+impl Mech {
+    fn vars(&self, names: &mut BTreeSet<String>) {
+        match self {
+            Self::Var(name) => {
+                names.insert(name.clone());
+            },
+            Self::Not(arg) | Self::Neg(arg) => arg.vars(names),
+            Self::Bin(_, lhs, rhs) => {
+                lhs.vars(names);
+                rhs.vars(names);
+            },
+            Self::Int(_) | Self::Bool(_) | Self::Const(_) => {},
+        }
+    }
+
+    fn consts(&self, paths: &mut BTreeSet<String>) {
+        match self {
+            Self::Const(path) => {
+                paths.insert(path.clone());
+            },
+            Self::Not(arg) | Self::Neg(arg) => arg.consts(paths),
+            Self::Bin(_, lhs, rhs) => {
+                lhs.consts(paths);
+                rhs.consts(paths);
+            },
+            Self::Int(_) | Self::Bool(_) | Self::Var(_) => {},
+        }
+    }
+
+    fn value(&self) -> Value {
+        match self {
+            Self::Int(value) => json!({"op": "int", "value": value}),
+            Self::Bool(value) => json!({"op": "bool", "value": value}),
+            Self::Var(name) => json!({"op": "var", "name": name}),
+            Self::Const(path) => json!({"op": "const", "path": path}),
+            Self::Not(arg) => json!({"op": "not", "arg": arg.value()}),
+            Self::Neg(arg) => json!({"op": "neg", "arg": arg.value()}),
+            Self::Bin(sym, lhs, rhs) => json!({"op": "bin", "sym": sym, "lhs": lhs.value(), "rhs": rhs.value()}),
+        }
+    }
+}
+
+fn mech(node: &Node) -> Option<Mech> {
+    let node = node.unwrap();
+    let items = node.list()?;
+    if items.first().and_then(Node::atom) != Some(">") {
+        return None;
+    }
+    match items.get(1).and_then(Node::atom)? {
+        "Const" => {
+            let constant = items.get(2)?.list()?;
+            if constant.first().and_then(Node::atom) != Some("Constant") {
+                return None;
+            }
+            match constant.get(1).and_then(Node::atom)? {
+                "Int" => Some(Mech::Int(constant.get(2)?.atom()?.parse().ok()?)),
+                "Bool" => match constant.get(2)?.atom()? {
+                    "true" => Some(Mech::Bool(true)),
+                    "false" => Some(Mech::Bool(false)),
+                    _ => None,
+                },
+                _ => None,
+            }
+        },
+        "ConstVar" => items
+            .get(2)
+            .and_then(|fun| fun.field("path"))
+            .and_then(Node::atom)
+            .map(|path| Mech::Const(path.to_owned())),
+        "ReadPlace" => {
+            let place = items.get(2)?.unwrap().list()?;
+            if place.first().and_then(Node::atom) != Some("Place")
+                || place.get(1).and_then(Node::atom) != Some("Local")
+            {
+                return None;
+            }
+            let name = place.get(2)?.list()?;
+            if name.first().and_then(Node::atom) != Some("VarIdent") {
+                return None;
+            }
+            Some(Mech::Var(name.get(1)?.atom()?.to_owned()))
+        },
+        "Var" => {
+            let name = items.get(2)?.list()?;
+            if name.first().and_then(Node::atom) != Some("VarIdent") {
+                return None;
+            }
+            Some(Mech::Var(name.get(1)?.atom()?.to_owned()))
+        },
+        "Unary" => {
+            let op = items.get(2)?.list()?;
+            let arg = items.get(3)?;
+            match op.get(1).and_then(Node::atom)? {
+                "Not" => Some(Mech::Not(Box::new(mech(arg)?))),
+                "Neg" => Some(Mech::Neg(Box::new(mech(arg)?))),
+                _ => None,
+            }
+        },
+        "Binary" => {
+            let op = items.get(2)?.list()?;
+            let lhs = mech(items.get(3)?)?;
+            let rhs = mech(items.get(4)?)?;
+            let sym = match op.get(1).and_then(Node::atom)? {
+                "Inequality" => match op.get(2)?.list()?.get(1)?.atom()? {
+                    "Lt" => "<",
+                    "Le" => "<=",
+                    "Gt" => ">",
+                    "Ge" => ">=",
+                    "Eq" => "==",
+                    "Ne" => "!=",
+                    _ => return None,
+                },
+                "Eq" => "==",
+                "Arith" => match op.get(2)?.list()?.get(1)?.atom()? {
+                    "Add" => "+",
+                    "Sub" => "-",
+                    "Mul" => "*",
+                    _ => return None,
+                },
+                _ => return None,
+            };
+            Some(Mech::Bin(sym, Box::new(lhs), Box::new(rhs)))
+        },
+        "Logical" => {
+            let op = items.get(2)?.list()?;
+            let lhs = mech(items.get(3)?)?;
+            let rhs = mech(items.get(4)?)?;
+            let sym = match op.get(1).and_then(Node::atom)? {
+                "And" => "&&",
+                "Or" => "||",
+                "Implies" => "==>",
+                _ => return None,
+            };
+            Some(Mech::Bin(sym, Box::new(lhs), Box::new(rhs)))
+        },
+        "Multi" => {
+            let op = items.get(2)?.list()?;
+            if op.get(1).and_then(Node::atom) != Some("Chained") {
+                return None;
+            }
+            let ops = op.get(2)?.list()?;
+            let operands = items.get(3)?.list()?;
+            if operands.len() != ops.len() + 1 {
+                return None;
+            }
+            let mut result: Option<Mech> = None;
+            for (index, chained) in ops.iter().enumerate() {
+                let fields = chained.list()?;
+                let inequality = fields.get(2)?.list()?;
+                let sym = match inequality.get(1)?.atom()? {
+                    "Lt" => "<",
+                    "Le" => "<=",
+                    "Gt" => ">",
+                    "Ge" => ">=",
+                    "Eq" => "==",
+                    "Ne" => "!=",
+                    _ => return None,
+                };
+                let lhs = mech(operands.get(index)?)?;
+                let rhs = mech(operands.get(index + 1)?)?;
+                let term = Mech::Bin(sym, Box::new(lhs), Box::new(rhs));
+                result = Some(match result {
+                    None => term,
+                    Some(previous) => Mech::Bin("&&", Box::new(previous), Box::new(term)),
+                });
+            }
+            result
+        },
+        _ => None,
+    }
+}
+
+fn mech_vars(node: &Mech, names: &mut BTreeSet<String>) {
+    node.vars(names);
+}
+
+#[derive(Debug, Default)]
+struct ClauseFeatures {
+    call: bool,
+    field_access: bool,
+    quantifier: bool,
+    old_or_final: bool,
+    unary_opr: bool,
+    ctor: bool,
+    trigger: bool,
+}
+
+fn scan_features(node: &Node, features: &mut ClauseFeatures) {
+    let Some(items) = node.list() else {
+        return;
+    };
+    if items.first().and_then(Node::atom) == Some(">") {
+        match items.get(1).and_then(Node::atom) {
+            Some("Call") => features.call = true,
+            Some("Ctor") => features.ctor = true,
+            Some("Quant") => features.quantifier = true,
+            Some("UnaryOpr") => features.unary_opr = true,
+            Some("Unary") => {
+                let op = items.get(2).and_then(Node::list).unwrap_or_default();
+                match op.get(1).and_then(Node::atom) {
+                    Some("MutRefFuture") => features.old_or_final = true,
+                    Some("Trigger") => features.trigger = true,
+                    _ => {},
+                }
+            },
+            Some("ReadPlace") => {
+                let place = items.get(2).map(Node::unwrap).and_then(Node::list).unwrap_or_default();
+                if place.get(1).and_then(Node::atom) == Some("Field") {
+                    features.field_access = true;
+                }
+            },
+            _ => {},
+        }
+    }
+    for child in items {
+        scan_features(child, features);
+    }
+}
+
+fn clause_source(
+    span: Option<&str>,
+    root: Option<&Path>,
+    cache: &mut BTreeMap<PathBuf, String>,
+) -> Option<String> {
+    let root = root?;
+    let span = span?;
+    let (file, coordinates) = crate::ir::span(span, root).ok()?;
+    let text = cache.entry(file.clone()).or_insert_with(|| {
+        fs::read_to_string(&file).unwrap_or_default()
+    });
+    if text.is_empty() {
+        return None;
+    }
+    let (start, end) = crate::ir::offsets(text, coordinates).ok()?;
+    text.get(start..end).map(str::to_owned)
+}
+
+fn requires_facts(
+    function: &Node,
+    scalar_names: &BTreeSet<String>,
+    source_root: Option<&Path>,
+    cache: &mut BTreeMap<PathBuf, String>,
+) -> Vec<Value> {
+    function
+        .field("require")
+        .and_then(Node::list)
+        .unwrap_or_default()
+        .iter()
+        .enumerate()
+        .map(|(index, clause)| {
+            let span = clause.list().and_then(|items| items.get(1)).and_then(Node::atom);
+            let mut features = ClauseFeatures::default();
+            scan_features(clause, &mut features);
+            let mut vars = BTreeSet::new();
+            collect_vars(clause, &mut vars);
+            let mut calls = Vec::new();
+            vir::walk_calls(clause, &mut calls);
+            calls.sort();
+            calls.dedup();
+            let mut consts = BTreeSet::new();
+            collect_const_vars(clause, &mut consts);
+            let parsed = mech(clause).filter(|expression| {
+                let mut names = BTreeSet::new();
+                mech_vars(expression, &mut names);
+                names.iter().all(|name| scalar_names.contains(name))
+            });
+            let mut expression_vars = BTreeSet::new();
+            if let Some(expression) = &parsed {
+                mech_vars(expression, &mut expression_vars);
+            }
+            let mut expression_consts = BTreeSet::new();
+            if let Some(expression) = &parsed {
+                expression.consts(&mut expression_consts);
+            }
+            json!({
+                "index": index,
+                "span": span,
+                "file": span.and_then(|span| saga_span_file(span)),
+                "line": span.and_then(|span| saga_span_line(span)),
+                "text": clause_source(span, source_root, cache),
+                "class": if parsed.is_some() { "mechanical" } else { "unsupported" },
+                "ast": parsed.as_ref().map(Mech::value),
+                "ast_vars": expression_vars,
+                "ast_consts": expression_consts,
+                "vars": vars,
+                "consts": consts,
+                "calls": calls,
+                "features": {
+                    "call": features.call,
+                    "field_access": features.field_access,
+                    "quantifier": features.quantifier,
+                    "old_or_final": features.old_or_final,
+                    "unary_opr": features.unary_opr,
+                    "ctor": features.ctor,
+                    "trigger": features.trigger,
+                },
+            })
+        })
+        .collect()
+}
+
+fn saga_span_file(span: &str) -> Option<String> {
+    crate::ir::span(span, Path::new(""))
+        .ok()
+        .map(|(file, _)| file.to_string_lossy().into_owned())
+}
+
+fn saga_span_line(span: &str) -> Option<usize> {
+    crate::ir::span(span, Path::new(""))
+        .ok()
+        .map(|(_, coordinates)| coordinates[0])
+}
+
+fn collect_const_vars(node: &Node, paths: &mut BTreeSet<String>) {
+    let Some(items) = node.list() else {
+        return;
+    };
+    if items.first().and_then(Node::atom) == Some(">")
+        && items.get(1).and_then(Node::atom) == Some("ConstVar")
+    {
+        if let Some(path) = items
+            .get(2)
+            .and_then(|fun| fun.field("path"))
+            .and_then(Node::atom)
+        {
+            paths.insert(path.to_owned());
+        }
+    }
+    for child in items {
+        collect_const_vars(child, paths);
+    }
+}
+
 fn previews(clauses: &[Node]) -> (usize, Vec<String>) {
     let mut result = Vec::new();
     for clause in clauses.iter().take(3) {
@@ -504,6 +997,7 @@ pub fn analyze(text: &str, crate_name: &str, source_root: Option<&Path>) -> Resu
 
     let mut entries = Vec::new();
     let mut counts = Counts::default();
+    let mut source_cache = BTreeMap::new();
     for (path, (outer, function)) in &canonical {
         let entry = function_entry(
             path,
@@ -512,6 +1006,7 @@ pub fn analyze(text: &str, crate_name: &str, source_root: Option<&Path>) -> Resu
             &by_path,
             &invariants,
             source_root,
+            &mut source_cache,
             &mut counts,
         );
         entries.push(entry);
@@ -542,6 +1037,7 @@ fn function_entry(
     by_path: &BTreeMap<String, &Node>,
     invariants: &BTreeMap<String, String>,
     source_root: Option<&Path>,
+    source_cache: &mut BTreeMap<PathBuf, String>,
     counts: &mut Counts,
 ) -> Value {
     let mode = function.field("mode").and_then(Node::atom).unwrap_or("");
@@ -764,6 +1260,14 @@ fn function_entry(
         .and_then(Node::list)
         .unwrap_or_default();
     let (requires_count, requires_preview) = previews(requires);
+    let params = param_facts(function);
+    let scalar_names = params
+        .iter()
+        .filter(|param| matches!(param["kind"].as_str(), Some("int" | "bool")))
+        .filter_map(|param| param["name"].as_str().map(str::to_owned))
+        .collect::<BTreeSet<_>>();
+    let requires_detail = requires_facts(function, &scalar_names, source_root, source_cache);
+    let generics = type_param_names(function);
     let span = outer.list().and_then(|items| items.get(1)).and_then(Node::atom);
     let mut source = source(span);
     if let (Some(root), Some(file)) = (source_root, source["file"].as_str()) {
@@ -795,6 +1299,12 @@ fn function_entry(
             Value::Null
         },
         "module": module,
+        "generics": {
+            "count": generics.len(),
+            "names": generics,
+        },
+        "params": params,
+        "requires": requires_detail,
         "pattern": pattern.as_ref().map(|(components, source)| json!({"found": true, "source": source, "components": components.len()})),
         "postcondition": {
             "present": post_present,

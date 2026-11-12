@@ -1,0 +1,44 @@
+verification results:: 2060 verified, 0 errors
+verification results:: 6 verified, 3 errors
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.27
+   Compiling quote v1.0.47
+   Compiling verus_syn v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/dependencies/syn)
+   Compiling verus_prettyplease v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/dependencies/prettyplease)
+   Compiling equivalent v1.0.3
+   Compiling hashbrown v0.17.1
+   Compiling convert_case v0.4.0
+   Compiling vstd v0.0.0-2026-10-04-0306 (/home/jinser/vie/work/AES/vostd/tools/verus/source/vstd)
+   Compiling verus_builtin v0.0.0-2026-09-16-0054 (/home/jinser/vie/work/AES/vostd/tools/verus/source/builtin)
+   Compiling indexmap v2.14.2
+   Compiling syn v2.0.119
+   Compiling synstructure v0.13.2
+   Compiling verus_state_machines_macros v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/source/state_machines_macros)
+   Compiling verus_builtin_macros v0.0.0-2026-09-20-0158 (/home/jinser/vie/work/AES/vostd/tools/verus/source/builtin_macros)
+   Compiling spec-vacuity-probe v0.1.0 (/tmp/m7e-synth/out)
+error: assertion failed
+  --> src/lib.rs:35:12
+   |
+35 |     assert(pre_0_constant_false(_unused));
+   |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ assertion failed
+
+error: postcondition not satisfied
+  --> src/lib.rs:51:9
+   |
+49 | proof fn vacuous_1_bool_sat()
+   |       ----------------------- at the end of the function body
+50 |     ensures
+51 |         forall|b: bool| !pre_1_bool_sat(b),
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+  --> src/lib.rs:82:9
+   |
+80 | proof fn live_2_bool_unsat()
+   |       ---------------------- at the end of the function body
+81 |     ensures
+82 |         exists|b: bool| pre_2_bool_unsat(b),
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: could not compile `spec-vacuity-probe` (lib) due to 3 previous errors
+warning: build failed, waiting for other jobs to finish...

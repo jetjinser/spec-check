@@ -1,0 +1,8 @@
+{
+  "preamble": "pub open spec fn always_false() -> bool { false }\n\npub open spec fn identity_bool(b: bool) -> bool { b }\n\npub open spec fn contra_bool(b: bool) -> bool { b && !b }\n",
+  "contracts": [
+    {"name": "constant_false", "probe": "quantifier", "params": "_unused: usize", "requires": "always_false()", "witness": "0usize"},
+    {"name": "bool_sat", "probe": "quantifier", "params": "b: bool", "requires": "identity_bool(b)", "witness": "true"},
+    {"name": "bool_unsat", "probe": "quantifier", "params": "b: bool", "requires": "contra_bool(b)"}
+  ]
+}

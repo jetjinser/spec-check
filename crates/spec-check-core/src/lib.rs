@@ -44,6 +44,7 @@ pub mod permission_guidance;
 pub mod prefix;
 pub mod project;
 pub mod reader;
+pub mod requires;
 pub mod resource;
 pub mod resource_flow;
 pub mod resource_project;

@@ -1,0 +1,232 @@
+{
+  "verdicts": [
+    {
+      "name": "r0028_lemma_path_pairs_step",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0068_lemma_eq_from_bits",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0069_lemma_from_bits_bits",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0111_lemma_x86_page_flags_wf",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0112_lemma_x86_priv_flags_wf",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0113_lemma_x86_set_prop_decode_bits",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0114_lemma_x86_set_prop_preserves_entry_bits",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0115_lemma_x86_set_prop_roundtrip",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0140_lemma_type_inv_range",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0156_with_capacity_val",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0158_contains",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0159_load",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0160_new",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0162_store",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0168_lemma_u64_nonzero_has_set_bit_aux",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0185_check_and_insert_dma_mapping",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0301_lemma_meta_region_inv_at",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0314_frame_to_meta",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0315_meta_to_frame",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0435_lemma_kernel_range_valid",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0436_sum_page_sizes_extend_right",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0437_sum_page_sizes_mono",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0438_paddr_to_vaddr",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0475_lemma_eq_from_bits",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0476_lemma_from_bits_bits",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0516_lemma_eq_from_bits",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0517_lemma_from_bits_bits",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0591_lemma_replace_cur_entry_mapping_sets",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0731_lemma_meta_frame_vaddr_properties",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0779_lemma_accounting_inv_at",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0780_lemma_accounting_inv_intro",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0781_lemma_accounting_preserved_by_pt_alloc",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0782_lemma_coverage_preserved_slots_eq",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0784_lemma_frame_drop_pre_derivable",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0791_lemma_handle_count_insert_fresh",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0792_lemma_handle_count_remove",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0793_lemma_segment_cover_contains",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0794_lemma_segment_cover_insert_inside",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0795_lemma_segment_cover_insert_outside",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0796_lemma_segment_cover_remove_inside",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0797_lemma_segment_cover_remove_outside",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0798_lemma_segment_cover_shrink_front",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0799_lemma_segment_cover_split",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0800_lemma_segment_cover_witness",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0824_lemma_step_segment_from_unused_accounting",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    }
+  ],
+  "dependency_summary": "verification results:: 2060 verified, 0 errors",
+  "probe_summary": "verification results:: 45 verified, 90 errors",
+  "target_summary": null
+}

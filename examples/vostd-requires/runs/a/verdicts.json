@@ -1,0 +1,76 @@
+{
+  "dependency_summary": "verification results:: 2060 verified, 0 errors",
+  "distribution": {
+    "anomaly": 0,
+    "candidate_inconclusive": 0,
+    "confirmed_live": 9,
+    "confirmed_vacuous": 0
+  },
+  "entries": [
+    {
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "expected": "ConfirmedLive",
+      "match": true,
+      "name": "r0106_lemma_encode_prop_flags_matches",
+      "verdict": "ConfirmedLive"
+    },
+    {
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "expected": "ConfirmedLive",
+      "match": true,
+      "name": "r0127_new",
+      "verdict": "ConfirmedLive"
+    },
+    {
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "expected": "ConfirmedLive",
+      "match": true,
+      "name": "r0166_lemma_u64_distinct_bits_differ",
+      "verdict": "ConfirmedLive"
+    },
+    {
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "expected": "ConfirmedLive",
+      "match": true,
+      "name": "r0167_lemma_u64_nonzero_has_set_bit",
+      "verdict": "ConfirmedLive"
+    },
+    {
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "expected": "ConfirmedLive",
+      "match": true,
+      "name": "r0169_lemma_u64_unit_bit_projection",
+      "verdict": "ConfirmedLive"
+    },
+    {
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "expected": "ConfirmedLive",
+      "match": true,
+      "name": "r0732_lemma_paddr_to_vaddr_properties",
+      "verdict": "ConfirmedLive"
+    },
+    {
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "expected": "ConfirmedLive",
+      "match": true,
+      "name": "r0733_lemma_vaddr_to_paddr_properties",
+      "verdict": "ConfirmedLive"
+    },
+    {
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "expected": "ConfirmedLive",
+      "match": true,
+      "name": "r1059_lemma_split_sub_page_big_j",
+      "verdict": "ConfirmedLive"
+    },
+    {
+      "detail": "vacuous_probe_failed=true live_probe_failed=false",
+      "expected": "ConfirmedLive",
+      "match": true,
+      "name": "r1196_lemma_vaddr_make_eq_page_size",
+      "verdict": "ConfirmedLive"
+    }
+  ],
+  "probe_summary": "verification results:: 18 verified, 9 errors",
+  "target_summary": null
+}

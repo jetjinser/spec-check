@@ -1,0 +1,227 @@
+{
+  "verdicts": [
+    {
+      "name": "r0834_lemma_structural_inv_cursor_frame",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0835_lemma_structural_inv_frame",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0836_lemma_structural_inv_segment",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0917_lemma_frame_to_index_injective",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0918_lemma_frame_to_meta_soundness",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0919_lemma_index_to_frame_biinjective",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0920_lemma_meta_to_frame_soundness",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0921_lemma_meta_to_paddr_biinjective",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0922_lemma_paddr_to_meta_biinjective",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0923_axiom_mmio_paddr_huge_page_closed",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0936_lemma_contains_valid_frame_paddr",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r0945_internal_invariants_imply_top_level_properties",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1062_lemma_va_plus_page_size_no_overflow",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1110_lemma_extend_empty_mapping_range",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1111_lemma_mapping_set_cardinality_bound",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1112_lemma_mapping_set_cardinality_fits_usize",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1113_lemma_mapping_set_cardinality_in_range",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1114_lemma_sub_mapping_pa_compose",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1115_lemma_wf_subset",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1116_lemma_wf_union",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1192_lemma_rec_vaddr_aligned",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1193_lemma_rec_vaddr_push_tail",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1194_lemma_rec_vaddr_suffix_bound",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1195_lemma_rec_vaddr_unfold",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1199_lemma_vaddr_strict_bound",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1200_lemma_vaddr_top_index_cell",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1210_lemma_flush_preserves_inv",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1211_lemma_update_preserves_consistent",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1215_lemma_read_bytes_eq_pointwise",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1216_lemma_split_join_identity",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1217_lemma_split_preserves_read",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1218_lemma_split_preserves_transl",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1231_from_vaddr",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1236_split",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1237_sub",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1242_lemma_va_mapping_unique",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1333_lemma_aligned_addr_clears_tag_bit",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1459_new",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1461_lemma_alloc_specific_model",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1462_lemma_alloc_suffix_model",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1464_lemma_free_set_contains_range",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1465_lemma_insert_free_range",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1466_lemma_merge_right_neighbor",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    },
+    {
+      "name": "r1467_lemma_remove_left_neighbor",
+      "verdict": "CandidateInconclusive",
+      "detail": "vacuous_probe_failed=true live_probe_failed=true"
+    }
+  ],
+  "dependency_summary": "verification results:: 2060 verified, 0 errors",
+  "probe_summary": "verification results:: 44 verified, 88 errors",
+  "target_summary": null
+}

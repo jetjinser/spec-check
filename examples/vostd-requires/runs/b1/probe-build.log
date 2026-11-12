@@ -1,0 +1,829 @@
+verification results:: 2060 verified, 0 errors
+verification results:: 45 verified, 90 errors
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
+   Compiling verus_syn v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/dependencies/syn)
+   Compiling verus_prettyplease v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/dependencies/prettyplease)
+   Compiling equivalent v1.0.3
+   Compiling hashbrown v0.17.1
+   Compiling vstd v0.0.0-2026-10-04-0306 (/home/jinser/vie/work/AES/vostd/tools/verus/source/vstd)
+   Compiling convert_case v0.4.0
+   Compiling verus_builtin v0.0.0-2026-09-16-0054 (/home/jinser/vie/work/AES/vostd/tools/verus/source/builtin)
+   Compiling indexmap v2.14.2
+   Compiling syn v2.0.119
+   Compiling synstructure v0.13.2
+   Compiling verus_state_machines_macros v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/source/state_machines_macros)
+   Compiling verus_builtin_macros v0.0.0-2026-09-20-0158 (/home/jinser/vie/work/AES/vostd/tools/verus/source/builtin_macros)
+   Compiling spec-vacuity-probe v0.1.0 (/tmp/m7e-run-b1/run)
+error: postcondition not satisfied
+   --> src/lib.rs:307:9
+    |
+305 | proof fn vacuous_0_r0028_lemma_path_pairs_step()
+    |       ------------------------------------------ at the end of the function body
+306 |     ensures
+307 |         forall|bytes_id: usize, start: usize, end: usize| !pre_0_r0028_lemma_path_pairs_step(bytes_id, start, end),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:313:9
+    |
+311 | proof fn live_0_r0028_lemma_path_pairs_step()
+    |       --------------------------------------- at the end of the function body
+312 |     ensures
+313 |         exists|bytes_id: usize, start: usize, end: usize| pre_0_r0028_lemma_path_pairs_step(bytes_id, start, end),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:330:9
+    |
+328 | proof fn vacuous_1_r0068_lemma_eq_from_bits()
+    |       --------------------------------------- at the end of the function body
+329 |     ensures
+330 |         forall|left_id: usize, right_id: usize| !pre_1_r0068_lemma_eq_from_bits(left_id, right_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:336:9
+    |
+334 | proof fn live_1_r0068_lemma_eq_from_bits()
+    |       ------------------------------------ at the end of the function body
+335 |     ensures
+336 |         exists|left_id: usize, right_id: usize| pre_1_r0068_lemma_eq_from_bits(left_id, right_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:353:9
+    |
+351 | proof fn vacuous_2_r0069_lemma_from_bits_bits()
+    |       ----------------------------------------- at the end of the function body
+352 |     ensures
+353 |         forall|bits: usize| !pre_2_r0069_lemma_from_bits_bits(bits),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:359:9
+    |
+357 | proof fn live_2_r0069_lemma_from_bits_bits()
+    |       -------------------------------------- at the end of the function body
+358 |     ensures
+359 |         exists|bits: usize| pre_2_r0069_lemma_from_bits_bits(bits),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:376:9
+    |
+374 | proof fn vacuous_3_r0111_lemma_x86_page_flags_wf()
+    |       -------------------------------------------- at the end of the function body
+375 |     ensures
+376 |         forall|v: usize, flags: usize| !pre_3_r0111_lemma_x86_page_flags_wf(v, flags),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:382:9
+    |
+380 | proof fn live_3_r0111_lemma_x86_page_flags_wf()
+    |       ----------------------------------------- at the end of the function body
+381 |     ensures
+382 |         exists|v: usize, flags: usize| pre_3_r0111_lemma_x86_page_flags_wf(v, flags),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:399:9
+    |
+397 | proof fn vacuous_4_r0112_lemma_x86_priv_flags_wf()
+    |       -------------------------------------------- at the end of the function body
+398 |     ensures
+399 |         forall|v: usize, priv_flags: usize| !pre_4_r0112_lemma_x86_priv_flags_wf(v, priv_flags),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:405:9
+    |
+403 | proof fn live_4_r0112_lemma_x86_priv_flags_wf()
+    |       ----------------------------------------- at the end of the function body
+404 |     ensures
+405 |         exists|v: usize, priv_flags: usize| pre_4_r0112_lemma_x86_priv_flags_wf(v, priv_flags),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:422:9
+    |
+420 | proof fn vacuous_5_r0113_lemma_x86_set_prop_decode_bits()
+    |       --------------------------------------------------- at the end of the function body
+421 |     ensures
+422 |         forall|pbits: usize, priv_bits: usize, cache_flags: usize, flags: usize| !pre_5_r0113_lemma_x86_set_prop_decode_bits(pbits, priv_bits, cache_flags, flags),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:428:9
+    |
+426 | proof fn live_5_r0113_lemma_x86_set_prop_decode_bits()
+    |       ------------------------------------------------ at the end of the function body
+427 |     ensures
+428 |         exists|pbits: usize, priv_bits: usize, cache_flags: usize, flags: usize| pre_5_r0113_lemma_x86_set_prop_decode_bits(pbits, priv_bits, cache_flags, flags),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:445:9
+    |
+443 | proof fn vacuous_6_r0114_lemma_x86_set_prop_preserves_entry_bits()
+    |       ------------------------------------------------------------ at the end of the function body
+444 |     ensures
+445 |         forall|old_raw: usize, new_raw: usize, flags: usize, phys_addr_mask: usize| !pre_6_r0114_lemma_x86_set_prop_preserves_entry_bits(old_raw, new_raw, flags, phys_addr_mask),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:451:9
+    |
+449 | proof fn live_6_r0114_lemma_x86_set_prop_preserves_entry_bits()
+    |       --------------------------------------------------------- at the end of the function body
+450 |     ensures
+451 |         exists|old_raw: usize, new_raw: usize, flags: usize, phys_addr_mask: usize| pre_6_r0114_lemma_x86_set_prop_preserves_entry_bits(old_raw, new_raw, flags, phys_addr_mask),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:468:9
+    |
+466 | proof fn vacuous_7_r0115_lemma_x86_set_prop_roundtrip()
+    |       ------------------------------------------------- at the end of the function body
+467 |     ensures
+468 |         forall|prop_id: usize, flags: usize| !pre_7_r0115_lemma_x86_set_prop_roundtrip(prop_id, flags),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:474:9
+    |
+472 | proof fn live_7_r0115_lemma_x86_set_prop_roundtrip()
+    |       ---------------------------------------------- at the end of the function body
+473 |     ensures
+474 |         exists|prop_id: usize, flags: usize| pre_7_r0115_lemma_x86_set_prop_roundtrip(prop_id, flags),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:491:9
+    |
+489 | proof fn vacuous_8_r0140_lemma_type_inv_range()
+    |       ----------------------------------------- at the end of the function body
+490 |     ensures
+491 |         forall|cpu_id_id: usize| !pre_8_r0140_lemma_type_inv_range(cpu_id_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:497:9
+    |
+495 | proof fn live_8_r0140_lemma_type_inv_range()
+    |       -------------------------------------- at the end of the function body
+496 |     ensures
+497 |         exists|cpu_id_id: usize| pre_8_r0140_lemma_type_inv_range(cpu_id_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:514:9
+    |
+512 | proof fn vacuous_9_r0156_with_capacity_val()
+    |       -------------------------------------- at the end of the function body
+513 |     ensures
+514 |         forall|num_cpus: usize| !pre_9_r0156_with_capacity_val(num_cpus),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:520:9
+    |
+518 | proof fn live_9_r0156_with_capacity_val()
+    |       ----------------------------------- at the end of the function body
+519 |     ensures
+520 |         exists|num_cpus: usize| pre_9_r0156_with_capacity_val(num_cpus),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:537:9
+    |
+535 | proof fn vacuous_10_r0158_contains()
+    |       ------------------------------ at the end of the function body
+536 |     ensures
+537 |         forall|ordering_id: usize| !pre_10_r0158_contains(ordering_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:543:9
+    |
+541 | proof fn live_10_r0158_contains()
+    |       --------------------------- at the end of the function body
+542 |     ensures
+543 |         exists|ordering_id: usize| pre_10_r0158_contains(ordering_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:560:9
+    |
+558 | proof fn vacuous_11_r0159_load()
+    |       -------------------------- at the end of the function body
+559 |     ensures
+560 |         forall|ordering_id: usize| !pre_11_r0159_load(ordering_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:566:9
+    |
+564 | proof fn live_11_r0159_load()
+    |       ----------------------- at the end of the function body
+565 |     ensures
+566 |         exists|ordering_id: usize| pre_11_r0159_load(ordering_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:583:9
+    |
+581 | proof fn vacuous_12_r0160_new()
+    |       ------------------------- at the end of the function body
+582 |     ensures
+583 |         forall|value_id: usize| !pre_12_r0160_new(value_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:589:9
+    |
+587 | proof fn live_12_r0160_new()
+    |       ---------------------- at the end of the function body
+588 |     ensures
+589 |         exists|value_id: usize| pre_12_r0160_new(value_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:606:9
+    |
+604 | proof fn vacuous_13_r0162_store()
+    |       --------------------------- at the end of the function body
+605 |     ensures
+606 |         forall|ordering_id: usize| !pre_13_r0162_store(ordering_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:612:9
+    |
+610 | proof fn live_13_r0162_store()
+    |       ------------------------ at the end of the function body
+611 |     ensures
+612 |         exists|ordering_id: usize| pre_13_r0162_store(ordering_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:629:9
+    |
+627 | proof fn vacuous_14_r0168_lemma_u64_nonzero_has_set_bit_aux()
+    |       ------------------------------------------------------- at the end of the function body
+628 |     ensures
+629 |         forall|word: usize, n: usize| !pre_14_r0168_lemma_u64_nonzero_has_set_bit_aux(word, n),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:635:9
+    |
+633 | proof fn live_14_r0168_lemma_u64_nonzero_has_set_bit_aux()
+    |       ---------------------------------------------------- at the end of the function body
+634 |     ensures
+635 |         exists|word: usize, n: usize| pre_14_r0168_lemma_u64_nonzero_has_set_bit_aux(word, n),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:652:9
+    |
+650 | proof fn vacuous_15_r0185_check_and_insert_dma_mapping()
+    |       -------------------------------------------------- at the end of the function body
+651 |     ensures
+652 |         forall|start_paddr: usize, num_pages: usize, page_size: usize| !pre_15_r0185_check_and_insert_dma_mapping(start_paddr, num_pages, page_size),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:658:9
+    |
+656 | proof fn live_15_r0185_check_and_insert_dma_mapping()
+    |       ----------------------------------------------- at the end of the function body
+657 |     ensures
+658 |         exists|start_paddr: usize, num_pages: usize, page_size: usize| pre_15_r0185_check_and_insert_dma_mapping(start_paddr, num_pages, page_size),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:675:9
+    |
+673 | proof fn vacuous_16_r0301_lemma_meta_region_inv_at()
+    |       ---------------------------------------------- at the end of the function body
+674 |     ensures
+675 |         forall|regions_id: usize, i: usize| !pre_16_r0301_lemma_meta_region_inv_at(regions_id, i),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:681:9
+    |
+679 | proof fn live_16_r0301_lemma_meta_region_inv_at()
+    |       ------------------------------------------- at the end of the function body
+680 |     ensures
+681 |         exists|regions_id: usize, i: usize| pre_16_r0301_lemma_meta_region_inv_at(regions_id, i),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:698:9
+    |
+696 | proof fn vacuous_17_r0314_frame_to_meta()
+    |       ----------------------------------- at the end of the function body
+697 |     ensures
+698 |         forall|paddr: usize| !pre_17_r0314_frame_to_meta(paddr),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:704:9
+    |
+702 | proof fn live_17_r0314_frame_to_meta()
+    |       -------------------------------- at the end of the function body
+703 |     ensures
+704 |         exists|paddr: usize| pre_17_r0314_frame_to_meta(paddr),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:721:9
+    |
+719 | proof fn vacuous_18_r0315_meta_to_frame()
+    |       ----------------------------------- at the end of the function body
+720 |     ensures
+721 |         forall|vaddr: usize, frame_metadata_range: usize, meta_slot_size: usize| !pre_18_r0315_meta_to_frame(vaddr, frame_metadata_range, meta_slot_size),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:727:9
+    |
+725 | proof fn live_18_r0315_meta_to_frame()
+    |       -------------------------------- at the end of the function body
+726 |     ensures
+727 |         exists|vaddr: usize, frame_metadata_range: usize, meta_slot_size: usize| pre_18_r0315_meta_to_frame(vaddr, frame_metadata_range, meta_slot_size),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:744:9
+    |
+742 | proof fn vacuous_19_r0435_lemma_kernel_range_valid()
+    |       ---------------------------------------------- at the end of the function body
+743 |     ensures
+744 |         forall|r_id: usize, kernel_base_vaddr: usize, kernel_end_vaddr: usize, page_size: usize| !pre_19_r0435_lemma_kernel_range_valid(r_id, kernel_base_vaddr, kernel_end_vaddr, page_size),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:750:9
+    |
+748 | proof fn live_19_r0435_lemma_kernel_range_valid()
+    |       ------------------------------------------- at the end of the function body
+749 |     ensures
+750 |         exists|r_id: usize, kernel_base_vaddr: usize, kernel_end_vaddr: usize, page_size: usize| pre_19_r0435_lemma_kernel_range_valid(r_id, kernel_base_vaddr, kernel_end_vaddr, page_size),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:767:9
+    |
+765 | proof fn vacuous_20_r0436_sum_page_sizes_extend_right()
+    |       ------------------------------------------------- at the end of the function body
+766 |     ensures
+767 |         forall|elems_id: usize, from: usize, to: usize| !pre_20_r0436_sum_page_sizes_extend_right(elems_id, from, to),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:773:9
+    |
+771 | proof fn live_20_r0436_sum_page_sizes_extend_right()
+    |       ---------------------------------------------- at the end of the function body
+772 |     ensures
+773 |         exists|elems_id: usize, from: usize, to: usize| pre_20_r0436_sum_page_sizes_extend_right(elems_id, from, to),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:790:9
+    |
+788 | proof fn vacuous_21_r0437_sum_page_sizes_mono()
+    |       ----------------------------------------- at the end of the function body
+789 |     ensures
+790 |         forall|elems_id: usize, from: usize, to1: usize, to2: usize| !pre_21_r0437_sum_page_sizes_mono(elems_id, from, to1, to2),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:796:9
+    |
+794 | proof fn live_21_r0437_sum_page_sizes_mono()
+    |       -------------------------------------- at the end of the function body
+795 |     ensures
+796 |         exists|elems_id: usize, from: usize, to1: usize, to2: usize| pre_21_r0437_sum_page_sizes_mono(elems_id, from, to1, to2),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:813:9
+    |
+811 | proof fn vacuous_22_r0438_paddr_to_vaddr()
+    |       ------------------------------------ at the end of the function body
+812 |     ensures
+813 |         forall|pa: usize, linear_mapping_base_vaddr: usize| !pre_22_r0438_paddr_to_vaddr(pa, linear_mapping_base_vaddr),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:819:9
+    |
+817 | proof fn live_22_r0438_paddr_to_vaddr()
+    |       --------------------------------- at the end of the function body
+818 |     ensures
+819 |         exists|pa: usize, linear_mapping_base_vaddr: usize| pre_22_r0438_paddr_to_vaddr(pa, linear_mapping_base_vaddr),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:836:9
+    |
+834 | proof fn vacuous_23_r0475_lemma_eq_from_bits()
+    |       ---------------------------------------- at the end of the function body
+835 |     ensures
+836 |         forall|left_id: usize, right_id: usize| !pre_23_r0475_lemma_eq_from_bits(left_id, right_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:842:9
+    |
+840 | proof fn live_23_r0475_lemma_eq_from_bits()
+    |       ------------------------------------- at the end of the function body
+841 |     ensures
+842 |         exists|left_id: usize, right_id: usize| pre_23_r0475_lemma_eq_from_bits(left_id, right_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:859:9
+    |
+857 | proof fn vacuous_24_r0476_lemma_from_bits_bits()
+    |       ------------------------------------------ at the end of the function body
+858 |     ensures
+859 |         forall|bits: usize| !pre_24_r0476_lemma_from_bits_bits(bits),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:865:9
+    |
+863 | proof fn live_24_r0476_lemma_from_bits_bits()
+    |       --------------------------------------- at the end of the function body
+864 |     ensures
+865 |         exists|bits: usize| pre_24_r0476_lemma_from_bits_bits(bits),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:882:9
+    |
+880 | proof fn vacuous_25_r0516_lemma_eq_from_bits()
+    |       ---------------------------------------- at the end of the function body
+881 |     ensures
+882 |         forall|left_id: usize, right_id: usize| !pre_25_r0516_lemma_eq_from_bits(left_id, right_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:888:9
+    |
+886 | proof fn live_25_r0516_lemma_eq_from_bits()
+    |       ------------------------------------- at the end of the function body
+887 |     ensures
+888 |         exists|left_id: usize, right_id: usize| pre_25_r0516_lemma_eq_from_bits(left_id, right_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:905:9
+    |
+903 | proof fn vacuous_26_r0517_lemma_from_bits_bits()
+    |       ------------------------------------------ at the end of the function body
+904 |     ensures
+905 |         forall|bits: usize| !pre_26_r0517_lemma_from_bits_bits(bits),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:911:9
+    |
+909 | proof fn live_26_r0517_lemma_from_bits_bits()
+    |       --------------------------------------- at the end of the function body
+910 |     ensures
+911 |         exists|bits: usize| pre_26_r0517_lemma_from_bits_bits(bits),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:928:9
+    |
+926 | proof fn vacuous_27_r0591_lemma_replace_cur_entry_mapping_sets()
+    |       ---------------------------------------------------------- at the end of the function body
+927 |     ensures
+928 |         forall|all_id: usize, current_id: usize, old_subtree_id: usize, replacement_id: usize, new_subtree_id: usize| !pre_27_r0591_lemma_replace_cur_entry_mapping_sets(all_id, current_id, old_subtree_id, replacement_id, new_subtree_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:934:9
+    |
+932 | proof fn live_27_r0591_lemma_replace_cur_entry_mapping_sets()
+    |       ------------------------------------------------------- at the end of the function body
+933 |     ensures
+934 |         exists|all_id: usize, current_id: usize, old_subtree_id: usize, replacement_id: usize, new_subtree_id: usize| pre_27_r0591_lemma_replace_cur_entry_mapping_sets(all_id, current_id, old_subtree_id, replacement_id, new_subtree_id),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:951:9
+    |
+949 | proof fn vacuous_28_r0731_lemma_meta_frame_vaddr_properties()
+    |       ------------------------------------------------------- at the end of the function body
+950 |     ensures
+951 |         forall|meta: usize, meta_slot_size: usize, max_nr_pages: usize, frame_metadata_range: usize| !pre_28_r0731_lemma_meta_frame_vaddr_properties(meta, meta_slot_size, max_nr_pages, frame_metadata_range),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:957:9
+    |
+955 | proof fn live_28_r0731_lemma_meta_frame_vaddr_properties()
+    |       ---------------------------------------------------- at the end of the function body
+956 |     ensures
+957 |         exists|meta: usize, meta_slot_size: usize, max_nr_pages: usize, frame_metadata_range: usize| pre_28_r0731_lemma_meta_frame_vaddr_properties(meta, meta_slot_size, max_nr_pages, frame_metadata_range),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:974:9
+    |
+972 | proof fn vacuous_29_r0779_lemma_accounting_inv_at()
+    |       --------------------------------------------- at the end of the function body
+973 |     ensures
+974 |         forall|s_id: usize, idx: usize| !pre_29_r0779_lemma_accounting_inv_at(s_id, idx),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:980:9
+    |
+978 | proof fn live_29_r0779_lemma_accounting_inv_at()
+    |       ------------------------------------------ at the end of the function body
+979 |     ensures
+980 |         exists|s_id: usize, idx: usize| pre_29_r0779_lemma_accounting_inv_at(s_id, idx),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:997:9
+    |
+995 | proof fn vacuous_30_r0780_lemma_accounting_inv_intro()
+    |       ------------------------------------------------ at the end of the function body
+996 |     ensures
+997 |         forall|store_id: usize, ref_count_unused: usize, ref_count_unique: usize| !pre_30_r0780_lemma_accounting_inv_intro(store_id, ref_count_unused, ref_count_unique),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1003:9
+     |
+1001 | proof fn live_30_r0780_lemma_accounting_inv_intro()
+     |       --------------------------------------------- at the end of the function body
+1002 |     ensures
+1003 |         exists|store_id: usize, ref_count_unused: usize, ref_count_unique: usize| pre_30_r0780_lemma_accounting_inv_intro(store_id, ref_count_unused, ref_count_unique),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1020:9
+     |
+1018 | proof fn vacuous_31_r0781_lemma_accounting_preserved_by_pt_alloc()
+     |       ------------------------------------------------------------ at the end of the function body
+1019 |     ensures
+1020 |         forall|s_old_id: usize, s_new_id: usize, ref_count_unused: usize| !pre_31_r0781_lemma_accounting_preserved_by_pt_alloc(s_old_id, s_new_id, ref_count_unused),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1026:9
+     |
+1024 | proof fn live_31_r0781_lemma_accounting_preserved_by_pt_alloc()
+     |       --------------------------------------------------------- at the end of the function body
+1025 |     ensures
+1026 |         exists|s_old_id: usize, s_new_id: usize, ref_count_unused: usize| pre_31_r0781_lemma_accounting_preserved_by_pt_alloc(s_old_id, s_new_id, ref_count_unused),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1043:9
+     |
+1041 | proof fn vacuous_32_r0782_lemma_coverage_preserved_slots_eq()
+     |       ------------------------------------------------------- at the end of the function body
+1042 |     ensures
+1043 |         forall|s_old_id: usize, s_new_id: usize| !pre_32_r0782_lemma_coverage_preserved_slots_eq(s_old_id, s_new_id),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1049:9
+     |
+1047 | proof fn live_32_r0782_lemma_coverage_preserved_slots_eq()
+     |       ---------------------------------------------------- at the end of the function body
+1048 |     ensures
+1049 |         exists|s_old_id: usize, s_new_id: usize| pre_32_r0782_lemma_coverage_preserved_slots_eq(s_old_id, s_new_id),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1066:9
+     |
+1064 | proof fn vacuous_33_r0784_lemma_frame_drop_pre_derivable()
+     |       ---------------------------------------------------- at the end of the function body
+1065 |     ensures
+1066 |         forall|s_id: usize, fid: usize| !pre_33_r0784_lemma_frame_drop_pre_derivable(s_id, fid),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1072:9
+     |
+1070 | proof fn live_33_r0784_lemma_frame_drop_pre_derivable()
+     |       ------------------------------------------------- at the end of the function body
+1071 |     ensures
+1072 |         exists|s_id: usize, fid: usize| pre_33_r0784_lemma_frame_drop_pre_derivable(s_id, fid),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1089:9
+     |
+1087 | proof fn vacuous_34_r0791_lemma_handle_count_insert_fresh()
+     |       ----------------------------------------------------- at the end of the function body
+1088 |     ensures
+1089 |         forall|frames_id: usize, id: usize| !pre_34_r0791_lemma_handle_count_insert_fresh(frames_id, id),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1095:9
+     |
+1093 | proof fn live_34_r0791_lemma_handle_count_insert_fresh()
+     |       -------------------------------------------------- at the end of the function body
+1094 |     ensures
+1095 |         exists|frames_id: usize, id: usize| pre_34_r0791_lemma_handle_count_insert_fresh(frames_id, id),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1112:9
+     |
+1110 | proof fn vacuous_35_r0792_lemma_handle_count_remove()
+     |       ----------------------------------------------- at the end of the function body
+1111 |     ensures
+1112 |         forall|frames_id: usize, fid: usize| !pre_35_r0792_lemma_handle_count_remove(frames_id, fid),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1118:9
+     |
+1116 | proof fn live_35_r0792_lemma_handle_count_remove()
+     |       -------------------------------------------- at the end of the function body
+1117 |     ensures
+1118 |         exists|frames_id: usize, fid: usize| pre_35_r0792_lemma_handle_count_remove(frames_id, fid),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1135:9
+     |
+1133 | proof fn vacuous_36_r0793_lemma_segment_cover_contains()
+     |       -------------------------------------------------- at the end of the function body
+1134 |     ensures
+1135 |         forall|segments_id: usize, sid: usize, paddr: usize| !pre_36_r0793_lemma_segment_cover_contains(segments_id, sid, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1141:9
+     |
+1139 | proof fn live_36_r0793_lemma_segment_cover_contains()
+     |       ----------------------------------------------- at the end of the function body
+1140 |     ensures
+1141 |         exists|segments_id: usize, sid: usize, paddr: usize| pre_36_r0793_lemma_segment_cover_contains(segments_id, sid, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1158:9
+     |
+1156 | proof fn vacuous_37_r0794_lemma_segment_cover_insert_inside()
+     |       ------------------------------------------------------- at the end of the function body
+1157 |     ensures
+1158 |         forall|segments_id: usize, sid: usize, entry_id: usize, paddr: usize| !pre_37_r0794_lemma_segment_cover_insert_inside(segments_id, sid, entry_id, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1164:9
+     |
+1162 | proof fn live_37_r0794_lemma_segment_cover_insert_inside()
+     |       ---------------------------------------------------- at the end of the function body
+1163 |     ensures
+1164 |         exists|segments_id: usize, sid: usize, entry_id: usize, paddr: usize| pre_37_r0794_lemma_segment_cover_insert_inside(segments_id, sid, entry_id, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1181:9
+     |
+1179 | proof fn vacuous_38_r0795_lemma_segment_cover_insert_outside()
+     |       -------------------------------------------------------- at the end of the function body
+1180 |     ensures
+1181 |         forall|segments_id: usize, sid: usize, entry_id: usize, paddr: usize| !pre_38_r0795_lemma_segment_cover_insert_outside(segments_id, sid, entry_id, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1187:9
+     |
+1185 | proof fn live_38_r0795_lemma_segment_cover_insert_outside()
+     |       ----------------------------------------------------- at the end of the function body
+1186 |     ensures
+1187 |         exists|segments_id: usize, sid: usize, entry_id: usize, paddr: usize| pre_38_r0795_lemma_segment_cover_insert_outside(segments_id, sid, entry_id, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1204:9
+     |
+1202 | proof fn vacuous_39_r0796_lemma_segment_cover_remove_inside()
+     |       ------------------------------------------------------- at the end of the function body
+1203 |     ensures
+1204 |         forall|segments_id: usize, sid: usize, paddr: usize| !pre_39_r0796_lemma_segment_cover_remove_inside(segments_id, sid, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1210:9
+     |
+1208 | proof fn live_39_r0796_lemma_segment_cover_remove_inside()
+     |       ---------------------------------------------------- at the end of the function body
+1209 |     ensures
+1210 |         exists|segments_id: usize, sid: usize, paddr: usize| pre_39_r0796_lemma_segment_cover_remove_inside(segments_id, sid, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1227:9
+     |
+1225 | proof fn vacuous_40_r0797_lemma_segment_cover_remove_outside()
+     |       -------------------------------------------------------- at the end of the function body
+1226 |     ensures
+1227 |         forall|segments_id: usize, sid: usize, paddr: usize| !pre_40_r0797_lemma_segment_cover_remove_outside(segments_id, sid, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1233:9
+     |
+1231 | proof fn live_40_r0797_lemma_segment_cover_remove_outside()
+     |       ----------------------------------------------------- at the end of the function body
+1232 |     ensures
+1233 |         exists|segments_id: usize, sid: usize, paddr: usize| pre_40_r0797_lemma_segment_cover_remove_outside(segments_id, sid, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1250:9
+     |
+1248 | proof fn vacuous_41_r0798_lemma_segment_cover_shrink_front()
+     |       ------------------------------------------------------ at the end of the function body
+1249 |     ensures
+1250 |         forall|segments_id: usize, sid: usize, page_size: usize, max_paddr: usize, new_entry_id: usize, paddr_check: usize| !pre_41_r0798_lemma_segment_cover_shrink_front(segments_id, sid, page_size, max_paddr, new_entry_id, paddr_check),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1256:9
+     |
+1254 | proof fn live_41_r0798_lemma_segment_cover_shrink_front()
+     |       --------------------------------------------------- at the end of the function body
+1255 |     ensures
+1256 |         exists|segments_id: usize, sid: usize, page_size: usize, max_paddr: usize, new_entry_id: usize, paddr_check: usize| pre_41_r0798_lemma_segment_cover_shrink_front(segments_id, sid, page_size, max_paddr, new_entry_id, paddr_check),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1273:9
+     |
+1271 | proof fn vacuous_42_r0799_lemma_segment_cover_split()
+     |       ----------------------------------------------- at the end of the function body
+1272 |     ensures
+1273 |         forall|segments_id: usize, sid: usize, new_left: usize, new_right: usize, entry_left_id: usize, entry_right_id: usize| !pre_42_r0799_lemma_segment_cover_split(segments_id, sid, new_left, new_right, entry_left_id, entry_right_id),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1279:9
+     |
+1277 | proof fn live_42_r0799_lemma_segment_cover_split()
+     |       -------------------------------------------- at the end of the function body
+1278 |     ensures
+1279 |         exists|segments_id: usize, sid: usize, new_left: usize, new_right: usize, entry_left_id: usize, entry_right_id: usize| pre_42_r0799_lemma_segment_cover_split(segments_id, sid, new_left, new_right, entry_left_id, entry_right_id),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1296:9
+     |
+1294 | proof fn vacuous_43_r0800_lemma_segment_cover_witness()
+     |       ------------------------------------------------- at the end of the function body
+1295 |     ensures
+1296 |         forall|segments_id: usize, paddr: usize| !pre_43_r0800_lemma_segment_cover_witness(segments_id, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1302:9
+     |
+1300 | proof fn live_43_r0800_lemma_segment_cover_witness()
+     |       ---------------------------------------------- at the end of the function body
+1301 |     ensures
+1302 |         exists|segments_id: usize, paddr: usize| pre_43_r0800_lemma_segment_cover_witness(segments_id, paddr),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1319:9
+     |
+1317 | proof fn vacuous_44_r0824_lemma_step_segment_from_unused_accounting()
+     |       --------------------------------------------------------------- at the end of the function body
+1318 |     ensures
+1319 |         forall|s_after_id: usize, old_store_id: usiz..._id, page_size, max_paddr, ref_count_unused),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^...^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+    --> src/lib.rs:1325:9
+     |
+1323 | proof fn live_44_r0824_lemma_step_segment_from_unused_accounting()
+     |       ------------------------------------------------------------ at the end of the function body
+1324 |     ensures
+1325 |         exists|s_after_id: usize, old_store_id: usiz..._id, page_size, max_paddr, ref_count_unused),
+     |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^...^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: could not compile `spec-vacuity-probe` (lib) due to 90 previous errors

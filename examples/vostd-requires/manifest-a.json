@@ -1,0 +1,239 @@
+{
+  "contracts": [
+    {
+      "name": "r0106_lemma_encode_prop_flags_matches",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/arch/x86/mm/mod.rs",
+          "line": 1202,
+          "span": "ostd/src/arch/x86/mm/mod.rs:1202:7: 1206:2 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::arch::mm\""
+        }
+      },
+      "params": "cache_flags: usize",
+      "probe": "quantifier",
+      "requires": "p106_k0(cache_flags)",
+      "witness": "0usize"
+    },
+    {
+      "name": "r0127_new",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "exec",
+        "source": {
+          "file": "ostd/src/boot/memory_region.rs",
+          "line": 85,
+          "span": "ostd/src/boot/memory_region.rs:85:5: 85:77 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "base: usize, len: usize, max_paddr: usize",
+      "probe": "quantifier",
+      "requires": "p127_k0(base, len, max_paddr)",
+      "witness": "(0usize, 0usize, 0usize)"
+    },
+    {
+      "name": "r0166_lemma_u64_distinct_bits_differ",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/cpu/set.rs",
+          "line": 767,
+          "span": "ostd/src/cpu/set.rs:767:7: 767:56 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::cpu::set\""
+        }
+      },
+      "params": "x: usize, y: usize",
+      "probe": "quantifier",
+      "requires": "p166_k0(x, y)",
+      "witness": "(0usize, 1usize)"
+    },
+    {
+      "name": "r0167_lemma_u64_nonzero_has_set_bit",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/cpu/set.rs",
+          "line": 707,
+          "span": "ostd/src/cpu/set.rs:707:7: 707:50 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::cpu::set\""
+        }
+      },
+      "params": "word: usize",
+      "probe": "quantifier",
+      "requires": "p167_k0(word)",
+      "witness": "1usize"
+    },
+    {
+      "name": "r0169_lemma_u64_unit_bit_projection",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/src/cpu/set.rs",
+          "line": 792,
+          "span": "ostd/src/cpu/set.rs:792:7: 792:55 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::cpu::set\""
+        }
+      },
+      "params": "b: usize",
+      "probe": "quantifier",
+      "requires": "p169_k0(b)",
+      "witness": "0usize"
+    },
+    {
+      "name": "r0732_lemma_paddr_to_vaddr_properties",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/arch/x86/mod.rs",
+          "line": 89,
+          "span": "ostd/src/../specs/arch/x86/mod.rs:89:1: 89:66 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "pa: usize, linear_mapping_base_vaddr: usize, vmalloc_base_vaddr: usize",
+      "probe": "quantifier",
+      "requires": "p732_k0(pa, linear_mapping_base_vaddr, vmalloc_base_vaddr)",
+      "witness": "(0usize, 0usize, 1usize)"
+    },
+    {
+      "name": "r0733_lemma_vaddr_to_paddr_properties",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/arch/x86/mod.rs",
+          "line": 100,
+          "span": "ostd/src/../specs/arch/x86/mod.rs:100:1: 100:66 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "va: usize, linear_mapping_base_vaddr: usize, vmalloc_base_vaddr: usize",
+      "probe": "quantifier",
+      "requires": "p733_k0(va, linear_mapping_base_vaddr, vmalloc_base_vaddr)",
+      "witness": "(0usize, 0usize, 1usize)"
+    },
+    {
+      "name": "r1059_lemma_split_sub_page_big_j",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/page_table/cursor/page_size_lemmas.rs",
+          "line": 224,
+          "span": "ostd/src/../specs/mm/page_table/cursor/page_size_lemmas.rs:224:1: 224:98 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "pub",
+          "restricted_to": null
+        }
+      },
+      "params": "level: usize, nr_levels: usize, i: usize, nr_entries: usize",
+      "probe": "quantifier",
+      "requires": "p1059_k0(level, nr_levels) && p1059_k1(i, nr_entries)",
+      "witness": "(2usize, 2usize, 1usize, 2usize)"
+    },
+    {
+      "name": "r1196_lemma_vaddr_make_eq_page_size",
+      "origin": {
+        "external_body": false,
+        "generics": {
+          "count": 0,
+          "names": []
+        },
+        "kind": "static",
+        "mode": "proof",
+        "source": {
+          "file": "ostd/specs/mm/page_table/owners.rs",
+          "line": 2001,
+          "span": "ostd/src/../specs/mm/page_table/owners.rs:2001:7: 2001:62 (#0)"
+        },
+        "trait": null,
+        "visibility": {
+          "kind": "non_pub",
+          "restricted_to": "\"ostd::specs::mm::page_table::owners\""
+        }
+      },
+      "params": "idx: usize, nr_levels: usize, offset: usize, nr_entries: usize",
+      "probe": "quantifier",
+      "requires": "p1196_k0(idx, nr_levels) && p1196_k1(offset, nr_entries)",
+      "witness": "(0usize, 1usize, 0usize, 1usize)"
+    }
+  ],
+  "preamble": "// Generated by spec-check screen-requires (M7e).\n// Requires clauses are wrapped as named spec fns (quantifier-trigger\n// discipline). Mechanical clauses are open spec bodies; clauses over\n// ghost structure are uninterp spec fns (constraint structure kept by\n// name, body abstracted). Constants referenced by requires are lifted\n// to probe parameters (documented abstraction).\n\npub open spec fn p106_k0(cache_flags: usize) -> bool {\n    (((cache_flags == 0) || (cache_flags == 8)) || (cache_flags == 16))\n}\n\n\npub open spec fn p127_k0(base: usize, len: usize, max_paddr: usize) -> bool {\n    ((base + len) <= max_paddr)\n}\n\n\npub open spec fn p166_k0(x: usize, y: usize) -> bool {\n    !((x == y))\n}\n\n\npub open spec fn p167_k0(word: usize) -> bool {\n    !((word == 0))\n}\n\n\npub open spec fn p169_k0(b: usize) -> bool {\n    ((0 <= b) && (b < 64))\n}\n\n\npub open spec fn p732_k0(pa: usize, linear_mapping_base_vaddr: usize, vmalloc_base_vaddr: usize) -> bool {\n    (pa < (vmalloc_base_vaddr - linear_mapping_base_vaddr))\n}\n\n\npub open spec fn p733_k0(va: usize, linear_mapping_base_vaddr: usize, vmalloc_base_vaddr: usize) -> bool {\n    ((linear_mapping_base_vaddr <= va) && (va < vmalloc_base_vaddr))\n}\n\n\npub open spec fn p1059_k0(level: usize, nr_levels: usize) -> bool {\n    ((2 <= level) && (level <= nr_levels))\n}\n\npub open spec fn p1059_k1(i: usize, nr_entries: usize) -> bool {\n    ((0 < i) && (i < nr_entries))\n}\n\n\npub open spec fn p1196_k0(idx: usize, nr_levels: usize) -> bool {\n    ((0 <= idx) && (idx < nr_levels))\n}\n\npub open spec fn p1196_k1(offset: usize, nr_entries: usize) -> bool {\n    ((0 <= offset) && (offset < nr_entries))\n}\n\n\n"
+}

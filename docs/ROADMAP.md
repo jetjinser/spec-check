@@ -3,7 +3,7 @@
 本文件是工具仓库的主线状态记录。**进度必须写在这里**，不依赖任何会话记忆；
 每次完成或推进一个条目，更新本文件并提交。
 
-## 当前状态（2026-11-11）
+## 当前状态（2026-11-12）
 
 - 引擎已从研究仓库独立（spec-check-core，47 模块，93 测试/0 失败）。
 - `project-capture` 可用；ktest-cfg 捕获通道已打通（vostd 上 1,496 验证 /
@@ -51,6 +51,15 @@
   = 105 capture-gap + 8 断连 + 4 环境。设计
   `docs/M7b-ktest-obligation-extraction.md`，归档
   `examples/vostd-ktest/`。
+- M7e requires 全函数筛查已实现：`cargo-spec-check screen-requires
+  --census FILE --out DIR [--tier] [--filter] [--limit] [--batch]`
+  从 census 分层（A 全机械 / B 含 uninterp / C blocked）、生成 quantifier
+  manifest、复用 `vacuity::run`。vostd 1468 函数 → 774 有 requires
+  （A 9 / B 89 / C 676；694 无 requires）；98 条候选分三批运行，
+  **9 ConfirmedLive / 89 CandidateInconclusive / 0 ConfirmedVacuous /
+  0 Anomaly，98/98 与预注册一致**；60 接口清单映射为 42 无 requires +
+  18 Tier C，与本轮候选零交集。见 `docs/M7e-requires-screening.md`、
+  `examples/vostd-requires/`。
 
 ## 主线条目（按优先级）
 
@@ -391,6 +400,30 @@ requires_human=true；registry 只读并字节校验。首站对账 10 份 repor
 construction_probe 合并 3 来源）、new 0、noop 63——F-013..F-017 与
 F-018..F-024 全部匹配既有条目、零误建。registry 现 26 条（19 + M7c 新增
 7）。commit 2b1644b。
+
+### M7e. census 全函数 requires 筛查 —— 完成（2026-11-12）
+
+把 vacuity 的 requires 侧筛查从"60 接口手写清单"推广为"基于 census 的全函数
+筛查"。census 增加逐函数 `generics`/`params`/`requires`（机械 AST、span 文本、
+特征标记）；`screen-requires --census FILE --out DIR [--tier] [--filter]
+[--limit] [--batch K --batch-size N] [--cargo-verus --z3 --vstd]` 分层
+（A 全机械 / B 含 uninterp / C blocked）、生成 quantifier manifest、复用
+`vacuity::run` 并输出逐函数分类与 verdict/expect 对照。
+
+- 分层：A 9 / B 89 / C 676（无 requires 694；函数总数 1468）。C 原因（按函数
+  去重）：generic 505、ghost_param 168、reference_param 366。C 明确不是
+  "无缺陷"。
+- 首站：A 校准批 9 条 → **9 ConfirmedLive**（35.9s）；B1 45 条、B2 44 条 →
+  **89 CandidateInconclusive**（38.1s / 37.5s）；合计 **98/98 与预注册一致**，
+  0 ConfirmedVacuous / 0 Anomaly。三批均首次编译通过。
+- 与 M1 60 接口对照：60 行映射为 42 `no_requires` + 18 Tier C，**0 个 A/B
+  候选**——两套清单不相交；M1 的 7 项已知 vacuous stub 全在 Tier C，实证
+  "Tier C ≠ 无缺陷"。
+- 归档：`docs/M7e-requires-screening.md`、`examples/vostd-requires/`
+  （screening.json、三批 manifest、REQUIRES-EXPECTED.md、REQUIRES-RUN.md、
+  runs/{a,b1,b2}.json）。registry 无新增（无新 ConfirmedVacuous）。
+- 边界：Tier C 676 未筛查；常量提升与有界见证；Tier B Inconclusive 不计缺陷；
+  `screen-requires` 为离线步骤，未默认接入夜班。
 
 ### CI 入口更新（census 可选通道）—— 完成（2026-11-12）
 

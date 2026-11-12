@@ -182,14 +182,23 @@ census 以 `::_VERUS_VERIFIED_` 记录为准，去掉该段后作为**规范路�
 `requires_preview` 只保留前 3 条、每条截断到 300 字符；完整 VIR 在
 输入文件中。
 
+M7e 追加的 additive 字段（schema 仍为 `spec-check.census/1`，旧消费者
+不受影响）：每个函数新增 `generics {count,names}`、`params
+[{name,type,kind,mode}]`、`requires [{index,span,file,line,text,class,ast,
+ast_vars,ast_consts,vars,consts,calls,features}]`。`class=mechanical` 表示
+该子句可机械转写为标量/布尔表达式（附结构化 `ast`）；`text` 在提供
+`--source-root` 时按 VIR span 从源码切出（多行 span 也支持）。这些是
+筛查输入事实，不含缺陷判定。详见 `docs/M7e-requires-screening.md`。
+
 ## 5. CLI
 
 ```
 cargo-spec-check census --vir FILE --crate NAME --out DIRECTORY [--source-root DIRECTORY]
 ```
 
-- 纯分析，不注入、不验证；不读取目标源码（`--source-root` 仅用于把
-  `source.file` 变为相对路径）。
+- 纯分析，不注入、不验证；不解析目标源码（`--source-root` 用于把
+  `source.file` 变为相对路径，并在 M7e 中按 VIR span 切出 requires
+  原文）。
 - 输出 `DIRECTORY/census.json`；stdout 打印汇总。
 - `cargo-spec-check` 与 `spec-check-core` 的二进制入口都注册该命令。
 

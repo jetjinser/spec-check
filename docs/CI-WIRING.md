@@ -15,7 +15,8 @@
    `changed_inputs` 纪律判定新鲜度，同一输入得到同一报告。
 4. **夜班只做在线可自动化的部分**：capture、check（vacuity/divergence）
    与可选 census 可以在无人值守下产生事实/判定；`extract-ktest`、
-   `synthesize`、`ledger` 是离线人机流程，不伪装成夜班自动发现。
+   `synthesize`、`screen-requires`、`ledger` 是离线人机流程，不伪装成
+   夜班自动发现。
 
 ## 运行边界：夜班在线 vs 离线人工
 
@@ -41,6 +42,7 @@
 | census | 在线（可选） | 导出的 VIR + crate 名 | `census/census.json` | 默认关，`SPEC_CHECK_CENSUS=1` 开 |
 | extract-ktest | 离线 | `#[ktest]` 源码树 | candidates JSON | 否 |
 | synthesize | 离线 | candidates + 项目侧 recipes | divergence manifest | 否 |
+| screen-requires | 离线 | `census.json` | requires manifest + 逐函数分层 | 否 |
 | ledger | 离线 | 人工/提案输入 | 台账提案 | 否 |
 
 **census 不是 check 的在线分析**：它不经过 capture/check 管线，也不注入
@@ -51,7 +53,9 @@
 
 **离线合成器不进入夜班**：`synthesize` 依赖项目侧 recipes 与人工挑选，
 `extract-ktest` 的候选需要评审，`ledger` 仍是提案；夜班不会自动生成或
-提交 manifest/台账。
+提交 manifest/台账。`screen-requires`（M7e）同样离线：它从 census 生成
+requires 分层的 quantifier manifest，实际探针运行按批手工发起；夜班只在
+`SPEC_CHECK_CENSUS=1` 时产出 census 事实（见 `docs/M7e-requires-screening.md`）。
 
 ## vostd CI 现状（2026-11-11 调研）
 

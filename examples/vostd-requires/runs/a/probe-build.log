@@ -1,0 +1,101 @@
+verification results:: 2060 verified, 0 errors
+verification results:: 18 verified, 9 errors
+   Compiling proc-macro2 v1.0.107
+   Compiling quote v1.0.47
+   Compiling unicode-ident v1.0.27
+   Compiling verus_syn v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/dependencies/syn)
+   Compiling verus_prettyplease v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/dependencies/prettyplease)
+   Compiling equivalent v1.0.3
+   Compiling hashbrown v0.17.1
+   Compiling convert_case v0.4.0
+   Compiling vstd v0.0.0-2026-10-04-0306 (/home/jinser/vie/work/AES/vostd/tools/verus/source/vstd)
+   Compiling verus_builtin v0.0.0-2026-09-16-0054 (/home/jinser/vie/work/AES/vostd/tools/verus/source/builtin)
+   Compiling indexmap v2.14.2
+   Compiling syn v2.0.119
+   Compiling synstructure v0.13.2
+   Compiling verus_state_machines_macros v0.0.0-2026-09-06-0133 (/home/jinser/vie/work/AES/vostd/tools/verus/source/state_machines_macros)
+   Compiling verus_builtin_macros v0.0.0-2026-09-20-0158 (/home/jinser/vie/work/AES/vostd/tools/verus/source/builtin_macros)
+   Compiling spec-vacuity-probe v0.1.0 (/tmp/m7e-run-a/run)
+error: postcondition not satisfied
+  --> src/lib.rs:81:9
+   |
+79 | proof fn vacuous_0_r0106_lemma_encode_prop_flags_matches()
+   |       ---------------------------------------------------- at the end of the function body
+80 |     ensures
+81 |         forall|cache_flags: usize| !pre_0_r0106_lemma_encode_prop_flags_matches(cache_flags),
+   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:106:9
+    |
+104 | proof fn vacuous_1_r0127_new()
+    |       ------------------------ at the end of the function body
+105 |     ensures
+106 |         forall|base: usize, len: usize, max_paddr: usize| !pre_1_r0127_new(base, len, max_paddr),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:131:9
+    |
+129 | proof fn vacuous_2_r0166_lemma_u64_distinct_bits_differ()
+    |       --------------------------------------------------- at the end of the function body
+130 |     ensures
+131 |         forall|x: usize, y: usize| !pre_2_r0166_lemma_u64_distinct_bits_differ(x, y),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:156:9
+    |
+154 | proof fn vacuous_3_r0167_lemma_u64_nonzero_has_set_bit()
+    |       -------------------------------------------------- at the end of the function body
+155 |     ensures
+156 |         forall|word: usize| !pre_3_r0167_lemma_u64_nonzero_has_set_bit(word),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:181:9
+    |
+179 | proof fn vacuous_4_r0169_lemma_u64_unit_bit_projection()
+    |       -------------------------------------------------- at the end of the function body
+180 |     ensures
+181 |         forall|b: usize| !pre_4_r0169_lemma_u64_unit_bit_projection(b),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:206:9
+    |
+204 | proof fn vacuous_5_r0732_lemma_paddr_to_vaddr_properties()
+    |       ---------------------------------------------------- at the end of the function body
+205 |     ensures
+206 |         forall|pa: usize, linear_mapping_base_vaddr: usize, vmalloc_base_vaddr: usize| !pre_5_r0732_lemma_paddr_to_vaddr_properties(pa, linear_mapping_base_vaddr, vmalloc_base_vaddr),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:231:9
+    |
+229 | proof fn vacuous_6_r0733_lemma_vaddr_to_paddr_properties()
+    |       ---------------------------------------------------- at the end of the function body
+230 |     ensures
+231 |         forall|va: usize, linear_mapping_base_vaddr: usize, vmalloc_base_vaddr: usize| !pre_6_r0733_lemma_vaddr_to_paddr_properties(va, linear_mapping_base_vaddr, vmalloc_base_vaddr),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:256:9
+    |
+254 | proof fn vacuous_7_r1059_lemma_split_sub_page_big_j()
+    |       ----------------------------------------------- at the end of the function body
+255 |     ensures
+256 |         forall|level: usize, nr_levels: usize, i: usize, nr_entries: usize| !pre_7_r1059_lemma_split_sub_page_big_j(level, nr_levels, i, nr_entries),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: postcondition not satisfied
+   --> src/lib.rs:281:9
+    |
+279 | proof fn vacuous_8_r1196_lemma_vaddr_make_eq_page_size()
+    |       -------------------------------------------------- at the end of the function body
+280 |     ensures
+281 |         forall|idx: usize, nr_levels: usize, offset: usize, nr_entries: usize| !pre_8_r1196_lemma_vaddr_make_eq_page_size(idx, nr_levels, offset, nr_entries),
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ failed this postcondition
+
+error: could not compile `spec-vacuity-probe` (lib) due to 9 previous errors
+warning: build failed, waiting for other jobs to finish...
