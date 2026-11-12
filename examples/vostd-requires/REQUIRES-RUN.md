@@ -56,6 +56,10 @@ reference_param **366**。
 原因组合：gen-only 252 / ref-only 143 / gen+ref 113 / gen+ghost+ref 94 /
 gen+ghost 46 / ghost+ref 16 / ghost-only 12。**Tier C 不视为「无缺陷」**。
 
+参数形态（774 个有 requires 的函数，参数实例计数）：int 531、bool 7、opaque 669、
+reference 481、ghost/tracked 368；按函数去重：含 ghost 175、含引用 388、泛型 505。
+这解释了 Tier C 的主导来源：泛型与引用覆盖面远大于标量层。
+
 子句层（census 全量）：2507 条 requires 子句 = mechanical 97 / unsupported 2410；
 源码 span 文本恢复 2391 条（95.4%，多行 span 已支持；失败项保留 span 与 VIR 预览）。
 unsupported 特征计数（可重叠）：call 2130、field_access 968、quantifier 146、
