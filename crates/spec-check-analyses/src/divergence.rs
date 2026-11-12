@@ -42,7 +42,7 @@ use crate::probe_infra::{
 };
 
 /// Project-side obligation manifest: the client obligations to probe.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Manifest {
     /// The target workspace to inject the obligation clients into.
     pub target_workspace: TargetWorkspace,
@@ -50,7 +50,7 @@ pub struct Manifest {
 }
 
 /// One obligation client entry.
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct ObligationEntry {
     /// Stable subject identifier.
     pub name: String,

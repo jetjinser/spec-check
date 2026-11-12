@@ -1,0 +1,73 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": [
+      "ktest_capture_gap"
+    ],
+    "target": "x86_64-unknown-none"
+  },
+  "types": {
+    "SliceAsVirtPtr": {
+      "imports": [
+        "use crate::mm::io::AsVirtPtr;"
+      ],
+      "setup": "let buf = [1u8, 2, 3];",
+      "construct": "&buf[..]"
+    },
+    "Jiffies": {
+      "imports": [
+        "use crate::timer::Jiffies;"
+      ],
+      "construct": ""
+    },
+    "Drhd": {
+      "imports": [
+        "use crate::arch::x86::kernel::acpi::remapping::Drhd;"
+      ],
+      "setup": "let bytes = [0u8, 0u8, 16u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0x00u8, 0x10u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8];",
+      "construct": "Drhd::from_bytes(&bytes[..])"
+    },
+    "PageTableMeta": {
+      "imports": [
+        "use crate::mm::page_table::PageTablePageMeta;",
+        "use crate::mm::kspace::KernelPtConfig;"
+      ],
+      "construct": ""
+    }
+  },
+  "interfaces": {
+    "AsVirtPtr::as_virt_ptr": {
+      "receiver_type": "SliceAsVirtPtr",
+      "family": "value-readback",
+      "call": "{recv}.as_virt_ptr()",
+      "probes": [
+        "let expected = buf.as_ptr() as usize;"
+      ],
+      "assert": "{out}.vaddr == expected"
+    },
+    "Jiffies::elapsed": {
+      "receiver_type": "Jiffies",
+      "family": "value-readback",
+      "bridge": "let first = Jiffies::elapsed();\nlet first_v = first.as_u64();",
+      "call": "Jiffies::elapsed()",
+      "probes": [
+        "let second_v = {out}.as_u64();"
+      ],
+      "assert": "second_v >= first_v"
+    },
+    "Drhd::register_base_addr": {
+      "receiver_type": "Drhd",
+      "family": "value-readback",
+      "call": "{recv}.register_base_addr()",
+      "assert": "{out} == 0x1000u64"
+    },
+    "PageTablePageMeta<C>::new": {
+      "receiver_type": "PageTableMeta",
+      "family": "value-readback",
+      "call": "PageTablePageMeta::<KernelPtConfig>::new(3)",
+      "assert": "{out}.level == 3"
+    }
+  }
+}

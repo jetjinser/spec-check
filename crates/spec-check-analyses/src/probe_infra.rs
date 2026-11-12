@@ -11,7 +11,7 @@ use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 // ---------------------------------------------------------------------------
 // Source utilities
@@ -67,7 +67,7 @@ pub(crate) fn fn_region(lines: &[&str], decl_prefix: &str) -> Option<(usize, usi
 
 /// Probe target workspace (manifest v1.1, shared by construction and
 /// obligation probes).
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct TargetWorkspace {
     /// Absolute path of the target workspace manifest (`Cargo.toml`).
     pub manifest_path: PathBuf,

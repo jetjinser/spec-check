@@ -1,0 +1,167 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": [
+      "ktest_capture_gap"
+    ],
+    "target": "x86_64-unknown-none"
+  },
+  "contracts": [
+    {
+      "name": "c096_vmreader_has_remain",
+      "params": "",
+      "obligation": "let buf = [1u8, 2, 3, 4, 5, 6, 7, 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet recv = VmReader::from(&buf[..]);\nlet out = recv.has_remain();\nassert(out);",
+      "model_preamble": "use crate::mm::io::VmReader;",
+      "expect": "gap"
+    },
+    {
+      "name": "c097_vmreader_limit",
+      "params": "",
+      "obligation": "let buf = [1u8, 2, 3, 4, 5, 6, 7, 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmReader::from(&buf[..]);\nrecv.limit(4);\nassert(recv.remain_spec() <= 4);",
+      "model_preamble": "use crate::mm::io::VmReader;",
+      "expect": "gap"
+    },
+    {
+      "name": "c098_vmreader_skip",
+      "params": "",
+      "obligation": "let buf = [1u8, 2, 3, 4, 5, 6, 7, 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmReader::from(&buf[..]);\nlet before = recv.cursor.vaddr;\nrecv.skip(4);\nassert(recv.cursor.vaddr == before + 4);",
+      "model_preamble": "use crate::mm::io::VmReader;",
+      "expect": "gap"
+    },
+    {
+      "name": "c100_vmwriter_has_avail",
+      "params": "",
+      "obligation": "let mut buf = [0u8; 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet recv = VmWriter::from(&mut buf[..]);\nlet out = recv.has_avail();\nassert(out);",
+      "model_preamble": "use crate::mm::io::VmWriter;",
+      "expect": "gap"
+    },
+    {
+      "name": "c101_vmwriter_limit",
+      "params": "",
+      "obligation": "let mut buf = [0u8; 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmWriter::from(&mut buf[..]);\nrecv.limit(4);\nassert(recv.avail_spec() <= 4);",
+      "model_preamble": "use crate::mm::io::VmWriter;",
+      "expect": "gap"
+    },
+    {
+      "name": "c102_vmwriter_skip",
+      "params": "",
+      "obligation": "let mut buf = [0u8; 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmWriter::from(&mut buf[..]);\nlet before = recv.cursor.vaddr;\nrecv.skip(4);\nassert(recv.cursor.vaddr == before + 4);",
+      "model_preamble": "use crate::mm::io::VmWriter;",
+      "expect": "gap"
+    },
+    {
+      "name": "c104_vmwriter_from",
+      "params": "",
+      "obligation": "let mut buf = [0u8; 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmWriter::from(&mut buf[..]);\nassert(recv.avail_spec() == 8usize);",
+      "model_preamble": "use crate::mm::io::VmWriter;",
+      "expect": "supported"
+    },
+    {
+      "name": "c162_mutex_new",
+      "params": "",
+      "obligation": "let recv = Mutex::<u64>::new(5u64);\nlet out = recv.lock();\nassert(out.view() == 5u64);\nlet _held = out;",
+      "model_preamble": "use crate::sync::Mutex;",
+      "expect": "gap"
+    },
+    {
+      "name": "c167_rcuoption_new_none",
+      "params": "",
+      "obligation": "let recv = RcuOption::<alloc::boxed::Box<u64>>::new_none();\nlet out = recv.read();\nlet flag = out.is_none();\nassert(flag);\nlet _held = out;",
+      "model_preamble": "use crate::sync::RcuOption;",
+      "expect": "gap"
+    },
+    {
+      "name": "c169_rcuoption_read",
+      "params": "",
+      "obligation": "let recv = RcuOption::<alloc::boxed::Box<u64>>::new(Some(alloc::boxed::Box::new(5u64)));\nlet handle = recv.read();\nlet flag = handle.is_none();\nassert(!flag);\nlet _held = handle;",
+      "model_preamble": "use crate::sync::RcuOption;",
+      "expect": "gap"
+    },
+    {
+      "name": "c170_rcuoptionreadguard_is_none",
+      "params": "",
+      "obligation": "let recv = RcuOption::<alloc::boxed::Box<u64>>::new(Some(alloc::boxed::Box::new(5u64)));\nlet out = recv.read();\nlet flag = out.is_none();\nassert(!flag);\nlet _held = out;",
+      "model_preamble": "use crate::sync::RcuOption;",
+      "expect": "gap"
+    },
+    {
+      "name": "c177_rwarc_clone_ro",
+      "params": "",
+      "obligation": "let recv = RwArc::new(5u64);\nlet ro = recv.clone_ro();\nlet out = ro.read();\nassert(out.view() == 5u64);\nlet _held = out;",
+      "model_preamble": "use crate::sync::RwArc;",
+      "expect": "gap"
+    },
+    {
+      "name": "c178_rwarc_get_cloned",
+      "params": "",
+      "obligation": "let recv = RwArc::new(5u64);\nlet out = recv.get_cloned();\nassert(out == 5u64);",
+      "model_preamble": "use crate::sync::RwArc;",
+      "expect": "gap"
+    },
+    {
+      "name": "c180_rwlock_new",
+      "params": "",
+      "obligation": "let recv = RwLock::<u64, PreemptDisabled>::new(5u64);\nlet out = recv.read();\nassert(out.view() == 5u64);\nlet _held = out;",
+      "model_preamble": "use crate::sync::{RwLock, PreemptDisabled};",
+      "expect": "gap"
+    },
+    {
+      "name": "c181_rwlock_read",
+      "params": "",
+      "obligation": "let recv = RwLock::<u64, PreemptDisabled>::new(5u64);\nlet out = recv.read();\nassert(out.view() == 5u64);\nlet _held = out;",
+      "model_preamble": "use crate::sync::{RwLock, PreemptDisabled};",
+      "expect": "gap"
+    },
+    {
+      "name": "c184_rwlock_try_read",
+      "params": "",
+      "obligation": "let recv = RwLock::<u64, PreemptDisabled>::new(5u64);\nif let Some(out) = recv.try_read() {\n    assert(out.view() == 5u64);\n    let _held = out;\n}",
+      "model_preamble": "use crate::sync::{RwLock, PreemptDisabled};",
+      "expect": "gap"
+    },
+    {
+      "name": "c195_rwmutex_new",
+      "params": "",
+      "obligation": "let recv = RwMutex::<u64>::new(5u64);\nlet out = recv.read();\nassert(out.view() == 5u64);\nlet _held = out;",
+      "model_preamble": "use crate::sync::RwMutex;",
+      "expect": "gap"
+    },
+    {
+      "name": "c196_rwmutex_read",
+      "params": "",
+      "obligation": "let recv = RwMutex::<u64>::new(5u64);\nlet out = recv.read();\nassert(out.view() == 5u64);\nlet _held = out;",
+      "model_preamble": "use crate::sync::RwMutex;",
+      "expect": "gap"
+    },
+    {
+      "name": "c199_rwmutex_try_read",
+      "params": "",
+      "obligation": "let recv = RwMutex::<u64>::new(5u64);\nif let Some(out) = recv.try_read() {\n    assert(out.view() == 5u64);\n    let _held = out;\n}",
+      "model_preamble": "use crate::sync::RwMutex;",
+      "expect": "gap"
+    },
+    {
+      "name": "c216_waitqueue_wake_all",
+      "params": "",
+      "obligation": "let recv = WaitQueue::new();\nlet out = recv.wake_all();\nassert(out == 0usize);",
+      "model_preamble": "use crate::sync::WaitQueue;",
+      "expect": "gap"
+    },
+    {
+      "name": "c232_either_left",
+      "params": "",
+      "obligation": "let recv = Either::<u64, u64>::Left(5u64);\nlet out = recv.left();\nassert(out == Some(5u64));",
+      "model_preamble": "use crate::util::Either;",
+      "expect": "gap"
+    },
+    {
+      "name": "c233_either_right",
+      "params": "",
+      "obligation": "let recv = Either::<u64, u64>::Right(5u64);\nlet out = recv.right();\nassert(out == Some(5u64));",
+      "model_preamble": "use crate::util::Either;",
+      "expect": "gap"
+    }
+  ]
+}

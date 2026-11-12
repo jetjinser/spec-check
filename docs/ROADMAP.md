@@ -23,6 +23,15 @@
   分布性可达性"。见 `docs/M2-tracked-modeling.md`、
   `examples/tracked-modeling-spike/`。
 
+- M7c 义务 client 合成器已实现：`cargo-spec-check synthesize --candidates
+  FILE --recipes FILE --out MANIFEST [--select ...]`，把候选 findings +
+  项目侧类型配方渲染为 divergence manifest（4 个通用族骨架 + recipe
+  schema + 预注册继承 + 跳过报告）；vostd 首站 22 条（Top10 + 12 条
+  registry 对照）运行判定 21 ContractGapCandidate / 1
+  ObligationSupported，expect_match 22/22，baseline clean；needs-recipe
+  66 条逐条分级（3 条提升、3 条尝试失败、60 条冻结面不可补）。见
+  `docs/M7c-obligation-synthesizer.md`、`examples/vostd-divergence/
+  DIVERGENCE-RUN-M7C.md`、`NEEDS-RECIPE-M7C.md`。
 - M7a 规格普查已实现：`cargo-spec-check census --vir --crate --out`
   从 VIR 枚举 Exec/Proof 函数的返回值、`#[verus_spec]` ghost 返回值与
   `&mut` 输出，判定有效后置条件（含 trait declaration 继承、排除
@@ -259,6 +268,54 @@ fn stub 三种面形态自动选型 + 铸造策略表 + 叶证据 run 生成）�
   注解会传播到继承该 default 的 impl（artifact 只在声明行标注），不影响
   finding。6 个 `decl_unavailable` 均为自带后置条件的
   `FallibleVm{Read,Write}` impl。
+
+
+### M7c. 义务 client 合成器（obligation synthesizer）—— 完成（2026-11-12）
+
+把手写义务 client 变成"模板族骨架 + 项目侧 recipe"的机械合成，并完成
+vostd 首站运行归档。
+
+- [x] 设计：`docs/M7c-obligation-synthesizer.md`——输入
+      `candidates.json` + `recipes.json` → 输出 divergence manifest；
+      4 个通用族骨架（value-readback / is_none-demand / guard-identity /
+      final-relation，`other` 不合成）、`{recv}`/`{out}`/`{handle}`
+      占位符与族校验、recipe schema（类型构造/导入/setup、接口
+      call/bridge/snapshot/probes/assert/hold、可选 `bind_attr`）、
+      预注册继承（candidate `prereg_expected`，recipe 覆盖须带
+      `expect_basis`）、不可合成降级（skip + 报告；不把占位义务塞进
+      manifest）、与 census 的关系。工具代码零项目专有知识。
+- [x] 实现：`spec-check-analyses::synthesize` +
+      `cargo-spec-check synthesize --candidates --recipes --out
+      [--select] [--report]`。合成报告逐候选记录
+      synthesized/skip reason/expect_source/渲染后义务；确定性与
+      placeholder/族/重名/select 校验。12 个合成器单测；全仓测试通过。
+- [x] 首站配方与合成：`examples/vostd-divergence/recipes-m7c.json`
+      覆盖 VmReader/VmWriter/Either/WaitQueue + 锁族/RcuOption 对照；
+      235 候选 → 22 条（213 skip：no-template-family 61、blocked 69、
+      needs-recipe 57、no-interface-recipe 26）；预注册
+      `DIVERGENCE-EXPECTED-M7C.md`（逐条依据 + 两轮编写期预检记录）。
+- [x] 首站运行：`/tmp/vostd-divergence-m7c-run1`，vstd **1908/0**、
+      target **1498/21**、baseline clean；判定 **21
+      ContractGapCandidate / 1 ObligationSupported**，`expect_match`
+      **22/22**；21 个 error 全为 obligation fn 内 `assertion failed`
+      （无 precondition/postcondition 事件）。C-104
+      `VmWriter::from` 的 `avail_spec()==slice.len()` 为 supported 面
+      （需 tracked `VmIoOwner` 绑定）；VmReader/VmWriter 的
+      limit/skip/has_* 为接收者后状态/返回值缺口。运行后 9 个文件
+      sha256 逐字节恢复，探针目录移除。
+- [x] 归档：`examples/vostd-divergence/DIVERGENCE-RUN-M7C.md`（判定表、
+      与 M5/M7a 对照、证据边界、registry 处置）。
+- [x] needs-recipe 评估：`examples/vostd-divergence/NEEDS-RECIPE-M7C.md`。
+      66 条中 3 条成功提升（C-103 AsVirtPtr、C-228 Jiffies::elapsed、
+      C-127 PageTablePageMeta::new，均 gap、expect_match ✓）、3 条尝试
+      失败（E0433 模块可见性；E0277 `Repr<MetaSlotSmall>`）、60 条冻结面
+      不可补（DMA/VmIo 缺 `AnyUFrameMeta` 实现、链表缺
+      `Repr<MetaSlotSmall>`、VmSpace/页表 owner 不可铸造、external_body
+      等）。修正了 M7b 前置"66 条 needs-recipe"的乐观口径。
+- 已知边界：合成器不做义务发明（recipe 是项目侧输入）；skip 不进入
+  manifest（避免污染整批构建）；`ContractGapCandidate` 是证明论结论；
+  Either 的 dual_spec 口径依赖调用形态；VmReader/VmWriter 的干净证据
+  以 ghost owner 绑定为前提（编写期 v1 未绑定时全部 client 不可表达）。
 
 ## 维护纪律
 

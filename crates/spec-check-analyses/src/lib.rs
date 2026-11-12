@@ -15,6 +15,7 @@
 
 pub mod divergence;
 mod probe_infra;
+pub mod synthesize;
 pub mod vacuity;
 
 use std::collections::BTreeMap;

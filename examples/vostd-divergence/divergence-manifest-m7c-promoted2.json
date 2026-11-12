@@ -1,0 +1,20 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": [
+      "ktest_capture_gap"
+    ],
+    "target": "x86_64-unknown-none"
+  },
+  "contracts": [
+    {
+      "name": "c127_pagetablepagemeta_new",
+      "params": "",
+      "obligation": "let out = PageTablePageMeta::<KernelPtConfig>::new(3);\nassert(out.level == 3);",
+      "model_preamble": "use crate::mm::page_table::PageTablePageMeta;\nuse crate::mm::kspace::KernelPtConfig;",
+      "expect": "gap"
+    }
+  ]
+}

@@ -1,0 +1,208 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": ["ktest_capture_gap"],
+    "target": "x86_64-unknown-none"
+  },
+  "types": {
+    "VmReader": {
+      "imports": ["use crate::mm::io::VmReader;"],
+      "setup": "let buf = [1u8, 2, 3, 4, 5, 6, 7, 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }",
+      "bind_attr": "#[verus_spec(with => Tracked(owner))]",
+      "construct": "VmReader::from(&buf[..])"
+    },
+    "VmWriter": {
+      "imports": ["use crate::mm::io::VmWriter;"],
+      "setup": "let mut buf = [0u8; 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }",
+      "bind_attr": "#[verus_spec(with => Tracked(owner))]",
+      "construct": "VmWriter::from(&mut buf[..])"
+    },
+    "Either": {
+      "imports": ["use crate::util::Either;"],
+      "construct": "Either::<u64, u64>::Left(5u64)"
+    },
+    "WaitQueue": {
+      "imports": ["use crate::sync::WaitQueue;"],
+      "construct": "WaitQueue::new()"
+    },
+    "Mutex": {
+      "imports": ["use crate::sync::Mutex;"],
+      "construct": "Mutex::<u64>::new(5u64)"
+    },
+    "RwLock": {
+      "imports": ["use crate::sync::{RwLock, PreemptDisabled};"],
+      "construct": "RwLock::<u64, PreemptDisabled>::new(5u64)"
+    },
+    "RwMutex": {
+      "imports": ["use crate::sync::RwMutex;"],
+      "construct": "RwMutex::<u64>::new(5u64)"
+    },
+    "RwArc": {
+      "imports": ["use crate::sync::RwArc;"],
+      "construct": "RwArc::new(5u64)"
+    },
+    "RcuOption": {
+      "imports": ["use crate::sync::RcuOption;"],
+      "construct": "RcuOption::<alloc::boxed::Box<u64>>::new_none()"
+    }
+  },
+  "interfaces": {
+    "VmReader<'_, Fallibility>::limit": {
+      "receiver_type": "VmReader",
+      "family": "final-relation",
+      "call": "{recv}.limit(4)",
+      "assert": "{recv}.remain_spec() <= 4"
+    },
+    "VmReader<'_, Fallibility>::skip": {
+      "receiver_type": "VmReader",
+      "family": "final-relation",
+      "snapshot": "let before = {recv}.cursor.vaddr;",
+      "call": "{recv}.skip(4)",
+      "assert": "{recv}.cursor.vaddr == before + 4"
+    },
+    "VmReader<'_, Fallibility>::has_remain": {
+      "receiver_type": "VmReader",
+      "family": "is_none-demand",
+      "call": "{recv}.has_remain()",
+      "assert": "{out}"
+    },
+    "VmWriter<'a, Fallibility>::limit": {
+      "receiver_type": "VmWriter",
+      "family": "final-relation",
+      "call": "{recv}.limit(4)",
+      "assert": "{recv}.avail_spec() <= 4"
+    },
+    "VmWriter<'a, Fallibility>::skip": {
+      "receiver_type": "VmWriter",
+      "family": "final-relation",
+      "snapshot": "let before = {recv}.cursor.vaddr;",
+      "call": "{recv}.skip(4)",
+      "assert": "{recv}.cursor.vaddr == before + 4"
+    },
+    "VmWriter<'a, Infallible>::from": {
+      "receiver_type": "VmWriter",
+      "family": "final-relation",
+      "assert": "{recv}.avail_spec() == 8usize",
+      "expect": "supported",
+      "expect_basis": "候选草稿 `final(buf)` 作用于自有数组（Verus final 要求 &mut 位置，不可转写）；改为构造器文档保证的 range 后状态：from ensures r.wf(owner) ∧ owner.range.end-start == slice.len() ⇒ avail_spec == 8。supported 是运行前假设（契约字面可推），非运行结果。"
+    },
+    "VmWriter<'a, Fallibility>::has_avail": {
+      "receiver_type": "VmWriter",
+      "family": "is_none-demand",
+      "call": "{recv}.has_avail()",
+      "assert": "{out}"
+    },
+    "Either<L, R>::left": {
+      "receiver_type": "Either",
+      "family": "value-readback",
+      "call": "{recv}.left()",
+      "assert": "{out} == Some(5u64)"
+    },
+    "Either<L, R>::right": {
+      "receiver_type": "Either",
+      "construct": "Either::<u64, u64>::Right(5u64)",
+      "family": "value-readback",
+      "call": "{recv}.right()",
+      "assert": "{out} == Some(5u64)"
+    },
+    "WaitQueue::wake_all": {
+      "receiver_type": "WaitQueue",
+      "family": "value-readback",
+      "call": "{recv}.wake_all()",
+      "assert": "{out} == 0usize"
+    },
+    "Mutex<T>::new": {
+      "receiver_type": "Mutex",
+      "family": "value-readback",
+      "call": "{recv}.lock()",
+      "assert": "{out}.view() == 5u64",
+      "hold": true
+    },
+    "RwLock<T, G>::new": {
+      "receiver_type": "RwLock",
+      "family": "value-readback",
+      "call": "{recv}.read()",
+      "assert": "{out}.view() == 5u64",
+      "hold": true
+    },
+    "RwLock<T, G>::read": {
+      "receiver_type": "RwLock",
+      "family": "value-readback",
+      "call": "{recv}.read()",
+      "assert": "{out}.view() == 5u64",
+      "hold": true
+    },
+    "RwLock<T, G>::try_read": {
+      "receiver_type": "RwLock",
+      "family": "value-readback",
+      "call": "{recv}.try_read()",
+      "bind": "if-let-some",
+      "assert": "{out}.view() == 5u64",
+      "hold": true
+    },
+    "RwMutex<T>::new": {
+      "receiver_type": "RwMutex",
+      "family": "value-readback",
+      "call": "{recv}.read()",
+      "assert": "{out}.view() == 5u64",
+      "hold": true
+    },
+    "RwMutex<T>::read": {
+      "receiver_type": "RwMutex",
+      "family": "value-readback",
+      "call": "{recv}.read()",
+      "assert": "{out}.view() == 5u64",
+      "hold": true
+    },
+    "RwMutex<T>::try_read": {
+      "receiver_type": "RwMutex",
+      "family": "value-readback",
+      "call": "{recv}.try_read()",
+      "bind": "if-let-some",
+      "assert": "{out}.view() == 5u64",
+      "hold": true
+    },
+    "RwArc<T>::clone_ro": {
+      "receiver_type": "RwArc",
+      "family": "value-readback",
+      "bridge": "let ro = {recv}.clone_ro();",
+      "call": "ro.read()",
+      "assert": "{out}.view() == 5u64",
+      "hold": true
+    },
+    "RwArc<T>::get_cloned": {
+      "receiver_type": "RwArc",
+      "family": "value-readback",
+      "call": "{recv}.get_cloned()",
+      "assert": "{out} == 5u64"
+    },
+    "RcuOption<P>::new_none": {
+      "receiver_type": "RcuOption",
+      "family": "value-readback",
+      "call": "{recv}.read()",
+      "probes": ["let flag = {out}.is_none();"],
+      "assert": "flag",
+      "hold": true
+    },
+    "RcuOption<P>::read": {
+      "receiver_type": "RcuOption",
+      "construct": "RcuOption::<alloc::boxed::Box<u64>>::new(Some(alloc::boxed::Box::new(5u64)))",
+      "family": "guard-identity",
+      "call": "{recv}.read()",
+      "probes": ["let flag = {handle}.is_none();"],
+      "assert": "!flag",
+      "hold": true
+    },
+    "RcuOptionReadGuard<'_, P>::is_none": {
+      "receiver_type": "RcuOption",
+      "construct": "RcuOption::<alloc::boxed::Box<u64>>::new(Some(alloc::boxed::Box::new(5u64)))",
+      "family": "is_none-demand",
+      "call": "{recv}.read()",
+      "probes": ["let flag = {out}.is_none();"],
+      "assert": "!flag",
+      "hold": true
+    }
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": [
+      "ktest_capture_gap"
+    ],
+    "target": "x86_64-unknown-none"
+  },
+  "contracts": [
+    {
+      "name": "c056__deref",
+      "params": "",
+      "obligation": "let recv = Link::<MetaSlotStorage>::new(MetaSlotStorage::Untyped);\nlet out = &*recv;\nassert(*out is Untyped);",
+      "model_preamble": "use crate::mm::frame::linked_list::Link;\nuse crate::specs::mm::frame::meta_owners::MetaSlotStorage;",
+      "expect": "gap"
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "target_workspace": {
+    "manifest_path": "/tmp/vostd-43da079-ktest-chan/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "ktest",
+    "extra_cfgs": [
+      "ktest_capture_gap"
+    ],
+    "target": "x86_64-unknown-none"
+  },
+  "contracts": [
+    {
+      "name": "c103_asvirtptr_as_virt_ptr",
+      "params": "",
+      "obligation": "let buf = [1u8, 2, 3];\nlet recv = &buf[..];\nlet out = recv.as_virt_ptr();\nlet expected = buf.as_ptr() as usize;\nassert(out.vaddr == expected);",
+      "model_preamble": "use crate::mm::io::AsVirtPtr;",
+      "expect": "gap"
+    },
+    {
+      "name": "c228_jiffies_elapsed",
+      "params": "",
+      "obligation": "let first = Jiffies::elapsed();\nlet first_v = first.as_u64();\nlet out = Jiffies::elapsed();\nlet second_v = out.as_u64();\nassert(second_v >= first_v);",
+      "model_preamble": "use crate::timer::Jiffies;",
+      "expect": "gap"
+    }
+  ]
+}

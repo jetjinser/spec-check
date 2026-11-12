@@ -112,6 +112,45 @@ fn check() -> Result<()> {
         }
         return Ok(());
     }
+    if args.first().is_some_and(|s| s == "synthesize") {
+        let usage = "synthesize --candidates FILE --recipes FILE --out FILE \
+                     [--select ID[,ID...]] [--report FILE]";
+        let mut values = BTreeMap::new();
+        let mut select: Vec<String> = Vec::new();
+        let mut iter = args.iter().skip(1);
+        while let Some(key) = iter.next() {
+            match key.as_str() {
+                "--candidates" | "--recipes" | "--out" | "--report" => {
+                    let value = iter.next().ok_or(usage)?.clone();
+                    if values.insert(key.clone(), value).is_some() {
+                        return Err(usage.into());
+                    }
+                },
+                "--select" => {
+                    let value = iter.next().ok_or(usage)?.clone();
+                    select.push(value);
+                },
+                _ => return Err(usage.into()),
+            }
+        }
+        let get = |k: &str| values.get(k).map(String::as_str).ok_or("missing option");
+        let report = spec_check_analyses::synthesize::run(
+            Path::new(get("--candidates")?),
+            Path::new(get("--recipes")?),
+            Path::new(get("--out")?),
+            values.get("--report").map(Path::new),
+            &select,
+        )?;
+        println!(
+            "synthesize: {} entries from {} selected candidates (of {}), {} skipped; manifest: {}",
+            report.synthesized,
+            report.candidates_selected,
+            report.candidates_total,
+            report.skipped,
+            get("--out")?,
+        );
+        return Ok(());
+    }
     if args.first().is_some_and(|s| s == "census") {
         let usage = "census --vir FILE --crate NAME --out DIRECTORY [--source-root DIRECTORY]";
         let mut values = BTreeMap::new();

@@ -1,0 +1,1897 @@
+{
+  "candidates_total": 235,
+  "candidates_selected": 1,
+  "synthesized": 1,
+  "skipped": 234,
+  "entries": [
+    {
+      "candidate_id": "C-127",
+      "function": "PageTablePageMeta<C>::new",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "registry_overlap": "none",
+      "dedup_key": "vr:pagetablepagemeta-c-new:1",
+      "entry_name": "c127_pagetablepagemeta_new",
+      "receiver_type": "PageTableMeta",
+      "expect": "gap",
+      "expect_source": "candidate-prereg",
+      "expect_basis": null,
+      "obligation": "let out = PageTablePageMeta::<KernelPtConfig>::new(3);\nassert(out.level == 3);",
+      "obligation_draft": "let m = PageTablePageMeta::<C>::new(0);\nassert(m.level_spec() == 0);"
+    }
+  ],
+  "skipped_candidates": [
+    {
+      "candidate_id": "C-001",
+      "function": "VmIoOwner::advance",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-002",
+      "function": "VmSpaceOwner::activate_reader",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-003",
+      "function": "VmSpaceOwner::activate_writer",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-004",
+      "function": "Dmar::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-005",
+      "function": "<Drhd as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-006",
+      "function": "Drhd::register_base_addr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-007",
+      "function": "<Rmrr as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-008",
+      "function": "<Atsr as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-009",
+      "function": "<Andd as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-010",
+      "function": "<Satc as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-011",
+      "function": "<Sidp as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-012",
+      "function": "<DeviceScope as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-013",
+      "function": "Apic::id",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-014",
+      "function": "Apic::version",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-015",
+      "function": "ApicTimer::timer_current_count",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-016",
+      "function": "X2Apic::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-017",
+      "function": "X2Apic::enable",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-018",
+      "function": "<X2Apic as super::Apic>::id",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-019",
+      "function": "<X2Apic as super::Apic>::version",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-020",
+      "function": "<X2Apic as ApicTimer>::timer_current_count",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-021",
+      "function": "XApic::read",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-022",
+      "function": "XApic::enable",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-023",
+      "function": "<XApic as super::Apic>::id",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-024",
+      "function": "<XApic as super::Apic>::version",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-025",
+      "function": "<XApic as ApicTimer>::timer_current_count",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-026",
+      "function": "ostd::arch::kernel::apic::xapic::get_xapic_base_address",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-027",
+      "function": "<PagingConsts as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-028",
+      "function": "<CpuSet as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-029",
+      "function": "AtomicCpuSet::new",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-030",
+      "function": "DmaCoherent<M>::daddr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-031",
+      "function": "DmaCoherent<M>::paddr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-032",
+      "function": "DmaCoherent<M>::nframes",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-033",
+      "function": "DmaCoherent<M>::nbytes",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-034",
+      "function": "<DmaCoherent<M> as HasDaddr>::daddr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-035",
+      "function": "<DmaCoherent<M> as HasPaddr>::paddr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-036",
+      "function": "<DmaCoherent<M> as VmIoOnce>::read_once",
+      "family": "other",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-037",
+      "function": "<DmaCoherent<M> as VmIoOnce>::write_once",
+      "family": "other",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-038",
+      "function": "DmaStreamSlice<Dma, M>::stream",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-039",
+      "function": "DmaStreamSlice<Dma, M>::sync",
+      "family": "other",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-040",
+      "function": "DmaStreamSlice<Dma, M>::daddr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-041",
+      "function": "DmaStream<M>::daddr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-042",
+      "function": "DmaStream<M>::direction",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-043",
+      "function": "DmaStream<M>::sync",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-044",
+      "function": "DmaStream<M>::paddr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-045",
+      "function": "DmaStream<M>::nframes",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-046",
+      "function": "DmaStream<M>::nbytes",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-047",
+      "function": "HasDaddr::daddr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-048",
+      "function": "ostd::mm::dma::check_and_insert_dma_mapping",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-049",
+      "function": "ostd::mm::dma::dma_type",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-050",
+      "function": "<FrameAllocOptions as Default>::default",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-051",
+      "function": "FrameAllocOptions::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-052",
+      "function": "FrameAllocOptions::zeroed",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-053",
+      "function": "LinkedList<M>::new",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-054",
+      "function": "<LinkedList<M> as Default>::default",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-055",
+      "function": "CursorMut<'a, M>::as_list",
+      "family": "guard-identity",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-056",
+      "function": "<Link<M> as Deref>::deref",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-057",
+      "function": "<Link<M> as DerefMut>::deref_mut",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-058",
+      "function": "<Link<M> as DerefMut>::deref_mut",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-059",
+      "function": "Link<M>::new",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-060",
+      "function": "<Link<M> as AnyFrameMeta>::on_drop",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-061",
+      "function": "<Link<M> as AnyFrameMeta>::is_untyped",
+      "family": "is_none-demand",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-062",
+      "function": "AnyFrameMeta::on_drop",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-063",
+      "function": "AnyFrameMeta::is_untyped",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-064",
+      "function": "<Frame<M> as core::fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-065",
+      "function": "<Frame<M> as core::fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-066",
+      "function": "Frame<M>::into_dyn",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-067",
+      "function": "<Segment<M> as Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-068",
+      "function": "<Segment<M> as Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-069",
+      "function": "Segment<M>::from_unused",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-070",
+      "function": "<UniqueFrame<M,> as core::fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-071",
+      "function": "<UniqueFrame<M,> as core::fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-072",
+      "function": "UniqueFrame<M>::drop",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-073",
+      "function": "UniqueFrame<M>::try_from_shared",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-074",
+      "function": "UntypedMem::reader",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-075",
+      "function": "UntypedMem::writer",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-076",
+      "function": "<VmReader<'_, Fallibility> as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-077",
+      "function": "VmIo::read_bytes",
+      "family": "other",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-078",
+      "function": "VmIo::read_bytes",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-079",
+      "function": "VmIo::read_bytes",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-080",
+      "function": "VmIo::read_val",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-081",
+      "function": "VmIo::read_val",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-082",
+      "function": "VmIo::read_slice",
+      "family": "other",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-083",
+      "function": "VmIo::read_slice",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-084",
+      "function": "VmIo::read_slice",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-085",
+      "function": "VmIo::write_bytes",
+      "family": "other",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-086",
+      "function": "VmIo::write_bytes",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-087",
+      "function": "VmIo::write_val",
+      "family": "other",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-088",
+      "function": "VmIo::write_val",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-089",
+      "function": "VmIo::write_slice",
+      "family": "other",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-090",
+      "function": "VmIo::write_slice",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-091",
+      "function": "VmIo::write_vals",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-092",
+      "function": "VmIo::write_vals",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-093",
+      "function": "VmIoOnce::read_once",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-094",
+      "function": "VmIoOnce::write_once",
+      "family": "other",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-095",
+      "function": "VmReader<'_, Fallibility>::cursor",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-096",
+      "function": "VmReader<'_, Fallibility>::has_remain",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-097",
+      "function": "VmReader<'_, Fallibility>::limit",
+      "family": "final-relation",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-098",
+      "function": "VmReader<'_, Fallibility>::skip",
+      "family": "final-relation",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-099",
+      "function": "VmWriter<'a, Fallibility>::cursor",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-100",
+      "function": "VmWriter<'a, Fallibility>::has_avail",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-101",
+      "function": "VmWriter<'a, Fallibility>::limit",
+      "family": "final-relation",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-102",
+      "function": "VmWriter<'a, Fallibility>::skip",
+      "family": "final-relation",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-103",
+      "function": "AsVirtPtr::as_virt_ptr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-104",
+      "function": "VmWriter<'a, Infallible>::from",
+      "family": "final-relation",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-105",
+      "function": "ostd::mm::io::pod_once_impls::is_non_tearing",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-106",
+      "function": "RangeAllocator::new",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-107",
+      "function": "ostd::mm::kspace::kvirt_area::KVIRT_AREA_ALLOCATOR",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-108",
+      "function": "KVirtArea::map_frames",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-109",
+      "function": "KVirtArea::map_frames",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-110",
+      "function": "KVirtArea::map_untracked_frames",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-111",
+      "function": "ostd::mm::kspace::KERNEL_PAGE_TABLE",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-112",
+      "function": "<KernelPtConfig as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-113",
+      "function": "HasPaddr::paddr",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-114",
+      "function": "ostd::mm::is_page_aligned",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-115",
+      "function": "ostd::mm::page_table::cursor::locking::unlock_range",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-116",
+      "function": "ostd::mm::page_table::cursor::locking::dfs_release_lock",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-117",
+      "function": "ostd::mm::page_table::cursor::locking::dfs_release_lock",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-118",
+      "function": "CursorMut<'rcu, C>::protect_next",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-119",
+      "function": "ostd::mm::page_table::largest_pages",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-120",
+      "function": "PageTable<KernelPtConfig>::new_kernel_page_table",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-121",
+      "function": "PageTable<KernelPtConfig>::create_user_page_table",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-122",
+      "function": "PageTable<KernelPtConfig>::create_user_page_table",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-123",
+      "function": "PageTable<C>::empty",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-124",
+      "function": "PageTableEntryTrait::from_usize",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-125",
+      "function": "<PageTablePageMeta<C> as AnyFrameMeta>::on_drop",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-126",
+      "function": "<PageTablePageMeta<C> as AnyFrameMeta>::is_untyped",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-128",
+      "function": "TlbFlusher<'a>::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-129",
+      "function": "TlbFlusher<'a>::issue_tlb_flush",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-130",
+      "function": "TlbFlusher<'a>::issue_tlb_flush_with",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-131",
+      "function": "TlbFlusher<'a>::dispatch_tlb_flush",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-132",
+      "function": "TlbFlusher<'a>::sync_tlb_flush",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-133",
+      "function": "<TlbFlushOp as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-134",
+      "function": "OpsStack::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-135",
+      "function": "OpsStack::is_empty",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-136",
+      "function": "OpsStack::push",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-137",
+      "function": "OpsStack::push_from",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-138",
+      "function": "OpsStack::flush_all",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-139",
+      "function": "OpsStack::clear_without_flush",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-140",
+      "function": "VmSpace::default",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-141",
+      "function": "VmSpace::default",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-142",
+      "function": "VmSpace::default",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-143",
+      "function": "VmSpace::new",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-144",
+      "function": "VmSpace::new",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-145",
+      "function": "VmSpace::cursor",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-146",
+      "function": "VmSpace::cursor",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-147",
+      "function": "VmSpace::cursor_mut",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-148",
+      "function": "VmSpace::cursor_mut",
+      "family": "final-relation",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-149",
+      "function": "CursorMut<'a>::map",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-150",
+      "function": "CursorMut<'a>::protect_next",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-151",
+      "function": "<UserPtConfig as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-152",
+      "function": "SpinGuardian::guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-153",
+      "function": "SpinGuardian::read_guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-154",
+      "function": "GuardTransfer::transfer_to",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-155",
+      "function": "GuardTransfer::transfer_to",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-156",
+      "function": "<PreemptDisabled as SpinGuardian>::guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-157",
+      "function": "<PreemptDisabled as SpinGuardian>::read_guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-158",
+      "function": "<LocalIrqDisabled as SpinGuardian>::guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-159",
+      "function": "<LocalIrqDisabled as SpinGuardian>::read_guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-160",
+      "function": "<WriteIrqDisabled as SpinGuardian>::guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-161",
+      "function": "<WriteIrqDisabled as SpinGuardian>::read_guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-162",
+      "function": "Mutex<T>::new",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-163",
+      "function": "<MutexGuard<'_, T> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-164",
+      "function": "<MutexGuard<'_, T> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-165",
+      "function": "Rcu<P>::new",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-166",
+      "function": "Rcu<P>::read",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-167",
+      "function": "RcuOption<P>::new_none",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-168",
+      "function": "RcuOption<P>::new",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-169",
+      "function": "RcuOption<P>::read",
+      "family": "guard-identity",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-170",
+      "function": "RcuOptionReadGuard<'_, P>::is_none",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-171",
+      "function": "<RcuDrop<T> as Clone>::clone",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-172",
+      "function": "RcuMonitor::new",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-173",
+      "function": "RcuMonitor::is_monitoring",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-174",
+      "function": "ostd::sync::rcu::non_null::either::min",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-175",
+      "function": "RwArc<T>::read",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-176",
+      "function": "RwArc<T>::write",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-177",
+      "function": "RwArc<T>::clone_ro",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-178",
+      "function": "RwArc<T>::get_cloned",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-179",
+      "function": "RoArc<T>::read",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-180",
+      "function": "RwLock<T, G>::new",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-181",
+      "function": "RwLock<T, G>::read",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-182",
+      "function": "RwLock<T, G>::write",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-183",
+      "function": "RwLock<T, G>::upread",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-184",
+      "function": "RwLock<T, G>::try_read",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-185",
+      "function": "RwLock<T, G>::try_write",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-186",
+      "function": "RwLock<T, G>::try_upread",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-187",
+      "function": "<RwLockReadGuard<'_, T, G,> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-188",
+      "function": "<RwLockReadGuard<'_, T, G,> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-189",
+      "function": "<RwLockWriteGuard<'_, T, G,> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-190",
+      "function": "<RwLockWriteGuard<'_, T, G,> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-191",
+      "function": "RwLockUpgradeableGuard<'a, T, G>::upgrade",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-192",
+      "function": "RwLockUpgradeableGuard<'a, T, G>::try_upgrade",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-193",
+      "function": "<RwLockUpgradeableGuard<'_, T, G> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-194",
+      "function": "<RwLockUpgradeableGuard<'_, T, G> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-195",
+      "function": "RwMutex<T>::new",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-196",
+      "function": "RwMutex<T>::read",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-197",
+      "function": "RwMutex<T>::write",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-198",
+      "function": "RwMutex<T>::upread",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-199",
+      "function": "RwMutex<T>::try_read",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-200",
+      "function": "RwMutex<T>::try_write",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-201",
+      "function": "RwMutex<T>::try_upread",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-202",
+      "function": "<RwMutexReadGuard<'_, T> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-203",
+      "function": "<RwMutexReadGuard<'_, T> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-204",
+      "function": "<RwMutexWriteGuard<'_, T> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-205",
+      "function": "<RwMutexWriteGuard<'_, T> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-206",
+      "function": "RwMutexWriteGuard<'a, T>::downgrade",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-207",
+      "function": "RwMutexWriteGuard<'a, T>::try_downgrade",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-208",
+      "function": "RwMutexUpgradeableGuard<'a, T>::upgrade",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-209",
+      "function": "RwMutexUpgradeableGuard<'a, T>::try_upgrade",
+      "family": "value-readback",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-210",
+      "function": "<RwMutexUpgradeableGuard<'_, T> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-211",
+      "function": "<RwMutexUpgradeableGuard<'_, T> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-212",
+      "function": "<SpinLockGuard<'_, T, G, I> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-213",
+      "function": "<SpinLockGuard<'_, T, G, I> as fmt::Debug>::fmt",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-214",
+      "function": "WaitQueue::new",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-215",
+      "function": "WaitQueue::wake_one",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-216",
+      "function": "WaitQueue::wake_all",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-217",
+      "function": "WaitQueue::is_empty",
+      "family": "is_none-demand",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-218",
+      "function": "<WaitQueue as Default>::default",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-219",
+      "function": "Waiter::task",
+      "family": "guard-identity",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-220",
+      "function": "Waker::wake_up",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-221",
+      "function": "AsAtomicModeGuard::as_atomic_mode_guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-222",
+      "function": "<G as AsAtomicModeGuard>::as_atomic_mode_guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-223",
+      "function": "<dyn InAtomicMode + '_ as AsAtomicModeGuard>::as_atomic_mode_guard",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-224",
+      "function": "<DisabledPreemptGuard as GuardTransfer>::transfer_to",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-225",
+      "function": "<DisabledPreemptGuard as GuardTransfer>::transfer_to",
+      "family": "final-relation",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-226",
+      "function": "ostd::task::preempt::guard::disable_preempt",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-227",
+      "function": "ostd::timer::jiffies::ELAPSED",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-228",
+      "function": "Jiffies::elapsed",
+      "family": "value-readback",
+      "constructibility": "needs-recipe",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-229",
+      "function": "ostd::trap::irq::disable_local",
+      "family": "guard-identity",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-230",
+      "function": "DisabledLocalIrqGuard::new",
+      "family": "other",
+      "constructibility": "blocked",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-231",
+      "function": "<Either<L, R> as Clone>::clone",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-232",
+      "function": "Either<L, R>::left",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-233",
+      "function": "Either<L, R>::right",
+      "family": "value-readback",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-234",
+      "function": "Either<L, R>::is_left",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    },
+    {
+      "candidate_id": "C-235",
+      "function": "Either<L, R>::is_right",
+      "family": "is_none-demand",
+      "constructibility": "constructible",
+      "reason": "not-selected",
+      "detail": null
+    }
+  ]
+}
