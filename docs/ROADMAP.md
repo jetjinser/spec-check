@@ -434,6 +434,32 @@ capture + check(+可选 census)；离线 = extract-ktest / synthesize /
 ledger"，不把离线合成器伪装成自动发现。验证：bash -n、既有 VIR 直跑 census
 （1468 函数）、git diff --check。commit 8dead7c。
 
+### M7e-扩展. Tier C 建模（泛型/引用/ghost）—— 完成（2026-11-12）
+
+把 676 个不可筛查函数中的大部分降级为可生成探针：
+
+- **泛型实例化**（项目侧 `--config` 的 `generic_instances`，exact/glob，不假设
+  trait bound/布局）→ 505/505 个泛型函数实例化成功。
+- **引用/ghost 保守抽象**：census 增 `param_uses/param_occurrences`；仅当引用
+  参数的全部使用都是 receiver/field/deref root（且计数一致）才映射为不透明
+  `{name}_id: usize` + 形状保持的 uninterp 子句；直接使用/整体传参保持 Tier C。
+  映射 364 个引用参数/316 函数、211 个 ghost 参数/121 函数。抽象是 relaxation
+  （真实模型 ⊆ 抽象模型）——抽象上的 `ConfirmedVacuous` 是真阳性，抽象上的
+  Live 不当作真实 liveness。
+- 分层 before→after：**A 9→12、B 89→633、C 676→129**，可运行候选 **98→645**
+  （+547）；baseline 复跑与 M7e 逐函数 tier 0 差异。
+- 运行 13 批 645 条（总 434s）：**ConfirmedLive 12 / CandidateInconclusive
+  633 / Vacuous 0**，expect 645/645；registry 无新增。
+- 与只读可行性分析的对照：分析预测 63 可升 A，保守实现实测仅新增 3 条 A——
+  因为引用/ghost 的字段/方法访问不作语义解释（只作审计账本），多数降为
+  uninterp B。差异与原因归档于 `examples/vostd-requires/analysis-tierc/` 与
+  `TIERC-RUN.md`。
+- 剩余 129 Tier C：ghost 直接使用 67、引用直接使用 41、二者 21（`plain_root`
+  直接比较/整体传参，如 `perm.id() == self.cell_id()`）。
+- 归档：`docs/M7e-tierc-modeling.md`、`examples/vostd-requires/
+  {config-tierc.json,TIERC-EXPECTED.md,TIERC-RUN.md,screening-tierc.json,
+  manifest-tierc.json,runs-tierc/,analysis-tierc/}`。commit 87657af + bd64101。
+
 ## 维护纪律
 
 1. 主线进度只认本文件与 git 历史；会话记忆不作为状态来源。
