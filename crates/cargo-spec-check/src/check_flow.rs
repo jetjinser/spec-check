@@ -34,9 +34,9 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use spec_check_analyses::divergence;
 use spec_check_analyses::vacuity;
+use spec_check_core::Result;
 use spec_check_core::project;
 use spec_check_core::support::write_json;
-use spec_check_core::Result;
 use std::{
     collections::BTreeMap,
     fs,
@@ -74,7 +74,6 @@ pub struct AnalysisSpec {
 
 /// Toolchain and directory context handed to every analysis runner.
 pub struct AnalysisContext {
-    pub capture_out: PathBuf,
     pub cargo_verus: PathBuf,
     pub z3: PathBuf,
     pub vstd: PathBuf,
@@ -116,8 +115,8 @@ mod adapters {
         ctx: &AnalysisContext,
     ) -> std::result::Result<AnalysisOutcome, String> {
         let raw = fs::read(&spec.manifest).map_err(|e| e.to_string())?;
-        let manifest: vacuity::Manifest =
-            serde_json::from_slice(&raw).map_err(|e| format!("{}: {e}", spec.manifest.display()))?;
+        let manifest: vacuity::Manifest = serde_json::from_slice(&raw)
+            .map_err(|e| format!("{}: {e}", spec.manifest.display()))?;
         let out = ctx.check_out.join("analyses").join(&spec.name);
         let report = vacuity::run(&manifest, &ctx.cargo_verus, &ctx.z3, &ctx.vstd, &out)?;
         write_json(&out.join("report.json"), &report).map_err(|e| e.to_string())?;
@@ -155,8 +154,8 @@ mod adapters {
         ctx: &AnalysisContext,
     ) -> std::result::Result<AnalysisOutcome, String> {
         let raw = fs::read(&spec.manifest).map_err(|e| e.to_string())?;
-        let manifest: divergence::Manifest =
-            serde_json::from_slice(&raw).map_err(|e| format!("{}: {e}", spec.manifest.display()))?;
+        let manifest: divergence::Manifest = serde_json::from_slice(&raw)
+            .map_err(|e| format!("{}: {e}", spec.manifest.display()))?;
         let out = ctx.check_out.join("analyses").join(&spec.name);
         let report = divergence::run(&manifest, &ctx.cargo_verus, &ctx.z3, &ctx.vstd, &out)?;
         write_json(&out.join("report.json"), &report).map_err(|e| e.to_string())?;
@@ -174,7 +173,8 @@ mod adapters {
                         v.name,
                         v.verdict,
                         v.detail,
-                        super::verdict_hint(&format!("{:?}", v.verdict)))
+                        super::verdict_hint(&format!("{:?}", v.verdict))
+                    )
                 })
                 .collect(),
             repro: vec![format!(
@@ -200,7 +200,7 @@ pub fn verdict_hint(verdict: &str) -> &'static str {
         "ContractGapCandidate" => {
             "contract gap candidate: obligation not derivable under the original contracts; \
              proof-theoretic, not a runtime counterexample"
-        },
+        }
         "Inconclusive" => "inconclusive: obligation not decidable; human review, not a defect",
         "Anomaly" => "anomaly: contradictory probes; manual review required",
         _ => "",
@@ -234,8 +234,8 @@ pub fn capture_freshness(out: &Path) -> Result<CaptureFreshness> {
         Err(e) => {
             return Ok(CaptureFreshness::Stale(format!(
                 "report.json unreadable: {e}"
-            )))
-        },
+            )));
+        }
     };
     if value["status"] != json!("captured") {
         return Ok(CaptureFreshness::Stale(format!(
@@ -243,7 +243,10 @@ pub fn capture_freshness(out: &Path) -> Result<CaptureFreshness> {
             value["status"]
         )));
     }
-    let changed = value["changed_inputs"].as_array().map(Vec::len).unwrap_or(0);
+    let changed = value["changed_inputs"]
+        .as_array()
+        .map(Vec::len)
+        .unwrap_or(0);
     if changed > 0 {
         return Ok(CaptureFreshness::Stale(format!("{changed} changed inputs")));
     }
@@ -326,7 +329,7 @@ pub fn run(
                 &capture.out,
             )?;
             (false, None)
-        },
+        }
         CaptureFreshness::Stale(reason) => {
             fs::remove_dir_all(&capture.out)?;
             project::run(
@@ -336,12 +339,11 @@ pub fn run(
                 &capture.out,
             )?;
             (false, Some(reason))
-        },
+        }
     };
 
     let registry = registry();
     let ctx = AnalysisContext {
-        capture_out: capture.out.clone(),
         cargo_verus: cargo_verus.to_path_buf(),
         z3: z3.to_path_buf(),
         vstd: vstd.to_path_buf(),
@@ -349,19 +351,17 @@ pub fn run(
     };
     let mut outcomes = Vec::new();
     for spec in &config.analyses {
-        let runner = registry
-            .get(spec.name.as_str())
-            .ok_or_else(|| {
-                format!(
-                    "unknown analysis '{}'; registered: {}",
-                    spec.name,
-                    registry
-                        .keys()
-                        .map(|s| s.to_owned())
-                        .collect::<Vec<_>>()
-                        .join(", ")
-                )
-            })?;
+        let runner = registry.get(spec.name.as_str()).ok_or_else(|| {
+            format!(
+                "unknown analysis '{}'; registered: {}",
+                spec.name,
+                registry
+                    .keys()
+                    .map(|s| s.to_owned())
+                    .collect::<Vec<_>>()
+                    .join(", ")
+            )
+        })?;
         let manifest = resolve(&spec.manifest);
         if !manifest.is_file() {
             return Err(format!(
@@ -375,7 +375,8 @@ pub fn run(
             name: spec.name.clone(),
             manifest,
         };
-        outcomes.push(runner(&spec, &ctx).map_err(|e| format!("analysis {} failed: {e}", spec.name))?);
+        outcomes
+            .push(runner(&spec, &ctx).map_err(|e| format!("analysis {} failed: {e}", spec.name))?);
     }
 
     let report = json!({
@@ -414,7 +415,11 @@ pub fn run(
         );
         println!("== capture directory: {}", capture.out.display());
         for outcome in &outcomes {
-            println!("== analysis {} (manifest {})", outcome.name, outcome.manifest.display());
+            println!(
+                "== analysis {} (manifest {})",
+                outcome.name,
+                outcome.manifest.display()
+            );
             for line in &outcome.summary {
                 println!("  {line}");
             }
@@ -457,7 +462,10 @@ mod tests {
     fn capture_freshness_follows_recorded_state() {
         let absent = scratch("freshness-absent");
         fs::remove_dir(&absent).unwrap();
-        assert_eq!(capture_freshness(&absent).unwrap(), CaptureFreshness::Missing);
+        assert_eq!(
+            capture_freshness(&absent).unwrap(),
+            CaptureFreshness::Missing
+        );
         let dir = scratch("freshness");
         assert!(matches!(
             capture_freshness(&dir).unwrap(),
@@ -523,7 +531,7 @@ mod tests {
         let registry = registry();
         assert!(registry.contains_key("vacuity"));
         assert!(registry.contains_key("divergence"));
-        assert!(registry.get("construction").is_none());
+        assert!(!registry.contains_key("construction"));
     }
 
     #[test]

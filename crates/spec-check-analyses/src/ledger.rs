@@ -149,10 +149,10 @@ impl CandidateIndex {
         if let Some(h) = self.by_entry.get(&e) {
             return Some(h.clone());
         }
-        if let Some(n) = leading_number(&e) {
-            if let Some(h) = self.by_number.get(&n) {
-                return Some(h.clone());
-            }
+        if let Some(n) = leading_number(&e)
+            && let Some(h) = self.by_number.get(&n)
+        {
+            return Some(h.clone());
         }
         self.by_id.get(&e).cloned()
     }
@@ -760,17 +760,20 @@ fn decide(
             best = 1000;
             tier = "entry-anchor";
         }
-        if let Some(key) = &rec.candidate_dedup_key {
-            if !key.is_empty() && key == &findings[i].dedup_key && best < 950 {
-                best = 950;
-                tier = "dedup-key";
-            }
+        if let Some(key) = &rec.candidate_dedup_key
+            && !key.is_empty()
+            && key == &findings[i].dedup_key
+            && best < 950
+        {
+            best = 950;
+            tier = "dedup-key";
         }
-        if let Some((recv, method)) = &function_pair {
-            if f.explicit_matches(recv, method) && best < 800 {
-                best = 800;
-                tier = "function-interface";
-            }
+        if let Some((recv, method)) = &function_pair
+            && f.explicit_matches(recv, method)
+            && best < 800
+        {
+            best = 800;
+            tier = "function-interface";
         }
         if f.subject_matches(&entry_tokens) && best < 790 {
             best = 790;
@@ -868,36 +871,35 @@ fn rule_matches(rule: &MapRule, rec: &Record) -> bool {
 
 fn validate_map(map: &LedgerMap, registry: &Registry, path: &Path) -> Result<(), String> {
     for (i, rule) in map.rules.iter().enumerate() {
-        if let Some(id) = &rule.registry_id {
-            if !registry.findings.iter().any(|f| &f.id == id) {
-                return Err(format!(
-                    "map {} rule {}: unknown registry_id {id}",
-                    path.display(),
-                    i
-                ));
-            }
+        if let Some(id) = &rule.registry_id
+            && !registry.findings.iter().any(|f| &f.id == id)
+        {
+            return Err(format!(
+                "map {} rule {}: unknown registry_id {id}",
+                path.display(),
+                i
+            ));
         }
-        if let Some(dk) = &rule.dedup_key {
-            if !registry.findings.iter().any(|f| &f.dedup_key == dk) {
-                return Err(format!(
-                    "map {} rule {}: unknown dedup_key {dk}",
-                    path.display(),
-                    i
-                ));
-            }
+        if let Some(dk) = &rule.dedup_key
+            && !registry.findings.iter().any(|f| &f.dedup_key == dk)
+        {
+            return Err(format!(
+                "map {} rule {}: unknown dedup_key {dk}",
+                path.display(),
+                i
+            ));
         }
-        if let (Some(id), Some(dk)) = (&rule.registry_id, &rule.dedup_key) {
-            if !registry
+        if let (Some(id), Some(dk)) = (&rule.registry_id, &rule.dedup_key)
+            && !registry
                 .findings
                 .iter()
                 .any(|f| &f.id == id && &f.dedup_key == dk)
-            {
-                return Err(format!(
-                    "map {} rule {}: registry_id {id} and dedup_key {dk} refer to different findings",
-                    path.display(),
-                    i
-                ));
-            }
+        {
+            return Err(format!(
+                "map {} rule {}: registry_id {id} and dedup_key {dk} refer to different findings",
+                path.display(),
+                i
+            ));
         }
     }
     Ok(())
@@ -1085,10 +1087,10 @@ fn build_entry(rec: &Record) -> ProposedEntry {
 fn refresh_proposal(rec: &mut Record) {
     let evidence = build_evidence(rec);
     rec.proposed_evidence = Some(evidence.clone());
-    if rec.action == "new_entry" {
-        if let Some(entry) = rec.proposed_entry.as_mut() {
-            entry.evidence = vec![evidence];
-        }
+    if rec.action == "new_entry"
+        && let Some(entry) = rec.proposed_entry.as_mut()
+    {
+        entry.evidence = vec![evidence];
     }
 }
 
@@ -1121,10 +1123,10 @@ fn summarize(records: &[Record], registry_findings: usize) -> LedgerSummary {
     }
     let mut appended: BTreeSet<&str> = BTreeSet::new();
     for r in records {
-        if r.action == "append_evidence" {
-            if let Some(id) = &r.registry_id {
-                appended.insert(id);
-            }
+        if r.action == "append_evidence"
+            && let Some(id) = &r.registry_id
+        {
+            appended.insert(id);
         }
     }
     s.appended_findings = appended.len();
@@ -1316,7 +1318,7 @@ fn dashboard(
 }
 
 fn md_cell(s: &str) -> String {
-    s.replace('|', "\\|").replace('\n', " ").replace('\r', " ")
+    s.replace('|', "\\|").replace(['\n', '\r'], " ")
 }
 
 // ---------------------------------------------------------------------------
@@ -1482,20 +1484,22 @@ fn strip_stage_suffix(mut s: String) -> String {
 
 fn semantic_entry_tokens(entry: &str) -> BTreeSet<String> {
     let mut s = entry.to_ascii_lowercase();
-    if let Some((prefix, rest)) = s.split_once('_') {
-        if is_numbered_prefix(prefix) && !rest.is_empty() {
-            s = rest.to_string();
-        }
+    if let Some((prefix, rest)) = s.split_once('_')
+        && is_numbered_prefix(prefix)
+        && !rest.is_empty()
+    {
+        s = rest.to_string();
     }
     ident_tokens(&strip_stage_suffix(s))
 }
 
 fn semantic_entry_key(entry: &str) -> String {
     let mut s = entry.to_ascii_lowercase();
-    if let Some((prefix, rest)) = s.split_once('_') {
-        if is_numbered_prefix(prefix) && !rest.is_empty() {
-            s = rest.to_string();
-        }
+    if let Some((prefix, rest)) = s.split_once('_')
+        && is_numbered_prefix(prefix)
+        && !rest.is_empty()
+    {
+        s = rest.to_string();
     }
     slug(&strip_stage_suffix(s))
 }
@@ -1940,7 +1944,14 @@ mod tests {
         );
         let out1 = root.join("out1");
         let out2 = root.join("out2");
-        run(&reg, &[rp.clone()], &[cp.clone()], None, &out1).unwrap();
+        run(
+            &reg,
+            std::slice::from_ref(&rp),
+            std::slice::from_ref(&cp),
+            None,
+            &out1,
+        )
+        .unwrap();
         run(&reg, &[rp], &[cp], None, &out2).unwrap();
         for name in ["ledger-report.json", "registry-patch.json", "DASHBOARD.md"] {
             assert_eq!(

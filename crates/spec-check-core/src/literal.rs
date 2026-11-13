@@ -5,7 +5,7 @@ use regex::Regex;
 use std::{collections::BTreeMap, fs, path::Path};
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct ArrayLiteral {
+pub struct ArrayLiteral {
     pub name: String,
     pub place: String,
     pub elements: Vec<usize>,
@@ -14,7 +14,7 @@ pub(crate) struct ArrayLiteral {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(crate) struct IndexLoop {
+pub struct IndexLoop {
     pub index: String,
     pub array_name: String,
     /// Rustc span for the range expression (`0..array.len()`).

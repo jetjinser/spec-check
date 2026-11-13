@@ -580,10 +580,7 @@ fn read_place_projection(node: &vir::Node) -> Option<(String, Vec<String>, bool)
         .flatten()
 }
 
-fn closure_tail_calls<'a>(
-    node: &'a vir::Node,
-    output: &mut Vec<(&'a vir::Node, &'a vir::Node)>,
-) {
+fn closure_tail_calls<'a>(node: &'a vir::Node, output: &mut Vec<(&'a vir::Node, &'a vir::Node)>) {
     if node_kind(node) == Some("NonSpecClosure") {
         if let Some(expression) = block_tail_expression(node)
             && node_kind(expression) == Some("Call")
@@ -638,7 +635,10 @@ fn empty_contract_part(closure: &vir::Node, name: &str) -> Option<bool> {
 fn function_ensures_empty(function: &vir::Node) -> Option<bool> {
     let parts = function.field("ensure")?.unwrap().list()?;
     (parts.first()?.atom() == Some("tuple")).then(|| {
-        parts.get(2).and_then(vir::Node::list).is_some_and(|items| items.is_empty())
+        parts
+            .get(2)
+            .and_then(vir::Node::list)
+            .is_some_and(|items| items.is_empty())
     })
 }
 
@@ -671,20 +671,19 @@ fn ensures_returns_callback_result(function: &vir::Node) -> bool {
         (parts.first().and_then(vir::Node::atom) == Some(">")
             && parts.get(1).and_then(vir::Node::atom) == Some("Ctor")
             && parts.get(2).and_then(datatype_path) == Some("core::option::Option")
-            && parts.get(3).and_then(vir::Node::atom) == Some("Some")
-        )
-            .then(|| parts.get(4))
-            .flatten()?
-            .list()?
-            .iter()
-            .find_map(|field| {
-                let parts = field.list()?;
-                (parts.first()?.atom() == Some("->") && parts.get(1)?.atom() == Some("0"))
-                    .then(|| parts.get(2))
-                    .flatten()
-            })
-            .and_then(read_place_projection)
-            .and_then(|(root, path, _)| path.is_empty().then_some(root))
+            && parts.get(3).and_then(vir::Node::atom) == Some("Some"))
+        .then(|| parts.get(4))
+        .flatten()?
+        .list()?
+        .iter()
+        .find_map(|field| {
+            let parts = field.list()?;
+            (parts.first()?.atom() == Some("->") && parts.get(1)?.atom() == Some("0"))
+                .then(|| parts.get(2))
+                .flatten()
+        })
+        .and_then(read_place_projection)
+        .and_then(|(root, path, _)| path.is_empty().then_some(root))
     }
     fn links_callback_postcondition(node: &vir::Node, callback: &str, result: &str) -> bool {
         if node_kind(node) == Some("Call")
@@ -712,11 +711,7 @@ fn ensures_returns_callback_result(function: &vir::Node) -> bool {
 /// Find blocking guard APIs whose `wait_until` callback returns a same-owner
 /// `try_*` result. The report records VIR flow evidence and leaves entailment to
 /// Verus; it does not infer a missing contract from structure alone.
-pub fn closure_forwarder_scan(
-    input: &Path,
-    owner_report_path: &Path,
-    out: &Path,
-) -> Result<()> {
+pub fn closure_forwarder_scan(input: &Path, owner_report_path: &Path, out: &Path) -> Result<()> {
     if out.exists() {
         return Err("owner-closure-scan output directory already exists".into());
     }
@@ -753,7 +748,11 @@ pub fn closure_forwarder_scan(
         if let Some(body) = function.field("body") {
             calls_through_closures(body, &mut closure_calls);
         }
-        for field in entry["owner_reference_fields"].as_array().into_iter().flatten() {
+        for field in entry["owner_reference_fields"]
+            .as_array()
+            .into_iter()
+            .flatten()
+        {
             let Some(field_path) = field["field_path"].as_array() else {
                 continue;
             };
@@ -762,9 +761,16 @@ pub fn closure_forwarder_scan(
                 .filter_map(Value::as_str)
                 .map(str::to_owned)
                 .collect::<Vec<_>>();
-            let Some(caller_owner_path) = field["matching_input_parameter"]["owner_projection_path"]
-                .as_array()
-                .map(|parts| parts.iter().filter_map(Value::as_str).map(str::to_owned).collect::<Vec<_>>())
+            let Some(caller_owner_path) =
+                field["matching_input_parameter"]["owner_projection_path"]
+                    .as_array()
+                    .map(|parts| {
+                        parts
+                            .iter()
+                            .filter_map(Value::as_str)
+                            .map(str::to_owned)
+                            .collect::<Vec<_>>()
+                    })
             else {
                 continue;
             };
@@ -812,10 +818,17 @@ pub fn closure_forwarder_scan(
                     continue;
                 };
                 let (root, receiver_path, through_temporary_read) = receiver;
-                let callee_owner_path = callee_field["matching_input_parameter"]["owner_projection_path"]
-                    .as_array()
-                    .map(|parts| parts.iter().filter_map(Value::as_str).map(str::to_owned).collect::<Vec<_>>())
-                    .unwrap_or_default();
+                let callee_owner_path =
+                    callee_field["matching_input_parameter"]["owner_projection_path"]
+                        .as_array()
+                        .map(|parts| {
+                            parts
+                                .iter()
+                                .filter_map(Value::as_str)
+                                .map(str::to_owned)
+                                .collect::<Vec<_>>()
+                        })
+                        .unwrap_or_default();
                 let mut composed_owner_path = receiver_path.clone();
                 composed_owner_path.extend(callee_owner_path.iter().cloned());
                 if root != "self" || composed_owner_path != caller_owner_path {
@@ -856,19 +869,27 @@ pub fn closure_forwarder_scan(
         }
     }
     findings.sort_by(|a, b| {
-        a["caller"].as_str().cmp(&b["caller"].as_str())
-            .then(a["closure_tail_call"].as_str().cmp(&b["closure_tail_call"].as_str()))
+        a["caller"].as_str().cmp(&b["caller"].as_str()).then(
+            a["closure_tail_call"]
+                .as_str()
+                .cmp(&b["closure_tail_call"].as_str()),
+        )
     });
-    let with_self_constructor = findings.iter().filter(|finding| {
-        finding["callee_constructor_evidence"]["all_matching_initializers_directly_read_self"]
-            == true
-    }).count();
-    let callback_contracts_empty = findings.iter().filter(|finding| {
-        finding["closure_ensures_empty"] == true
-    }).count();
-    let helpers_link_callback_ensures = findings.iter().filter(|finding| {
-        finding["helper_contract_links_callback_ensures_to_some_result"] == true
-    }).count();
+    let with_self_constructor = findings
+        .iter()
+        .filter(|finding| {
+            finding["callee_constructor_evidence"]["all_matching_initializers_directly_read_self"]
+                == true
+        })
+        .count();
+    let callback_contracts_empty = findings
+        .iter()
+        .filter(|finding| finding["closure_ensures_empty"] == true)
+        .count();
+    let helpers_link_callback_ensures = findings
+        .iter()
+        .filter(|finding| finding["helper_contract_links_callback_ensures_to_some_result"] == true)
+        .count();
     let report = json!({
         "schema": "vir-owner-closure-flow-v1",
         "input": {"vir_sha256": input_hash},

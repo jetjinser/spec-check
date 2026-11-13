@@ -6,10 +6,10 @@ mod callback;
 mod capture;
 mod census;
 mod client;
-mod contract_scan;
 mod conditional;
 mod conditional_check;
 mod conditional_project;
+mod contract_scan;
 mod contracts;
 mod demand;
 mod demand_check;
@@ -128,23 +128,49 @@ fn check() -> Result<()> {
         return demand::run(Path::new(&args[2]), Path::new(&args[4]));
     }
     if args.first().is_some_and(|s| s == "conditional-check") {
-        if args.len() != 7 || args[1] != "--config" || args[3] != "--verus-root" || args[5] != "--out" {
-            return Err("conditional-check --config FILE --verus-root SDK --out NEW_DIRECTORY".into());
+        if args.len() != 7
+            || args[1] != "--config"
+            || args[3] != "--verus-root"
+            || args[5] != "--out"
+        {
+            return Err(
+                "conditional-check --config FILE --verus-root SDK --out NEW_DIRECTORY".into(),
+            );
         }
-        return conditional_check::run(Path::new(&args[2]), Path::new(&args[4]), Path::new(&args[6]));
+        return conditional_check::run(
+            Path::new(&args[2]),
+            Path::new(&args[4]),
+            Path::new(&args[6]),
+        );
     }
     if args.first().is_some_and(|s| s == "conditional-project") {
-        if args.len() != 9 || args[1] != "--config" || args[3] != "--manifest-path"
-            || args[5] != "--verus-root" || args[7] != "--out" {
+        if args.len() != 9
+            || args[1] != "--config"
+            || args[3] != "--manifest-path"
+            || args[5] != "--verus-root"
+            || args[7] != "--out"
+        {
             return Err("conditional-project --config JSON --manifest-path TOML --verus-root SDK --out NEW_DIRECTORY".into());
         }
-        return conditional_project::run(Path::new(&args[2]), Path::new(&args[4]), Path::new(&args[6]), Path::new(&args[8]));
+        return conditional_project::run(
+            Path::new(&args[2]),
+            Path::new(&args[4]),
+            Path::new(&args[6]),
+            Path::new(&args[8]),
+        );
     }
     if args.first().is_some_and(|s| s == "conditional-generate") {
-        if args.len() != 7 || args[1] != "--vir" || args[3] != "--source-root" || args[5] != "--out" {
-            return Err("conditional-generate --vir VIR --source-root DIRECTORY --out NEW_DIRECTORY".into());
+        if args.len() != 7 || args[1] != "--vir" || args[3] != "--source-root" || args[5] != "--out"
+        {
+            return Err(
+                "conditional-generate --vir VIR --source-root DIRECTORY --out NEW_DIRECTORY".into(),
+            );
         }
-        return conditional::generate(Path::new(&args[2]), Path::new(&args[4]), Path::new(&args[6]));
+        return conditional::generate(
+            Path::new(&args[2]),
+            Path::new(&args[4]),
+            Path::new(&args[6]),
+        );
     }
     if args.first().is_some_and(|s| s == "conditional-scan") {
         if args.len() != 5 || args[1] != "--vir" || args[3] != "--out" {
@@ -157,7 +183,10 @@ fn check() -> Result<()> {
         let mut values = BTreeMap::new();
         let mut iter = args.iter().skip(1);
         while let Some(key) = iter.next() {
-            if !matches!(key.as_str(), "--vir" | "--crate" | "--out" | "--source-root") {
+            if !matches!(
+                key.as_str(),
+                "--vir" | "--crate" | "--out" | "--source-root"
+            ) {
                 return Err(usage.into());
             }
             let value = iter.next().ok_or(usage)?.clone();
@@ -200,8 +229,14 @@ fn check() -> Result<()> {
         return guard_owner::run(Path::new(&args[2]), Path::new(&args[4]));
     }
     if args.first().is_some_and(|s| s == "owner-closure-scan") {
-        if args.len() != 7 || args[1] != "--vir" || args[3] != "--owner-report" || args[5] != "--out" {
-            return Err("owner-closure-scan --vir VIR --owner-report REPORT --out NEW_DIRECTORY".into());
+        if args.len() != 7
+            || args[1] != "--vir"
+            || args[3] != "--owner-report"
+            || args[5] != "--out"
+        {
+            return Err(
+                "owner-closure-scan --vir VIR --owner-report REPORT --out NEW_DIRECTORY".into(),
+            );
         }
         return guard_owner::closure_forwarder_scan(
             Path::new(&args[2]),
@@ -210,12 +245,10 @@ fn check() -> Result<()> {
         );
     }
     if args.first().is_some_and(|s| s == "owner-report-enrich") {
-        if args.len() != 7
-            || args[1] != "--vir"
-            || args[3] != "--report"
-            || args[5] != "--out"
-        {
-            return Err("owner-report-enrich --vir VIR --report SCAN_REPORT --out NEW_DIRECTORY".into());
+        if args.len() != 7 || args[1] != "--vir" || args[3] != "--report" || args[5] != "--out" {
+            return Err(
+                "owner-report-enrich --vir VIR --report SCAN_REPORT --out NEW_DIRECTORY".into(),
+            );
         }
         return owner_report_enrich::run(
             Path::new(&args[2]),

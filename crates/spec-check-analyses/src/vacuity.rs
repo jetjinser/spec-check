@@ -58,8 +58,8 @@ use std::path::Path;
 use std::process::Command;
 
 use crate::probe_infra::{
-    forwarded_cfgs, fn_region, indent_block, log_tail, param_names, parse_target_log,
-    run_captured, sanitize, target_command, CEvent, CMarker,
+    CEvent, CMarker, fn_region, forwarded_cfgs, indent_block, log_tail, param_names,
+    parse_target_log, run_captured, sanitize, target_command,
 };
 
 // Public API surface kept at the historical paths (manifests and archives
@@ -70,17 +70,13 @@ pub use crate::probe_infra::{ProbeInjection, ProbeModule, TargetWorkspace};
 /// Which probe family an entry belongs to.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Deserialize)]
 #[serde(rename_all = "snake_case")]
+#[derive(Default)]
 pub enum ProbeKind {
     /// Standalone quantifier probe crate (default; v1.0 behavior).
+    #[default]
     Quantifier,
     /// Construction probe injected into `target_workspace`.
     Construction,
-}
-
-impl Default for ProbeKind {
-    fn default() -> Self {
-        ProbeKind::Quantifier
-    }
 }
 
 /// Project-side probe manifest: the contracts to probe.
@@ -142,8 +138,7 @@ pub struct ContractEntry {
     pub face_requires: bool,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
-#[derive(Serialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize)]
 pub struct EntryVerdict {
     pub name: String,
     pub verdict: Verdict,
@@ -201,7 +196,7 @@ pub fn generate_probe_lib(manifest: &Manifest) -> String {
                     safe = safe,
                     i = i,
                 )
-            },
+            }
             None => String::new(),
         };
         out.push_str(&format!(
@@ -252,7 +247,10 @@ pub fn generate_probe_injection(manifest: &Manifest) -> Result<ProbeInjection, S
         }
         let safe = sanitize(&c.name);
         if modules.iter().any(|m: &ProbeModule| m.safe_name == safe) {
-            return Err(format!("construction entry name collides after sanitize: {}", c.name));
+            return Err(format!(
+                "construction entry name collides after sanitize: {}",
+                c.name
+            ));
         }
         let construct = c
             .construct
@@ -273,11 +271,11 @@ pub fn generate_probe_injection(manifest: &Manifest) -> Result<ProbeInjection, S
              verus! {{\n\n",
             c.name, gate,
         ));
-        if let Some(mp) = &c.model_preamble {
-            if !mp.is_empty() {
-                src.push_str(mp);
-                src.push_str("\n\n");
-            }
+        if let Some(mp) = &c.model_preamble
+            && !mp.is_empty()
+        {
+            src.push_str(mp);
+            src.push_str("\n\n");
         }
         src.push_str(&format!(
             "// ---- probe entry fn (construct face) — do not edit ----\n\
@@ -386,7 +384,7 @@ pub fn run(
     if has_quantifier {
         let src = out.join("src");
         std::fs::create_dir_all(&src).map_err(|e| e.to_string())?;
-        std::fs::write(out.join("Cargo.toml"), &probe_cargo_toml(vstd))
+        std::fs::write(out.join("Cargo.toml"), probe_cargo_toml(vstd))
             .map_err(|e| e.to_string())?;
         std::fs::write(src.join("lib.rs"), generate_probe_lib(manifest))
             .map_err(|e| e.to_string())?;
@@ -442,9 +440,14 @@ fn validate_manifest(manifest: &Manifest) -> Result<(), String> {
                 if c.requires.as_deref().unwrap_or("").trim().is_empty() {
                     return Err(format!("quantifier entry {} missing requires", c.name));
                 }
-            },
+            }
             ProbeKind::Construction => {
-                if c.expect_fail_requires.as_deref().unwrap_or("").trim().is_empty() {
+                if c.expect_fail_requires
+                    .as_deref()
+                    .unwrap_or("")
+                    .trim()
+                    .is_empty()
+                {
                     return Err(format!(
                         "construction entry {} missing expect_fail_requires",
                         c.name
@@ -453,7 +456,7 @@ fn validate_manifest(manifest: &Manifest) -> Result<(), String> {
                 if c.construct.as_deref().unwrap_or("").trim().is_empty() {
                     return Err(format!("construction entry {} missing construct", c.name));
                 }
-            },
+            }
         }
     }
     Ok(())
@@ -528,7 +531,10 @@ fn run_construction(
 fn probe_cargo_toml(vstd: &Path) -> String {
     // `verify = true` is required: cargo-verus does not verify the primary
     // package without it (validated in the criterion spike).
-    format!("[package]\nname = \"spec-vacuity-probe\"\nversion = \"0.1.0\"\nedition = \"2021\"\npublish = false\n\n[dependencies]\nvstd = {{ path = {:?} }}\n\n[workspace]\n\n[package.metadata.verus]\nverify = true\n", vstd.display())
+    format!(
+        "[package]\nname = \"spec-vacuity-probe\"\nversion = \"0.1.0\"\nedition = \"2021\"\npublish = false\n\n[dependencies]\nvstd = {{ path = {:?} }}\n\n[workspace]\n\n[package.metadata.verus]\nverify = true\n",
+        vstd.display()
+    )
 }
 
 fn run_verus(cargo_verus: &Path, z3: &Path, out: &Path) -> Result<String, String> {
@@ -557,9 +563,7 @@ fn run_verus(cargo_verus: &Path, z3: &Path, out: &Path) -> Result<String, String
 pub fn classify(manifest: &Manifest, log: &str) -> VacuityReport {
     let mut report = classify_quantifier(manifest, log);
     for c in &manifest.contracts {
-        if c.probe == ProbeKind::Construction
-            && !report.verdicts.iter().any(|v| v.name == c.name)
-        {
+        if c.probe == ProbeKind::Construction && !report.verdicts.iter().any(|v| v.name == c.name) {
             report.verdicts.push(EntryVerdict {
                 name: c.name.clone(),
                 verdict: Verdict::CandidateInconclusive,
@@ -614,10 +618,7 @@ fn classify_quantifier(manifest: &Manifest, log: &str) -> VacuityReport {
             current_failure_line = None;
             continue;
         }
-        if let Some(rest) = line
-            .trim_start()
-            .strip_prefix("--> src/lib.rs:")
-        {
+        if let Some(rest) = line.trim_start().strip_prefix("--> src/lib.rs:") {
             if let Some(num) = rest
                 .split(':')
                 .next()
@@ -703,7 +704,7 @@ pub fn classify_construction(manifest: &Manifest, log: &str) -> VacuityReport {
                 probe_summary: None,
                 target_summary: None,
             };
-        },
+        }
     };
     let crate_name = manifest
         .target_workspace
@@ -744,7 +745,10 @@ pub fn classify_construction(manifest: &Manifest, log: &str) -> VacuityReport {
 
         let entry_outcome = if !target_ran {
             "not_run"
-        } else if entry_events.iter().any(|e| e.marker == CMarker::Precondition) {
+        } else if entry_events
+            .iter()
+            .any(|e| e.marker == CMarker::Precondition)
+        {
             "rejected_expected"
         } else if !entry_events.is_empty() {
             "failed_other"
@@ -875,7 +879,8 @@ mod tests {
             generated
                 .lines()
                 .position(|l| l.starts_with(prefix))
-                .unwrap() + 1
+                .unwrap()
+                + 1
         };
         let vac_line = line_of("proof fn vacuous_0_vacuous_thing");
         let live_line = line_of("proof fn live_1_live_thing");
@@ -971,13 +976,22 @@ verification results:: 2 verified, 2 errors
 
         let fab = &inj.modules[0];
         // entry fn has NO requires clause (fabrication face)
-        assert!(!fab.source.contains("pub fn entry_0_fabrication(m: &Mutex<u64>)\n    requires"));
-        assert!(fab.source.contains("pub fn entry_0_fabrication(m: &Mutex<u64>) {"));
+        assert!(
+            !fab.source
+                .contains("pub fn entry_0_fabrication(m: &Mutex<u64>)\n    requires")
+        );
+        assert!(
+            fab.source
+                .contains("pub fn entry_0_fabrication(m: &Mutex<u64>) {")
+        );
         assert!(fab.source.contains("stub_call(m, t);"));
         assert!(fab.live_region.is_none());
         // region covers the whole synthesized fn
         let lines: Vec<&str> = fab.source.lines().collect();
-        assert_eq!(lines[fab.entry_region.0 - 1], "pub fn entry_0_fabrication(m: &Mutex<u64>) {");
+        assert_eq!(
+            lines[fab.entry_region.0 - 1],
+            "pub fn entry_0_fabrication(m: &Mutex<u64>) {"
+        );
         assert_eq!(lines[fab.entry_region.1 - 1], "}");
 
         let holder = &inj.modules[1];
@@ -1044,7 +1058,11 @@ error: could not compile `ostd` (lib) due to 1 previous error
         );
         let r = classify_construction(&m, &log);
         assert_eq!(r.verdicts[0].verdict, Verdict::ConfirmedVacuous);
-        assert!(r.verdicts[0].detail.contains(&format!("fabrication.rs:{fab_line}")));
+        assert!(
+            r.verdicts[0]
+                .detail
+                .contains(&format!("fabrication.rs:{fab_line}"))
+        );
         assert!(r.verdicts[0].detail.contains("channel-exhaustion"));
         assert_eq!(r.verdicts[1].verdict, Verdict::ConfirmedLive);
         assert_eq!(r.target_summary.as_deref(), Some("1500 verified, 1 errors"));
@@ -1054,7 +1072,7 @@ error: could not compile `ostd` (lib) due to 1 previous error
    Compiling ostd v0.1.0 (/tmp/target/ostd)
 verification results:: 1501 verified, 0 errors
 ";
-        let r = classify_construction(&m, &log);
+        let r = classify_construction(&m, log);
         assert_eq!(r.verdicts[0].verdict, Verdict::ConfirmedLive);
         assert_eq!(r.verdicts[1].verdict, Verdict::ConfirmedLive);
 
@@ -1067,7 +1085,7 @@ error[E0433]: cannot find module `nope`
   --> ostd/src/spec_check_probes/fabrication.rs:3:5
 error: could not compile `ostd` (lib) due to 1 previous error
 ";
-        let r = classify_construction(&m, &log);
+        let r = classify_construction(&m, log);
         assert_eq!(r.verdicts[0].verdict, Verdict::CandidateInconclusive);
         assert!(r.verdicts[0].detail.contains("not_run"));
         assert_eq!(r.verdicts[1].verdict, Verdict::CandidateInconclusive);
@@ -1076,7 +1094,8 @@ error: could not compile `ostd` (lib) due to 1 previous error
         // candidate; the same failure shape with a failing live fn →
         // anomaly (both failed, attribution missing).
         let hf_line = inj.modules[1].entry_region.0 + 1; // inside holder entry body
-        let log = format!("\
+        let log = format!(
+            "\
    Compiling ostd v0.1.0 (/tmp/target/ostd)
 error: postcondition not satisfied
    --> ostd/src/spec_check_probes/fabrication.rs:{fab_line}:5
@@ -1085,7 +1104,8 @@ error: postcondition not satisfied
    --> ostd/src/spec_check_probes/holder_face.rs:{hf_line}:5
 
 verification results:: 1499 verified, 2 errors
-");
+"
+        );
         let r = classify_construction(&m, &log);
         assert_eq!(r.verdicts[0].verdict, Verdict::CandidateInconclusive);
         assert_eq!(r.verdicts[1].verdict, Verdict::CandidateInconclusive);
@@ -1168,8 +1188,14 @@ verification results:: 1499 verified, 2 errors
         )
         .unwrap();
         let out = std::env::temp_dir().join("spec-check-vacuity-test-out");
-        let err = run(&no_tw, Path::new("cargo-verus"), Path::new("z3"), Path::new("vstd"), &out)
-            .unwrap_err();
+        let err = run(
+            &no_tw,
+            Path::new("cargo-verus"),
+            Path::new("z3"),
+            Path::new("vstd"),
+            &out,
+        )
+        .unwrap_err();
         assert!(err.contains("target_workspace"));
     }
 }

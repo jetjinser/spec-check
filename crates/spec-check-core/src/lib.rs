@@ -11,8 +11,8 @@
 pub mod assertion_rule;
 pub mod attribution;
 pub mod borrowed_resource;
-pub mod callback;
 pub mod call_guidance;
+pub mod callback;
 pub mod capture;
 pub mod census;
 pub mod client;
@@ -62,4 +62,4 @@ pub mod test_census;
 pub mod vir;
 
 pub use serde_json::json;
-pub use support::{execute, hash, write_json, Result};
+pub use support::{Result, execute, hash, write_json};

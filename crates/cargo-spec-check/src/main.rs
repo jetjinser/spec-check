@@ -3,64 +3,40 @@
 //! CLI surface is preserved from the research-repo lineage so archived
 //! campaign replays keep working; all logic lives in the core crate.
 
-use spec_check_core::assertion_rule;
-use spec_check_core::support::{execute, hash, write_json, Result};
+use serde_json::{Value, json};
 use spec_check_core::attribution;
 use spec_check_core::borrowed_resource;
-use spec_check_core::call_guidance;
-use spec_check_core::callback;
 use spec_check_core::capture;
 use spec_check_core::census;
 use spec_check_core::client;
-use spec_check_core::contract_scan;
 use spec_check_core::conditional;
 use spec_check_core::conditional_check;
 use spec_check_core::conditional_project;
-use spec_check_core::contracts;
+use spec_check_core::contract_scan;
 use spec_check_core::demand;
 use spec_check_core::demand_check;
 use spec_check_core::evidence;
-use spec_check_core::filter_guidance;
-use spec_check_core::finite;
 use spec_check_core::ghost_abi;
 use spec_check_core::guard_owner;
-use spec_check_core::guidance;
-use spec_check_core::handoff;
-use spec_check_core::helper;
-use spec_check_core::ir;
 use spec_check_core::link;
-use spec_check_core::literal;
 use spec_check_core::obligation;
 use spec_check_core::option_alternative;
 use spec_check_core::ordinary;
-use spec_check_core::owner_post;
 use spec_check_core::owner_report_enrich;
-use spec_check_core::permission_guidance;
-use spec_check_core::prefix;
 use spec_check_core::project;
 use spec_check_core::reader;
 use spec_check_core::requires;
 use spec_check_core::resource;
-use spec_check_core::resource_flow;
 use spec_check_core::resource_project;
-use spec_check_core::return_forwarding;
-use spec_check_core::review;
 use spec_check_core::runner;
 use spec_check_core::scope;
-use spec_check_core::set_state;
-use spec_check_core::state;
-use spec_check_core::state_semantics;
-use spec_check_core::std_body;
+use spec_check_core::support::{Result, execute, hash, write_json};
 use spec_check_core::test_census;
-use spec_check_core::vir;
-use serde::Serialize;
-use serde_json::{Value, json};
 use std::{
     collections::BTreeMap,
     env, fs,
-    io::Write,
     path::{Path, PathBuf},
-    process::{Command, Stdio},
+    process::Command,
 };
 mod check_flow;
 fn check() -> Result<()> {
@@ -76,7 +52,8 @@ fn check() -> Result<()> {
         if args.len() != 11 || keys.iter().enumerate().any(|(i, k)| args[1 + i * 2] != *k) {
             return Err("analyses-vacuity --manifest FILE --cargo-verus PATH --z3 PATH --vstd PATH --out DIRECTORY".into());
         }
-        let manifest: spec_check_analyses::vacuity::Manifest = serde_json::from_slice(&fs::read(&args[2])?)?;
+        let manifest: spec_check_analyses::vacuity::Manifest =
+            serde_json::from_slice(&fs::read(&args[2])?)?;
         let report = spec_check_analyses::vacuity::run(
             &manifest,
             Path::new(&args[4]),
@@ -97,7 +74,8 @@ fn check() -> Result<()> {
         if args.len() != 11 || keys.iter().enumerate().any(|(i, k)| args[1 + i * 2] != *k) {
             return Err("analyses-divergence --manifest FILE --cargo-verus PATH --z3 PATH --vstd PATH --out DIRECTORY".into());
         }
-        let manifest: spec_check_analyses::divergence::Manifest = serde_json::from_slice(&fs::read(&args[2])?)?;
+        let manifest: spec_check_analyses::divergence::Manifest =
+            serde_json::from_slice(&fs::read(&args[2])?)?;
         let report = spec_check_analyses::divergence::run(
             &manifest,
             Path::new(&args[4]),
@@ -126,11 +104,11 @@ fn check() -> Result<()> {
                     if values.insert(key.clone(), value).is_some() {
                         return Err(usage.into());
                     }
-                },
+                }
                 "--select" => {
                     let value = iter.next().ok_or(usage)?.clone();
                     select.push(value);
-                },
+                }
                 _ => return Err(usage.into()),
             }
         }
@@ -157,7 +135,10 @@ fn check() -> Result<()> {
         let mut values = BTreeMap::new();
         let mut iter = args.iter().skip(1);
         while let Some(key) = iter.next() {
-            if !matches!(key.as_str(), "--source-root" | "--out" | "--config" | "--stats") {
+            if !matches!(
+                key.as_str(),
+                "--source-root" | "--out" | "--config" | "--stats"
+            ) {
                 return Err(usage.into());
             }
             let value = iter.next().ok_or(usage)?.clone();
@@ -187,7 +168,10 @@ fn check() -> Result<()> {
         let mut values = BTreeMap::new();
         let mut iter = args.iter().skip(1);
         while let Some(key) = iter.next() {
-            if !matches!(key.as_str(), "--vir" | "--crate" | "--out" | "--source-root") {
+            if !matches!(
+                key.as_str(),
+                "--vir" | "--crate" | "--out" | "--source-root"
+            ) {
                 return Err(usage.into());
             }
             let value = iter.next().ok_or(usage)?.clone();
@@ -249,7 +233,10 @@ fn check() -> Result<()> {
             .get("--tier")
             .map(|value| {
                 let mut tiers = std::collections::BTreeSet::new();
-                for tier in value.split(',').map(|tier| tier.trim().to_ascii_uppercase()) {
+                for tier in value
+                    .split(',')
+                    .map(|tier| tier.trim().to_ascii_uppercase())
+                {
                     if !matches!(tier.as_str(), "A" | "B" | "C") {
                         return Err("--tier accepts a comma-separated subset of A,B,C");
                     }
@@ -390,8 +377,7 @@ fn check() -> Result<()> {
         return Ok(());
     }
     if args.first().is_some_and(|s| s == "signals") {
-        let usage =
-            "signals --screening FILE --verdicts FILE [--expectations FILE] --out FILE";
+        let usage = "signals --screening FILE --verdicts FILE [--expectations FILE] --out FILE";
         let mut values = BTreeMap::new();
         let mut iter = args.iter().skip(1);
         while let Some(key) = iter.next() {
@@ -445,7 +431,7 @@ fn check() -> Result<()> {
                     if slot.replace(value).is_some() {
                         return Err(usage.into());
                     }
-                },
+                }
                 "--report" => {
                     let before = reports.len();
                     while let Some(next) = iter.clone().next() {
@@ -457,7 +443,7 @@ fn check() -> Result<()> {
                     if reports.len() == before {
                         return Err(usage.into());
                     }
-                },
+                }
                 "--candidates" => {
                     let before = candidates.len();
                     while let Some(next) = iter.clone().next() {
@@ -469,7 +455,7 @@ fn check() -> Result<()> {
                     if candidates.len() == before {
                         return Err(usage.into());
                     }
-                },
+                }
                 _ => return Err(usage.into()),
             }
         }
@@ -536,7 +522,7 @@ fn check() -> Result<()> {
             json_mode,
         );
     }
-if args.first().is_some_and(|s| s == "option-alternatives") {
+    if args.first().is_some_and(|s| s == "option-alternatives") {
         let keys = ["--input", "--context", "--verus-root", "--out"];
         if args.len() != 9 || keys.iter().enumerate().any(|(i, k)| args[1 + i * 2] != *k) {
             return Err("option-alternatives --input DIRECTORY --context FILE --verus-root SDK --out NEW_DIRECTORY".into());
@@ -571,23 +557,49 @@ if args.first().is_some_and(|s| s == "option-alternatives") {
         return demand::run(Path::new(&args[2]), Path::new(&args[4]));
     }
     if args.first().is_some_and(|s| s == "conditional-check") {
-        if args.len() != 7 || args[1] != "--config" || args[3] != "--verus-root" || args[5] != "--out" {
-            return Err("conditional-check --config FILE --verus-root SDK --out NEW_DIRECTORY".into());
+        if args.len() != 7
+            || args[1] != "--config"
+            || args[3] != "--verus-root"
+            || args[5] != "--out"
+        {
+            return Err(
+                "conditional-check --config FILE --verus-root SDK --out NEW_DIRECTORY".into(),
+            );
         }
-        return conditional_check::run(Path::new(&args[2]), Path::new(&args[4]), Path::new(&args[6]));
+        return conditional_check::run(
+            Path::new(&args[2]),
+            Path::new(&args[4]),
+            Path::new(&args[6]),
+        );
     }
     if args.first().is_some_and(|s| s == "conditional-project") {
-        if args.len() != 9 || args[1] != "--config" || args[3] != "--manifest-path"
-            || args[5] != "--verus-root" || args[7] != "--out" {
+        if args.len() != 9
+            || args[1] != "--config"
+            || args[3] != "--manifest-path"
+            || args[5] != "--verus-root"
+            || args[7] != "--out"
+        {
             return Err("conditional-project --config JSON --manifest-path TOML --verus-root SDK --out NEW_DIRECTORY".into());
         }
-        return conditional_project::run(Path::new(&args[2]), Path::new(&args[4]), Path::new(&args[6]), Path::new(&args[8]));
+        return conditional_project::run(
+            Path::new(&args[2]),
+            Path::new(&args[4]),
+            Path::new(&args[6]),
+            Path::new(&args[8]),
+        );
     }
     if args.first().is_some_and(|s| s == "conditional-generate") {
-        if args.len() != 7 || args[1] != "--vir" || args[3] != "--source-root" || args[5] != "--out" {
-            return Err("conditional-generate --vir VIR --source-root DIRECTORY --out NEW_DIRECTORY".into());
+        if args.len() != 7 || args[1] != "--vir" || args[3] != "--source-root" || args[5] != "--out"
+        {
+            return Err(
+                "conditional-generate --vir VIR --source-root DIRECTORY --out NEW_DIRECTORY".into(),
+            );
         }
-        return conditional::generate(Path::new(&args[2]), Path::new(&args[4]), Path::new(&args[6]));
+        return conditional::generate(
+            Path::new(&args[2]),
+            Path::new(&args[4]),
+            Path::new(&args[6]),
+        );
     }
     if args.first().is_some_and(|s| s == "conditional-scan") {
         if args.len() != 5 || args[1] != "--vir" || args[3] != "--out" {
@@ -608,8 +620,14 @@ if args.first().is_some_and(|s| s == "option-alternatives") {
         return guard_owner::run(Path::new(&args[2]), Path::new(&args[4]));
     }
     if args.first().is_some_and(|s| s == "owner-closure-scan") {
-        if args.len() != 7 || args[1] != "--vir" || args[3] != "--owner-report" || args[5] != "--out" {
-            return Err("owner-closure-scan --vir VIR --owner-report REPORT --out NEW_DIRECTORY".into());
+        if args.len() != 7
+            || args[1] != "--vir"
+            || args[3] != "--owner-report"
+            || args[5] != "--out"
+        {
+            return Err(
+                "owner-closure-scan --vir VIR --owner-report REPORT --out NEW_DIRECTORY".into(),
+            );
         }
         return guard_owner::closure_forwarder_scan(
             Path::new(&args[2]),
@@ -618,12 +636,10 @@ if args.first().is_some_and(|s| s == "option-alternatives") {
         );
     }
     if args.first().is_some_and(|s| s == "owner-report-enrich") {
-        if args.len() != 7
-            || args[1] != "--vir"
-            || args[3] != "--report"
-            || args[5] != "--out"
-        {
-            return Err("owner-report-enrich --vir VIR --report SCAN_REPORT --out NEW_DIRECTORY".into());
+        if args.len() != 7 || args[1] != "--vir" || args[3] != "--report" || args[5] != "--out" {
+            return Err(
+                "owner-report-enrich --vir VIR --report SCAN_REPORT --out NEW_DIRECTORY".into(),
+            );
         }
         return owner_report_enrich::run(
             Path::new(&args[2]),

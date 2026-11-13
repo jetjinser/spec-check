@@ -1,7 +1,7 @@
 use crate::Result;
 use serde_json::{Value, json};
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub(crate) enum Node {
+pub enum Node {
     Atom(String),
     List(Vec<Node>),
 }

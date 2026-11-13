@@ -94,15 +94,15 @@ fn unwrap_type(node: &Node) -> &Node {
         return node;
     };
     if items.first().and_then(Node::atom) == Some("Typ") {
-        if items.get(1).and_then(Node::atom) == Some("Decorate") {
-            if let Some(inner) = items.get(3) {
-                return unwrap_type(inner);
-            }
+        if items.get(1).and_then(Node::atom) == Some("Decorate")
+            && let Some(inner) = items.get(3)
+        {
+            return unwrap_type(inner);
         }
-        if items.get(1).and_then(Node::atom) == Some("MutRef") {
-            if let Some(inner) = items.get(2) {
-                return unwrap_type(inner);
-            }
+        if items.get(1).and_then(Node::atom) == Some("MutRef")
+            && let Some(inner) = items.get(2)
+        {
+            return unwrap_type(inner);
         }
     }
     node
@@ -214,10 +214,10 @@ fn collect_pattern_binding(node: &Node, name: &mut Option<String>, typ: &mut Opt
         return;
     };
     if items.first().and_then(Node::atom) == Some("PatternBinding") {
-        if let Some(value) = node.field("name").and_then(Node::list) {
-            if value.first().and_then(Node::atom) == Some("VarIdent") {
-                *name = value.get(1).and_then(Node::atom).map(str::to_owned);
-            }
+        if let Some(value) = node.field("name").and_then(Node::list)
+            && value.first().and_then(Node::atom) == Some("VarIdent")
+        {
+            *name = value.get(1).and_then(Node::atom).map(str::to_owned);
         }
         if let Some(value) = node.field("typ") {
             *typ = Some(value.clone());
@@ -246,10 +246,10 @@ fn collect_vars(node: &Node, names: &mut BTreeSet<String>) {
     let Some(items) = node.list() else {
         return;
     };
-    if items.first().and_then(Node::atom) == Some("VarIdent") {
-        if let Some(name) = items.get(1).and_then(Node::atom) {
-            names.insert(name.to_owned());
-        }
+    if items.first().and_then(Node::atom) == Some("VarIdent")
+        && let Some(name) = items.get(1).and_then(Node::atom)
+    {
+        names.insert(name.to_owned());
     }
     for child in items {
         collect_vars(child, names);
@@ -1454,38 +1454,36 @@ fn classify_use(
 fn walk_param_uses(node: &Node, params: &BTreeSet<String>, uses: &mut Vec<ParamUse>) {
     let node = node.unwrap();
     if let Some(args) = call_args(node) {
-        if call_is_dynamic(node) {
-            if let Some(root) = args.first().and_then(expr_root) {
-                if params.contains(&root.0) {
-                    let field = root.1.iter().rev().find_map(|segment| match segment {
-                        PlaceSegment::Field(field) => Some(field.clone()),
-                        PlaceSegment::Deref => None,
-                    });
-                    uses.push(ParamUse {
-                        name: root.0,
-                        kind: "receiver_root",
-                        callee: call_path(node),
-                        field,
-                        argc: Some(args.len()),
-                    });
-                    for argument in args.iter().skip(1) {
-                        walk_param_uses(argument, params, uses);
-                    }
-                    return;
-                }
+        if call_is_dynamic(node)
+            && let Some(root) = args.first().and_then(expr_root)
+            && params.contains(&root.0)
+        {
+            let field = root.1.iter().rev().find_map(|segment| match segment {
+                PlaceSegment::Field(field) => Some(field.clone()),
+                PlaceSegment::Deref => None,
+            });
+            uses.push(ParamUse {
+                name: root.0,
+                kind: "receiver_root",
+                callee: call_path(node),
+                field,
+                argc: Some(args.len()),
+            });
+            for argument in args.iter().skip(1) {
+                walk_param_uses(argument, params, uses);
             }
+            return;
         }
         for argument in &args {
             walk_param_uses(argument, params, uses);
         }
         return;
     }
-    if is_read_place(node) {
-        if let Some(root) = expr_root(node)
-            && classify_use(&root, params, uses)
-        {
-            return;
-        }
+    if is_read_place(node)
+        && let Some(root) = expr_root(node)
+        && classify_use(&root, params, uses)
+    {
+        return;
     }
     for child in node.list().unwrap_or_default() {
         walk_param_uses(child, params, uses);
@@ -1574,8 +1572,8 @@ fn requires_facts(
             json!({
                 "index": index,
                 "span": span,
-                "file": span.and_then(|span| saga_span_file(span)),
-                "line": span.and_then(|span| saga_span_line(span)),
+                "file": span.and_then(saga_span_file),
+                "line": span.and_then(saga_span_line),
                 "text": clause_source(span, source_root, cache),
                 "class": if parsed.is_some() { "mechanical" } else { "unsupported" },
                 "ast": parsed.as_ref().map(Mech::value),
@@ -1619,14 +1617,12 @@ fn collect_const_vars(node: &Node, paths: &mut BTreeSet<String>) {
     };
     if items.first().and_then(Node::atom) == Some(">")
         && items.get(1).and_then(Node::atom) == Some("ConstVar")
-    {
-        if let Some(path) = items
+        && let Some(path) = items
             .get(2)
             .and_then(|fun| fun.field("path"))
             .and_then(Node::atom)
-        {
-            paths.insert(path.to_owned());
-        }
+    {
+        paths.insert(path.to_owned());
     }
     for child in items {
         collect_const_vars(child, paths);
@@ -1645,6 +1641,7 @@ fn previews(clauses: &[Node]) -> (usize, Vec<String>) {
     (clauses.len(), result)
 }
 
+#[allow(clippy::too_many_arguments)]
 fn output(
     kind: &str,
     name: Option<String>,
@@ -1797,6 +1794,7 @@ pub fn analyze(text: &str, crate_name: &str, source_root: Option<&Path>) -> Resu
     }))
 }
 
+#[allow(clippy::too_many_arguments)]
 fn function_entry(
     path: &str,
     outer: &Node,
@@ -1915,32 +1913,31 @@ fn function_entry(
         if let Some(return_type) = function
             .field("inner_ret")
             .and_then(|p| p.unwrap().field("typ"))
+            && !type_is_unit(return_type)
         {
-            if !type_is_unit(return_type) {
-                let impl_name = function.field("inner_ret").and_then(param_name);
-                let decl_name = declaration
-                    .and_then(|d| d.field("inner_ret"))
-                    .and_then(param_name);
-                let mention_name = if !own_present && decl_present {
-                    decl_name.clone().or_else(|| impl_name.clone())
-                } else {
-                    impl_name.clone()
-                };
-                let named = mention_name.as_deref().is_some_and(|n| {
-                    n != "%return" && n != "_VERUS_ret_ident" && !n.starts_with('%')
-                });
-                outputs.push(output(
-                    "return",
-                    mention_name.clone(),
-                    mention_name,
-                    named,
-                    Some(return_type.clone()),
-                    is_ghost_type(return_type),
-                    &mentions,
-                    invariants,
-                    returns_mention,
-                ));
-            }
+            let impl_name = function.field("inner_ret").and_then(param_name);
+            let decl_name = declaration
+                .and_then(|d| d.field("inner_ret"))
+                .and_then(param_name);
+            let mention_name = if !own_present && decl_present {
+                decl_name.clone().or_else(|| impl_name.clone())
+            } else {
+                impl_name.clone()
+            };
+            let named = mention_name
+                .as_deref()
+                .is_some_and(|n| n != "%return" && n != "_VERUS_ret_ident" && !n.starts_with('%'));
+            outputs.push(output(
+                "return",
+                mention_name.clone(),
+                mention_name,
+                named,
+                Some(return_type.clone()),
+                is_ghost_type(return_type),
+                &mentions,
+                invariants,
+                returns_mention,
+            ));
         }
     }
     for (index, parameter) in function

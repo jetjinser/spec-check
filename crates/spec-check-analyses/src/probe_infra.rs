@@ -40,7 +40,13 @@ pub(crate) fn param_names(params: &str) -> Vec<String> {
 
 pub(crate) fn indent_block(src: &str) -> String {
     src.lines()
-        .map(|l| if l.trim().is_empty() { String::new() } else { format!("    {l}") })
+        .map(|l| {
+            if l.trim().is_empty() {
+                String::new()
+            } else {
+                format!("    {l}")
+            }
+        })
         .collect::<Vec<_>>()
         .join("\n")
 }
@@ -49,10 +55,7 @@ pub(crate) fn indent_block(src: &str) -> String {
 /// the next line that is exactly `}` (convention: synthesized fn bodies
 /// are indented and contain no column-0 closing braces).
 pub(crate) fn fn_region(lines: &[&str], decl_prefix: &str) -> Option<(usize, usize)> {
-    let start = lines
-        .iter()
-        .position(|l| l.starts_with(decl_prefix))?
-        + 1;
+    let start = lines.iter().position(|l| l.starts_with(decl_prefix))? + 1;
     for (off, l) in lines[start..].iter().enumerate() {
         if l.trim() == "}" {
             return Some((start, start + off + 1));
@@ -167,10 +170,10 @@ impl Drop for InjectionGuard {
             match orig {
                 Some(bytes) => {
                     let _ = std::fs::write(path, bytes);
-                },
+                }
                 None => {
                     let _ = std::fs::remove_file(path);
-                },
+                }
             }
         }
         if let Some(dir) = &self.created_dir {
@@ -206,7 +209,11 @@ pub(crate) fn write_injection(
     let dir_existed = target.inject_dir_abs.is_dir();
     let mut guard = InjectionGuard {
         modified: Vec::new(),
-        created_dir: if dir_existed { None } else { Some(target.inject_dir_abs.clone()) },
+        created_dir: if dir_existed {
+            None
+        } else {
+            Some(target.inject_dir_abs.clone())
+        },
     };
 
     // Crate root wiring: append the gated module declaration.
@@ -220,8 +227,11 @@ pub(crate) fn write_injection(
     ));
     let lib_orig = snapshot(&target.root_file)?;
     std::fs::write(&target.root_file, &lib_injected).map_err(|e| e.to_string())?;
-    std::fs::write(replay.join("lib.rs.orig"), lib_orig.clone().unwrap_or_default())
-        .map_err(|e| e.to_string())?;
+    std::fs::write(
+        replay.join("lib.rs.orig"),
+        lib_orig.clone().unwrap_or_default(),
+    )
+    .map_err(|e| e.to_string())?;
     guard.modified.push((target.root_file.clone(), lib_orig));
     std::fs::write(replay.join("lib.rs.injected"), &lib_injected).map_err(|e| e.to_string())?;
 
@@ -316,6 +326,7 @@ pub(crate) fn verus_env(cmd: &mut Command, z3: &Path) {
         .env("RUSTC_BOOTSTRAP", "1");
 }
 
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn target_command(
     cargo_verus: &Path,
     phase: &str,
@@ -395,9 +406,9 @@ pub(crate) fn marker_of(line: &str) -> CMarker {
     }
 }
 
-pub(crate) fn parse_target_log(
-    log: &str,
-) -> (Vec<CEvent>, Vec<(usize, String)>, HashMap<String, usize>) {
+pub(crate) type ParsedTargetLog = (Vec<CEvent>, Vec<(usize, String)>, HashMap<String, usize>);
+
+pub(crate) fn parse_target_log(log: &str) -> ParsedTargetLog {
     let mut events = Vec::new();
     let mut summaries = Vec::new();
     let mut crate_sections: HashMap<String, usize> = HashMap::new();
@@ -405,7 +416,10 @@ pub(crate) fn parse_target_log(
     let mut pending: Option<CMarker> = None;
     for line in log.lines() {
         let trimmed_line = line.trim_start();
-        if let Some(rest) = trimmed_line.strip_prefix("Compiling ").or_else(|| trimmed_line.strip_prefix("Checking ")) {
+        if let Some(rest) = trimmed_line
+            .strip_prefix("Compiling ")
+            .or_else(|| trimmed_line.strip_prefix("Checking "))
+        {
             section += 1;
             if let Some(name) = rest.split_whitespace().next() {
                 crate_sections.entry(name.to_string()).or_insert(section);
@@ -433,7 +447,11 @@ pub(crate) fn parse_target_log(
                 pending.take(),
                 parts.next().and_then(|s| s.trim().parse::<usize>().ok()),
             ) {
-                events.push(CEvent { marker, file, line: num });
+                events.push(CEvent {
+                    marker,
+                    file,
+                    line: num,
+                });
             }
             continue;
         }

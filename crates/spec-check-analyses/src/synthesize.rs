@@ -30,7 +30,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 use crate::divergence::{Expectation, Manifest as DivergenceManifest, ObligationEntry};
-use crate::probe_infra::{sanitize, TargetWorkspace};
+use crate::probe_infra::{TargetWorkspace, sanitize};
 
 // ---------------------------------------------------------------------------
 // Candidate input (one record per upstream finding; unknown fields ignored)
@@ -299,16 +299,16 @@ fn preamble_of(ty: Option<&TypeRecipe>, ir: &InterfaceRecipe) -> Option<String> 
                 parts.push(import.to_string());
             }
         }
-        if let Some(mp) = &ty.model_preamble {
-            if !mp.trim().is_empty() {
-                parts.push(mp.trim_end().to_string());
-            }
-        }
-    }
-    if let Some(mp) = &ir.model_preamble {
-        if !mp.trim().is_empty() {
+        if let Some(mp) = &ty.model_preamble
+            && !mp.trim().is_empty()
+        {
             parts.push(mp.trim_end().to_string());
         }
+    }
+    if let Some(mp) = &ir.model_preamble
+        && !mp.trim().is_empty()
+    {
+        parts.push(mp.trim_end().to_string());
     }
     if parts.is_empty() {
         None
@@ -416,7 +416,7 @@ pub fn render(
                 lines.push(format!("let {binding} = {call};"));
                 lines.extend(body);
             }
-        },
+        }
         Family::FinalRelation => {
             push_bind_attr(&mut lines, ty, has_receiver);
             if has_receiver {
@@ -427,12 +427,13 @@ pub fn render(
             } else {
                 Vec::new()
             };
-            for block in [ir.bridge.as_ref(), ir.snapshot.as_ref()] {
-                if let Some(block) = block {
-                    for line in block.lines() {
-                        if !line.trim().is_empty() {
-                            lines.push(substitute(line, &pairs)?);
-                        }
+            for block in [ir.bridge.as_ref(), ir.snapshot.as_ref()]
+                .into_iter()
+                .flatten()
+            {
+                for line in block.lines() {
+                    if !line.trim().is_empty() {
+                        lines.push(substitute(line, &pairs)?);
                     }
                 }
             }
@@ -449,17 +450,13 @@ pub fn render(
                 );
             }
             lines.push(format!("assert({});", substitute(&ir.assertion, &pairs)?));
-        },
+        }
         Family::IteratorSequence => {
             if call.is_empty() {
-                return Err(
-                    "family iterator-sequence requires a non-empty `call`".into(),
-                );
+                return Err("family iterator-sequence requires a non-empty `call`".into());
             }
             if ir.steps.is_empty() {
-                return Err(
-                    "family iterator-sequence requires at least one `steps` entry".into(),
-                );
+                return Err("family iterator-sequence requires at least one `steps` entry".into());
             }
             push_bind_attr(&mut lines, ty, has_receiver);
             if has_receiver {
@@ -497,8 +494,11 @@ pub fn render(
                         .into(),
                 );
             }
-            lines.push(format!("assert({});", substitute(&ir.assertion, &iter_pairs)?));
-        },
+            lines.push(format!(
+                "assert({});",
+                substitute(&ir.assertion, &iter_pairs)?
+            ));
+        }
         Family::StateInvariant => {
             if !has_receiver && call.is_empty() {
                 return Err(
@@ -536,10 +536,10 @@ pub fn render(
                 );
             }
             lines.push(format!("assert({});", substitute(&ir.assertion, &pairs)?));
-        },
+        }
         Family::Other => {
             return Err("family `other` has no obligation skeleton".into());
-        },
+        }
     }
 
     let obligation = lines.join("\n");
@@ -617,7 +617,7 @@ pub fn canonical_function(function: &str) -> String {
             '<' => depth += 1,
             '>' => depth = depth.saturating_sub(1),
             _ if depth == 0 => out.push(ch),
-            _ => {},
+            _ => {}
         }
     }
     out.trim().to_string()
@@ -683,7 +683,7 @@ fn resolve_expect(
                     "interface recipe for {} has unknown expect {other:?}",
                     candidate.function
                 ));
-            },
+            }
         };
         return Ok((expect, "recipe-override", Some(basis.to_string())));
     }
@@ -790,7 +790,9 @@ pub fn synthesize(
                 family: candidate.family.clone(),
                 constructibility: candidate.constructibility.clone(),
                 reason: "dedup".into(),
-                detail: Some(format!("dedup_key {dedup_key:?} already synthesized by {first}")),
+                detail: Some(format!(
+                    "dedup_key {dedup_key:?} already synthesized by {first}"
+                )),
             });
             continue;
         }
@@ -843,17 +845,12 @@ pub fn synthesize(
         }
 
         let ty = match &ir.receiver_type {
-            Some(name) => Some(
-                recipes
-                    .types
-                    .get(name)
-                    .ok_or_else(|| {
-                        format!(
-                            "interface recipe for {} references unknown type recipe {name:?}",
-                            candidate.function
-                        )
-                    })?,
-            ),
+            Some(name) => Some(recipes.types.get(name).ok_or_else(|| {
+                format!(
+                    "interface recipe for {} references unknown type recipe {name:?}",
+                    candidate.function
+                )
+            })?),
             None => None,
         };
 
@@ -885,7 +882,7 @@ pub fn synthesize(
                         })?;
                     (parsed, Some(basis.to_string()))
                 }
-            },
+            }
         };
 
         let rendered = render(obligation_family, ty, ir)?;
@@ -973,7 +970,8 @@ pub fn run(
     select: &[String],
 ) -> Result<SynthesisReport, String> {
     let candidates: Vec<Candidate> = serde_json::from_slice(
-        &std::fs::read(candidates_path).map_err(|e| format!("{}: {e}", candidates_path.display()))?,
+        &std::fs::read(candidates_path)
+            .map_err(|e| format!("{}: {e}", candidates_path.display()))?,
     )
     .map_err(|e| format!("{}: {e}", candidates_path.display()))?;
     let recipes: Recipes = serde_json::from_slice(
@@ -984,10 +982,10 @@ pub fn run(
     let synthesis = synthesize(&candidates, &recipes, select)?;
     let manifest_json = serde_json::to_string_pretty(&synthesis.manifest)
         .map_err(|e| format!("serialize manifest: {e}"))?;
-    if let Some(parent) = out_path.parent() {
-        if !parent.as_os_str().is_empty() {
-            std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
-        }
+    if let Some(parent) = out_path.parent()
+        && !parent.as_os_str().is_empty()
+    {
+        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
     }
     std::fs::write(out_path, format!("{manifest_json}\n"))
         .map_err(|e| format!("{}: {e}", out_path.display()))?;
@@ -1002,7 +1000,7 @@ pub fn run(
                 .unwrap_or_else(|| "synthesis".into());
             derived_report = out_path.with_file_name(format!("{stem}.report.json"));
             &derived_report
-        },
+        }
     };
     let report_json = serde_json::to_string_pretty(&synthesis.report)
         .map_err(|e| format!("serialize report: {e}"))?;
@@ -1132,16 +1130,16 @@ mod tests {
     fn renders_final_relation_with_snapshot() {
         let recipes = recipes_json();
         let ty = recipes.types.get("Widget").unwrap();
-        let ir = recipes
-            .interfaces
-            .get("Widget<'_, Mode>::limit")
-            .unwrap();
+        let ir = recipes.interfaces.get("Widget<'_, Mode>::limit").unwrap();
         let rendered = render(Family::FinalRelation, Some(ty), ir).unwrap();
         assert_eq!(
             rendered.obligation,
             "let buf = [0u8; 8];\nlet mut recv = Widget::from(&buf[..]);\nlet before = recv.cursor.vaddr;\nrecv.limit(4);\nassert(recv.remain_spec() <= 4);"
         );
-        assert_eq!(rendered.model_preamble.as_deref(), Some("use demo::Widget;"));
+        assert_eq!(
+            rendered.model_preamble.as_deref(),
+            Some("use demo::Widget;")
+        );
     }
 
     #[test]
@@ -1168,7 +1166,11 @@ mod tests {
         .unwrap();
         let rendered = render(Family::GuardIdentity, Some(ty), &ir).unwrap();
         assert!(rendered.obligation.contains("let handle = recv.lock();"));
-        assert!(rendered.obligation.contains("assert(handle.rel_cache(recv));"));
+        assert!(
+            rendered
+                .obligation
+                .contains("assert(handle.rel_cache(recv));")
+        );
 
         let bad: InterfaceRecipe = serde_json::from_value(serde_json::json!({
             "receiver_type": "Cache",
@@ -1228,16 +1230,18 @@ mod tests {
         assert_eq!(reasons["C-004"], "no-template-family");
         assert_eq!(reasons["C-005"], "needs-recipe");
         assert_eq!(reasons["C-006"], "dedup");
-        assert!(synthesis
-            .report
-            .skipped_candidates
-            .iter()
-            .find(|s| s.candidate_id == "C-005")
-            .unwrap()
-            .detail
-            .as_deref()
-            .unwrap()
-            .contains("tracked owner"));
+        assert!(
+            synthesis
+                .report
+                .skipped_candidates
+                .iter()
+                .find(|s| s.candidate_id == "C-005")
+                .unwrap()
+                .detail
+                .as_deref()
+                .unwrap()
+                .contains("tracked owner")
+        );
     }
 
     #[test]
@@ -1286,17 +1290,12 @@ mod tests {
         assert_eq!(by_id.manifest.contracts.len(), 1);
         assert_eq!(by_id.manifest.contracts[0].name, "c001_widget_limit");
 
-        let by_function =
-            synthesize(&candidates, &recipes, &["Cache<T>::get".into()]).unwrap();
+        let by_function = synthesize(&candidates, &recipes, &["Cache<T>::get".into()]).unwrap();
         assert_eq!(by_function.manifest.contracts.len(), 1);
         assert_eq!(by_function.manifest.contracts[0].name, "c003_cache_get");
 
-        let by_entry = synthesize(
-            &candidates,
-            &recipes,
-            &["c002_widget_has_remain".into()],
-        )
-        .unwrap();
+        let by_entry =
+            synthesize(&candidates, &recipes, &["c002_widget_has_remain".into()]).unwrap();
         assert_eq!(by_entry.manifest.contracts.len(), 1);
 
         let err = synthesize(&candidates, &recipes, &["C-404".into()]).unwrap_err();
@@ -1343,7 +1342,11 @@ mod tests {
         }))
         .unwrap();
         let rendered = render(Family::ValueReadback, Some(&ty), &ir).unwrap();
-        assert!(rendered.obligation.contains("let mut recv = Cache::<u64>::new(5u64);"));
+        assert!(
+            rendered
+                .obligation
+                .contains("let mut recv = Cache::<u64>::new(5u64);")
+        );
     }
 
     #[test]
@@ -1378,7 +1381,10 @@ mod tests {
         }))
         .unwrap();
         let rendered = render(Family::ValueReadback, Some(&ty), &ir).unwrap();
-        assert_eq!(rendered.obligation, "let out = Clock::now();\nassert(out >= 0);");
+        assert_eq!(
+            rendered.obligation,
+            "let out = Clock::now();\nassert(out >= 0);"
+        );
         assert!(!rendered.obligation.contains("let recv"));
     }
 
@@ -1543,12 +1549,16 @@ mod tests {
         .unwrap();
         let synthesis = synthesize(&candidates, &recipes, &[]).unwrap();
         assert_eq!(synthesis.manifest.contracts.len(), 2);
-        assert!(synthesis.manifest.contracts[0]
-            .obligation
-            .contains("Some(0u64..3u64)"));
-        assert!(synthesis.manifest.contracts[1]
-            .obligation
-            .contains("r0.is_none()"));
+        assert!(
+            synthesis.manifest.contracts[0]
+                .obligation
+                .contains("Some(0u64..3u64)")
+        );
+        assert!(
+            synthesis.manifest.contracts[1]
+                .obligation
+                .contains("r0.is_none()")
+        );
         assert_eq!(
             synthesis.report.entries[0].obligation_family,
             "iterator-sequence"

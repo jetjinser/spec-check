@@ -559,10 +559,8 @@ pub(crate) fn inventory(text: &str) -> Result<Value> {
             return Err("MIR block inventory incomplete".into());
         }
     }
-    let mut block_statement_ids = BTreeMap::<
-        (&str, &str),
-        std::collections::BTreeSet<usize>,
-    >::new();
+    let mut block_statement_ids =
+        BTreeMap::<(&str, &str), std::collections::BTreeSet<usize>>::new();
     let mut statement_ids = std::collections::BTreeSet::new();
     for statement in rows.iter().filter(|r| r["kind"] == "mir_stmt") {
         let key = (statement["owner"].as_str(), statement["block"].as_str());
@@ -570,11 +568,7 @@ pub(crate) fn inventory(text: &str) -> Result<Value> {
             return Err("MIR statement references an absent basic block".into());
         };
         let index = statement["index"].parse::<usize>()?;
-        if !statement_ids.insert((
-            key.0,
-            key.1,
-            index,
-        )) {
+        if !statement_ids.insert((key.0, key.1, index)) {
             return Err("duplicate MIR statement identity".into());
         }
         if index >= *expected {
@@ -711,9 +705,19 @@ mod tests {
     fn mir_statement_records_are_scoped_to_real_blocks_and_have_unique_indices() {
         let text = "PROJECT_OWNER\t1\tf\tFn\tfile:1\t[]\nPROJECT_MIR_BODY\t1\t1\nPROJECT_MIR_STMT\t1\tbb0\t0\tfile:1\tAssign(_4, Discriminant(_3))\nPROJECT_MIR_TERM\t1\tbb0\tfile:1\t1\treturn";
         assert_eq!(inventory(text).unwrap()["counts"]["mir_stmt"], 1);
-        assert!(inventory(&(text.to_owned() + "\nPROJECT_MIR_STMT\t1\tbb1\t0\tfile:1\tNop")).is_err());
-        assert!(inventory(&(text.to_owned() + "\nPROJECT_MIR_STMT\t1\tbb0\t0\tfile:1\tNop")).is_err());
-        assert!(inventory(&text.replace("PROJECT_MIR_STMT\t1\tbb0\t0\tfile:1\tAssign(_4, Discriminant(_3))\n", "")).is_err());
+        assert!(
+            inventory(&(text.to_owned() + "\nPROJECT_MIR_STMT\t1\tbb1\t0\tfile:1\tNop")).is_err()
+        );
+        assert!(
+            inventory(&(text.to_owned() + "\nPROJECT_MIR_STMT\t1\tbb0\t0\tfile:1\tNop")).is_err()
+        );
+        assert!(
+            inventory(&text.replace(
+                "PROJECT_MIR_STMT\t1\tbb0\t0\tfile:1\tAssign(_4, Discriminant(_3))\n",
+                ""
+            ))
+            .is_err()
+        );
     }
 
     #[test]

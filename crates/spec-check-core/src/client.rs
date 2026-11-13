@@ -200,12 +200,7 @@ pub(crate) fn full_verification_context(inv: &Invocation) -> Result<()> {
 pub fn run(links: &Path, sdk: &Path, out: &Path) -> Result<()> {
     run_scoped(links, sdk, out, None)
 }
-pub fn run_scoped(
-    links: &Path,
-    sdk: &Path,
-    out: &Path,
-    sources: Option<&Path>,
-) -> Result<()> {
+pub fn run_scoped(links: &Path, sdk: &Path, out: &Path, sources: Option<&Path>) -> Result<()> {
     run_mode(links, sdk, out, sources, false)
 }
 

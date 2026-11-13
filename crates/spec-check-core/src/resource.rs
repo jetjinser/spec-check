@@ -976,13 +976,7 @@ pub(crate) fn erase_captures(records: &[Record], connections: &Value) -> Result<
     ir::remap(data, &removed, false)
 }
 
-pub fn run(
-    context: &Path,
-    source: &Path,
-    function: &str,
-    sdk: &Path,
-    out: &Path,
-) -> Result<()> {
+pub fn run(context: &Path, source: &Path, function: &str, sdk: &Path, out: &Path) -> Result<()> {
     if out.exists() {
         return Err("resource output directory must be new".into());
     }

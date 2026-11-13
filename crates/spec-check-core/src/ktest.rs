@@ -18,8 +18,24 @@ use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::sync::LazyLock;
 
 const DEFAULT_TEST_ATTR: &str = "ktest";
+
+static RE_ASSOC_TYPE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"^\s*(?:unsafe\s*\{\s*)?([A-Z][A-Za-z0-9_]*)\s*(?:::<[^>]*>)?\s*::")
+        .expect("static regex")
+});
+static RE_STRUCT_LITERAL: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"^\s*([A-Z][A-Za-z0-9_]*)\s*\{").expect("static regex"));
+static RE_TO_FALLIBLE: LazyLock<Regex> = LazyLock::new(|| {
+    Regex::new(r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*\.\s*to_(?:fallible|infallible)\s*\(")
+        .expect("static regex")
+});
+static RE_FN_SIGNATURE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"\bfn\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(").expect("static regex"));
+static RE_ALLOCATOR_REUSE: LazyLock<Regex> =
+    LazyLock::new(|| Regex::new(r"_before|\bpaddr\b").expect("static regex"));
 
 // ---------------------------------------------------------------------------
 // Configuration
@@ -383,7 +399,10 @@ pub fn mask_source(text: &str) -> String {
             } else {
                 // ASCII or multi-byte char literal, or a lifetime.
                 let mut k = j;
-                while k < n && k < j + 8 && bytes[k] != b'\'' && bytes[k] != b'\n'
+                while k < n
+                    && k < j + 8
+                    && bytes[k] != b'\''
+                    && bytes[k] != b'\n'
                     && !bytes[k].is_ascii_whitespace()
                 {
                     k += 1;
@@ -437,7 +456,10 @@ fn strip_leading_comments(s: &str) -> &str {
     let mut rest = s.trim_start();
     loop {
         if let Some(r) = rest.strip_prefix("//") {
-            rest = r.split_once('\n').map(|(_, r)| r.trim_start()).unwrap_or("");
+            rest = r
+                .split_once('\n')
+                .map(|(_, r)| r.trim_start())
+                .unwrap_or("");
         } else if let Some(r) = rest.strip_prefix("/*") {
             if let Some(end) = r.find("*/") {
                 rest = r[end + 2..].trim_start();
@@ -500,7 +522,7 @@ fn next_semicolon(masked: &str, from: usize, end: usize) -> usize {
         .unwrap_or(end)
 }
 
-fn slice<'a>(raw: &'a str, start: usize, end: usize) -> &'a str {
+fn slice(raw: &str, start: usize, end: usize) -> &str {
     raw.get(start..end).unwrap_or("")
 }
 
@@ -603,11 +625,7 @@ fn control_spans(masked: &str, body_start: usize, body_end: usize, rules: &Rules
     let mut spans = Vec::new();
     let mut add = |start: usize, end: usize, kind: SpanKind| {
         if end > start {
-            spans.push(Span {
-                start,
-                end,
-                kind,
-            });
+            spans.push(Span { start, end, kind });
         }
     };
 
@@ -653,16 +671,19 @@ fn control_spans(masked: &str, body_start: usize, body_end: usize, rules: &Rules
         }
     }
 
-    for m in Regex::new(r"\blet\b").expect("static regex").find_iter(body) {
+    for m in Regex::new(r"\blet\b")
+        .expect("static regex")
+        .find_iter(body)
+    {
         let start = body_start + m.start();
         let end = next_semicolon(masked, start, body_end);
         let stmt = &masked[start..end];
-        if stmt.contains("else") {
-            if let Some(open_rel) = stmt.find('{') {
-                let open = start + open_rel;
-                if let Some(close) = match_delim(masked, open) {
-                    add(start, close + 1, SpanKind::LetElse);
-                }
+        if stmt.contains("else")
+            && let Some(open_rel) = stmt.find('{')
+        {
+            let open = start + open_rel;
+            if let Some(close) = match_delim(masked, open) {
+                add(start, close + 1, SpanKind::LetElse);
             }
         }
     }
@@ -763,9 +784,8 @@ fn classify_assertion(
                 .map(|(r, _)| r)
                 .chain(field_receivers(rhs))
                 .collect();
-            let both_valuey =
-                (!lrecv.is_empty() || !method_calls(lhs).is_empty())
-                    && (!rrecv.is_empty() || !method_calls(rhs).is_empty());
+            let both_valuey = (!lrecv.is_empty() || !method_calls(lhs).is_empty())
+                && (!rrecv.is_empty() || !method_calls(rhs).is_empty());
             let cross = both_valuey && !lrecv.is_empty() && !rrecv.is_empty() && lrecv != rrecv;
             let relation = rules.has_invariant_field(lhs) || rules.has_invariant_field(rhs);
             if cross || (both_valuey && relation) {
@@ -774,7 +794,10 @@ fn classify_assertion(
                     "relation between two object observations".into(),
                 );
             }
-            return ("value_readback".into(), "concrete value/round-trip equality".into());
+            return (
+                "value_readback".into(),
+                "concrete value/round-trip equality".into(),
+            );
         }
         return ("value_readback".into(), "equality assertion".into());
     }
@@ -889,20 +912,15 @@ fn infer_variant(
     if has_ok && !has_some {
         return ("Ok".into(), "constructor".into(), "high".into());
     }
-    if let Some(target) = target {
-        if let Some((_, method)) = target.rsplit_once('.') {
-            if let Some(variant) = rules.cfg.method_variants.get(method) {
-                return match variant.as_str() {
-                    "option" => ("Some".into(), "method-table".into(), "medium".into()),
-                    "result" => ("Ok".into(), "method-table".into(), "medium".into()),
-                    _ => (
-                        "Some or Ok".into(),
-                        "unknown".into(),
-                        "low".into(),
-                    ),
-                };
-            }
-        }
+    if let Some(target) = target
+        && let Some((_, method)) = target.rsplit_once('.')
+        && let Some(variant) = rules.cfg.method_variants.get(method)
+    {
+        return match variant.as_str() {
+            "option" => ("Some".into(), "method-table".into(), "medium".into()),
+            "result" => ("Ok".into(), "method-table".into(), "medium".into()),
+            _ => ("Some or Ok".into(), "unknown".into(), "low".into()),
+        };
     }
     ("Some or Ok".into(), "unknown".into(), "low".into())
 }
@@ -927,8 +945,7 @@ fn collect_demands(
         let snippet_raw = norm(strip_leading_comments(slice(raw, prev + 1, next + 1)), 400);
         let snippet_masked = slice(masked, prev + 1, next + 1);
         let target = target_call(snippet_masked);
-        let (demand, source, confidence) =
-            infer_variant(rules, snippet_masked, target.as_deref());
+        let (demand, source, confidence) = infer_variant(rules, snippet_masked, target.as_deref());
         let (scope, control_flow) = context_at(spans, pos);
         out.push(Demand {
             kind: m[1].to_string(),
@@ -1051,9 +1068,29 @@ fn collect_calls(raw: &str, masked: &str, body_start: usize, body_end: usize) ->
         });
     }
     let bare_skip = BTreeSet::from([
-        "if", "while", "for", "match", "Some", "Ok", "Err", "None", "return", "let", "in",
-        "move", "async", "unsafe", "loop", "unwrap", "expect", "vec", "format", "panic",
-        "assert", "assert_eq", "assert_ne",
+        "if",
+        "while",
+        "for",
+        "match",
+        "Some",
+        "Ok",
+        "Err",
+        "None",
+        "return",
+        "let",
+        "in",
+        "move",
+        "async",
+        "unsafe",
+        "loop",
+        "unwrap",
+        "expect",
+        "vec",
+        "format",
+        "panic",
+        "assert",
+        "assert_eq",
+        "assert_ne",
     ]);
     for (name, start) in bare_calls(body) {
         if bare_skip.contains(name.as_str()) {
@@ -1105,22 +1142,13 @@ fn infer_locals(masked: &str, body_start: usize, body_end: usize) -> BTreeMap<St
             .map(strip_type)
             .filter(|t| !t.is_empty())
             .or_else(|| {
-                let assoc =
-                    Regex::new(r"^\s*(?:unsafe\s*\{\s*)?([A-Z][A-Za-z0-9_]*)\s*(?:::<[^>]*>)?\s*::")
-                        .expect("static regex");
-                assoc
+                RE_ASSOC_TYPE
                     .captures(rhs)
                     .map(|m| m[1].to_string())
-                    .or_else(|| {
-                        Regex::new(r"^\s*([A-Z][A-Za-z0-9_]*)\s*\{")
-                            .expect("static regex")
-                            .captures(rhs)
-                            .map(|m| m[1].to_string())
-                    })
+                    .or_else(|| RE_STRUCT_LITERAL.captures(rhs).map(|m| m[1].to_string()))
                     .or_else(|| {
                         // `let f = x.to_fallible();` keeps the receiver type.
-                        Regex::new(r"^\s*([A-Za-z_][A-Za-z0-9_]*)\s*\.\s*to_(?:fallible|infallible)\s*\(")
-                            .expect("static regex")
+                        RE_TO_FALLIBLE
                             .captures(rhs)
                             .and_then(|m| locals.get(&m[1]).cloned())
                     })
@@ -1137,7 +1165,10 @@ fn resolve_target(target: &str, locals: &BTreeMap<String, String>) -> (String, S
         let canonical = Regex::new(r"<[^>]*>")
             .expect("static regex")
             .replace_all(target, "");
-        return (canonical.trim_matches(':').to_string(), "associated-call".into());
+        return (
+            canonical.trim_matches(':').to_string(),
+            "associated-call".into(),
+        );
     }
     if let Some((recv, method)) = target.rsplit_once('.') {
         if let Some(ty) = locals.get(recv) {
@@ -1151,9 +1182,26 @@ fn resolve_target(target: &str, locals: &BTreeMap<String, String>) -> (String, S
 fn helper_function(masked: &str, open: usize, close: Option<usize>) -> Option<String> {
     let body = &masked[open + 1..close?];
     let skip = BTreeSet::from([
-        "next", "into_iter", "iter", "for_each", "map", "filter", "collect", "push", "clone",
-        "len", "is_empty", "contains", "unwrap", "expect", "assert", "assert_eq", "assert_ne",
-        "panic", "format", "vec",
+        "next",
+        "into_iter",
+        "iter",
+        "for_each",
+        "map",
+        "filter",
+        "collect",
+        "push",
+        "clone",
+        "len",
+        "is_empty",
+        "contains",
+        "unwrap",
+        "expect",
+        "assert",
+        "assert_eq",
+        "assert_ne",
+        "panic",
+        "format",
+        "vec",
     ]);
     for (name, _) in bare_calls(body) {
         if skip.contains(name.as_str()) || name.starts_with("assert") || name.starts_with("check") {
@@ -1178,16 +1226,28 @@ fn derive_function(
     helper_fn: Option<String>,
 ) -> (String, String, Vec<String>) {
     if let Some(function) = rules.cfg.function_overrides.get(test) {
-        return (
-            function.clone(),
-            "override".into(),
-            vec![function.clone()],
-        );
+        return (function.clone(), "override".into(), vec![function.clone()]);
     }
     let pure = BTreeSet::from([
-        "is_none", "is_some", "is_ok", "is_err", "unwrap", "expect", "next", "len",
-        "is_empty", "contains", "iter", "collect", "clone", "load", "drop", "read", "write",
-        "borrow", "borrow_mut",
+        "is_none",
+        "is_some",
+        "is_ok",
+        "is_err",
+        "unwrap",
+        "expect",
+        "next",
+        "len",
+        "is_empty",
+        "contains",
+        "iter",
+        "collect",
+        "clone",
+        "load",
+        "drop",
+        "read",
+        "write",
+        "borrow",
+        "borrow_mut",
     ]);
     let mut scores: BTreeMap<String, (String, i32)> = BTreeMap::new();
     let mut note = |target: &str, weight: i32, source: String| {
@@ -1198,9 +1258,7 @@ fn derive_function(
         if function.is_empty() || pure.contains(function.as_str()) {
             return;
         }
-        let entry = scores
-            .entry(function)
-            .or_insert((src.clone(), 0));
+        let entry = scores.entry(function).or_insert((src.clone(), 0));
         entry.1 += weight;
         if source == "assert" && entry.0 == "method-name-only" {
             entry.0 = src;
@@ -1271,8 +1329,8 @@ impl LoadedFile {
 
 fn local_functions(masked: &str) -> BTreeMap<String, (usize, usize)> {
     let mut funcs = BTreeMap::new();
-    let re = Regex::new(r"\bfn\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:<[^>{}]*>)?\s*\(")
-        .expect("static regex");
+    let re =
+        Regex::new(r"\bfn\s+([A-Za-z_][A-Za-z0-9_]*)\s*(?:<[^>{}]*>)?\s*\(").expect("static regex");
     for c in re.captures_iter(masked) {
         let Some(whole) = c.get(0) else { continue };
         let Some(paren) = whole.end().checked_sub(1) else {
@@ -1317,10 +1375,7 @@ fn file_module_parts(rel: &str) -> Vec<String> {
         .split('/')
         .map(str::to_string)
         .collect();
-    if parts
-        .last()
-        .is_some_and(|p| p == "mod" || p == "lib")
-    {
+    if parts.last().is_some_and(|p| p == "mod" || p == "lib") {
         parts.pop();
     }
     parts
@@ -1383,8 +1438,7 @@ fn declaration_gate(root: &Path, rel: &str, rules: &Rules) -> (bool, String) {
         return (false, String::new());
     };
     let masked = mask_source(&raw);
-    let re = Regex::new(&format!(r"\bmod\s+{}\s*;", regex::escape(&stem)))
-        .expect("escaped regex");
+    let re = Regex::new(&format!(r"\bmod\s+{}\s*;", regex::escape(&stem))).expect("escaped regex");
     for m in re.find_iter(&masked) {
         let window = &masked[m.start().saturating_sub(400)..m.start()];
         if rules
@@ -1397,10 +1451,7 @@ fn declaration_gate(root: &Path, rel: &str, rules: &Rules) -> (bool, String) {
                 true,
                 format!(
                     "{} declares `mod {stem};` under a capture-gap cfg",
-                    parent
-                        .strip_prefix(root)
-                        .unwrap_or(&parent)
-                        .display()
+                    parent.strip_prefix(root).unwrap_or(&parent).display()
                 ),
             );
         }
@@ -1440,7 +1491,10 @@ fn crate_disconnection(root: &Path, rel: &str, rules: &Rules) -> (bool, String) 
         if !re.is_match(&masked_lib) {
             return (
                 true,
-                format!("top-level module `{top}` is not declared (or is commented out) in {}", rules.cfg.crate_root_file),
+                format!(
+                    "top-level module `{top}` is not declared (or is commented out) in {}",
+                    rules.cfg.crate_root_file
+                ),
             );
         }
     }
@@ -1456,8 +1510,11 @@ fn crate_disconnection(root: &Path, rel: &str, rules: &Rules) -> (bool, String) 
                     true,
                     format!(
                         "{} selects a non-{} `{}` path; {}/{}/ tests are not compiled",
-                        rules.cfg.crate_root_file, rule.excluded_prefix, rule.module,
-                        rule.module, rule.excluded_prefix
+                        rules.cfg.crate_root_file,
+                        rule.excluded_prefix,
+                        rule.module,
+                        rule.module,
+                        rule.excluded_prefix
                     ),
                 );
             }
@@ -1536,23 +1593,16 @@ fn discover(root: &Path, files: &[LoadedFile], rules: &Rules) -> Vec<TestRecord>
             let attr_start = m.start();
             let after_end = (m.end() + 600).min(file.masked.len());
             let after = &file.masked[m.end()..after_end];
-            let Some(fn_rel) = Regex::new(r"\bfn\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(")
-                .expect("static regex")
-                .captures(after)
-            else {
+            let Some(fn_rel) = RE_FN_SIGNATURE.captures(after) else {
                 continue;
             };
             let fn_pos = m.end() + fn_rel.get(0).unwrap().start();
             let fn_name = fn_rel[1].to_string();
             let attrs = attrs_before(&file.masked, fn_pos);
             let should_panic = attrs.iter().any(|a| a.contains("should_panic"));
-            let cfg_gap_attr = attrs.iter().any(|a| {
-                rules
-                    .cfg
-                    .capture_gap_cfgs
-                    .iter()
-                    .any(|cfg| a.contains(cfg))
-            });
+            let cfg_gap_attr = attrs
+                .iter()
+                .any(|a| rules.cfg.capture_gap_cfgs.iter().any(|cfg| a.contains(cfg)));
             let Some(open_rel) = file.masked[fn_pos..].find('{') else {
                 continue;
             };
@@ -1572,8 +1622,7 @@ fn discover(root: &Path, files: &[LoadedFile], rules: &Rules) -> Vec<TestRecord>
                     .any(|cfg| window.contains(cfg))
             });
             let (decl_gap, decl_reason) = declaration_gate(root, &file.rel, rules);
-            let (disconnected, disconnected_reason) =
-                crate_disconnection(root, &file.rel, rules);
+            let (disconnected, disconnected_reason) = crate_disconnection(root, &file.rel, rules);
 
             let mut capture_gap_reasons = Vec::new();
             if inline_gap || cfg_gap_attr {
@@ -1601,20 +1650,14 @@ fn discover(root: &Path, files: &[LoadedFile], rules: &Rules) -> Vec<TestRecord>
                 body_end,
                 &spans,
             );
-            let calls = collect_calls(
-                &file.raw,
-                &file.masked,
-                body_start + 1,
-                body_end,
-            );
+            let calls = collect_calls(&file.raw, &file.masked, body_start + 1, body_end);
             let locals = infer_locals(&file.masked, body_start + 1, body_end);
 
             let mut via_helper = Vec::new();
             let mut via_helper_file = None;
             let mut helper_spans = Vec::new();
             if assertions.is_empty() {
-                let called: BTreeSet<String> =
-                    calls.iter().map(|c| c.name.clone()).collect();
+                let called: BTreeSet<String> = calls.iter().map(|c| c.name.clone()).collect();
                 for (hname, (hopen, hclose)) in &file.funcs {
                     if called.contains(hname)
                         && rules
@@ -1623,8 +1666,7 @@ fn discover(root: &Path, files: &[LoadedFile], rules: &Rules) -> Vec<TestRecord>
                             .iter()
                             .any(|p| hname.starts_with(p))
                     {
-                        let hspans =
-                            control_spans(&file.masked, *hopen + 1, *hclose, rules);
+                        let hspans = control_spans(&file.masked, *hopen + 1, *hclose, rules);
                         let mut hasserts = collect_assertions(
                             rules,
                             &file.raw,
@@ -1656,8 +1698,7 @@ fn discover(root: &Path, files: &[LoadedFile], rules: &Rules) -> Vec<TestRecord>
                             {
                                 continue;
                             }
-                            let hspans =
-                                control_spans(&other.masked, *hopen + 1, *hclose, rules);
+                            let hspans = control_spans(&other.masked, *hopen + 1, *hclose, rules);
                             let mut hasserts = collect_assertions(
                                 rules,
                                 &other.raw,
@@ -1693,14 +1734,8 @@ fn discover(root: &Path, files: &[LoadedFile], rules: &Rules) -> Vec<TestRecord>
             let helper_fn = helper_spans.first().and_then(|(idx, open, close)| {
                 helper_function(&files[*idx].masked, *open, Some(*close))
             });
-            let (function, function_source, functions) = derive_function(
-                rules,
-                &test,
-                &assertions,
-                &demands,
-                &locals,
-                helper_fn,
-            );
+            let (function, function_source, functions) =
+                derive_function(rules, &test, &assertions, &demands, &locals, helper_fn);
 
             let mut record = TestRecord {
                 id: format!("K{next_id:03}"),
@@ -1736,7 +1771,7 @@ fn discover(root: &Path, files: &[LoadedFile], rules: &Rules) -> Vec<TestRecord>
                 model_requirements: Vec::new(),
             };
             annotate_exclusions(rules, &mut record, &file.raw);
-            rate(&rules, &mut record, &file.raw);
+            rate(rules, &mut record, &file.raw);
             tests.push(record);
             next_id += 1;
         }
@@ -1751,26 +1786,23 @@ fn annotate_exclusions(rules: &Rules, test: &mut TestRecord, raw: &str) {
             a.exclusion_reason = Some("private_observation".into());
             continue;
         }
-        if matches!(a.kind.as_str(), "assert_eq" | "assert_ne") {
-            if let Some(open) = a.text.find('(') {
-                if let Some(close) = match_delim(&a.text, open) {
-                    let args = split_top_commas(&a.text[open + 1..close]);
-                    if args.len() >= 2 {
-                        let lhs = &a.text[open + 1 + args[0].0..open + 1 + args[0].1];
-                        let rhs = &a.text[open + 1 + args[1].0..open + 1 + args[1].1];
-                        if is_literal(lhs) && is_literal(rhs) {
-                            a.category = "excluded_tautology".into();
-                            a.exclusion_reason = Some("tautology".into());
-                        }
-                    }
+        if matches!(a.kind.as_str(), "assert_eq" | "assert_ne")
+            && let Some(open) = a.text.find('(')
+            && let Some(close) = match_delim(&a.text, open)
+        {
+            let args = split_top_commas(&a.text[open + 1..close]);
+            if args.len() >= 2 {
+                let lhs = &a.text[open + 1 + args[0].0..open + 1 + args[0].1];
+                let rhs = &a.text[open + 1 + args[1].0..open + 1 + args[1].1];
+                if is_literal(lhs) && is_literal(rhs) {
+                    a.category = "excluded_tautology".into();
+                    a.exclusion_reason = Some("tautology".into());
                 }
             }
         }
         if body.contains("drop(")
             && a.text.contains("start_paddr")
-            && Regex::new(r"_before|\bpaddr\b")
-                .expect("static regex")
-                .is_match(&a.text)
+            && RE_ALLOCATOR_REUSE.is_match(&a.text)
         {
             a.category = "excluded_test_assumption".into();
             a.exclusion_reason = Some("test_assumption_allocator_reuse".into());
@@ -1818,8 +1850,7 @@ fn rate(rules: &Rules, test: &mut TestRecord, raw: &str) {
         .iter()
         .filter(|a| a.category != "excluded_private_observation")
         .collect();
-    let categories: BTreeSet<String> =
-        kept.iter().map(|a| a.category.clone()).collect();
+    let categories: BTreeSet<String> = kept.iter().map(|a| a.category.clone()).collect();
 
     if kept.is_empty() {
         if !test.assertions.is_empty() {
@@ -1835,7 +1866,8 @@ fn rate(rules: &Rules, test: &mut TestRecord, raw: &str) {
             test.rating_reasons = vec!["no assertion and no success demand".into()];
             return;
         }
-        reasons.push("only success demands (unwrap/expect) remain; no value/shape assertion".into());
+        reasons
+            .push("only success demands (unwrap/expect) remain; no value/shape assertion".into());
     }
 
     if test.capture_gap {
@@ -1902,17 +1934,21 @@ fn rate(rules: &Rules, test: &mut TestRecord, raw: &str) {
         return;
     }
     if categories.contains("invariant_consistency") {
-        reasons.push("cross-object invariant; requires exported relation predicate / tracked model".into());
+        reasons.push(
+            "cross-object invariant; requires exported relation predicate / tracked model".into(),
+        );
         test.rating = "needs_model_invariant".into();
         test.rating_reasons = reasons;
         test.categories = categories.into_iter().collect();
         test.category = primary_category(&test.categories, &test.demands);
         return;
     }
-    if kept
-        .iter()
-        .all(|a| matches!(a.category.as_str(), "value_readback" | "existence_acquisition"))
-    {
+    if kept.iter().all(|a| {
+        matches!(
+            a.category.as_str(),
+            "value_readback" | "existence_acquisition"
+        )
+    }) {
         reasons.push("public API call + observable value/shape assertion".into());
         test.rating = "direct".into();
         test.rating_reasons = reasons;
@@ -2231,10 +2267,7 @@ pub fn run(
             count(&mut by_variant, &d.demand);
             count(&mut by_variant_source, &d.variant_source);
             count(&mut by_scope, &format!("demand:{}", d.scope));
-            count(
-                &mut by_control_flow,
-                &format!("demand:{}", d.control_flow),
-            );
+            count(&mut by_control_flow, &format!("demand:{}", d.control_flow));
         }
     }
 
@@ -2266,18 +2299,18 @@ pub fn run(
         "model_requirements": candidates.iter().flat_map(|c| c.model_requirements.iter()).fold(BTreeMap::new(), |mut m, r| { *m.entry(r.clone()).or_insert(0usize) += 1; m }),
     });
 
-    if let Some(parent) = out.parent() {
-        if !parent.as_os_str().is_empty() {
-            fs::create_dir_all(parent).map_err(|e| e.to_string())?;
-        }
+    if let Some(parent) = out.parent()
+        && !parent.as_os_str().is_empty()
+    {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
     }
     let body = serde_json::to_string_pretty(&candidates).map_err(|e| e.to_string())?;
     fs::write(out, format!("{body}\n")).map_err(|e| format!("{}: {e}", out.display()))?;
     if let Some(path) = stats_out {
-        if let Some(parent) = path.parent() {
-            if !parent.as_os_str().is_empty() {
-                fs::create_dir_all(parent).map_err(|e| e.to_string())?;
-            }
+        if let Some(parent) = path.parent()
+            && !parent.as_os_str().is_empty()
+        {
+            fs::create_dir_all(parent).map_err(|e| e.to_string())?;
         }
         fs::write(
             path,
@@ -2337,8 +2370,10 @@ mod tests {
 
     #[test]
     fn assertion_classification_covers_value_existence_and_invariant() {
-        let mut cfg = Config::default();
-        cfg.invariant_field_patterns = vec!["start_paddr".into()];
+        let cfg = Config {
+            invariant_field_patterns: vec!["start_paddr".into()],
+            ..Default::default()
+        };
         let rules = Rules::new(cfg).unwrap();
         let (cat, _) = classify_assertion(&rules, "assert_eq", "g.value(), 5", "");
         assert_eq!(cat, "value_readback");
@@ -2351,8 +2386,10 @@ mod tests {
             "",
         );
         assert_eq!(cat, "invariant_consistency");
-        let mut cfg = Config::default();
-        cfg.private_observation_patterns = vec![r"\.lock\.load\b".into()];
+        let cfg = Config {
+            private_observation_patterns: vec![r"\.lock\.load\b".into()],
+            ..Default::default()
+        };
         let rules = Rules::new(cfg).unwrap();
         let (cat, _) = classify_assertion(&rules, "assert", "!lock.lock.load()", "");
         assert_eq!(cat, "excluded_private_observation");
@@ -2362,7 +2399,8 @@ mod tests {
     fn variant_inference_records_its_source() {
         let mut cfg = Config::default();
         cfg.method_variants.insert("push".into(), "result".into());
-        cfg.method_variants.insert("try_lock".into(), "option".into());
+        cfg.method_variants
+            .insert("try_lock".into(), "option".into());
         let rules = Rules::new(cfg).unwrap();
         assert_eq!(
             infer_variant(&rules, "let x: Result<u64, ()> = f();", None),
@@ -2378,11 +2416,7 @@ mod tests {
         );
         assert_eq!(
             infer_variant(&rules, "let x = thing.unknown();", Some("thing.unknown")),
-            (
-                "Some or Ok".into(),
-                "unknown".into(),
-                "low".into()
-            )
+            ("Some or Ok".into(), "unknown".into(), "low".into())
         );
     }
 
@@ -2434,18 +2468,19 @@ mod test {
         assert_eq!(stats["tests_seen"], 2);
         assert_eq!(stats["candidates"], 1);
         assert_eq!(stats["excluded"], 1);
-        let candidates: Vec<Candidate> =
-            serde_json::from_slice(&fs::read(&out1).unwrap()).unwrap();
+        let candidates: Vec<Candidate> = serde_json::from_slice(&fs::read(&out1).unwrap()).unwrap();
         assert_eq!(candidates.len(), 2);
         let direct = candidates.iter().find(|c| c.rating == "direct").unwrap();
         assert_eq!(direct.function, "Mutex::try_lock");
         assert_eq!(direct.family, "is_none-demand");
         assert_eq!(direct.constructibility, "constructible");
         assert_eq!(direct.category, "state_transition");
-        assert!(direct
-            .model_requirements
-            .iter()
-            .all(|r| r != "variant-disambiguation"));
+        assert!(
+            direct
+                .model_requirements
+                .iter()
+                .all(|r| r != "variant-disambiguation")
+        );
 
         let out2 = root.join("out2.json");
         run(&root, None, &out2, None).unwrap();
@@ -2478,18 +2513,18 @@ mod test {
         .unwrap();
         let out = root.join("out.json");
         run(&root, None, &out, None).unwrap();
-        let candidates: Vec<Candidate> =
-            serde_json::from_slice(&fs::read(&out).unwrap()).unwrap();
+        let candidates: Vec<Candidate> = serde_json::from_slice(&fs::read(&out).unwrap()).unwrap();
         let c = &candidates[0];
         assert_eq!(c.rating, "needs_model_helper");
         assert_eq!(c.assertions_via_helper, vec!["assert_range_difference"]);
         assert_eq!(c.function, "range_difference");
         assert_eq!(c.function_source, "bare-call");
         assert_eq!(c.constructibility, "needs-recipe");
-        assert!(c
-            .assertions
-            .iter()
-            .all(|a| a.via_helper.as_deref() == Some("assert_range_difference")));
+        assert!(
+            c.assertions
+                .iter()
+                .all(|a| a.via_helper.as_deref() == Some("assert_range_difference"))
+        );
         let _ = fs::remove_dir_all(&root);
     }
 
@@ -2524,14 +2559,15 @@ fn disconnected() {
 "#,
         )
         .unwrap();
-        let mut cfg = Config::default();
-        cfg.capture_gap_cfgs = vec!["ktest_capture_gap".into()];
+        let cfg = Config {
+            capture_gap_cfgs: vec!["ktest_capture_gap".into()],
+            ..Default::default()
+        };
         let cfg_path = root.join("config.json");
         fs::write(&cfg_path, serde_json::to_vec(&cfg).unwrap()).unwrap();
         let out = root.join("out.json");
         run(&root, Some(&cfg_path), &out, None).unwrap();
-        let candidates: Vec<Candidate> =
-            serde_json::from_slice(&fs::read(&out).unwrap()).unwrap();
+        let candidates: Vec<Candidate> = serde_json::from_slice(&fs::read(&out).unwrap()).unwrap();
         assert_eq!(candidates.len(), 2);
         let gated = candidates
             .iter()
@@ -2571,8 +2607,7 @@ mod test {
         .unwrap();
         let out = root.join("out.json");
         run(&root, None, &out, None).unwrap();
-        let candidates: Vec<Candidate> =
-            serde_json::from_slice(&fs::read(&out).unwrap()).unwrap();
+        let candidates: Vec<Candidate> = serde_json::from_slice(&fs::read(&out).unwrap()).unwrap();
         let demands = &candidates[0].demands;
         assert_eq!(demands.len(), 1); // the let-else destructuring pattern
         assert_eq!(demands[0].kind, "let-pattern");

@@ -43,4 +43,3 @@ pub fn execute(command: &mut Command, out: &Path, name: &str) -> Result<std::pro
     fs::write(out.join(format!("{name}.stderr")), &r.stderr)?;
     Ok(r)
 }
-

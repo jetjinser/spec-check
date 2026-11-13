@@ -1,7 +1,8 @@
 use crate::{Result, hash, ir::Record};
 use serde_json::{Value, json};
 
-const TEMPLATE: &str = include_str!("../assets/experiments/test-spec/assertion-rule/usize.template");
+const TEMPLATE: &str =
+    include_str!("../assets/experiments/test-spec/assertion-rule/usize.template");
 const MODEL: &[u8] = include_bytes!("../assets/experiments/test-spec/assertion-rule/semantics.rs");
 const APPROVED: &str = include_str!("../assets/experiments/test-spec/assertion-rule/rule.json");
 

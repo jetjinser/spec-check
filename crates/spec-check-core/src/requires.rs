@@ -1729,10 +1729,10 @@ pub fn build(census: &Value, options: &Options) -> Result<Value> {
         if !options.tiers.contains(decision.tier.as_str()) {
             continue;
         }
-        if let Some(filter) = &options.filter {
-            if !decision.path.contains(filter) {
-                continue;
-            }
+        if let Some(filter) = &options.filter
+            && !decision.path.contains(filter)
+        {
+            continue;
         }
         candidates.push(decision.path.clone());
     }
@@ -2464,7 +2464,7 @@ fn classify(
                     "pub uninterp spec fn p{index}_k{clause_index}({}) -> bool;\n\n",
                     args.iter()
                         .map(|(name, _)| {
-                            let int = model.get(name).map_or(true, |entry| entry.int);
+                            let int = model.get(name).is_none_or(|entry| entry.int);
                             format!(
                                 "{name}: {}",
                                 if int {
@@ -2871,12 +2871,12 @@ fn ordered_args(
     let mut args = Vec::new();
     for param in params {
         let original = param.name.as_str();
-        if let Some(entry) = model.get(original) {
-            if vars.contains(&entry.probe) || vars.contains(original) {
-                args.push((entry.probe.clone(), entry.probe.clone()));
-                if !param_order.contains(&entry.probe) {
-                    param_order.push(entry.probe.clone());
-                }
+        if let Some(entry) = model.get(original)
+            && (vars.contains(&entry.probe) || vars.contains(original))
+        {
+            args.push((entry.probe.clone(), entry.probe.clone()));
+            if !param_order.contains(&entry.probe) {
+                param_order.push(entry.probe.clone());
             }
         }
     }
@@ -2957,7 +2957,7 @@ fn render_mech_fn(
     let arglist = args
         .iter()
         .map(|(name, _)| {
-            let int = model.get(name).map_or(true, |entry| entry.int);
+            let int = model.get(name).is_none_or(|entry| entry.int);
             format!(
                 "{name}: {}",
                 if int {
@@ -3106,8 +3106,8 @@ fn search_witness(
         let name = &param_order[index];
         for value in &domains[index] {
             env.insert(name.clone(), value.clone());
-            if feasible(constraints, constraint_vars, env) {
-                if let Some(values) = dfs(
+            if feasible(constraints, constraint_vars, env)
+                && let Some(values) = dfs(
                     index + 1,
                     param_order,
                     domains,
@@ -3115,9 +3115,9 @@ fn search_witness(
                     constraint_vars,
                     env,
                     nodes,
-                ) {
-                    return Some(values);
-                }
+                )
+            {
+                return Some(values);
             }
             env.remove(name);
         }

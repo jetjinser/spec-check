@@ -37,8 +37,8 @@ use serde::{Deserialize, Serialize};
 use std::path::Path;
 
 use crate::probe_infra::{
-    forwarded_cfgs, fn_region, indent_block, parse_target_log, run_captured, sanitize,
-    target_command, write_injection, CEvent, CMarker, ProbeInjection, ProbeModule, TargetWorkspace,
+    CEvent, CMarker, ProbeInjection, ProbeModule, TargetWorkspace, fn_region, forwarded_cfgs,
+    indent_block, parse_target_log, run_captured, sanitize, target_command, write_injection,
 };
 
 /// Project-side obligation manifest: the client obligations to probe.
@@ -140,7 +140,10 @@ pub fn generate_obligation_injection(manifest: &Manifest) -> Result<ProbeInjecti
     for (i, c) in manifest.contracts.iter().enumerate() {
         let safe = sanitize(&c.name);
         if modules.iter().any(|m: &ProbeModule| m.safe_name == safe) {
-            return Err(format!("obligation entry name collides after sanitize: {}", c.name));
+            return Err(format!(
+                "obligation entry name collides after sanitize: {}",
+                c.name
+            ));
         }
 
         let mut src = String::new();
@@ -153,11 +156,11 @@ pub fn generate_obligation_injection(manifest: &Manifest) -> Result<ProbeInjecti
              verus! {{\n\n",
             c.name, gate,
         ));
-        if let Some(mp) = &c.model_preamble {
-            if !mp.is_empty() {
-                src.push_str(mp);
-                src.push_str("\n\n");
-            }
+        if let Some(mp) = &c.model_preamble
+            && !mp.is_empty()
+        {
+            src.push_str(mp);
+            src.push_str("\n\n");
         }
         src.push_str(&format!(
             "// ---- obligation client — do not edit ----\n\
@@ -285,15 +288,11 @@ fn first_error_line(log: &str) -> String {
         .to_string()
 }
 
-fn module_events<'a>(
-    events: &'a [CEvent],
-    module_suffix: &str,
-) -> Vec<&'a CEvent> {
+fn module_events<'a>(events: &'a [CEvent], module_suffix: &str) -> Vec<&'a CEvent> {
     events
         .iter()
         .filter(|e| {
-            e.file.ends_with(module_suffix)
-                || e.file == module_suffix.trim_start_matches('/')
+            e.file.ends_with(module_suffix) || e.file == module_suffix.trim_start_matches('/')
         })
         .collect()
 }
@@ -326,7 +325,7 @@ pub fn classify(manifest: &Manifest, log: &str) -> DivergenceReport {
                 target_summary: None,
                 baseline_clean: false,
             };
-        },
+        }
     };
     let crate_name = manifest
         .target_workspace
@@ -367,11 +366,7 @@ pub fn classify(manifest: &Manifest, log: &str) -> DivergenceReport {
     let baseline_events: Vec<&CEvent> = events
         .iter()
         .filter(|e| e.file.starts_with(&module_dir_prefix))
-        .filter(|e| {
-            !probe_suffixes
-                .iter()
-                .any(|s| e.file.ends_with(s.as_str()))
-        })
+        .filter(|e| !probe_suffixes.iter().any(|s| e.file.ends_with(s.as_str())))
         .collect();
     let baseline_failed = !baseline_events.is_empty();
 
@@ -390,12 +385,10 @@ pub fn classify(manifest: &Manifest, log: &str) -> DivergenceReport {
             .copied()
             .filter(|e| e.line >= m.entry_region.0 && e.line <= m.entry_region.1)
             .collect();
-        let obligation_failed = obligation_events
-            .iter()
-            .any(|e| e.marker != CMarker::Other);
-        let outside_obligation_failed = all_module
-            .iter()
-            .any(|e| e.marker != CMarker::Other && (e.line < m.entry_region.0 || e.line > m.entry_region.1));
+        let obligation_failed = obligation_events.iter().any(|e| e.marker != CMarker::Other);
+        let outside_obligation_failed = all_module.iter().any(|e| {
+            e.marker != CMarker::Other && (e.line < m.entry_region.0 || e.line > m.entry_region.1)
+        });
 
         let (verdict, reason) = if !target_ran {
             (
@@ -546,7 +539,10 @@ mod tests {
         assert_eq!(inj.module_name, "spec_check_probes");
         assert_eq!(inj.lib_decl, "#[cfg(ktest)] mod spec_check_probes;");
         assert_eq!(inj.modules.len(), 3);
-        assert!(inj.mod_rs.contains("#[cfg(ktest)]\npub mod guard_identity;"));
+        assert!(
+            inj.mod_rs
+                .contains("#[cfg(ktest)]\npub mod guard_identity;")
+        );
         // leading digit sanitized
         assert_eq!(inj.modules[2].safe_name, "p_1bad_name");
 
@@ -555,14 +551,19 @@ mod tests {
         assert!(src.contains("pub fn obligation_0_guard_identity() {"));
         assert!(src.contains("assert(g.rel(&m));"));
         let lines: Vec<&str> = src.lines().collect();
-        assert_eq!(lines[inj.modules[0].entry_region.0 - 1], "pub fn obligation_0_guard_identity() {");
+        assert_eq!(
+            lines[inj.modules[0].entry_region.0 - 1],
+            "pub fn obligation_0_guard_identity() {"
+        );
         assert_eq!(lines[inj.modules[0].entry_region.1 - 1], "}");
         assert!(inj.modules[0].live_region.is_none());
     }
 
     fn log_for(m: &Manifest, events: &[(usize, &str, usize)], summary: Option<&str>) -> String {
         let inj = generate_obligation_injection(m).unwrap();
-        let mut out = String::from("   Compiling vstd v0.1.0 (/tmp/tools/vstd)\nverification results:: 2060 verified, 0 errors\n   Compiling ostd v0.1.0 (/tmp/target/ostd)\n");
+        let mut out = String::from(
+            "   Compiling vstd v0.1.0 (/tmp/tools/vstd)\nverification results:: 2060 verified, 0 errors\n   Compiling ostd v0.1.0 (/tmp/target/ostd)\n",
+        );
         for (module, kind, line) in events {
             let file = format!(
                 "ostd/src/spec_check_probes/{}.rs",
@@ -596,7 +597,14 @@ mod tests {
         )
         .unwrap();
         assert!(validate_manifest(&m).is_err());
-        let err = run(&m, Path::new("cargo-verus"), Path::new("z3"), Path::new("vstd"), &std::env::temp_dir().join("spec-check-divergence-test-out")).unwrap_err();
+        let err = run(
+            &m,
+            Path::new("cargo-verus"),
+            Path::new("z3"),
+            Path::new("vstd"),
+            &std::env::temp_dir().join("spec-check-divergence-test-out"),
+        )
+        .unwrap_err();
         assert!(err.contains("missing obligation"));
     }
 
@@ -615,12 +623,19 @@ mod tests {
         let r = classify(&m, &log);
         assert_eq!(r.verdicts[0].verdict, Verdict::ContractGapCandidate);
         assert_eq!(r.verdicts[0].expect_match, Some(true));
-        assert!(r.verdicts[0].detail.contains(&format!("guard_identity.rs:{gap_line}")));
+        assert!(
+            r.verdicts[0]
+                .detail
+                .contains(&format!("guard_identity.rs:{gap_line}"))
+        );
         assert_eq!(r.verdicts[1].verdict, Verdict::ObligationSupported);
         assert_eq!(r.verdicts[1].expect_match, None);
         assert!(r.baseline_clean);
         assert_eq!(r.target_summary.as_deref(), Some("1500 verified, 1 errors"));
-        assert_eq!(r.dependency_summary.as_deref(), Some("2060 verified, 0 errors"));
+        assert_eq!(
+            r.dependency_summary.as_deref(),
+            Some("2060 verified, 0 errors")
+        );
 
         // baseline failure (target-crate error outside probe modules) → anomaly
         let log = format!(
@@ -634,11 +649,7 @@ mod tests {
         assert!(!r.baseline_clean);
 
         // compile error in one probe module (E0433 = CMarker::Other)
-        let log = log_for(
-            &m,
-            &[(2, "compile", 3)],
-            Some("1499 verified, 1 errors"),
-        );
+        let log = log_for(&m, &[(2, "compile", 3)], Some("1499 verified, 1 errors"));
         let r = classify(&m, &log);
         assert_eq!(r.verdicts[2].verdict, Verdict::Inconclusive);
         assert!(r.verdicts[2].detail.contains("compile error"));
@@ -682,9 +693,7 @@ mod tests {
         assert_eq!(r.verdicts[0].expect_match, Some(false));
 
         // rustc events outside the target crate are not baseline failures
-        let log = format!(
-            "   Compiling vstd v0.1.0 (/tmp/tools/vstd)\nerror[E0433]: cannot find module `nope`\n   --> vstd/src/some.rs:3:5\n   Compiling ostd v0.1.0 (/tmp/target/ostd)\nverification results:: 1501 verified, 0 errors\n"
-        );
+        let log = "   Compiling vstd v0.1.0 (/tmp/tools/vstd)\nerror[E0433]: cannot find module `nope`\n   --> vstd/src/some.rs:3:5\n   Compiling ostd v0.1.0 (/tmp/target/ostd)\nverification results:: 1501 verified, 0 errors\n".to_string();
         let r = classify(&m, &log);
         assert!(r.baseline_clean);
         assert_eq!(r.verdicts[0].verdict, Verdict::ObligationSupported);
