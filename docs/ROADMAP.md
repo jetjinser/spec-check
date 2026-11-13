@@ -519,6 +519,27 @@ ledger"，不把离线合成器伪装成自动发现。验证：bash -n、既有
   实现：`signals.rs`、`census.rs`、`requires.rs`、`cargo-spec-check/src/main.rs`。
 - 全测：`cargo test --offline` 全绿；core lib 152 passed / 72 ignored。
 
+### 候选裁定与验证（2026-11-13）—— 完成
+
+- **V-003 定性**：VmIo 7 个 default fallback 的 `!obeys_*` 前置恒假判为
+  `intentional-safety-net`（crate-scope 健全性守卫），`closed-by-design`，
+  machine_status 不升级。归档 `research/.../vmio-default-vacuity/`。
+- **obligation_fail 分诊**：16 条 → A 5 / B 1 / C 10；F-012 证据不足降为
+  `candidate_unverified`；F-016 关闭为阴性控制；新增 F-027（page-table
+  boundary Err，candidate_verified，1496/0）。归档
+  `research/.../obligation-triage/`。
+- **Top 候选验证**（独立副本，基线 1495/0）：
+  - F-019 `has_remain/has_avail` → `candidate_verified`（义务 Supported）
+  - F-020 `Either::left/right` → `candidate_verified`（需 `dual_spec, open`）
+  - F-024 `PageTablePageMeta::new` → `candidate_verified`
+  - F-018 `limit/skip` 失败：`final(self).*` 在 `&mut self -> &mut Self`
+    返回形态下 Verus 不可证（重借用 final-state 限制），保持 obligation_fail
+  - 阴性对照 5/5 正确判 Gap（新增后置非空洞）
+  - 归档 `research/.../candidate-fixes-2026-11-13/`（补丁/日志/README）
+- 台账：`candidate_verified` 6→9，`obligation_fail` 15→12。
+- 说明：F-020/F-024 的需求侧为 doc/合成 client 级，机器契约与证明等级
+  达到 candidate_verified，但不声称真实调用点覆盖。
+
 ## 维护纪律
 
 1. 主线进度只认本文件与 git 历史；会话记忆不作为状态来源。
