@@ -1,6 +1,7 @@
 # CI 接入：vostd 首站（M4）
 
-状态：配置与脚本已交付（2026-11-11；2026-11-12 增加可选 census 通道）。
+状态：配置与脚本已交付（2026-11-11；2026-11-12 增加可选 census 通道；
+2026-11-13 增加 CI 动态 divergence target）。
 **未实际触发 CI 运行**；上线前的人工决定项见文末清单。
 
 ## 设计原则
@@ -24,7 +25,8 @@
 夜班在线（run-spec-check.sh，同一命令本地/CI）
   vostd workspace
     ├─ capture ──► check(vacuity) ───────────────┐
-    ├─ check(divergence，设 DIVERGENCE_MANIFEST) ─┤──► CHECK_OUT/ ──► artifact
+    ├─ check(divergence，设 DIVERGENCE_MANIFEST 或
+    │        DIVERGENCE_MANIFEST_TEMPLATE) ──────┤──► CHECK_OUT/ ──► artifact
     └─ [SPEC_CHECK_CENSUS=1，默认关]              │
          cargo dv focus --log vir ──► crate.vir ──► census ──► CHECK_OUT/census/
 
@@ -92,6 +94,8 @@ CHECK_OUT/
   capture.json   capture 剖面（默认生成或 CAPTURE_CONFIG 覆盖）
   capture/       project-capture 输出（report.json、changed_inputs）
   check/         check 输出（report.json、analyses/<name>/…、探针日志）
+  divergence-manifest.json
+                 由 DIVERGENCE_MANIFEST_TEMPLATE 展开的本次运行清单
   census/        census 输出（census.json）；仅 SPEC_CHECK_CENSUS=1
   census-vir/    VIR 导出输入（crate.vir，约 100 MB）；同一开关
   run.log        本次运行完整 stdout/stderr
@@ -110,6 +114,7 @@ CHECK_OUT/
 | `ANALYSIS_MANIFEST` | `examples/vostd-guard/manifest.json` | vacuity 清单 |
 | `ANALYSIS_NAME` | `vacuity` | 注册表分析名 |
 | `DIVERGENCE_MANIFEST` | 空 | 可选第二分析（注册名 `divergence`） |
+| `DIVERGENCE_MANIFEST_TEMPLATE` | 空 | 可选第二分析模板；`__VOSTD_DIR__` 替换为本次 `$VOSTD_DIR`，生成 `$CHECK_OUT/divergence-manifest.json`。与 `DIVERGENCE_MANIFEST` 互斥 |
 | `SPEC_CHECK_NO_NIX=1` | 关 | 跳过 nix develop，直接用当前环境 |
 | `SPEC_CHECK_CARGO_FLAGS` | 空 | 额外 cargo build 参数（如 `--offline`） |
 | `SPEC_CHECK_JSON=1` | 关 | check 传 `--json` |
@@ -198,6 +203,8 @@ jobs:
       VOSTD_DIR: ${{ github.workspace }}
       SPEC_CHECK_DIR: ${{ github.workspace }}/spec-check
       CHECK_OUT: ${{ github.workspace }}/spec-check-report
+      # 可选第二分析；模板里的 __VOSTD_DIR__ 在运行脚本内展开为本次 checkout。
+      DIVERGENCE_MANIFEST_TEMPLATE: ${{ github.workspace }}/spec-check/examples/ci/divergence-manifest.template.json
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
@@ -227,6 +234,7 @@ jobs:
           echo "spec-check: $SPEC_CHECK_DIR ($(git -C "$SPEC_CHECK_DIR" rev-parse HEAD))"
           echo "artifact dir: $CHECK_OUT"
           echo "census: ${SPEC_CHECK_CENSUS:-0} (1 = VIR export + census, opt-in)"
+          echo "divergence template: ${DIVERGENCE_MANIFEST_TEMPLATE:-off}"
           "$SPEC_CHECK_DIR/examples/ci/run-spec-check.sh"
 
       - name: Publish summary
@@ -277,6 +285,69 @@ jobs:
 注意：summary 步骤的 python heredoc 内容与 `PY` 结束符必须保持在与
 `if` 同一列（YAML 按 `run: |` 首行剥缩进后，`PY` 需在第 0 列）。
 
+## CI divergence（vostd workflow 可直接粘贴）
+
+CI 的 checkout 路径由 runner 决定，不能预先把 `target_workspace` 写死。
+入口脚本因此提供 `DIVERGENCE_MANIFEST_TEMPLATE`：模板中的
+`__VOSTD_DIR__` 替换为本次 `$VOSTD_DIR`，展开结果写到
+`$CHECK_OUT/divergence-manifest.json` 并作为 artifact 保留。生成的清单可
+直接重放，模板本身不含绝对路径。`DIVERGENCE_MANIFEST`（固定清单）语义
+不变；两者互斥，同时设置会以管道错误退出。
+
+job 级 env（与 `CHECK_OUT` 同处）：
+
+```yaml
+    env:
+      VOSTD_DIR: ${{ github.workspace }}
+      SPEC_CHECK_DIR: ${{ github.workspace }}/spec-check
+      CHECK_OUT: ${{ github.workspace }}/spec-check-report
+      DIVERGENCE_MANIFEST_TEMPLATE: ${{ github.workspace }}/spec-check/examples/ci/divergence-manifest.template.json
+```
+
+Run step 里只需一行状态输出；脚本会同时注册 vacuity 与 divergence：
+
+```yaml
+      - name: Run spec-check
+        run: |
+          echo "divergence template: ${DIVERGENCE_MANIFEST_TEMPLATE:-off}"
+          "$SPEC_CHECK_DIR/examples/ci/run-spec-check.sh"
+```
+
+若需要 `workflow_dispatch` 开关，可在 inputs 中加 `divergence`（boolean，
+默认 `true`），并把 env 改为下面这行；`schedule` 没有 inputs，因此仍默认
+开启：
+
+```yaml
+      DIVERGENCE_MANIFEST_TEMPLATE: ${{ (github.event_name == 'workflow_dispatch' && inputs.divergence == false) && '' || format('{0}/spec-check/examples/ci/divergence-manifest.template.json', github.workspace) }}
+```
+
+CI 清单：`examples/ci/divergence-manifest.template.json`（6 条：Mutex
+guard 身份、try_lock 关系 supported 控制、try_lock is_none 需求、RwArc
+get_cloned、Either left/right 值读回）。预注册与边界见
+`examples/ci/DIVERGENCE-CI-EXPECTED.md`。探针 gate 用自定义
+`spec_check_probes`，而不是 `ktest`：分支上的 `#[cfg(ktest)] mod test`
+含已注释 API，启用 ktest 会让 ostd 整体编译失败，把所有条目降为
+Inconclusive。
+
+**成本（本机实测）**：全入口冒烟（check-smoke capture + vacuity +
+divergence，vostd tip 副本）`real 4m00.6s`；其中 divergence 阶段约
+`2m40s`（vstd 1908 verified / 0 errors，ostd 1470 verified / 5 errors，
+baseline clean）。divergence 使用自己的 target-dir，不复用 capture 的
+验证产物，因此 CI 上是一次额外的全量 verified build；hosted runner 还会
+叠加 setup-verus 与默认 ostd capture。现有 job timeout 300 分钟有充足
+余量，但不要把 divergence 放进每个 PR。
+
+**与 PR 级 ensures-coverage 的分工**：
+
+- PR 级 ensures-coverage 面向变更函数，做轻量的输出/后置覆盖检查，适合
+  每个 PR 的快速反馈；
+- 夜班 divergence 是固定条目、注入 client + 两阶段全量 verified build 的
+  契约充分性对照；它要求整个目标 crate 的 baseline 干净，判定是证明论
+  结论（`ContractGapCandidate`），不是运行时反例。成本分钟级，只适合
+  定时/手动运行；
+- 两者都遵守 ANALYSIS-CONTRACT v1：发现写报告，不改变退出码；只有配置、
+  capture、工具、未知分析等管道错误才失败。
+
 ## 本地运行
 
 每夜站点等价命令（本地）：
@@ -300,6 +371,24 @@ SPEC_CHECK_CARGO_FLAGS=--offline \
 
 （2026-11-11 已按此命令冒烟通过：capture fresh → 4 契约判定，报告与
 `check/report.json` 落盘，vostd 工作区无字节改动。）
+
+带 CI divergence 的本地复现（用独立副本，避免注入主工作树；worktree 需
+共享主检出的 Verus SDK）：
+
+```
+git -C ~/vie/work/AES/vostd worktree add --detach /tmp/vostd-ci 39235be76
+ln -s ~/vie/work/AES/vostd/tools/verus /tmp/vostd-ci/tools/verus
+VOSTD_DIR=/tmp/vostd-ci \
+CHECK_OUT=/tmp/spec-check-ci-divergence \
+DIVERGENCE_MANIFEST_TEMPLATE=~/vie/work/AES/spec-check/examples/ci/divergence-manifest.template.json \
+  ~/vie/work/AES/spec-check/examples/ci/run-spec-check.sh
+rm /tmp/vostd-ci/tools/verus
+git -C /tmp/vostd-ci status --porcelain   # 应为空
+git -C ~/vie/work/AES/vostd worktree remove /tmp/vostd-ci
+```
+
+（2026-11-13 实测：默认 ostd capture 之外，divergence 6 条全部命中预注册
+`expect`；见 `examples/ci/DIVERGENCE-CI-EXPECTED.md` 与本次运行报告。）
 
 可选 census（默认关；VIR 导出分钟级，VIR 约 100 MB）：
 
@@ -393,3 +482,9 @@ cargo-spec-check synthesize --candidates candidates.json --recipes recipes.json 
 10. **权限与密钥**：workflow 仅 `contents: read`，不需要任何 secret；
     spec-check 若是私有仓库，需要 checkout 权限（PAT 或同 org 内默认
     GITHUB_TOKEN 的可见范围）——取决于 #1 的落点。
+11. **divergence 清单与分支漂移**：模板只解决 checkout 路径，不保证条目
+    在目标分支仍成立。当前 CI 清单 6 条全部取自 `43da079..39235be76`
+    中逐字节未变的 `ostd/src/sync`、`ostd/src/util`；分支改动其他模块时，
+    需要像 `examples/ci/DIVERGENCE-CI-EXPECTED.md` 那样先核对源码再改
+    清单，并重新预注册 `expect`。`baseline_clean=false` / Inconclusive
+    只是证据不足，不是 gap。

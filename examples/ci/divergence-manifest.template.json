@@ -1,0 +1,53 @@
+{
+  "target_workspace": {
+    "manifest_path": "__VOSTD_DIR__/Cargo.toml",
+    "inject_dir": "ostd/src/spec_check_probes",
+    "gate_cfg": "spec_check_probes",
+    "extra_cfgs": [],
+    "target": "x86_64-unknown-none"
+  },
+  "contracts": [
+    {
+      "name": "ci_mutex_lock_guard_identity",
+      "params": "",
+      "obligation": "let mutex = Mutex::<u64>::new(5);\nlet guard = mutex.lock();\nassert(guard.rel_mutex(mutex));\nlet _held_guard = guard;",
+      "model_preamble": "use crate::sync::{Mutex, MutexGuard, RwArc};",
+      "expect": "gap"
+    },
+    {
+      "name": "ci_mutex_try_lock_rel_supported",
+      "params": "",
+      "obligation": "let mutex = Mutex::<u64>::new(5);\nlet mref = &mutex;\nif let Some(g) = mref.try_lock() {\n    assert(g.rel_mutex(*mref));\n}",
+      "model_preamble": "use crate::sync::{Mutex, MutexGuard, RwArc};",
+      "expect": "supported"
+    },
+    {
+      "name": "ci_mutex_try_lock_is_none_demand",
+      "params": "",
+      "obligation": "let lock = Mutex::<u64>::new(0);\nlet guard1 = lock.lock();\nlet __sq_assert_result_0 = lock.try_lock();\nassert(__sq_assert_result_0.is_none());\nlet _held_guard = guard1;",
+      "model_preamble": "use crate::sync::{Mutex, MutexGuard, RwArc};",
+      "expect": "gap"
+    },
+    {
+      "name": "ci_rwarc_get_cloned_value",
+      "params": "",
+      "obligation": "let arc = RwArc::new(5u64);\nlet value = arc.get_cloned();\nassert(value == 5);",
+      "model_preamble": "use crate::sync::{Mutex, MutexGuard, RwArc};",
+      "expect": "gap"
+    },
+    {
+      "name": "ci_either_left_value_readback",
+      "params": "",
+      "obligation": "let recv = Either::<u64, u64>::Left(5u64);\nlet out = recv.left();\nassert(out == Some(5u64));",
+      "model_preamble": "use crate::util::Either;",
+      "expect": "gap"
+    },
+    {
+      "name": "ci_either_right_value_readback",
+      "params": "",
+      "obligation": "let recv = Either::<u64, u64>::Right(5u64);\nlet out = recv.right();\nassert(out == Some(5u64));",
+      "model_preamble": "use crate::util::Either;",
+      "expect": "gap"
+    }
+  ]
+}

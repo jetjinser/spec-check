@@ -12,6 +12,7 @@
 #     capture.json      capture profile plan (generated default or override)
 #     capture/          project-capture output (report.json, changed_inputs)
 #     check/            check output (report.json, analyses/<name>/...)
+#     divergence-manifest.json  generated from DIVERGENCE_MANIFEST_TEMPLATE
 #     census/           census output (census.json); only when SPEC_CHECK_CENSUS=1
 #     census-vir/       VIR export input (crate.vir, ~100 MB); same condition
 #     run.log           full stdout/stderr of this run
@@ -36,6 +37,14 @@
 #   DIVERGENCE_MANIFEST    optional second analysis (registry name:
 #                          divergence); when set, CONFIG declares both
 #                          analyses and they run sequentially in one check.
+#   DIVERGENCE_MANIFEST_TEMPLATE
+#                          alternative to DIVERGENCE_MANIFEST for CI: the
+#                          template's __VOSTD_DIR__ placeholder is replaced
+#                          with $VOSTD_DIR and the result is written to
+#                          $CHECK_OUT/divergence-manifest.json. The generated
+#                          file lets a run use the checked-out workspace as the
+#                          divergence target without hard-coded paths. Set at
+#                          most one of the two variables.
 #   SPEC_CHECK_NO_NIX=1    run in the current environment, skip nix develop.
 #   SPEC_CHECK_CARGO_FLAGS extra cargo build flags (e.g. --offline).
 #   SPEC_CHECK_JSON=1      pass --json to the check command.
@@ -71,6 +80,14 @@ SPEC_CHECK_CENSUS="${SPEC_CHECK_CENSUS:-0}"
 CENSUS_CRATE="${CENSUS_CRATE:-ostd}"
 CENSUS_TARGET="${CENSUS_TARGET:-$CENSUS_CRATE}"
 CENSUS_VIR_DIR="${CENSUS_VIR_DIR:-$CHECK_OUT/census-vir}"
+DIVERGENCE_MANIFEST="${DIVERGENCE_MANIFEST:-}"
+DIVERGENCE_MANIFEST_TEMPLATE="${DIVERGENCE_MANIFEST_TEMPLATE:-}"
+
+if [[ -n "$DIVERGENCE_MANIFEST" && -n "$DIVERGENCE_MANIFEST_TEMPLATE" ]]; then
+  fail "set only one of DIVERGENCE_MANIFEST and DIVERGENCE_MANIFEST_TEMPLATE"
+fi
+[[ -z "$DIVERGENCE_MANIFEST_TEMPLATE" || -f "$DIVERGENCE_MANIFEST_TEMPLATE" ]] \
+  || fail "missing $DIVERGENCE_MANIFEST_TEMPLATE"
 
 if [[ "$SPEC_CHECK_CENSUS" == "1" && -n "${CENSUS_VIR:-}" ]]; then
   [[ -f "$CENSUS_VIR" ]] || fail "CENSUS_VIR does not exist: $CENSUS_VIR"
@@ -88,9 +105,22 @@ for path in \
   "$ANALYSIS_MANIFEST"; do
   [[ -e "$path" ]] || fail "missing $path (bootstrapped SDK needs 'cargo dv bootstrap' in vostd)"
 done
-[[ -z "${DIVERGENCE_MANIFEST:-}" || -e "$DIVERGENCE_MANIFEST" ]] \
+[[ -z "$DIVERGENCE_MANIFEST" || -e "$DIVERGENCE_MANIFEST" ]] \
   || fail "missing $DIVERGENCE_MANIFEST"
 [[ -d "$VOSTD_DIR/nix" ]] || fail "$VOSTD_DIR/nix missing (flake devshell expected)"
+
+# CI dynamic target: expand the template against the checkout this run uses.
+# The generated manifest is an artifact (not a repo file), so the same template
+# works for a local worktree and a CI workspace.
+if [[ -n "$DIVERGENCE_MANIFEST_TEMPLATE" ]]; then
+  DIVERGENCE_MANIFEST_TEMPLATE="$(readlink -f "$DIVERGENCE_MANIFEST_TEMPLATE")"
+  DIVERGENCE_MANIFEST="$CHECK_OUT/divergence-manifest.json"
+  divergence_content="$(<"$DIVERGENCE_MANIFEST_TEMPLATE")"
+  [[ "$divergence_content" == *"__VOSTD_DIR__"* ]] \
+    || fail "$DIVERGENCE_MANIFEST_TEMPLATE has no __VOSTD_DIR__ placeholder"
+  divergence_content="${divergence_content//__VOSTD_DIR__/$VOSTD_DIR}"
+  printf '%s\n' "$divergence_content" > "$DIVERGENCE_MANIFEST"
+fi
 
 CAPTURE_CONFIG_FILE="${CAPTURE_CONFIG:-$CHECK_OUT/capture.json}"
 if [[ -n "${CAPTURE_CONFIG:-}" ]]; then
@@ -114,7 +144,7 @@ EOF
 fi
 
 ANALYSES_JSON="{\"name\": \"$ANALYSIS_NAME\", \"manifest\": \"$ANALYSIS_MANIFEST\"}"
-if [[ -n "${DIVERGENCE_MANIFEST:-}" ]]; then
+if [[ -n "$DIVERGENCE_MANIFEST" ]]; then
   DIVERGENCE_MANIFEST="$(readlink -f "$DIVERGENCE_MANIFEST")"
   ANALYSES_JSON="$ANALYSES_JSON, {\"name\": \"divergence\", \"manifest\": \"$DIVERGENCE_MANIFEST\"}"
 fi
