@@ -135,7 +135,7 @@ EOF
 
 # Warm the cargo registry before project-capture: it resolves the target
 # workspace with `cargo metadata --offline`.
-INNER='
+INNER=$(cat <<'SPEC_CHECK_INNER'
 set -euo pipefail
 cargo build --manifest-path "$SPEC_CHECK_DIR/Cargo.toml" ${SPEC_CHECK_CARGO_FLAGS:-}
 cargo fetch --manifest-path "$CAPTURE_MANIFEST"
@@ -194,7 +194,8 @@ exec "$SPEC_CHECK_DIR/target/debug/cargo-spec-check" check \
   --z3 "$VERUS_SDK/z3" \
   --vstd "$VERUS_SDK/vstd" \
   --out "$CHECK_OUT/check" ${SPEC_CHECK_JSON:+--json}
-'
+SPEC_CHECK_INNER
+)
 
 export SPEC_CHECK_DIR CHECK_OUT VERUS_SDK CAPTURE_MANIFEST \
   SPEC_CHECK_CARGO_FLAGS SPEC_CHECK_JSON \
