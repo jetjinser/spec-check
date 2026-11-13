@@ -107,7 +107,9 @@ for path in \
 done
 [[ -z "$DIVERGENCE_MANIFEST" || -e "$DIVERGENCE_MANIFEST" ]] \
   || fail "missing $DIVERGENCE_MANIFEST"
-[[ -d "$VOSTD_DIR/nix" ]] || fail "$VOSTD_DIR/nix missing (flake devshell expected)"
+if [[ "${SPEC_CHECK_NO_NIX:-0}" != "1" ]]; then
+  [[ -d "$VOSTD_DIR/nix" ]] || fail "$VOSTD_DIR/nix missing (flake devshell expected; set SPEC_CHECK_NO_NIX=1 to run without nix)"
+fi
 
 # CI dynamic target: expand the template against the checkout this run uses.
 # The generated manifest is an artifact (not a repo file), so the same template
