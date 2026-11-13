@@ -81,6 +81,13 @@ fn ignored(key: &str) -> bool {
             | "MFLAGS"
             | "_"
             | "SHLVL"
+            // rustup/cargo proxy injection: these change between the capture
+            // parent and the wrapper process but carry no crate semantics.
+            | "CARGO_HOME"
+            | "RUSTUP_HOME"
+            | "RUSTUP_TOOLCHAIN"
+            | "RUSTUP_TOOLCHAIN_SOURCE"
+            | "RUST_RECURSION_COUNT"
     )
 }
 pub(crate) fn configured_args(
@@ -236,5 +243,30 @@ mod tests {
         ] {
             assert!(configured_args(&args, &[invalid.into()], true).is_err());
         }
+    }
+}
+
+#[cfg(test)]
+mod env_whitelist_tests {
+    use super::{ignored, retained};
+
+    #[test]
+    fn rustup_proxy_variables_are_ignored() {
+        for key in [
+            "CARGO_HOME",
+            "RUSTUP_HOME",
+            "RUSTUP_TOOLCHAIN",
+            "RUSTUP_TOOLCHAIN_SOURCE",
+            "RUST_RECURSION_COUNT",
+        ] {
+            assert!(ignored(key), "{key} should be ignored");
+            assert!(!retained(key), "{key} should not be retained");
+        }
+    }
+
+    #[test]
+    fn semantic_variables_are_not_ignored() {
+        assert!(!ignored("RUSTFLAGS"));
+        assert!(retained("RUSTFLAGS"));
     }
 }
