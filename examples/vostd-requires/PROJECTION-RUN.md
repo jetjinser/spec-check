@@ -257,3 +257,17 @@ nix develop ~/vie/work/AES/vostd/nix -c bash -c '\
 registry：本轮新增 V-003（VmIo default fallback，crate-scope 模型相对），详见
 `research/experiments/spec-quality-two-day/findings/registry.json`。没有虚构升级：M1 的构造层 V-001 不变，
 51 个未映射 C 不登记为缺陷。
+
+## 11. 后续裁定（2026-11-13）：V-003 按设计关闭
+
+§6 的 7 条 `ConfirmedVacuous` 已完成人工复核：`!Self::obeys_vmio_{read,write}_requires()`
+恒假是刻意设计，不是缺陷。trait 的两个 requires hook 默认 `false`（`ostd/src/mm/io.rs:1175-1181`），
+fallback 只在 impl 未 opt-in 自定义 requires 时可用；opt-in 的 impl 按文档必须覆写
+（`ostd/src/mm/io.rs:1307-1308,1357-1358,1419-1420`）。crate 内 3 个 active verified impl
+（`DmaCoherent`/`DmaStream`/`DmaStreamSlice`）全部 opt-in（`obeys = true`）且未覆写，因此
+§6 的 crate-scope 恒假结果准确且属按设计关闭。历史证据（`c404572bb` 将 `external_body`
+默认方法改为带 `!obeys` 前置并证明方法体）支持同一结论。
+
+registry V-003 的 `human_review` 已记为 `intentional-safety-net` / `closed-by-design`，
+`machine_status` 不升级。完整证据链与重开条件见
+`research/experiments/spec-quality-two-day/vmio-default-vacuity/README.md`。
