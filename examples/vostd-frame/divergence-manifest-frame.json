@@ -1,0 +1,83 @@
+{
+ "target_workspace": {
+  "manifest_path": "/tmp/vostd-43da079-frame/Cargo.toml",
+  "inject_dir": "ostd/src/spec_check_probes",
+  "gate_cfg": "ktest",
+  "extra_cfgs": [
+   "ktest_capture_gap"
+  ],
+  "target": "x86_64-unknown-none"
+ },
+ "contracts": [
+  {
+   "name": "f01_push_preserves_earlier",
+   "params": "",
+   "obligation": "let mut recv = MemoryRegionArray::<64>::new();\nlet _ = recv.push(MemoryRegion::new(0usize, 4097usize, MemoryRegionType::Usable)).unwrap();\nlet _ = recv.push(MemoryRegion::new(4095usize, 4098usize, MemoryRegionType::Usable)).unwrap();\nlet ghost r0 = recv@[0];\nlet ghost r1 = recv@[1];\nlet _ = recv.push(MemoryRegion::new(8192usize, 20480usize, MemoryRegionType::Usable)).unwrap();\nassert(recv@[0] == r0 && recv@[1] == r1);",
+   "model_preamble": "use crate::boot::memory_region::{MemoryRegion, MemoryRegionArray, MemoryRegionType};",
+   "expect": "supported"
+  },
+  {
+   "name": "f02_full_push_preserves",
+   "params": "",
+   "obligation": "let mut recv = MemoryRegionArray::<1>::new();\nlet _ = recv.push(MemoryRegion::new(0usize, 4097usize, MemoryRegionType::Usable)).unwrap();\nlet ghost before = recv@;\nlet res = recv.push(MemoryRegion::new(4095usize, 4098usize, MemoryRegionType::Usable));\nassert(res.is_err());\nassert(recv@ == before);",
+   "model_preamble": "use crate::boot::memory_region::{MemoryRegion, MemoryRegionArray, MemoryRegionType};",
+   "expect": "supported"
+  },
+  {
+   "name": "f03_cpuset_add_preserves_others",
+   "params": "",
+   "obligation": "broadcast use crate::cpu::axiom_cpu_count_bounds;\nlet cpu0 = CpuId::try_from(0usize).unwrap();\nlet mut recv = CpuSet::new_empty();\nrecv.add(cpu0);\nassert(recv@.contains(0));\nassert(!recv@.contains(1));",
+   "model_preamble": "use crate::cpu::{CpuId, CpuSet};",
+   "expect": "supported"
+  },
+  {
+   "name": "f04_cpuset_remove_preserves_others",
+   "params": "",
+   "obligation": "broadcast use crate::cpu::axiom_cpu_count_bounds;\nlet cpu0 = CpuId::try_from(0usize).unwrap();\nlet mut recv = CpuSet::new_empty();\nrecv.add(cpu0);\nlet ghost before = recv@;\nrecv.remove(cpu0);\nassert(recv@.contains(1) == before.contains(1));\nassert(!recv@.contains(0));",
+   "model_preamble": "use crate::cpu::{CpuId, CpuSet};",
+   "expect": "supported"
+  },
+  {
+   "name": "f05_failed_write_preserves_writer",
+   "params": "",
+   "obligation": "let mut buf = [0u8; 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmWriter::from(&mut buf[..]);\nlet r = recv.limit(0);\nlet ghost cursor = r.cursor;\nlet ghost end = r.end;\nlet ghost gid = r.ghost_id;\nlet val = 0u64;\n#[verus_spec(with Tracked(&mut owner))]\nlet res = r.write_once(&val);\nassert(res.is_err());\nassert(r.cursor == cursor && r.end == end && r.ghost_id == gid);",
+   "model_preamble": "use crate::mm::io::{VmReader, VmWriter};",
+   "expect": "supported"
+  },
+  {
+   "name": "f06_reader_limit_frame",
+   "params": "",
+   "obligation": "let buf = [1u8, 2, 3, 4, 5, 6, 7, 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmReader::from(&buf[..]);\nlet ghost cursor = recv.cursor;\nlet ghost gid = recv.ghost_id;\nlet r = recv.limit(4);\nassert(r.cursor == cursor && r.ghost_id == gid);",
+   "model_preamble": "use crate::mm::io::{VmReader, VmWriter};",
+   "expect": "supported"
+  },
+  {
+   "name": "f07_reader_skip_frame",
+   "params": "",
+   "obligation": "let buf = [1u8, 2, 3, 4, 5, 6, 7, 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmReader::from(&buf[..]);\nlet ghost end = recv.end;\nlet ghost gid = recv.ghost_id;\nlet r = recv.skip(4);\nassert(r.end == end && r.ghost_id == gid);",
+   "model_preamble": "use crate::mm::io::{VmReader, VmWriter};",
+   "expect": "supported"
+  },
+  {
+   "name": "f08_writer_limit_frame",
+   "params": "",
+   "obligation": "let mut buf = [0u8; 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmWriter::from(&mut buf[..]);\nlet ghost cursor = recv.cursor;\nlet ghost gid = recv.ghost_id;\nlet r = recv.limit(4);\nassert(r.cursor == cursor && r.ghost_id == gid);",
+   "model_preamble": "use crate::mm::io::{VmReader, VmWriter};",
+   "expect": "supported"
+  },
+  {
+   "name": "f09_mutex_guard_deref_mut_frame",
+   "params": "",
+   "obligation": "let mutex = Mutex::<u64>::new(7u64);\nlet mut guard = mutex.lock();\nlet ghost before = guard@;\nlet r = core::ops::DerefMut::deref_mut(&mut guard);\nassert(guard@ == before);",
+   "model_preamble": "use crate::sync::{Mutex, RwLock};",
+   "expect": "gap"
+  },
+  {
+   "name": "f10_rwlock_write_guard_deref_mut_frame",
+   "params": "",
+   "obligation": "let lock = RwLock::<u64, PreemptDisabled>::new(7u64);\nlet mut guard = lock.write();\nlet ghost before = guard@;\nlet r = core::ops::DerefMut::deref_mut(&mut guard);\nassert(guard@ == before);",
+   "model_preamble": "use crate::sync::{RwLock, PreemptDisabled};",
+   "expect": "gap"
+  }
+ ]
+}

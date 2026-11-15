@@ -41,6 +41,115 @@ fn render_compact(node: &Node) -> String {
         .join(" ")
 }
 
+fn future_kind(node: &Node) -> Option<&'static str> {
+    let items = node.list()?;
+    let offset = usize::from(items.first().and_then(Node::atom) == Some(">"));
+    if items.get(offset).and_then(Node::atom) == Some("Old") {
+        return Some("old");
+    }
+    if items.get(offset).and_then(Node::atom) != Some("Unary") {
+        return None;
+    }
+    let op = items.get(offset + 1)?.list()?;
+    if op.first().and_then(Node::atom) != Some("UnaryOp")
+        || op.get(1).and_then(Node::atom) != Some("MutRefFuture")
+    {
+        return None;
+    }
+    let kind = op.get(2)?.list()?;
+    if kind.first().and_then(Node::atom) != Some("MutRefFutureSourceName") {
+        return None;
+    }
+    match kind.get(1).and_then(Node::atom) {
+        Some("Old") => Some("old"),
+        Some("Final") => Some("final"),
+        _ => None,
+    }
+}
+
+fn contains_future(node: &Node, wanted: &str) -> bool {
+    if future_kind(node) == Some(wanted) {
+        return true;
+    }
+    node.list()
+        .is_some_and(|items| items.iter().any(|item| contains_future(item, wanted)))
+}
+
+fn frame_render(node: &Node) -> String {
+    if let Some(atom) = node.atom() {
+        return atom.to_owned();
+    }
+    let Some(items) = node.list() else {
+        return String::new();
+    };
+    if matches!(items.first().and_then(Node::atom), Some("@" | "@@")) {
+        return items.get(2).map(frame_render).unwrap_or_default();
+    }
+    if items.first().and_then(Node::atom) == Some("Place")
+        && let Some("DerefMut" | "Temporary" | "Local") = items.get(1).and_then(Node::atom)
+    {
+        return items.get(2).map(frame_render).unwrap_or_default();
+    }
+    if items.first().and_then(Node::atom) == Some(">") {
+        match items.get(1).and_then(Node::atom) {
+            Some("Old") => {
+                return items.get(2).map(frame_render).unwrap_or_default();
+            }
+            Some("Place") => {
+                if let Some("DerefMut" | "Temporary") = items.get(2).and_then(Node::atom) {
+                    return items.get(3).map(frame_render).unwrap_or_default();
+                }
+            }
+            Some("Unary") => {
+                if future_kind(node).is_some() {
+                    return items.get(3).map(frame_render).unwrap_or_default();
+                }
+                return items
+                    .get(2..)
+                    .unwrap_or_default()
+                    .iter()
+                    .map(frame_render)
+                    .collect::<Vec<_>>()
+                    .join(" ");
+            }
+            Some("ReadPlace") => {
+                return items.get(2).map(frame_render).unwrap_or_default();
+            }
+            _ => {}
+        }
+    }
+    items
+        .iter()
+        .map(frame_render)
+        .filter(|part| !part.is_empty())
+        .collect::<Vec<_>>()
+        .join(" ")
+}
+
+fn equality_sides(node: &Node) -> Option<(&Node, &Node)> {
+    let node = node.unwrap();
+    let items = node.list()?;
+    let offset = usize::from(items.first().and_then(Node::atom) == Some(">"));
+    if items.get(offset).and_then(Node::atom) != Some("Binary") {
+        return None;
+    }
+    let op = items.get(offset + 1)?.list()?;
+    if op.first().and_then(Node::atom) != Some("BinaryOp")
+        || !op.iter().any(|part| part.atom() == Some("Eq"))
+    {
+        return None;
+    }
+    Some((items.get(offset + 2)?, items.get(offset + 3)?))
+}
+
+fn frame_equality(node: &Node) -> Option<(&Node, &Node)> {
+    let (left, right) = equality_sides(node)?;
+    if !contains_future(left, "old") && !contains_future(right, "old") {
+        return None;
+    }
+    (frame_render(left) == frame_render(right)).then_some((left, right))
+}
+
 fn normalize_relative(path: &Path) -> PathBuf {
     let mut result = PathBuf::new();
     for component in path.components() {
@@ -1794,6 +1903,32 @@ pub fn analyze(text: &str, crate_name: &str, source_root: Option<&Path>) -> Resu
     }))
 }
 
+fn frame_facts(own_regular: &[Node], decl_regular: &[Node], function: &Node) -> Value {
+    let mut clauses = 0usize;
+    let mut old_mentions = 0usize;
+    let mut final_mentions = 0usize;
+    for clause in own_regular.iter().chain(decl_regular.iter()) {
+        let old = contains_future(clause, "old");
+        let fin = contains_future(clause, "final");
+        old_mentions += usize::from(old);
+        final_mentions += usize::from(fin);
+        clauses += usize::from(frame_equality(clause).is_some());
+    }
+    let mut_params = function
+        .field("params")
+        .and_then(Node::list)
+        .unwrap_or_default()
+        .iter()
+        .filter(|parameter| typ(Some(parameter)).is_some_and(type_contains_mutref))
+        .count();
+    json!({
+        "clauses": clauses,
+        "old_mentions": old_mentions,
+        "final_mentions": final_mentions,
+        "mut_params": mut_params,
+    })
+}
+
 #[allow(clippy::too_many_arguments)]
 fn function_entry(
     path: &str,
@@ -1849,6 +1984,19 @@ fn function_entry(
     };
     let default_present = !own_defaults.is_empty() || !decl_defaults.is_empty();
     let default_only = !post_present && default_present;
+    let frame = frame_facts(own_regular, decl_regular, function);
+    let frame_status = if frame["clauses"].as_u64().unwrap_or(0) > 0 {
+        "explicit"
+    } else if post_present {
+        "absent"
+    } else {
+        "no_post"
+    };
+    counts.record_frame(
+        frame_status,
+        frame["mut_params"].as_u64().unwrap_or(0) as usize,
+        frame["clauses"].as_u64().unwrap_or(0) as usize,
+    );
 
     let mut vars = BTreeSet::new();
     let mut final_vars = BTreeSet::new();
@@ -2096,6 +2244,13 @@ fn function_entry(
             "requires_count": requires_count,
             "requires_preview": requires_preview,
         },
+        "frame": {
+            "clauses": frame["clauses"],
+            "old_mentions": frame["old_mentions"],
+            "final_mentions": frame["final_mentions"],
+            "mut_params": frame["mut_params"],
+            "status": frame_status,
+        },
         "outputs": outputs,
         "findings": findings,
     })
@@ -2124,6 +2279,10 @@ struct Counts {
     without_return: usize,
     without_mut: usize,
     without_type_invariant_only: usize,
+    frame_explicit: usize,
+    frame_absent: usize,
+    frame_no_post: usize,
+    frame_mut_absent: usize,
 }
 
 impl Counts {
@@ -2181,6 +2340,19 @@ impl Counts {
         }
     }
 
+    fn record_frame(&mut self, status: &str, mut_params: usize, _clauses: usize) {
+        match status {
+            "explicit" => self.frame_explicit += 1,
+            "absent" => {
+                self.frame_absent += 1;
+                if mut_params > 0 {
+                    self.frame_mut_absent += 1;
+                }
+            }
+            _ => self.frame_no_post += 1,
+        }
+    }
+
     fn value(&self) -> Value {
         json!({
             "functions": self.functions,
@@ -2207,6 +2379,12 @@ impl Counts {
                 "return_unmentioned": self.without_return,
                 "mut_state_unmentioned": self.without_mut,
                 "type_invariant_only": self.without_type_invariant_only,
+            },
+            "frame": {
+                "explicit": self.frame_explicit,
+                "absent": self.frame_absent,
+                "no_post": self.frame_no_post,
+                "mut_absent": self.frame_mut_absent,
             },
         })
     }
@@ -2388,5 +2566,29 @@ mod tests {
         assert_eq!(function["external_body"], true);
         assert_eq!(function["outputs"][0]["type_invariant"], "type_inv");
         assert_eq!(function["outputs"][0]["type_invariant_only"], true);
+    }
+    #[test]
+    fn frame_equality_is_detected_but_output_relation_is_not() {
+        let side = |kind: &str, id: u32| {
+            format!(
+                r#"(@@ "t.rs:1:1: 1:2 (#0)" (> Unary (UnaryOp MutRefFuture (MutRefFutureSourceName {kind})) (@@ "t.rs:1:1: 1:2 (#0)" (> ReadPlace (@ "t.rs:1:1: 1:2 (#0)" (Place Local (VarIdent x (VarIdentDisambiguate RustcId 2)))) (Typ MutRef (Typ Int (IntRange USize)))) (UnfinalizedReadKind :preliminary_kind (ReadKind Move) :id {id})) (Typ MutRef (Typ Int (IntRange USize)))))"#
+            )
+        };
+        let frame = format!(
+            r#"(@ "t.rs:1:1: 1:2 (#0)" (Function :name (Fun :path p::frame) :mode Exec :visibility (Visibility :restricted_to None) :inner_ret (@ "t.rs:1:1: 1:2 (#0)" (Param :name (VarIdent %return (VarIdentDisambiguate AirLocal)) :typ (Typ Datatype (Dt Tuple 0) () ()))) :params ((@ "t.rs:1:1: 1:2 (#0)" (Param :name (VarIdent x (VarIdentDisambiguate RustcId 2)) :typ (Typ MutRef (Typ Int (IntRange USize)))))) :ensure (tuple ((@@ "t.rs:1:1: 1:2 (#0)" (> Binary (BinaryOp Eq Spec) {} {} (Typ Bool)))) ()) :require () :attrs (FunctionAttrs :is_external_body false)))"#,
+            side("Final", 2),
+            side("Old", 3)
+        );
+        let report = analyze(&frame, "p", None).unwrap();
+        let entry = &report["functions"][0];
+        assert_eq!(entry["frame"]["clauses"], 1);
+        assert_eq!(entry["frame"]["status"], "explicit");
+        assert_eq!(report["counts"]["frame"]["explicit"], 1);
+
+        let report = analyze(FINAL, "p", None).unwrap();
+        let entry = &report["functions"][0];
+        assert_eq!(entry["frame"]["clauses"], 0);
+        assert_eq!(entry["frame"]["status"], "absent");
+        assert_eq!(entry["frame"]["old_mentions"], 0);
     }
 }

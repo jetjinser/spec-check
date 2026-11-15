@@ -182,6 +182,13 @@ census 以 `::_VERUS_VERIFIED_` 记录为准，去掉该段后作为**规范路�
 `requires_preview` 只保留前 3 条、每条截断到 300 字符；完整 VIR 在
 输入文件中。
 
+M8 追加的 additive 字段（schema 仍为 `spec-check.census/1`）：每个函数有
+`frame { clauses, old_mentions, final_mentions, mut_params, status }`，
+`counts.frame` 汇总 `explicit / absent / no_post / mut_absent`。`clauses` 只统计
+`final(e) == old(e)`（或反向、量词下同形）的显式帧等式；`old_mentions`/
+`final_mentions` 记录任意 `old`/`final` 出现，因此可区分“无帧等式但用更新等式
+表达”与“完全没有旧态/终态语法”。旧消费者忽略新字段即可。
+
 M7e 追加的 additive 字段（schema 仍为 `spec-check.census/1`，旧消费者
 不受影响）：每个函数新增 `generics {count,names}`、`params
 [{name,type,kind,mode}]`、`requires [{index,span,file,line,text,class,ast,

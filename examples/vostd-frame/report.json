@@ -1,0 +1,77 @@
+{
+  "verdicts": [
+    {
+      "name": "f01_push_preserves_earlier",
+      "verdict": "ObligationSupported",
+      "expect": "supported",
+      "expect_match": true,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    },
+    {
+      "name": "f02_full_push_preserves",
+      "verdict": "ObligationSupported",
+      "expect": "supported",
+      "expect_match": true,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    },
+    {
+      "name": "f03_cpuset_add_preserves_others",
+      "verdict": "ObligationSupported",
+      "expect": "supported",
+      "expect_match": true,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    },
+    {
+      "name": "f04_cpuset_remove_preserves_others",
+      "verdict": "ObligationSupported",
+      "expect": "supported",
+      "expect_match": true,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    },
+    {
+      "name": "f05_failed_write_preserves_writer",
+      "verdict": "ContractGapCandidate",
+      "expect": "supported",
+      "expect_match": false,
+      "detail": "obligation failed under the original contracts (failure attributed to the obligation fn at ostd/src/spec_check_probes/f05_failed_write_preserves_writer.rs:24); baseline clean — the contract does not derive the client obligation (proof-theoretic gap candidate, not a runtime counterexample)"
+    },
+    {
+      "name": "f06_reader_limit_frame",
+      "verdict": "ObligationSupported",
+      "expect": "supported",
+      "expect_match": true,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    },
+    {
+      "name": "f07_reader_skip_frame",
+      "verdict": "ObligationSupported",
+      "expect": "supported",
+      "expect_match": true,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    },
+    {
+      "name": "f08_writer_limit_frame",
+      "verdict": "ObligationSupported",
+      "expect": "supported",
+      "expect_match": true,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    },
+    {
+      "name": "f09_mutex_guard_deref_mut_frame",
+      "verdict": "ObligationSupported",
+      "expect": "gap",
+      "expect_match": false,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    },
+    {
+      "name": "f10_rwlock_write_guard_deref_mut_frame",
+      "verdict": "ObligationSupported",
+      "expect": "gap",
+      "expect_match": false,
+      "detail": "obligation verified under the original contracts; baseline clean"
+    }
+  ],
+  "dependency_summary": "1908 verified, 0 errors",
+  "target_summary": "1506 verified, 1 errors",
+  "baseline_clean": true
+}

@@ -1,0 +1,1053 @@
+{
+ "schema": "spec-check.frame-census/1",
+ "source_census_schema": "spec-check.census/1",
+ "vir": {
+  "path": "/tmp/m7a-vir-export2/crate.vir",
+  "sha256": "7327fe3df0b2df6c692014bb2d7949c2599b7aeae37da9290fa4b1ab99792c91"
+ },
+ "counts": {
+  "absent": 1121,
+  "explicit": 147,
+  "mut_absent": 216,
+  "no_post": 200
+ },
+ "derived": {
+  "with_postcondition": 1268,
+  "absent_mentions_old_or_final": 211,
+  "absent_mentions_neither": 910,
+  "mut_absent": 216,
+  "mut_absent_neither": 5,
+  "explicit_clauses_total": 456
+ },
+ "explicit": [
+  {
+   "path": "ostd::mm::frame::impl&%10::clone",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/mm/frame/mod.rs",
+   "line": 650
+  },
+  {
+   "path": "ostd::mm::frame::linked_list::impl&%2::lazy_get_id",
+   "clauses": 3,
+   "mut_params": 1,
+   "file": "ostd/src/mm/frame/linked_list.rs",
+   "line": 628
+  },
+  {
+   "path": "ostd::mm::frame::linked_list::impl&%2::push_back",
+   "clauses": 1,
+   "mut_params": 4,
+   "file": "ostd/src/mm/frame/linked_list.rs",
+   "line": 366
+  },
+  {
+   "path": "ostd::mm::frame::linked_list::impl&%2::push_front",
+   "clauses": 1,
+   "mut_params": 4,
+   "file": "ostd/src/mm/frame/linked_list.rs",
+   "line": 271
+  },
+  {
+   "path": "ostd::mm::frame::linked_list::impl&%3::current_meta",
+   "clauses": 6,
+   "mut_params": 3,
+   "file": "ostd/src/mm/frame/linked_list.rs",
+   "line": 813
+  },
+  {
+   "path": "ostd::mm::frame::linked_list::impl&%3::insert_before",
+   "clauses": 1,
+   "mut_params": 4,
+   "file": "ostd/src/mm/frame/linked_list.rs",
+   "line": 1156
+  },
+  {
+   "path": "ostd::mm::frame::linked_list::impl&%3::take_current",
+   "clauses": 1,
+   "mut_params": 3,
+   "file": "ostd/src/mm/frame/linked_list.rs",
+   "line": 884
+  },
+  {
+   "path": "ostd::mm::frame::meta::impl&%1::drop_last_in_place",
+   "clauses": 8,
+   "mut_params": 1,
+   "file": "ostd/src/mm/frame/meta.rs",
+   "line": 821
+  },
+  {
+   "path": "ostd::mm::frame::meta::impl&%1::drop_meta_in_place",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/mm/frame/meta.rs",
+   "line": 882
+  },
+  {
+   "path": "ostd::mm::frame::meta::impl&%1::inc_ref_count",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/src/mm/frame/meta.rs",
+   "line": 638
+  },
+  {
+   "path": "ostd::mm::frame::meta::impl&%1::write_meta",
+   "clauses": 2,
+   "mut_params": 2,
+   "file": "ostd/src/mm/frame/meta.rs",
+   "line": 753
+  },
+  {
+   "path": "ostd::mm::frame::segment::impl&%0::clone",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/mm/frame/segment.rs",
+   "line": 127
+  },
+  {
+   "path": "ostd::mm::frame::segment::impl&%3::slice",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/mm/frame/segment.rs",
+   "line": 682
+  },
+  {
+   "path": "ostd::mm::frame::segment::impl&%6::next",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/src/mm/frame/segment.rs",
+   "line": 877
+  },
+  {
+   "path": "ostd::mm::frame::unique::impl&%2::meta_mut",
+   "clauses": 4,
+   "mut_params": 2,
+   "file": "ostd/src/mm/frame/unique.rs",
+   "line": 297
+  },
+  {
+   "path": "ostd::mm::frame::unique::impl&%5::drop",
+   "clauses": 1,
+   "mut_params": 2,
+   "file": "ostd/src/mm/frame/unique.rs",
+   "line": 526
+  },
+  {
+   "path": "ostd::mm::frame::unique::impl&%6::from_unique",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/mm/frame/unique.rs",
+   "line": 565
+  },
+  {
+   "path": "ostd::mm::frame::unique::impl&%7::try_from_shared",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/mm/frame/unique.rs",
+   "line": 613
+  },
+  {
+   "path": "ostd::mm::io::impl&%10::read_fallible",
+   "clauses": 6,
+   "mut_params": 2,
+   "file": "ostd/src/mm/io.rs",
+   "line": 2081
+  },
+  {
+   "path": "ostd::mm::io::impl&%11::read_fallible",
+   "clauses": 6,
+   "mut_params": 2,
+   "file": "ostd/src/mm/io.rs",
+   "line": 2081
+  },
+  {
+   "path": "ostd::mm::io::impl&%12::read_fallible",
+   "clauses": 6,
+   "mut_params": 2,
+   "file": "ostd/src/mm/io.rs",
+   "line": 2081
+  },
+  {
+   "path": "ostd::mm::io::impl&%13::write_fallible",
+   "clauses": 6,
+   "mut_params": 2,
+   "file": "ostd/src/mm/io.rs",
+   "line": 2135
+  },
+  {
+   "path": "ostd::mm::io::impl&%14::write_fallible",
+   "clauses": 6,
+   "mut_params": 2,
+   "file": "ostd/src/mm/io.rs",
+   "line": 2135
+  },
+  {
+   "path": "ostd::mm::io::impl&%15::write_fallible",
+   "clauses": 6,
+   "mut_params": 2,
+   "file": "ostd/src/mm/io.rs",
+   "line": 2135
+  },
+  {
+   "path": "ostd::mm::io::impl&%2::read_once",
+   "clauses": 2,
+   "mut_params": 2,
+   "file": "ostd/src/mm/io.rs",
+   "line": 982
+  },
+  {
+   "path": "ostd::mm::io::impl&%3::collect",
+   "clauses": 3,
+   "mut_params": 1,
+   "file": "ostd/src/mm/io.rs",
+   "line": 1124
+  },
+  {
+   "path": "ostd::mm::io::impl&%3::read_val",
+   "clauses": 3,
+   "mut_params": 1,
+   "file": "ostd/src/mm/io.rs",
+   "line": 1082
+  },
+  {
+   "path": "ostd::mm::io::impl&%4::skip_in_place",
+   "clauses": 2,
+   "mut_params": 2,
+   "file": "ostd/src/mm/io.rs",
+   "line": 1676
+  },
+  {
+   "path": "ostd::mm::io::impl&%6::fill_zeros",
+   "clauses": 3,
+   "mut_params": 1,
+   "file": "ostd/src/mm/io.rs",
+   "line": 1880
+  },
+  {
+   "path": "ostd::mm::io::impl&%6::write_val",
+   "clauses": 3,
+   "mut_params": 1,
+   "file": "ostd/src/mm/io.rs",
+   "line": 1836
+  },
+  {
+   "path": "ostd::mm::io::memcpy",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/src/mm/io.rs",
+   "line": 161
+  },
+  {
+   "path": "ostd::mm::kspace::impl&%5::clone",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/mm/kspace/mod.rs",
+   "line": 556
+  },
+  {
+   "path": "ostd::mm::page_table::RCClone::clone",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/mm/page_table/mod.rs",
+   "line": 75
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%0::next",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 117
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%3::clone_item",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 209
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%3::cur_entry",
+   "clauses": 5,
+   "mut_params": 2,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 1825
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%3::find_next_impl",
+   "clauses": 2,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 826
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%3::move_forward",
+   "clauses": 3,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 1510
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%3::pop_level",
+   "clauses": 7,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 1677
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%3::push_level",
+   "clauses": 4,
+   "mut_params": 2,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 1773
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%3::query",
+   "clauses": 2,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 370
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%4::map",
+   "clauses": 2,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 2913
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%4::map_branch_pt",
+   "clauses": 5,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 2309
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%4::map_loop",
+   "clauses": 3,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 2391
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%4::protect_cur_entry",
+   "clauses": 6,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 1967
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%4::protect_next",
+   "clauses": 1,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 3430
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%4::query",
+   "clauses": 1,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 2285
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%4::replace_cur_entry",
+   "clauses": 5,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 3555
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::impl&%4::take_next",
+   "clauses": 1,
+   "mut_params": 4,
+   "file": "ostd/src/mm/page_table/cursor/mod.rs",
+   "line": 3184
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::locking::dfs_acquire_lock",
+   "clauses": 1,
+   "mut_params": 3,
+   "file": "ostd/src/mm/page_table/cursor/locking.rs",
+   "line": 593
+  },
+  {
+   "path": "ostd::mm::page_table::cursor::locking::dfs_mark_stray_and_unlock",
+   "clauses": 6,
+   "mut_params": 2,
+   "file": "ostd/src/mm/page_table/cursor/locking.rs",
+   "line": 725
+  },
+  {
+   "path": "ostd::mm::page_table::impl&%10::empty_with_owner",
+   "clauses": 1,
+   "mut_params": 3,
+   "file": "ostd/src/mm/page_table/mod.rs",
+   "line": 1378
+  },
+  {
+   "path": "ostd::mm::page_table::node::child::impl&%3::from_pte",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/src/mm/page_table/node/child.rs",
+   "line": 192
+  },
+  {
+   "path": "ostd::mm::page_table::node::entry::impl&%2::alloc_if_none",
+   "clauses": 2,
+   "mut_params": 5,
+   "file": "ostd/src/mm/page_table/node/entry.rs",
+   "line": 616
+  },
+  {
+   "path": "ostd::mm::page_table::node::entry::impl&%2::protect",
+   "clauses": 9,
+   "mut_params": 3,
+   "file": "ostd/src/mm/page_table/node/entry.rs",
+   "line": 252
+  },
+  {
+   "path": "ostd::mm::page_table::node::entry::impl&%2::replace",
+   "clauses": 3,
+   "mut_params": 5,
+   "file": "ostd/src/mm/page_table/node/entry.rs",
+   "line": 345
+  },
+  {
+   "path": "ostd::mm::page_table::node::entry::impl&%2::split_if_mapped_huge",
+   "clauses": 11,
+   "mut_params": 5,
+   "file": "ostd/src/mm/page_table/node/entry.rs",
+   "line": 968
+  },
+  {
+   "path": "ostd::mm::page_table::node::entry::impl&%2::to_ref",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/src/mm/page_table/node/entry.rs",
+   "line": 162
+  },
+  {
+   "path": "ostd::mm::page_table::node::entry::impl&%3::alloc_absent_child",
+   "clauses": 5,
+   "mut_params": 5,
+   "file": "ostd/src/mm/page_table/node/entry.rs",
+   "line": 2141
+  },
+  {
+   "path": "ostd::mm::page_table::node::entry::impl&%3::protect_child",
+   "clauses": 12,
+   "mut_params": 3,
+   "file": "ostd/src/mm/page_table/node/entry.rs",
+   "line": 1746
+  },
+  {
+   "path": "ostd::mm::page_table::node::entry::impl&%3::replace_absent_with_frame",
+   "clauses": 7,
+   "mut_params": 5,
+   "file": "ostd/src/mm/page_table/node/entry.rs",
+   "line": 2389
+  },
+  {
+   "path": "ostd::mm::page_table::node::entry::impl&%3::replace_child",
+   "clauses": 5,
+   "mut_params": 5,
+   "file": "ostd/src/mm/page_table/node/entry.rs",
+   "line": 1891
+  },
+  {
+   "path": "ostd::mm::page_table::node::impl&%3::nr_children_mut",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/src/mm/page_table/node/mod.rs",
+   "line": 613
+  },
+  {
+   "path": "ostd::mm::page_table::node::impl&%3::stray_mut",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/src/mm/page_table/node/mod.rs",
+   "line": 500
+  },
+  {
+   "path": "ostd::mm::page_table::node::impl&%3::write_pte",
+   "clauses": 6,
+   "mut_params": 2,
+   "file": "ostd/src/mm/page_table/node/mod.rs",
+   "line": 578
+  },
+  {
+   "path": "ostd::mm::page_table::store_pte",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/src/mm/page_table/mod.rs",
+   "line": 1861
+  },
+  {
+   "path": "ostd::mm::vm_space::impl&%1::query",
+   "clauses": 1,
+   "mut_params": 4,
+   "file": "ostd/src/mm/vm_space.rs",
+   "line": 590
+  },
+  {
+   "path": "ostd::mm::vm_space::impl&%2::protect_next",
+   "clauses": 1,
+   "mut_params": 4,
+   "file": "ostd/src/mm/vm_space.rs",
+   "line": 1617
+  },
+  {
+   "path": "ostd::mm::vm_space::impl&%2::query",
+   "clauses": 1,
+   "mut_params": 4,
+   "file": "ostd/src/mm/vm_space.rs",
+   "line": 765
+  },
+  {
+   "path": "ostd::mm::vm_space::impl&%5::clone",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/mm/vm_space.rs",
+   "line": 1672
+  },
+  {
+   "path": "ostd::mm::vm_space::vm_space_specs::impl&%1::dispose_reader",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/vm_space.rs",
+   "line": 582
+  },
+  {
+   "path": "ostd::mm::vm_space::vm_space_specs::impl&%1::dispose_writer",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/vm_space.rs",
+   "line": 622
+  },
+  {
+   "path": "ostd::mm::vm_space::vm_space_specs::impl&%1::remove_reader",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/vm_space.rs",
+   "line": 464
+  },
+  {
+   "path": "ostd::mm::vm_space::vm_space_specs::impl&%1::remove_writer",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/vm_space.rs",
+   "line": 490
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::cursor_find_next_step",
+   "clauses": 4,
+   "mut_params": 2,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 605
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::cursor_jump_step",
+   "clauses": 4,
+   "mut_params": 2,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 635
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::cursor_mut_map_embedded",
+   "clauses": 4,
+   "mut_params": 4,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 298
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::cursor_mut_regions_step",
+   "clauses": 4,
+   "mut_params": 3,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 694
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::cursor_mut_unmap_embedded",
+   "clauses": 1,
+   "mut_params": 4,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 370
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::cursor_protect_next_step",
+   "clauses": 4,
+   "mut_params": 2,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 665
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::cursor_query_embedded",
+   "clauses": 1,
+   "mut_params": 3,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 196
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::cursor_query_step",
+   "clauses": 4,
+   "mut_params": 2,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 554
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::lemma_cursor_jump_embedded",
+   "clauses": 1,
+   "mut_params": 3,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 264
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::map_step",
+   "clauses": 7,
+   "mut_params": 3,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 768
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::open_cursor_mut_step",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 502
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::open_cursor_step",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 454
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::vm_space_cursor_embedded",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 90
+  },
+  {
+   "path": "ostd::specs::mm::embedding::cursor::vm_space_cursor_mut_embedded",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/cursor.rs",
+   "line": 131
+  },
+  {
+   "path": "ostd::specs::mm::embedding::frame::drop_step",
+   "clauses": 4,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/frame.rs",
+   "line": 227
+  },
+  {
+   "path": "ostd::specs::mm::embedding::frame::frame_drop_embedded",
+   "clauses": 6,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/frame.rs",
+   "line": 106
+  },
+  {
+   "path": "ostd::specs::mm::embedding::frame::frame_from_in_use_embedded",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/frame.rs",
+   "line": 79
+  },
+  {
+   "path": "ostd::specs::mm::embedding::frame::from_in_use_step",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/frame.rs",
+   "line": 182
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::lemma_insert_cursor",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 681
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::lemma_insert_frame",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 777
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::lemma_insert_segment",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 854
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::lemma_insert_unique",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 818
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::lemma_insert_vm_io",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 731
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::lemma_insert_vm_space",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 629
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::tracked_extract_cursor",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 655
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::tracked_extract_frame",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 756
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::tracked_extract_segment",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 835
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::tracked_extract_unique",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 799
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::tracked_extract_vm_io",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 709
+  },
+  {
+   "path": "ostd::specs::mm::embedding::impl&%4::tracked_extract_vm_space",
+   "clauses": 7,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 601
+  },
+  {
+   "path": "ostd::specs::mm::embedding::io::lemma_vm_writer_limit_embedded",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/io.rs",
+   "line": 206
+  },
+  {
+   "path": "ostd::specs::mm::embedding::io::lemma_vm_writer_skip_embedded",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/io.rs",
+   "line": 216
+  },
+  {
+   "path": "ostd::specs::mm::embedding::io::read_step",
+   "clauses": 8,
+   "mut_params": 2,
+   "file": "ostd/specs/mm/embedding/io.rs",
+   "line": 326
+  },
+  {
+   "path": "ostd::specs::mm::embedding::io::tracked_vm_reader_read_embedded",
+   "clauses": 2,
+   "mut_params": 2,
+   "file": "ostd/specs/mm/embedding/io.rs",
+   "line": 177
+  },
+  {
+   "path": "ostd::specs::mm::embedding::io::vm_io_method_step",
+   "clauses": 4,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/io.rs",
+   "line": 302
+  },
+  {
+   "path": "ostd::specs::mm::embedding::lemma_drop_segment_with_store_inv",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/mod.rs",
+   "line": 1933
+  },
+  {
+   "path": "ostd::specs::mm::embedding::list_store::axiom_insert_before_at_embedded",
+   "clauses": 1,
+   "mut_params": 3,
+   "file": "ostd/specs/mm/embedding/list_store.rs",
+   "line": 482
+  },
+  {
+   "path": "ostd::specs::mm::embedding::list_store::axiom_take_at_embedded",
+   "clauses": 1,
+   "mut_params": 2,
+   "file": "ostd/specs/mm/embedding/list_store.rs",
+   "line": 535
+  },
+  {
+   "path": "ostd::specs::mm::embedding::list_store::impl&%1::step_list_drop",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/list_store.rs",
+   "line": 716
+  },
+  {
+   "path": "ostd::specs::mm::embedding::list_store::impl&%1::step_list_new",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/list_store.rs",
+   "line": 694
+  },
+  {
+   "path": "ostd::specs::mm::embedding::list_store::impl&%1::step_move_next",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/list_store.rs",
+   "line": 991
+  },
+  {
+   "path": "ostd::specs::mm::embedding::list_store::impl&%1::step_move_prev",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/list_store.rs",
+   "line": 1008
+  },
+  {
+   "path": "ostd::specs::mm::embedding::list_store::lemma_push_back_embedded",
+   "clauses": 1,
+   "mut_params": 3,
+   "file": "ostd/specs/mm/embedding/list_store.rs",
+   "line": 361
+  },
+  {
+   "path": "ostd::specs::mm::embedding::list_store::push_front_embedded",
+   "clauses": 1,
+   "mut_params": 3,
+   "file": "ostd/specs/mm/embedding/list_store.rs",
+   "line": 247
+  },
+  {
+   "path": "ostd::specs::mm::embedding::list_store::tracked_pop_back_embedded",
+   "clauses": 1,
+   "mut_params": 2,
+   "file": "ostd/specs/mm/embedding/list_store.rs",
+   "line": 428
+  },
+  {
+   "path": "ostd::specs::mm::embedding::list_store::tracked_pop_front_embedded",
+   "clauses": 1,
+   "mut_params": 2,
+   "file": "ostd/specs/mm/embedding/list_store.rs",
+   "line": 307
+  },
+  {
+   "path": "ostd::specs::mm::embedding::segment::drop_step",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/segment.rs",
+   "line": 356
+  },
+  {
+   "path": "ostd::specs::mm::embedding::segment::from_unused_step",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/segment.rs",
+   "line": 297
+  },
+  {
+   "path": "ostd::specs::mm::embedding::segment::lemma_segment_drop_embedded",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/segment.rs",
+   "line": 154
+  },
+  {
+   "path": "ostd::specs::mm::embedding::segment::segment_from_unused_embedded",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/segment.rs",
+   "line": 75
+  },
+  {
+   "path": "ostd::specs::mm::embedding::segment::segment_next_embedded",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/embedding/segment.rs",
+   "line": 251
+  },
+  {
+   "path": "ostd::specs::mm::frame::meta_owners::write_metadata_into_storage",
+   "clauses": 2,
+   "mut_params": 2,
+   "file": "ostd/specs/mm/frame/meta_owners.rs",
+   "line": 317
+  },
+  {
+   "path": "ostd::specs::mm::frame::unique::impl&%5::tracked_borrow_mut_repr_perm",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/frame/unique.rs",
+   "line": 173
+  },
+  {
+   "path": "ostd::specs::mm::io::impl&%3::advance",
+   "clauses": 4,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/io.rs",
+   "line": 257
+  },
+  {
+   "path": "ostd::specs::mm::io::impl&%3::split",
+   "clauses": 4,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/io.rs",
+   "line": 375
+  },
+  {
+   "path": "ostd::specs::mm::io::impl&%3::write_to_read",
+   "clauses": 4,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/io.rs",
+   "line": 566
+  },
+  {
+   "path": "ostd::specs::mm::page_table::cursor::owners::impl&%0::tracked_new_child",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/page_table/cursor/owners.rs",
+   "line": 594
+  },
+  {
+   "path": "ostd::specs::mm::page_table::owners::mark_borrowed_children",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/page_table/owners.rs",
+   "line": 541
+  },
+  {
+   "path": "ostd::specs::mm::page_table::owners::mark_borrowed_children_at",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/page_table/owners.rs",
+   "line": 468
+  },
+  {
+   "path": "ostd::specs::mm::page_table::owners::rebase_freshly_allocated_children",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/page_table/owners.rs",
+   "line": 633
+  },
+  {
+   "path": "ostd::specs::mm::page_table::owners::rebase_freshly_allocated_children_at",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/page_table/owners.rs",
+   "line": 568
+  },
+  {
+   "path": "ostd::specs::mm::virt_mem::impl&%5::copy_nonoverlapping",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/virt_mem.rs",
+   "line": 880
+  },
+  {
+   "path": "ostd::specs::mm::virt_mem::impl&%5::copy_offset",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/virt_mem.rs",
+   "line": 815
+  },
+  {
+   "path": "ostd::specs::mm::virt_mem::impl&%5::write_volatile",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/mm/virt_mem.rs",
+   "line": 620
+  },
+  {
+   "path": "ostd::specs::task::cpu_core::impl&%5::tracked_schedule_in",
+   "clauses": 4,
+   "mut_params": 1,
+   "file": "ostd/specs/task/cpu_core.rs",
+   "line": 209
+  },
+  {
+   "path": "ostd::specs::task::cpu_core::impl&%5::tracked_schedule_out",
+   "clauses": 4,
+   "mut_params": 1,
+   "file": "ostd/specs/task/cpu_core.rs",
+   "line": 230
+  },
+  {
+   "path": "ostd::specs::task::cpu_local::impl&%4::tracked_return",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/task/cpu_local.rs",
+   "line": 165
+  },
+  {
+   "path": "ostd::specs::task::cpu_local::impl&%4::tracked_take",
+   "clauses": 1,
+   "mut_params": 1,
+   "file": "ostd/specs/task/cpu_local.rs",
+   "line": 147
+  },
+  {
+   "path": "ostd::specs::task::cpu_local::impl&%5::lemma_distinct",
+   "clauses": 3,
+   "mut_params": 1,
+   "file": "ostd/specs/task/cpu_local.rs",
+   "line": 227
+  },
+  {
+   "path": "ostd::specs::task::cpu_local::impl&%5::lemma_same_cpu_has_distinct_auth",
+   "clauses": 3,
+   "mut_params": 1,
+   "file": "ostd/specs/task/cpu_local.rs",
+   "line": 241
+  },
+  {
+   "path": "ostd::specs::task::cpu_local::impl&%5::tracked_update",
+   "clauses": 4,
+   "mut_params": 2,
+   "file": "ostd/specs/task/cpu_local.rs",
+   "line": 208
+  },
+  {
+   "path": "ostd::sync::spin::impl&%10::deref_mut",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/sync/spin.rs",
+   "line": 563
+  },
+  {
+   "path": "ostd::sync::spin::impl&%8::tracked_borrow_mut_resource",
+   "clauses": 2,
+   "mut_params": 1,
+   "file": "ostd/src/sync/spin.rs",
+   "line": 510
+  }
+ ]
+}
