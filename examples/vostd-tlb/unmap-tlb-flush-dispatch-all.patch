@@ -1,0 +1,193 @@
+--- vostd-43da079-ktest-chan/ostd/specs/mm/tlb.rs	2026-10-16 16:31:12.000000000 +0800
++++ vostd-a2/ostd/specs/mm/tlb.rs	2026-11-16 03:55:43.930808270 +0800
+@@ -1,4 +1,5 @@
+ use vstd::prelude::*;
++use core::ops::Range;
+ use vstd_extra::ownership::*;
+ 
+ use crate::specs::mm::page_table::*;
+@@ -97,16 +98,112 @@
+         self.pending.tracked_push(op);
+     }
+ 
+-    pub open spec fn dispatch_tlb_flush_spec(self) -> Self {
+-        let op = self.pending.last();
+-        let popped = TlbModel {
+-            pending: self.pending[..self.pending.len() - 1],
+-            mappings: self.mappings,
+-        };
++    pub open spec fn flush_range(self, range: Range<Vaddr>) -> Self {
++        let m = self.mappings.filter(|m: Mapping| m.va_range.start < range.end && range.start < m.va_range.end);
++        TlbModel { pending: self.pending, mappings: self.mappings - m }
++    }
++
++    pub open spec fn apply_op(mappings: Set<Mapping>, op: TlbFlushOp) -> Set<Mapping> {
++        match op {
++            TlbFlushOp::All => Set::<Mapping>::empty(),
++            TlbFlushOp::Address(va) => mappings.filter(|m: Mapping| !(m.va_range.start <= va < m.va_range.end)),
++            TlbFlushOp::Range(range) => mappings.filter(|m: Mapping| !(m.va_range.start < range.end && range.start < m.va_range.end)),
++        }
++    }
++
++    pub open spec fn apply_all(mappings: Set<Mapping>, pending: Seq<TlbFlushOp>) -> Set<Mapping>
++        decreases pending.len(),
++    {
++        if pending.len() == 0 {
++            mappings
++        } else {
++            TlbModel::apply_all(Self::apply_op(mappings, pending[0]), pending[1..])
++        }
++    }
++
++    pub open spec fn op_covers(op: TlbFlushOp, m: Mapping) -> bool {
++        match op {
++            TlbFlushOp::All => true,
++            TlbFlushOp::Address(va) => m.va_range.start <= va < m.va_range.end,
++            TlbFlushOp::Range(range) => m.va_range.start < range.end && range.start < m.va_range.end,
++        }
++    }
++
++    pub proof fn lemma_apply_op_subset(mappings: Set<Mapping>, op: TlbFlushOp)
++        ensures
++            Self::apply_op(mappings, op).subset_of(mappings),
++    {
++        match op {
++            TlbFlushOp::All => {},
++            TlbFlushOp::Address(va) => {},
++            TlbFlushOp::Range(range) => {},
++        }
++    }
++
++    pub proof fn lemma_apply_op_not_contains(mappings: Set<Mapping>, op: TlbFlushOp, m: Mapping)
++        requires
++            Self::op_covers(op, m),
++        ensures
++            !Self::apply_op(mappings, op).contains(m),
++    {
+         match op {
+-            TlbFlushOp::All => popped,
+-            TlbFlushOp::Address(va) => popped.flush(va),
+-            TlbFlushOp::Range(range) => popped.flush(range.start),
++            TlbFlushOp::All => {},
++            TlbFlushOp::Address(va) => {},
++            TlbFlushOp::Range(range) => {},
++        }
++    }
++
++    pub proof fn lemma_apply_all_subset(mappings: Set<Mapping>, pending: Seq<TlbFlushOp>)
++        ensures
++            Self::apply_all(mappings, pending).subset_of(mappings),
++        decreases pending.len(),
++    {
++        if pending.len() > 0 {
++            Self::lemma_apply_op_subset(mappings, pending[0]);
++            Self::lemma_apply_all_subset(Self::apply_op(mappings, pending[0]), pending[1..]);
++        }
++    }
++
++    pub proof fn lemma_apply_all_removed(
++        mappings: Set<Mapping>,
++        pending: Seq<TlbFlushOp>,
++        m: Mapping,
++    )
++        requires
++            exists|i: int| 0 <= i < pending.len() && #[trigger] Self::op_covers(pending[i], m),
++        ensures
++            !Self::apply_all(mappings, pending).contains(m),
++        decreases pending.len(),
++    {
++        if pending.len() == 0 {
++            let i = choose|i: int| 0 <= i < pending.len() && #[trigger] Self::op_covers(pending[i], m);
++            assert(0 <= i < pending.len());
++            assert(false);
++        } else {
++            let i = choose|i: int| 0 <= i < pending.len() && #[trigger] Self::op_covers(pending[i], m);
++            if i == 0 {
++                Self::lemma_apply_op_not_contains(mappings, pending[0], m);
++                Self::lemma_apply_all_subset(Self::apply_op(mappings, pending[0]), pending[1..]);
++            } else {
++                assert(Self::apply_all(mappings, pending) == Self::apply_all(
++                    Self::apply_op(mappings, pending[0]),
++                    pending[1..],
++                ));
++                assert(exists|j: int| 0 <= j < pending[1..].len() && #[trigger] Self::op_covers(
++                    pending[1..][j],
++                    m,
++                )) by {
++                    assert(pending[1..][i - 1] == pending[i]);
++                }
++                Self::lemma_apply_all_removed(Self::apply_op(mappings, pending[0]), pending[1..], m);
++            }
++        }
++    }
++
++    pub open spec fn dispatch_tlb_flush_spec(self) -> Self {
++        TlbModel {
++            pending: Seq::<TlbFlushOp>::empty(),
++            mappings: Self::apply_all(self.mappings, self.pending),
+         }
+     }
+ }
+--- vostd-43da079-ktest-chan/ostd/src/mm/vm_space.rs	2026-11-11 09:43:08.579171021 +0800
++++ vostd-a2/ostd/src/mm/vm_space.rs	2026-11-16 03:57:17.365646519 +0800
+@@ -1012,6 +1012,11 @@
+             final(self).pt_cursor.0.invariants(*final(cursor_owner), *final(regions), *final(guards)),
+             old(cursor_owner)@.unmap_spec(len, final(cursor_owner)@, r),
+             final(tlb_model).inv(),
++            forall|m: Mapping|
++                #[trigger] old(cursor_owner)@.mappings.contains(m)
++                    && old(cursor_owner)@.cur_va <= m.va_range.start
++                    && m.va_range.start < old(cursor_owner)@.cur_va + len
++                    ==> !final(tlb_model).mappings.contains(m),
+     )]
+     #[verifier::spinoff_prover]
+     pub fn unmap(&mut self, len: usize) -> usize {
+@@ -1028,6 +1033,7 @@
+ 
+         assert(!self.pt_cursor.0.find_next_panic_condition(len));
+ 
++        let start_va_exec = self.virt_addr();
+         let end_va = self.virt_addr() + len;
+         let mut num_unmapped: usize = 0;
+ 
+@@ -1549,8 +1555,40 @@
+         }
+ 
+         #[verus_spec(with Tracked(tlb_model))]
++        self.flusher.issue_tlb_flush(TlbFlushOp::Range(start_va_exec..end_va));
++        let ghost tlb_before_dispatch = *tlb_model;
++        #[verus_spec(with Tracked(tlb_model))]
+         self.flusher.dispatch_tlb_flush();
+ 
++        proof {
++            let last: int = tlb_before_dispatch.pending.len() - 1;
++            assert(tlb_before_dispatch.pending.len() > 0);
++            assert(tlb_before_dispatch.pending[last] == TlbFlushOp::Range(start_va_exec..end_va));
++            assert(final(tlb_model).mappings == TlbModel::apply_all(
++                tlb_before_dispatch.mappings,
++                tlb_before_dispatch.pending,
++            ));
++            assert forall|m: Mapping|
++                old(cursor_owner)@.mappings.contains(m)
++                    && old(cursor_owner)@.cur_va <= m.va_range.start
++                    && m.va_range.start < old(cursor_owner)@.cur_va + len
++                implies !final(tlb_model).mappings.contains(m) by {
++                assert(start_va_exec == old(cursor_owner)@.cur_va);
++                assert(end_va == old(cursor_owner)@.cur_va + len);
++                assert(m.inv());
++                assert(TlbModel::op_covers(TlbFlushOp::Range(start_va_exec..end_va), m));
++                assert(exists|i: int| 0 <= i < tlb_before_dispatch.pending.len()
++                    && #[trigger] TlbModel::op_covers(tlb_before_dispatch.pending[i], m)) by {
++                    assert(tlb_before_dispatch.pending[last] == TlbFlushOp::Range(start_va_exec..end_va));
++                };
++                TlbModel::lemma_apply_all_removed(
++                    tlb_before_dispatch.mappings,
++                    tlb_before_dispatch.pending,
++                    m,
++                );
++            };
++        }
++
+         num_unmapped
+     }
+ 
