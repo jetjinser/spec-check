@@ -47,3 +47,24 @@ removing the trailing Range and adding the same invariant: **1498 verified /
 Same missing obligations as above; the ktest/ktest-macro difference is not the
 cause. The verified `dispatch_all` + trailing Range version remains the
 delivered patch.
+
+## A2c progress: removed-coverage invariant verified
+
+Route: keep per-item ops + dispatch_all, remove the trailing Range, and track
+`forall m in removed, exists pending op covering m` (no `covered_end` interval).
+
+- Added `pending_before = tlb_model.pending` before the match and proved
+  `tlb_model.pending == pending_before.push(issued_op)`.
+- Added the loop invariant: every `removed` mapping is covered by some pending
+  op.
+- Maintenance: old removed mappings keep their witness (push prefix); Mapped
+  adds `mm` with `Address(va)`; Stray adds `subtree` with `Range(va..va+len)`.
+- Result: **1499 / 1** — the invariant and both arm proofs verify. The only
+  remaining failure is the revocation postcondition at the end:
+
+  `forall m in old view, start <= m.start < end ==> !final(tlb).mappings.contains(m)`
+
+Remaining gap: bridge an old mapping in the range to either `removed` or a
+removed sub-mapping of a boundary split; then use `lemma_apply_all_removed`.
+The split-parent case (old mapping starts in range and is split at `end`) is
+the missing bridge. No trailing Range is needed for the removed part.
