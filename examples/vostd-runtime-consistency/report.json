@@ -1,0 +1,544 @@
+{
+ "schema": "spec-check.runtime-consistency/1",
+ "rows": [
+  {
+   "id": "K007",
+   "function": "MemoryRegionArray::push",
+   "rating": "direct",
+   "family": "value-readback",
+   "assertions": [
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq"
+   ],
+   "classification": "run_supported",
+   "basis": "M7b run: ObligationSupported (push value readback)",
+   "census_postconditions": []
+  },
+  {
+   "id": "K131",
+   "function": "Mutex::try_lock",
+   "rating": "direct",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert",
+    "assert",
+    "assert",
+    "assert"
+   ],
+   "classification": "run_gap",
+   "basis": "M7b run: ContractGapCandidate; ensures only constrains ret is Some",
+   "census_postconditions": []
+  },
+  {
+   "id": "K078",
+   "function": "query",
+   "rating": "direct",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert_eq",
+    "assert",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq"
+   ],
+   "classification": "static_covered",
+   "basis": "vm_space::query ensures cover both Ok(mapped) and Ok(None) branches",
+   "census_postconditions": [
+    [
+     "ostd::mm::page_table::cursor::impl&%3::query",
+     true,
+     7,
+     0,
+     [
+      true,
+      true,
+      true,
+      true,
+      true
+     ]
+    ],
+    [
+     "ostd::mm::page_table::cursor::impl&%4::query",
+     true,
+     6,
+     0,
+     [
+      true,
+      true,
+      true,
+      true,
+      true
+     ]
+    ],
+    [
+     "ostd::mm::vm_space::impl&%1::query",
+     true,
+     6,
+     0,
+     [
+      true,
+      true,
+      true,
+      true,
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K071",
+   "function": "PageTable::cursor_mut",
+   "rating": "direct",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert",
+    "assert",
+    "assert"
+   ],
+   "classification": "not_expressible",
+   "basis": "PageTable::cursor_mut needs tracked owner/guards and RCU model",
+   "census_postconditions": []
+  },
+  {
+   "id": "K070",
+   "function": "PageTable::cursor_mut",
+   "rating": "direct",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert",
+    "assert",
+    "assert"
+   ],
+   "classification": "not_expressible",
+   "basis": "PageTable::cursor_mut needs tracked owner/guards and RCU model",
+   "census_postconditions": []
+  },
+  {
+   "id": "K073",
+   "function": "page_walk",
+   "rating": "direct",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert",
+    "assert"
+   ],
+   "classification": "not_expressible",
+   "basis": "page_walk is not in the census verified surface",
+   "census_postconditions": []
+  },
+  {
+   "id": "K072",
+   "function": "page_walk",
+   "rating": "direct",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert",
+    "assert"
+   ],
+   "classification": "not_expressible",
+   "basis": "page_walk is not in the census verified surface",
+   "census_postconditions": []
+  },
+  {
+   "id": "K080",
+   "function": "find_next",
+   "rating": "direct",
+   "family": "value-readback",
+   "assertions": [
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq",
+    "assert_eq"
+   ],
+   "classification": "static_covered",
+   "basis": "vm_space::find_next ensures give res->0 == va for Some",
+   "census_postconditions": [
+    [
+     "ostd::mm::page_table::cursor::impl&%3::find_next",
+     true,
+     5,
+     0,
+     [
+      true,
+      true,
+      true,
+      true,
+      true
+     ]
+    ],
+    [
+     "ostd::mm::page_table::cursor::impl&%4::find_next",
+     true,
+     3,
+     0,
+     [
+      true,
+      true,
+      true,
+      true,
+      true
+     ]
+    ],
+    [
+     "ostd::mm::vm_space::impl&%1::find_next",
+     true,
+     3,
+     0,
+     [
+      true,
+      true,
+      true,
+      true,
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K150",
+   "function": "range_difference",
+   "rating": "needs_model_helper",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert_eq",
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "range_difference ensures mention the returned sequence; helper iterator model absent",
+   "census_postconditions": [
+    [
+     "ostd::util::ops::range_difference",
+     true,
+     1,
+     0,
+     [
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K151",
+   "function": "range_difference",
+   "rating": "needs_model_helper",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert_eq",
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "range_difference ensures mention the returned sequence; helper iterator model absent",
+   "census_postconditions": [
+    [
+     "ostd::util::ops::range_difference",
+     true,
+     1,
+     0,
+     [
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K146",
+   "function": "range_difference",
+   "rating": "needs_model_helper",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert_eq",
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "range_difference ensures mention the returned sequence; helper iterator model absent",
+   "census_postconditions": [
+    [
+     "ostd::util::ops::range_difference",
+     true,
+     1,
+     0,
+     [
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K149",
+   "function": "range_difference",
+   "rating": "needs_model_helper",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert_eq",
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "range_difference ensures mention the returned sequence; helper iterator model absent",
+   "census_postconditions": [
+    [
+     "ostd::util::ops::range_difference",
+     true,
+     1,
+     0,
+     [
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K145",
+   "function": "range_difference",
+   "rating": "needs_model_helper",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert_eq",
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "range_difference ensures mention the returned sequence; helper iterator model absent",
+   "census_postconditions": [
+    [
+     "ostd::util::ops::range_difference",
+     true,
+     1,
+     0,
+     [
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K152",
+   "function": "range_difference",
+   "rating": "needs_model_helper",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert_eq",
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "range_difference ensures mention the returned sequence; helper iterator model absent",
+   "census_postconditions": [
+    [
+     "ostd::util::ops::range_difference",
+     true,
+     1,
+     0,
+     [
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K147",
+   "function": "range_difference",
+   "rating": "needs_model_helper",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert_eq",
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "range_difference ensures mention the returned sequence; helper iterator model absent",
+   "census_postconditions": [
+    [
+     "ostd::util::ops::range_difference",
+     true,
+     1,
+     0,
+     [
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K153",
+   "function": "range_difference",
+   "rating": "needs_model_helper",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert_eq",
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "range_difference ensures mention the returned sequence; helper iterator model absent",
+   "census_postconditions": [
+    [
+     "ostd::util::ops::range_difference",
+     true,
+     1,
+     0,
+     [
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K148",
+   "function": "range_difference",
+   "rating": "needs_model_helper",
+   "family": "is_none-demand",
+   "assertions": [
+    "assert_eq",
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "range_difference ensures mention the returned sequence; helper iterator model absent",
+   "census_postconditions": [
+    [
+     "ostd::util::ops::range_difference",
+     true,
+     1,
+     0,
+     [
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K075",
+   "function": "disable_preempt",
+   "rating": "needs_model_helper",
+   "family": "value-readback",
+   "assertions": [
+    "assert_eq"
+   ],
+   "classification": "no_postcondition",
+   "basis": "disable_preempt has no effective postcondition",
+   "census_postconditions": [
+    [
+     "ostd::mm::kspace::kvirt_area::disable_preempt",
+     false,
+     0,
+     0,
+     [
+      false
+     ]
+    ],
+    [
+     "ostd::task::preempt::guard::disable_preempt",
+     false,
+     0,
+     0,
+     [
+      false
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K068",
+   "function": "start_paddr",
+   "rating": "needs_model_quantified",
+   "family": "final-relation",
+   "assertions": [
+    "assert_eq",
+    "assert_eq",
+    "assert_eq"
+   ],
+   "classification": "static_covered",
+   "basis": "frame start_paddr inherits declaration ensures and mentions the return",
+   "census_postconditions": [
+    [
+     "ostd::mm::frame::impl&%7::start_paddr",
+     true,
+     0,
+     0,
+     [
+      true
+     ]
+    ],
+    [
+     "ostd::mm::frame::segment::impl&%2::start_paddr",
+     true,
+     0,
+     0,
+     [
+      true
+     ]
+    ],
+    [
+     "ostd::mm::frame::unique::impl&%4::start_paddr",
+     true,
+     0,
+     0,
+     [
+      true
+     ]
+    ]
+   ]
+  },
+  {
+   "id": "K014",
+   "function": "AtomicCpuSet::contains",
+   "rating": "needs_model_quantified",
+   "family": "final-relation",
+   "assertions": [
+    "assert",
+    "assert",
+    "assert",
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "AtomicCpuSet::contains ensures/decl mention the return",
+   "census_postconditions": []
+  },
+  {
+   "id": "K012",
+   "function": "cpu::set::test::test_empty_cpu_set_iter_is_empty",
+   "rating": "needs_model_quantified",
+   "family": "final-relation",
+   "assertions": [
+    "assert"
+   ],
+   "classification": "not_expressible",
+   "basis": "candidate is a test-local iterator property, not an interface contract",
+   "census_postconditions": []
+  },
+  {
+   "id": "K069",
+   "function": "entry",
+   "rating": "needs_model_quantified",
+   "family": "value-readback",
+   "assertions": [
+    "assert"
+   ],
+   "classification": "static_covered",
+   "basis": "page-table node entry ensures mention return and &mut output",
+   "census_postconditions": [
+    [
+     "ostd::mm::page_table::node::impl&%3::entry",
+     true,
+     5,
+     0,
+     [
+      true,
+      true
+     ]
+    ]
+   ]
+  }
+ ]
+}
