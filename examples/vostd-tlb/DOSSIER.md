@@ -25,8 +25,8 @@ unbacked stale entry.
 |---|---|
 | threat model, P1/P2 | `THREAT-MODEL.md` |
 | W1/W2 mutation scripts | `apply_w1.py`, `apply_w2.py` |
-| P1 patch + run record | `map-tlb-flush.patch`, `PATCH-RUN.md` |
-| P2 patch + run record | `unmap-tlb-flush.patch`, `P2-RUN.md` |
+| P1 patch + run record | `map-tlb-flush-optimized.patch`, `A1-RUN.md` (conservative: `map-tlb-flush.patch`) |
+| P2 patch + run record | `unmap-tlb-flush-dispatch-all.patch`, `A2-RUN.md` (earlier: `unmap-tlb-flush.patch`) |
 | pre-registration | `PATCH-EXPECTED.md` |
 
 Baseline and patched runs: `run-check.sh` (cargo-verus check -p ostd,
