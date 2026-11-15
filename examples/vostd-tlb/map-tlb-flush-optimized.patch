@@ -1,0 +1,182 @@
+--- vostd-43da079-ktest-chan/ostd/src/mm/page_table/cursor/mod.rs	2026-11-11 16:27:28.342210422 +0800
++++ vostd-opt1/ostd/src/mm/page_table/cursor/mod.rs	2026-11-16 03:37:58.116053900 +0800
+@@ -2360,7 +2360,7 @@
+     }
+ 
+     #[verifier::rlimit(300)]
+-    #[verus_spec(
++    #[verus_spec(split_result =>
+         with Tracked(owner): Tracked<&mut CursorOwner<'rcu, C>>,
+              Tracked(regions): Tracked<&mut MetaRegionOwners>,
+              Tracked(guards): Tracked<&mut Guards>,
+@@ -2377,6 +2377,7 @@
+             final(self).0.level == level,
+             final(owner).in_locked_range(),
+             final(owner)@ == old(owner)@.split_while_huge(page_size::<PagingConsts>(level)),
++            split_result == false ==> final(owner)@ == old(owner)@,
+             forall |item: C::Item| #![trigger Self::item_slot_in_regions(item, *old(regions))]
+                 Self::item_slot_in_regions(item, *old(regions)) ==>
+                 Self::item_slot_in_regions(item, *final(regions)),
+@@ -2397,7 +2398,7 @@
+                 old(regions).slots.contains_key(idx) ==> final(regions).slots.contains_key(idx),
+     )]
+     #[verifier::spinoff_prover]
+-    pub fn map_loop(&mut self, level: PagingLevel, rcu_guard: &'rcu A) {
++    pub fn map_loop(&mut self, level: PagingLevel, rcu_guard: &'rcu A) -> (split: bool) {
+         // Keep quantified continuation and region predicates local to this loop proof.
+         hide(CursorContinuation::view_mappings);
+         hide(CursorOwner::view_mappings);
+@@ -2410,6 +2411,7 @@
+         let ghost guard_level = self.0.guard_level;
+         let ghost barrier_va = self.0.barrier_va;
+         let ghost owner0 = *owner;
++        let mut split = false;
+         proof {
+             owner0.split_while_huge_at_level_noop();
+         }
+@@ -2432,6 +2434,7 @@
+                 owner.metaregion_sound(*regions),
+                 !owner.popped_too_high,
+                 owner@ == owner0@.split_while_huge(page_size::<PagingConsts>(self.0.level)),
++                split == false ==> owner@ == owner0@,
+                 forall|item: C::Item|
+                     #![trigger Self::item_slot_in_regions(item, *old(regions))]
+                     Self::item_slot_in_regions(item, *old(regions)) ==> Self::item_slot_in_regions(
+@@ -2741,6 +2744,7 @@
+                     #[verus_spec(with Tracked(&mut child_owner), Tracked(&mut parent_owner), Tracked(regions),
+                             Tracked(guards))]
+                     cur_entry.split_if_mapped_huge(rcu_guard)).unwrap();
++                    split = true;
+ 
+                     proof {
+                         continuation.entry_own.tracked_put_node(parent_owner);
+@@ -2815,6 +2819,7 @@
+                 },
+             }
+         }
++        split
+     }
+ 
+     /// Maps the item starting from the current address to a physical address range.
+@@ -2916,10 +2921,11 @@
+                 old(regions).contains(idx) ==> final(regions).contains(idx),
+             final(self).0.guard_level == old(self).0.guard_level,
+             final(self).0.barrier_va == old(self).0.barrier_va,
++            (res is Ok && !*final(split_out)) ==> !old(owner)@.present(),
+     )]
+     #[verifier::spinoff_prover]
+     #[verifier::rlimit(300)]
+-    pub unsafe fn map(&mut self, item: C::Item) -> (res: Result<(), PageTableFrag<C>>) {
++    pub unsafe fn map(&mut self, item: C::Item, split_out: &mut bool) -> (res: Result<(), PageTableFrag<C>>) {
+         hide(MetaSlotOwner::storage_perm);
+         hide(MetaSlotOwner::vtable_ptr_perm);
+         let ghost self0 = *self;
+@@ -2979,7 +2985,8 @@
+         }
+ 
+         #[verus_spec(with Tracked(owner), Tracked(regions), Tracked(guards))]
+-        self.map_loop(level, rcu_guard);
++        let split = self.map_loop(level, rcu_guard);
++        *split_out = split;
+ 
+         let ghost owner1 = *owner;
+         let ghost regions_before_new_child = *regions;
+@@ -3046,6 +3053,7 @@
+             };
+         }
+ 
++        let ghost owner_pre_replace = *owner;
+         #[verus_spec(with Tracked(owner), Tracked(new_owner), Tracked(regions), Tracked(guards))]
+         let frag = self.replace_cur_entry(Child::Frame(pa, level, prop));
+ 
+@@ -3076,6 +3084,15 @@
+         if let Some(frag) = frag {
+             Err(frag)
+         } else {
++            proof {
++                assert(owner_pre_replace.cur_entry_owner().is_absent());
++                owner_pre_replace.lemma_cur_entry_absent_not_present();
++                if !split {
++                    assert(owner1@ == owner0@);
++                    assert(owner_pre_replace@ == owner1@);
++                    assert(!old(owner)@.present());
++                }
++            }
+             Ok(())
+         }
+     }
+--- vostd-43da079-ktest-chan/ostd/src/mm/vm_space.rs	2026-11-11 09:43:08.579171021 +0800
++++ vostd-opt1/ostd/src/mm/vm_space.rs	2026-11-16 03:42:43.806890244 +0800
+@@ -927,16 +927,43 @@
+                 old(cursor_owner)@,
+                 final(cursor_owner)@,
+             ),
++            forall|m: Mapping|
++                #[trigger] old(cursor_owner)@.mappings.contains(m)
++                    && m.va_range.start <= old(self).pt_cursor.0.va
++                    && old(self).pt_cursor.0.va < m.va_range.end
++                    ==> !final(tlb_model).mappings.contains(m),
+     )]
+     pub fn map(&mut self, frame: UFrame, prop: PageProperty) {
+         let start_va = self.virt_addr();
+         let item = MappedItem { frame: frame, prop: prop };
+ 
+         // SAFETY: It is safe to map untyped memory into the userspace.
+-        let Err(frag) = (unsafe {
++        let mut split = false;
++        let res = unsafe {
+             #[verus_spec(with Tracked(cursor_owner), Tracked(entry_owner), Tracked(regions), Tracked(guards))]
+-            self.pt_cursor.map(item)
+-        }) else {
++            self.pt_cursor.map(item, &mut split)
++        };
++        let Err(frag) = res else {
++            if split {
++                #[verus_spec(with Tracked(tlb_model))]
++                self.flusher.issue_tlb_flush(TlbFlushOp::Address(start_va));
++                #[verus_spec(with Tracked(tlb_model))]
++                self.flusher.dispatch_tlb_flush();
++            } else {
++                proof {
++                    assert forall|m: Mapping|
++                        old(cursor_owner)@.mappings.contains(m)
++                            && m.va_range.start <= start_va
++                            && start_va < m.va_range.end
++                            implies !final(tlb_model).mappings.contains(m) by {
++                        assert(old(cursor_owner)@.cur_va == start_va);
++                        assert(old(cursor_owner)@.mappings.filter(
++                            |x: Mapping| x.va_range.start <= start_va < x.va_range.end,
++                        ).contains(m));
++                        assert(old(cursor_owner)@.present());
++                    };
++                }
++            }
+             return;  // No mapping exists at the current address.
+         };
+ 
+--- vostd-43da079-ktest-chan/ostd/src/mm/kspace/kvirt_area.rs	2026-11-11 16:35:04.065739117 +0800
++++ vostd-opt1/ostd/src/mm/kspace/kvirt_area.rs	2026-11-16 03:36:16.279056064 +0800
+@@ -636,9 +636,10 @@
+             // `item_slot_in_regions` for the current item is delivered by the
+             // loop invariant (instantiated at i = it.index()), itself established by
+             // the function precondition.
++            let mut split = false;
+             let res = unsafe {
+                 #[verus_spec(with Tracked(&mut cursor_owner), Tracked(entry_owner), Tracked(regions), Tracked(guards))]
+-                cursor.map(item)
++                cursor.map(item, &mut split)
+             };
+ 
+             // `item_slot_in_regions` preservation for the remaining frames
+@@ -925,9 +926,10 @@
+                 proof {
+                     let idx = crate::specs::mm::frame::mapping::frame_to_index(pa);
+                 }
++                let mut split = false;
+                 let _ = unsafe {
+                     #[verus_spec(with Tracked(&mut cursor_owner), Tracked(entry_owner), Tracked(regions), Tracked(guards))]
+-                    cursor.map(item)
++                    cursor.map(item, &mut split)
+                 };
+ 
+                 proof {
