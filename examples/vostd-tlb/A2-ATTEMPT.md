@@ -34,3 +34,16 @@ Full crate: 1499 verified / 1 error. Errors:
 These are proof-engineering tasks, not new counterexamples; the trailing Range
 op is a sufficient witness for the postcondition. Fallback kept:
 `unmap-tlb-flush-dispatch-all.patch` (1500/0; W2 + postcondition 1499/1).
+
+## Pristine combined repeat (2026-11-15)
+
+Repeated on the pristine combined tree (`combined-tlb-contracts.patch` base),
+removing the trailing Range and adding the same invariant: **1498 verified /
+2 errors**.
+
+- `invariant not satisfied at end of loop body` (vm_space.rs:1170)
+- `postcondition not satisfied` at the revocation clause (vm_space.rs:1095)
+
+Same missing obligations as above; the ktest/ktest-macro difference is not the
+cause. The verified `dispatch_all` + trailing Range version remains the
+delivered patch.

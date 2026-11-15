@@ -62,3 +62,16 @@ The fuller outcome is **not fully reached**: A2 keeps a redundant trailing
 Range op for the proof; runtime evidence is model-level because the kernel
 runner is absent; upstream is deferred. Next internal steps: finish the coverage
 invariant to drop the trailing op, and add a kernel-runner image when available.
+
+## Update (2026-11-15, second internal pass)
+
+- A2 removal was retried on the pristine combined tree: 1498/2, with the same
+  loop-coverage invariant failure plus the revocation postcondition. The
+  trailing Range op remains in the delivered patch; exact obligations are in
+  `A2-ATTEMPT.md`.
+- Runtime: OSDK 0.16 and QEMU are available in the Asterinas devshell, but OSDK
+  builds plain-Rust kernels; the frozen verified ostd is Verus-built and has no
+  OSDK integration. The exact blocker is architectural (Verus vs OSDK), not a
+  missing tool. Asterinas' runtime ostd is a different 0.18 codebase, so a test
+  there would not validate the frozen artifact. The executable model test is
+  the strongest internal runtime evidence available.
