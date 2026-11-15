@@ -1,0 +1,60 @@
+--- vostd-43da079-ktest-chan/ostd/src/mm/vm_space.rs	2026-11-11 09:43:08.579171021 +0800
++++ vostd-p2/ostd/src/mm/vm_space.rs	2026-11-16 01:41:38.879655639 +0800
+@@ -1012,6 +1012,11 @@
+             final(self).pt_cursor.0.invariants(*final(cursor_owner), *final(regions), *final(guards)),
+             old(cursor_owner)@.unmap_spec(len, final(cursor_owner)@, r),
+             final(tlb_model).inv(),
++            forall|m: Mapping|
++                #[trigger] old(cursor_owner)@.mappings.contains(m)
++                    && old(cursor_owner)@.cur_va <= m.va_range.start
++                    && m.va_range.start < old(cursor_owner)@.cur_va + len
++                    ==> !final(tlb_model).mappings.contains(m),
+     )]
+     #[verifier::spinoff_prover]
+     pub fn unmap(&mut self, len: usize) -> usize {
+@@ -1028,6 +1033,7 @@
+ 
+         assert(!self.pt_cursor.0.find_next_panic_condition(len));
+ 
++        let start_va_exec = self.virt_addr();
+         let end_va = self.virt_addr() + len;
+         let mut num_unmapped: usize = 0;
+ 
+@@ -1549,6 +1555,8 @@
+         }
+ 
+         #[verus_spec(with Tracked(tlb_model))]
++        self.flusher.issue_tlb_flush(TlbFlushOp::Range(start_va_exec..end_va));
++        #[verus_spec(with Tracked(tlb_model))]
+         self.flusher.dispatch_tlb_flush();
+ 
+         num_unmapped
+--- vostd-43da079-ktest-chan/ostd/specs/mm/tlb.rs	2026-10-16 16:31:12.000000000 +0800
++++ vostd-p2/ostd/specs/mm/tlb.rs	2026-11-16 01:41:20.130544084 +0800
+@@ -1,4 +1,5 @@
+ use vstd::prelude::*;
++use core::ops::Range;
+ use vstd_extra::ownership::*;
+ 
+ use crate::specs::mm::page_table::*;
+@@ -41,6 +42,11 @@
+         TlbModel { pending: self.pending, mappings: self.mappings - m }
+     }
+ 
++    pub open spec fn flush_range(self, range: Range<Vaddr>) -> Self {
++        let m = self.mappings.filter(|m: Mapping| m.va_range.start < range.end && range.start < m.va_range.end);
++        TlbModel { pending: self.pending, mappings: self.mappings - m }
++    }
++
+     pub axiom fn tracked_flush(&mut self, va: Vaddr)
+         requires
+             old(self).inv(),
+@@ -106,7 +112,7 @@
+         match op {
+             TlbFlushOp::All => popped,
+             TlbFlushOp::Address(va) => popped.flush(va),
+-            TlbFlushOp::Range(range) => popped.flush(range.start),
++            TlbFlushOp::Range(range) => popped.flush_range(range),
+         }
+     }
+ }
