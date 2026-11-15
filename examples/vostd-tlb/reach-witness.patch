@@ -1,0 +1,45 @@
+--- vostd-43da079-ktest-chan/ostd/src/mm/vm_space.rs	2026-11-11 09:43:08.579171021 +0800
++++ vostd-reach/ostd/src/mm/vm_space.rs	2026-11-16 04:10:57.671473159 +0800
+@@ -55,6 +55,42 @@
+ 
+ verus! {
+ 
++proof fn reach_split_path_witness()
++{
++    let m = Mapping {
++        va_range: 0..2097152,
++        pa_range: 0..2097152,
++        page_size: 2097152,
++        property: arbitrary(),
++    };
++    let view = CursorView::<UserPtConfig> {
++        cur_va: 0,
++        mappings: set![m],
++        phantom: PhantomData,
++    };
++    assert(m.page_size == 2097152);
++    assert(m.va_range.start == 0 && m.va_range.end == 2097152);
++    assert(m.pa_range.start == 0 && m.pa_range.end == 2097152);
++    assert(set![4096usize, 2097152usize, 1073741824usize].contains(2097152usize)) by (compute);
++    assert(2097152usize <= MAX_PADDR) by (compute_only);
++    assert(crate::mm::pow2(64) == 0x1_0000_0000_0000_0000nat) by {
++        vstd::arithmetic::power2::lemma2_to64();
++    };
++    assert(m.va_range.end <= crate::mm::pow2(64));
++    assert(m.inv());
++    assert(view.inv()) by {
++        assert(mappings_well_formed(view.mappings));
++        assert(mappings_disjoint_vaddrs(view.mappings));
++        lemma_vaddr_range_spec_user();
++    };
++    assert(view.mappings.contains(m));
++    assert(m.va_range.start <= 0 < m.va_range.end);
++    assert(view.mappings.filter(|x: Mapping| x.va_range.start <= 0 < x.va_range.end).contains(m));
++    assert(view.present());
++    assert(view.query_mapping() == m);
++    assert(view.query_mapping().page_size == 2097152);
++}
++
+ /// A virtual address space for user-mode tasks, enabling safe manipulation of user-space memory.
+ ///
+ /// The [`VmSpace`] type provides memory isolation guarantees between user-space and
