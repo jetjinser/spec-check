@@ -97,3 +97,23 @@ Maintenance:
 Final: if `m ∈ removed`, D gives an op covering `m`; otherwise D gives an op
 covering `sm`, and the same op covers `m` because `sm ⊆ m`. Then
 `lemma_apply_all_removed` closes the postcondition.
+
+## A2e: bridge invariant fails at boundary parents
+
+The E invariant (old mapping in the passed range is removed, or a removed
+sub-mapping shares its start) reaches 1498/2:
+
+- `loop invariant not satisfied` (vm_space.rs:1248)
+- `assertion failed` for the take_next empty-filter case at vm_space.rs:1517
+
+Root cause: E quantifies the *entry* view. A huge entry starting before the
+processed VA may be split by an earlier iteration; its sub-mapping at a later
+start is in `prev_mappings`, while the entry mapping itself is not. The
+boundary-parent case therefore needs a processed-interval history, not a
+per-mapping predicate. Closing it is a larger invariant than the value of
+removing one redundant range flush.
+
+Engineering decision: keep the trailing `Range(start..end)` op. It is one
+additional range flush per `unmap`; the per-item `_with` ops remain, and
+`dispatch_all` is faithful. The verified combined patch (1500/0, W1/W2 rejected)
+is final.

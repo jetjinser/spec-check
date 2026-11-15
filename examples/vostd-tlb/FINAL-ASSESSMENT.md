@@ -25,10 +25,12 @@ user; this assessment covers the internal work only.
   43da079 (`patch -p1 --dry-run`), unlike the earlier ktest-based patches; a
   macro-config difference between the ktest workspace and pristine required the
   `apply_all` proof on both map flush exits.
-- **Residual:** one trailing `Range` op in `unmap` is retained as the proof
-  witness. The A2 removal attempt (`A2-ATTEMPT.md`) fails at the loop coverage
-  invariant (1499/1; exact obligations listed). The op is redundant at runtime
-  but is not removed.
+- **Residual (final):** one trailing `Range` op in `unmap` is retained. The A2
+  removal attempts reached 1499/1 (removed-coverage invariant verified) and
+  1498/2 with the boundary-parent bridge; the remaining case needs a
+  processed-interval history invariant. Engineering decision: keep the one
+  extra range flush rather than grow the proof. `A2-ATTEMPT.md` records the
+  exact obligations.
 
 ## 3. Runtime evidence — PARTIAL
 
