@@ -488,3 +488,21 @@ cargo-spec-check synthesize --candidates candidates.json --recipes recipes.json 
     需要像 `examples/ci/DIVERGENCE-CI-EXPECTED.md` 那样先核对源码再改
     清单，并重新预注册 `expect`。`baseline_clean=false` / Inconclusive
     只是证据不足，不是 gap。
+
+## Current station (2026-11-15)
+
+Status: green on the fork, smoke scope.
+
+The capture step uses rustc-private MIR APIs, so the station is pinned to the
+toolchain the tool supports:
+
+- Verus `d128dda371ca4b19faa8b9b6e31425891ca9eadf` (rust-toolchain 1.98.1)
+- vostd `jetjinser/vostd` branch `borrowed-repr` (43da079)
+- smoke inputs: capture + four vacuity controls
+- verdicts: 2 ConfirmedVacuous, 2 ConfirmedLive (expected classification)
+- triggers: workflow changes, nightly 02:40 UTC, manual dispatch
+
+Tracking upstream main requires porting the MIR probe to the newer rustc API:
+1.99.1 changed `generics` to `Binder<TyCtxt, RawList<...>>` (no `is_empty`) and
+the `rustc-dev` component layout. Until that port exists, the station pins the
+supported toolchain on purpose.

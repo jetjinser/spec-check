@@ -540,6 +540,15 @@ ledger"，不把离线合成器伪装成自动发现。验证：bash -n、既有
 - 说明：F-020/F-024 的需求侧为 doc/合成 client 级，机器契约与证明等级
   达到 candidate_verified，但不声称真实调用点覆盖。
 
+### CI activation (pinned station) —— 完成（2026-11-15）
+
+夜班站点在 fork 上首次全绿（smoke 范围）：capture + 4 条 vacuity 对照，
+判定 2 ConfirmedVacuous / 2 ConfirmedLive；artifact 正常上传。站点固定
+Verus `d128dda` / rustc 1.98.1，检查 fork 的 `borrowed-repr`（43da079），
+因为 capture 使用 rustc 私有 MIR API。跟踪 upstream main 需要把 MIR
+探测程序移植到 1.99.1 的新 API；在此之前固定版本是刻意选择。详见
+`docs/CI-WIRING.md` 的 current station 一节。
+
 ## 维护纪律
 
 1. 主线进度只认本文件与 git 历史；会话记忆不作为状态来源。
