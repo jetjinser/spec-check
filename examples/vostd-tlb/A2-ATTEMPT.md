@@ -68,3 +68,32 @@ Remaining gap: bridge an old mapping in the range to either `removed` or a
 removed sub-mapping of a boundary split; then use `lemma_apply_all_removed`.
 The split-parent case (old mapping starts in range and is split at `end`) is
 the missing bridge. No trailing Range is needed for the removed part.
+
+## A2d plan: the missing bridge invariant
+
+To close the final revocation postcondition without the trailing Range, add
+
+```
+// E: every old mapping whose start has been passed is either removed, or a
+// removed sub-mapping shares its start.
+forall|m: Mapping| old(cursor_owner)@.mappings.contains(m)
+    && start_va <= m.va_range.start && m.va_range.start < cursor_owner@.cur_va
+    ==> removed.contains(m)
+        || exists|sm: Mapping| removed.contains(sm)
+            && sm.va_range.start == m.va_range.start
+            && m.va_range.start <= sm.va_range.start
+            && sm.va_range.end <= m.va_range.end
+```
+
+Maintenance:
+- Mapped: take_next's filter gives `m.start >= va`; take_next's split refinement
+  and old-view non-overlap give `mm` (the removed sub-mapping at `va`) as the
+  witness, with `mm.start == m.start == va` for every old `m` whose start is in
+  the processed slot.
+- Stray: the subtree filter puts `m` itself into `removed`.
+- Break: `take_next`'s `None` empty filter covers the tail; E is preserved with
+  `cursor == end_va`.
+
+Final: if `m ∈ removed`, D gives an op covering `m`; otherwise D gives an op
+covering `sm`, and the same op covers `m` because `sm ⊆ m`. Then
+`lemma_apply_all_removed` closes the postcondition.
