@@ -12,6 +12,13 @@ Baseline: 1495 verified / 0 errors. All runs below use the same command
 | A5 | real code + postcondition, no code change | **1494 / 1**, postcondition failed at the `return` exit |
 | W1 + clause | wrong body (no flush at all) + postcondition | **1494 / 1**, postcondition failed |
 
+Discriminating run A6: adding an entry precondition that every TLB entry at
+the VA is backed by the old cursor view, plus the backing-preserved
+postcondition, still fails at the same `return` (1494 / 1). So A5 is not an
+artifact of unbacked stale TLB entries: the old view contains a mapping that
+covers the VA (the split case), the TLB is backed, and the real body does not
+flush that path.
+
 A5 is the important one: with the new postcondition, the *real* `map` fails at
 the early return. That path is taken when the slot is absent, including when
 `map_loop` split a huge page that covered the address. The real body only

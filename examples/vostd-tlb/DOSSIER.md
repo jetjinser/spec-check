@@ -14,7 +14,10 @@ frozen revision:
 
 This is a contract gap and, for `map`, also a missing flush in the real body on
 the absent/split return path: adding the postcondition without changing the
-body fails at that return (1494/1).
+body fails at that return (1494/1). A discriminating run with an entry
+precondition ("TLB entries at the VA are backed by the old cursor view") still
+fails at the same return, so the counterexample is the split case, not an
+unbacked stale entry.
 
 ## Evidence
 
