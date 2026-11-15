@@ -59,6 +59,14 @@ ensures only makes the implementation proof easier.
 - This is a pilot over one crate and one clause per function. It says nothing
   about coverage of the other 767 requires functions.
 
+## Residual
+
+The pilot does not mutate the 30 confirmed findings. It uses seven
+representative preconditions and one supported caller obligation, because
+each confirmed finding would need its own contract patch plus a working
+obligation client; several (F-018/F-021) already have infeasible candidate
+patches. Extending the operator to the confirmed set is left as follow-up.
+
 ## Reproduce
 
 - `mutate.py <copy>` applies the seven content-anchored mutations (exact-count

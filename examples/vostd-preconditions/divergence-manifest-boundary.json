@@ -1,0 +1,83 @@
+{
+ "target_workspace": {
+  "manifest_path": "/tmp/vostd-43da079-boundary/Cargo.toml",
+  "inject_dir": "ostd/src/spec_check_probes",
+  "gate_cfg": "ktest",
+  "extra_cfgs": [
+   "ktest_capture_gap"
+  ],
+  "target": "x86_64-unknown-none"
+ },
+ "contracts": [
+  {
+   "name": "p01_memory_region_overflow",
+   "params": "",
+   "obligation": "use crate::boot::memory_region::{MemoryRegion, MemoryRegionType};\nlet _ = MemoryRegion::new(crate::mm::MAX_PADDR, 1usize, MemoryRegionType::Usable);",
+   "model_preamble": "",
+   "expect": "gap"
+  },
+  {
+   "name": "p02_page_size_zero",
+   "params": "",
+   "obligation": "use crate::mm::page_size;\nuse crate::arch::mm::PagingConsts;\nlet _ = page_size::<PagingConsts>(0);",
+   "model_preamble": "",
+   "expect": "gap"
+  },
+  {
+   "name": "p03_page_size_too_high",
+   "params": "",
+   "obligation": "use crate::mm::page_size;\nuse crate::arch::mm::PagingConsts;\nlet _ = page_size::<PagingConsts>(16);",
+   "model_preamble": "",
+   "expect": "gap"
+  },
+  {
+   "name": "p04_paddr_overflow",
+   "params": "",
+   "obligation": "use crate::mm::kspace::paddr_to_vaddr;\nlet _ = paddr_to_vaddr(usize::MAX);",
+   "model_preamble": "",
+   "expect": "gap"
+  },
+  {
+   "name": "p05_atomic_contains_release",
+   "params": "",
+   "obligation": "use crate::cpu::{AtomicCpuSet, CpuId, CpuSet};\nuse core::sync::atomic::Ordering;\nbroadcast use crate::cpu::axiom_cpu_count_bounds;\nlet cpu0 = CpuId::try_from(0usize).unwrap();\nlet set = AtomicCpuSet::new(CpuSet::new_empty());\nlet _ = set.contains(cpu0, Ordering::Release);",
+   "model_preamble": "",
+   "expect": "gap"
+  },
+  {
+   "name": "p06_atomic_load_acqrel",
+   "params": "",
+   "obligation": "use crate::cpu::{AtomicCpuSet, CpuSet};\nuse core::sync::atomic::Ordering;\nlet set = AtomicCpuSet::new(CpuSet::new_empty());\nlet _ = set.load(Ordering::AcqRel);",
+   "model_preamble": "",
+   "expect": "gap"
+  },
+  {
+   "name": "p07_atomic_store_acquire",
+   "params": "",
+   "obligation": "use crate::cpu::{AtomicCpuSet, CpuSet};\nuse core::sync::atomic::Ordering;\nlet set = AtomicCpuSet::new(CpuSet::new_empty());\nlet v = CpuSet::new_empty();\nset.store(&v, Ordering::Acquire);",
+   "model_preamble": "",
+   "expect": "gap"
+  },
+  {
+   "name": "p08_reader_skip_too_far",
+   "params": "",
+   "obligation": "use crate::mm::io::VmReader;\nlet buf = [1u8; 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmReader::from(&buf[..]);\nlet _ = recv.skip(9);",
+   "model_preamble": "",
+   "expect": "gap"
+  },
+  {
+   "name": "p09_writer_skip_too_far",
+   "params": "",
+   "obligation": "use crate::mm::io::VmWriter;\nlet mut buf = [0u8; 8];\nproof_decl! { let tracked mut owner: crate::specs::mm::io::VmIoOwner; }\n#[verus_spec(with => Tracked(owner))]\nlet mut recv = VmWriter::from(&mut buf[..]);\nlet _ = recv.skip(9);",
+   "model_preamble": "",
+   "expect": "gap"
+  },
+  {
+   "name": "p10_memory_region_off_by_one",
+   "params": "",
+   "obligation": "use crate::boot::memory_region::{MemoryRegion, MemoryRegionType};\nlet _ = MemoryRegion::new(crate::mm::MAX_PADDR - 1, 2usize, MemoryRegionType::Usable);",
+   "model_preamble": "",
+   "expect": "gap"
+  }
+ ]
+}
