@@ -544,6 +544,8 @@ fn run_verus(cargo_verus: &Path, z3: &Path, out: &Path) -> Result<String, String
         .env("VERUS_USE_RUSTUP", "0")
         .env("VERUS_Z3_PATH", z3)
         .env("RUSTC_BOOTSTRAP", "1")
+        .env("CARGO_TERM_COLOR", "never")
+        .env("NO_COLOR", "1")
         .output()
         .map_err(|e| format!("failed to execute cargo-verus: {e}"))?;
     let mut log = String::from_utf8_lossy(&output.stdout).to_string();

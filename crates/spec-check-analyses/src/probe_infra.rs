@@ -350,6 +350,8 @@ pub(crate) fn target_command(
     for a in verus_args {
         cmd.arg(a);
     }
+    cmd.env("CARGO_TERM_COLOR", "never");
+    cmd.env("NO_COLOR", "1");
     verus_env(&mut cmd, z3);
     cmd
 }
