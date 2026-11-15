@@ -1,7 +1,7 @@
-# Final assessment: did we reach the core outcome?
+# Final internal assessment: did we reach the core outcome?
 
-Date: 2026-11-15. Frozen rev 43da079. Evidence is verification-level unless
-stated otherwise.
+Date: 2026-11-15. Frozen rev 43da079. Upstream actions are deferred by the
+user; this assessment covers the internal work only.
 
 ## 1. Discovery / proof — ACHIEVED
 
@@ -15,47 +15,50 @@ stated otherwise.
 - Locks: no safety witness; safety is enforced by linear permissions (negative
   result), with `try_lock` always-None as a liveness witness (F-031).
 
-## 2. Patch quality — PARTIAL
+## 2. Patch quality — MOSTLY ACHIEVED
 
-- `map` optimized: only split/replacement flushes; plain new mappings take no
-  flush. Full crate 1495/0; W1+postcondition 1494/1. (`map-tlb-flush-optimized.patch`)
-- `unmap`: `dispatch_all` model + `Range` semantics + revocation postcondition.
-  Full crate 1500/0; W2+postcondition 1499/1.
-  **Residual:** one trailing `Range` op is retained as the proof witness;
-  removing it needs a loop coverage invariant. At runtime it is redundant.
-- Both patches are candidates; no upstream review; `Cursor::map` gains an
-  internal `split_out` parameter.
+- `map`: split-gated flush; plain new mappings take no flush. Combined pristine
+  crate 1500/0; W1 + postcondition 1499/1.
+- `unmap`: `dispatch_all` model + `Range` flush semantics + revocation
+  postcondition. Combined pristine 1500/0; W2 + postcondition 1499/1.
+- Combined series `combined-tlb-contracts.patch` applies cleanly to pristine
+  43da079 (`patch -p1 --dry-run`), unlike the earlier ktest-based patches; a
+  macro-config difference between the ktest workspace and pristine required the
+  `apply_all` proof on both map flush exits.
+- **Residual:** one trailing `Range` op in `unmap` is retained as the proof
+  witness. The A2 removal attempt (`A2-ATTEMPT.md`) fails at the loop coverage
+  invariant (1499/1; exact obligations listed). The op is redundant at runtime
+  but is not removed.
 
-## 3. Runtime evidence — NOT ACHIEVED
+## 3. Runtime evidence — PARTIAL
 
-- No QEMU (`qemu-system-x86_64` absent), no `cargo-osdk`/`osdk`, empty
-  `ostd/osdk/`; the ktest workspace cannot execute here.
-- Replaced by the Verus reachability witness; no hardware stale-TLB demo, no
-  full cursor-owner tree execution.
+- QEMU is available (`nix shell nixpkgs#qemu`, 11.1.2).
+- Exact blocker: no `cargo-osdk` in nixpkgs, no `osdk/` or `OSDK.toml` in the
+  vostd tree, no kernel image/runner. The ktest suite cannot be booted here.
+- An executable **model** test (`model-test/`) passes: split-then-remap without
+  a flush leaves the stale TLB entry; split-gated flush removes it; unmap ops +
+  dispatch_all revoke; no dispatch leaves entries; Range removes all
+  intersecting mappings. This is not a kernel run.
 
-## 4. Upstream status — NOT SUBMITTED (exact blocker)
+## 4. Upstream status — DEFERRED
 
-- Upstream identified: `asterinas/vostd`.
-- No `gh`, no `GH_TOKEN`/`GITHUB_TOKEN`, no write channel; anonymous read only.
-- `UPSTREAM-ISSUE.md` and `SEND-PACKAGE.md` are ready to send manually.
-- Feedback: none (not submitted).
+- Upstream identified (`asterinas/vostd`) and an issue package prepared, but the
+  user deferred all upstream/external actions. No submission, no feedback, no
+  claim of either.
 
 ## 5. Impact — NONE YET
 
-- No accepted upstream change, no deployment, no CI check adopted.
-- The repository artifacts are the only durable output.
+- No merged change, no deployment, no adopted CI check.
+- Durable output: verified candidate patches, executable model test, issue
+  package, and this assessment.
 
 ## Verdict
 
-The core scientific question is answered with machine-checked evidence: **yes,
-wrong implementations can pass the current TLB contracts, and one real `map`
-path is missing a flush**. Two candidate patches are verified and reject the
-witnesses.
+The core **scientific** outcome is reached: wrong implementations pass the
+current TLB contracts, the real `map` split path misses a flush, and two
+verified patches reject the witnesses on the pristine revision.
 
-The core *outcome* in the fuller sense — optimized patches, runtime
-confirmation, and upstream adoption — is **not fully reached**: A2 has a proof
-residual, runtime is blocked by the environment, and submission is blocked by
-missing credentials. The shortest path to closure is: (1) finish the unmap
-coverage invariant and drop the trailing Range, (2) provide a GitHub token or
-submit the prepared issue, (3) run a minimal QEMU test if a runner becomes
-available.
+The fuller outcome is **not fully reached**: A2 keeps a redundant trailing
+Range op for the proof; runtime evidence is model-level because the kernel
+runner is absent; upstream is deferred. Next internal steps: finish the coverage
+invariant to drop the trailing op, and add a kernel-runner image when available.
