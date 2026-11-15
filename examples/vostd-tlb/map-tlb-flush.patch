@@ -1,0 +1,27 @@
+--- vostd-43da079-ktest-chan/ostd/src/mm/vm_space.rs	2026-11-11 09:43:08.579171021 +0800
++++ vostd-patch-a4/ostd/src/mm/vm_space.rs	2026-11-16 01:34:53.985462003 +0800
+@@ -927,6 +927,11 @@
+                 old(cursor_owner)@,
+                 final(cursor_owner)@,
+             ),
++            forall|m: Mapping|
++                #[trigger] old(cursor_owner)@.mappings.contains(m)
++                    && m.va_range.start <= old(self).pt_cursor.0.va
++                    && old(self).pt_cursor.0.va < m.va_range.end
++                    ==> !final(tlb_model).mappings.contains(m),
+     )]
+     pub fn map(&mut self, frame: UFrame, prop: PageProperty) {
+         let start_va = self.virt_addr();
+@@ -937,6 +942,12 @@
+             #[verus_spec(with Tracked(cursor_owner), Tracked(entry_owner), Tracked(regions), Tracked(guards))]
+             self.pt_cursor.map(item)
+         }) else {
++            // The slot was absent, but mapping may have split a huge page that
++            // covered this address. Flush the address before returning.
++            #[verus_spec(with Tracked(tlb_model))]
++            self.flusher.issue_tlb_flush(TlbFlushOp::Address(start_va));
++            #[verus_spec(with Tracked(tlb_model))]
++            self.flusher.dispatch_tlb_flush();
+             return;  // No mapping exists at the current address.
+         };
+ 
