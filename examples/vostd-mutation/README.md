@@ -6,6 +6,10 @@ metric for the checks, not new defect claims.
 
 ## Setup
 
+Evidence grade: exploratory method calibration. No per-site outcome
+predictions were registered before this run, so the outcomes below are not
+defect evidence; they only calibrate what the two check layers can observe.
+
 Frozen copy `/tmp/vostd-mut` of the ktest workspace. Baseline
 `cargo-verus check -p ostd --target x86_64-unknown-none --lib` (no probes):
 **1495 verified / 0 errors**. Then seven `requires` clauses in seven functions
