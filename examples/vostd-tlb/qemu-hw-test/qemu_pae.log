@@ -1,0 +1,5 @@
+warm read: 0xAA
+after 2M split+remap (no invlpg): 0xAA
+after invlpg: 0xBB
+verdict: CONFIRMED stale 2M-page translation without flush
+

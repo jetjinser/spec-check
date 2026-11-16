@@ -1,0 +1,5 @@
+warm read: 0xAA
+after split+remap (no invlpg): 0xAA
+after invlpg: 0xBB
+verdict: CONFIRMED stale TLB translation without flush
+

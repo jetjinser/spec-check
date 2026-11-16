@@ -32,9 +32,13 @@ user; this assessment covers the internal work only.
   extra range flush rather than grow the proof. `A2-ATTEMPT.md` records the
   exact obligations.
 
-## 3. Runtime evidence — PARTIAL
+## 3. Runtime evidence — HARDWARE-LEVEL ACHIEVED, OSTD RUN STILL ABSENT
 
-- QEMU is available (`nix shell nixpkgs#qemu`, 11.1.2).
+- **New:** a minimal 32-bit PAE kernel in QEMU 11.1 confirms that a 2MB
+  translation survives a split+4K remap without invalidation (warm 0xAA; no
+  invlpg 0xAA; invlpg 0xBB). See `qemu-hw-test/` and `qemu_pae.log`. This is a
+  real VM execution of the hazard, not an ostd run.
+- OSDK/QEMU availability earlier:
 - Exact blocker: no `cargo-osdk` in nixpkgs, no `osdk/` or `OSDK.toml` in the
   vostd tree, no kernel image/runner. The ktest suite cannot be booted here.
 - An executable **model** test (`model-test/`) passes: split-then-remap without

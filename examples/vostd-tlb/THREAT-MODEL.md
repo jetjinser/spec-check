@@ -61,6 +61,23 @@ recycled frames. The documentation is stronger than the contract.
   obligation or postcondition about `TlbModel`. There is no verification-level
   sensor that distinguishes the two bodies.
 
+## Runtime evidence (QEMU, hardware/VM level)
+
+`qemu-hw-test/` boots a minimal 32-bit PAE kernel in QEMU 11.1, caches a 2MB
+translation for VA `0x00800000` (frame A = 0xAA), splits the PDE to a 4KB page
+table, remaps the VA to frame B (0xBB) without invalidation, then reads again.
+Serial log:
+
+```
+warm read: 0xAA
+after 2M split+remap (no invlpg): 0xAA
+after invlpg: 0xBB
+```
+
+The 4MB PSE variant shows the same. This confirms the hazard on a real VM: a
+missing flush after split+remap leaves a stale translation. It does **not**
+execute ostd; the ostd evidence remains W1/W2/A5/A6 and the model test.
+
 ## Evidence grade and preregistration
 
 `Confirmed` for "the current contract admits a wrong implementation" (the
