@@ -176,6 +176,14 @@ fn skip_line(line: &str) -> bool {
         || t.starts_with("assume")
         || t.starts_with("broadcast")
         || t.starts_with("reveal")
+        || t.contains("&&&")
+        || t.contains("|||")
+        || t.contains("==>")
+        || t.contains("implies")
+        || t.contains("forall")
+        || t.contains("exists")
+        || t.contains("old(")
+        || t.contains("final(")
 }
 
 fn replace_once(line: &str, old: &str, new: &str) -> Option<String> {
@@ -360,8 +368,23 @@ pub fn generate(config: &Config) -> Result<(crate::mutation::Manifest, Generatio
             .ok_or_else(|| format!("function not found: {function}"))?;
         report.functions.insert(function.clone(), start_line);
         let body_text = &source[body.clone()];
+        let mut proof_depth: i32 = 0;
         for (offset, line) in line_offsets(body_text, body.start) {
             let line_no = source[..offset].bytes().filter(|b| *b == b'\n').count() + 1;
+            let t = line.trim_start();
+            let starts_proof = t.starts_with("proof")
+                || (t.starts_with("assert") && t.contains(" by"))
+                || t.starts_with("broadcast")
+                || t.starts_with("reveal");
+            let opens = line.matches('{').count() as i32;
+            let closes = line.matches('}').count() as i32;
+            if proof_depth > 0 || starts_proof {
+                proof_depth += opens - closes;
+                if proof_depth < 0 {
+                    proof_depth = 0;
+                }
+                continue;
+            }
             for candidate in candidates_for_line(function, line_no, line, &enabled) {
                 if candidate.old == candidate.new {
                     report.skipped_same += 1;
@@ -427,6 +450,36 @@ mod tests {
         assert_eq!(&src[range], " if x { y(); } ");
         assert_eq!(line, 1);
         assert!(function_body(src, "missing").is_none());
+    }
+
+    #[test]
+    fn proof_regions_are_not_mutated() {
+        let dir =
+            std::env::temp_dir().join(format!("spec-check-mutgen-proof-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("src")).unwrap();
+        let src = "fn f() {\n    proof { assert(x == 0); }\n    assert!(0 < x);\n}\n";
+        std::fs::write(dir.join("src/lib.rs"), src).unwrap();
+        let config = Config {
+            target_workspace: dir.clone(),
+            source: "src/lib.rs".into(),
+            package: "p".into(),
+            module: "m".into(),
+            target: None,
+            target_dir: dir.join("target"),
+            full_confirm: false,
+            functions: vec!["f".into()],
+            operators: vec!["comparison_flip".into()],
+            max_mutants: 10,
+        };
+        let (manifest, _) = generate(&config).unwrap();
+        assert!(
+            manifest
+                .mutations
+                .iter()
+                .all(|m| m.old.contains("assert!(0 < x)"))
+        );
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]
