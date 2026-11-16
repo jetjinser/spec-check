@@ -1,5 +1,10 @@
 # P1 patch run record
 
+> Historical verification-level record. The 2026-11-16 runtime correction shows
+> that ostd v0.16.0 split returns `Err(Mapped)` and `VmSpace::map` flushes;
+> A5/A6 is **not** a confirmed real-body defect. F-029 is a contract gap. See
+> `FINAL-ASSESSMENT.md` §1 and `ostd-runtime-2026-11-16/`.
+
 Patch: `map-tlb-flush.patch` (27 lines, one file).
 Baseline: 1495 verified / 0 errors. All runs below use the same command
 (`run-check.sh`).
@@ -14,17 +19,16 @@ Baseline: 1495 verified / 0 errors. All runs below use the same command
 
 Discriminating run A6: adding an entry precondition that every TLB entry at
 the VA is backed by the old cursor view, plus the backing-preserved
-postcondition, still fails at the same `return` (1494 / 1). So A5 is not an
-artifact of unbacked stale TLB entries: the old view contains a mapping that
-covers the VA (the split case), the TLB is backed, and the real body does not
-flush that path.
+postcondition, still fails at the same `return` (1494 / 1). At the
+verification level, this excluded unbacked stale entries and was read as the
+real body not flushing that path. The 2026-11-16 runtime correction supersedes
+that reading.
 
-A5 is the important one: with the new postcondition, the *real* `map` fails at
-the early return. That path is taken when the slot is absent, including when
-`map_loop` split a huge page that covered the address. The real body only
-flushes on the `Err(frag)` (replaced-frame) path, so an old TLB entry covering
-the address can survive. The A4 patch adds an address flush before that return
-and the postcondition then verifies.
+A5 was read as the *real* `map` failing at the early return. That path is taken
+when the slot is absent, including after `map_loop` splits a huge page. The A4
+patch adds an address flush before that return and the postcondition then
+verifies. Runtime ostd v0.16.0 later showed that a split returns `Err(Mapped)`
+and takes the flush branch, so A5 is not a confirmed real-body defect.
 
 W1 + clause shows the same postcondition rejects a body that never flushes.
 
@@ -54,7 +58,8 @@ conservative version is the one verified here.
 
 - A4 is a candidate patch, not an upstream PR. It changes runtime behavior
   (extra flush), so maintainer review is required.
-- The failure of A5 is a verification-level witness that the real body lacks
-  the flush on that path; it is not a runtime reproduction on hardware.
+- A5 is a historical verification-level observation, not a confirmed
+  real-body defect; the 2026-11-16 runtime correction found the flush branch on
+  the split return. It is not a runtime reproduction on hardware.
 - P2 (`unmap`) is separate: W2 is confirmed, the `Range` model fix and the
   corresponding postcondition are pending.

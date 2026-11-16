@@ -1,5 +1,9 @@
 # A2: dispatch_all TLB model + unmap revocation
 
+> Historical record (1500/0, trailing `Range`). The final A2 result removes the
+> trailing `Range` and verifies at 1502/0; see `A2-FINAL.md`. Keep this file for
+> the intermediate proof history, not as the current patch description.
+
 Patch: `unmap-tlb-flush-dispatch-all.patch` (2 files, 146 added lines).
 
 ## What changed

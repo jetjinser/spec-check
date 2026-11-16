@@ -12,12 +12,12 @@ frozen revision:
 - `VmSpace::map` (F-029): replacement and split paths.
 - `VmSpace::unmap` (F-030): removal path.
 
-This is a contract gap and, for `map`, also a missing flush in the real body on
-the absent/split return path: adding the postcondition without changing the
-body fails at that return (1494/1). A discriminating run with an entry
-precondition ("TLB entries at the VA are backed by the old cursor view") still
-fails at the same return, so the counterexample is the split case, not an
-unbacked stale entry.
+This is a contract gap. The frozen-revision A5/A6 verification-level run also
+failed at the early return when the new postcondition was added body-unchanged
+(1494/1), including with an entry precondition backing the TLB. That reading
+was **not** reproduced at runtime: ostd v0.16.0 shows the split returns
+`Err(Mapped)`, so `VmSpace::map` takes its flush branch. Do not present A5/A6
+as a confirmed real-code defect.
 
 ## Evidence
 
@@ -37,19 +37,19 @@ Baseline and patched runs: `run-check.sh` (cargo-verus check -p ostd,
 1. **map**
    - Add the postcondition: if an old mapping covered the VA, no such mapping
      remains in `final(tlb_model).mappings`.
-   - Flush the address on the early-return (absent/split) path. The
-     conservative patch flushes on every absent-slot map.
-   - Preferred: have `map_loop` report whether it split a huge page, and flush
-     only then (avoids a hot-path flush per new mapping).
+   - On the frozen revision, the A1 candidate flushes the address on the
+     early-return (absent/split) path. Whether a body change is still needed on
+     the target runtime revision must be checked there; v0.16.0 already flushes
+     on the `Err(Mapped)` split return.
 2. **unmap**
    - Fix the model: `TlbFlushOp::Range` must remove every intersecting mapping
      (`flush_range`), not only the mapping covering `range.start`.
    - Add the revocation postcondition for old mappings starting in
      `[start, start + len)`.
-   - The patch works around the model's single-`pending` dispatch with one
-     trailing range flush. Preferred: make dispatch apply the whole pending
-     stack (`dispatch_all`), keep the per-item `issue_tlb_flush_with` calls for
-     frame lifetime, and drop the trailing flush.
+   - Make dispatch apply the whole pending stack (`dispatch_all`), keep the
+     per-item `issue_tlb_flush_with` calls for frame lifetime, and drop the
+     trailing flush. The no-trailing proof is verified at 1502/0
+     (`a2-no-trailing/combined-tlb-contracts-no-trailing.patch`).
 3. **tests**
    - Existing ktest/unit suites should be re-run (not run in this goal; the
      frozen copy's ktest harness is available).
@@ -60,15 +60,18 @@ Baseline and patched runs: `run-check.sh` (cargo-verus check -p ostd,
 
 Once the postconditions land, normal verification enforces them; no new job is
 needed for the contract. A cheap optional guard would be a `compile_fail`
-style check that the two bad bodies no longer verify. The real cost question is
-runtime: the conservative map flush is on a hot path, so the split-flag version
-is the recommended upstream shape.
+style check that the two bad bodies no longer verify. Runtime cost depends on
+the target revision: v0.16.0 already flushes on the `Err(Mapped)` split return,
+so do not add a hot-path flush without checking. The split-flag A1 shape is
+only a frozen-rev candidate.
 
 ## Not claimed
 
 - The ostd evidence is verification-level. A separate hardware/VM-level
   reproduction of the stale-translation hazard exists (`qemu-hw-test/`, QEMU
   2M PAE and 4M PSE), but it does not execute ostd.
-- The witnesses show the contract admits wrong bodies; only the `map` A5 run
-  shows the real body missing a flush on one path.
+- The witnesses show the contract admits wrong bodies. A5/A6 is a
+  verification-level observation from the frozen revision, not a confirmed
+  real-body defect; runtime v0.16.0 flushes on the split path. F-029 is a
+  contract gap.
 - Frozen rev 43da079 only; no upstream review yet.
