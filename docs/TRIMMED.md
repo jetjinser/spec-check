@@ -11,7 +11,7 @@ documentation, and tests, and are preserved in Git history:
 Restore any of them with:
 
 ```sh
-git checkout <parent-of-trim-commit> -- examples/<name>
+git checkout 165ed8c -- examples/<name>
 ```
 
 `examples/tracked-modeling-spike/*/target/` build caches were also removed;
