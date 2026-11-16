@@ -91,6 +91,35 @@ fn check() -> Result<()> {
         }
         return Ok(());
     }
+    if args.first().is_some_and(|s| s == "analyses-mutation") {
+        let keys = ["--manifest", "--cargo-verus", "--z3", "--vstd", "--out"];
+        if args.len() != 11 || keys.iter().enumerate().any(|(i, k)| args[1 + i * 2] != *k) {
+            return Err("analyses-mutation --manifest FILE --cargo-verus PATH --z3 PATH --vstd PATH --out DIRECTORY".into());
+        }
+        let manifest: spec_check_analyses::mutation::Manifest =
+            serde_json::from_slice(&fs::read(&args[2])?)?;
+        let report = spec_check_analyses::mutation::run(
+            &manifest,
+            Path::new(&args[4]),
+            Path::new(&args[6]),
+            Path::new(&args[10]),
+        )?;
+        let out = Path::new(&args[10]);
+        fs::create_dir_all(out)?;
+        write_json(&out.join("report.json"), &report)?;
+        println!(
+            "mutation: {} mutants, {} verified survivors, {} rejected, {} compile errors, {} unknown",
+            report.summary.mutants,
+            report.summary.verified_survivors,
+            report.summary.rejected,
+            report.summary.compile_errors,
+            report.summary.unknown,
+        );
+        for result in &report.results {
+            println!("{}: {}", result.id, result.final_status);
+        }
+        return Ok(());
+    }
     if args.first().is_some_and(|s| s == "synthesize") {
         let usage = "synthesize --candidates FILE --recipes FILE --out FILE \
                      [--select ID[,ID...]] [--report FILE]";

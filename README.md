@@ -24,3 +24,19 @@ The core engine is ported verbatim from
 `research/tools/cargo-spec-check` at research revision `5d54c0690208`
 so archived campaign evidence keeps replaying bit-for-bit. Internal
 re-organisation is incremental and tracked in `docs/ARCHITECTURE.md`.
+
+## Contract mutation
+
+`analyses-mutation` is a controlled contract-adequacy loop. A project-side
+manifest supplies exact old/new source snippets; the tool runs focused Verus on
+each mutant, full-confirms focus survivors, restores the source, and writes a
+report. A `verified_survivor` is a **contract-gap candidate**, never an
+automatic bug verdict.
+
+```sh
+cargo-spec-check analyses-mutation \
+  --manifest MUTATIONS.json \
+  --cargo-verus PATH --z3 PATH --vstd PATH --out OUT
+```
+
+See `docs/MUTATION.md` for the manifest schema and evidence boundaries.

@@ -10,6 +10,9 @@
   - `findings/` — typed finding schema and report rendering
 - `spec-check-analyses` — pluggable analyses. Each analysis is a generic
   pass over captured artifacts; see the crate docs for the extension recipe.
+  `mutation` is an explicitly project-supplied, source-mutation analysis: it
+  consumes a frozen manifest and returns contract-gap candidates, not defect
+  verdicts.
 - `cargo-spec-check` — CLI shell; parsing and dispatch only.
 
 ## Rules
