@@ -37,16 +37,25 @@ reads 0xBB. Result: `1 passed; 0 failed`.
 in v0.16.0 (`Frame::map_level()==1`). The A5/A6 "real map misses a flush" claim
 is not reproduced; F-029 is a contract gap, not a confirmed real-code defect.
 
-## 3. Frozen verified artifact run — unavailable
+## 3. Frozen verified artifact run — architectural blocker
 
-- OSDK builds plain-Rust kernels while the frozen ostd is Verus-built; there is
-  no OSDK↔Verus integration.
-- `cargo check -p ostd` in the frozen tree fails with `E0554`; `vstd` has no
-  plain-rustc build, and the rewritten tree has no `osdk/`/`OSDK.toml`.
-- Asterinas' runtime ostd is a different unverified codebase (0.18 on the main
-  tree; the 0.16.0 tag is the same-version runtime used above).
+- The frozen crate **can** be verified and compiled as a bare-metal library:
+  `cargo verus build -p ostd --target x86_64-unknown-none` reports
+  `1495 verified, 0 errors` and produces `libostd.rlib` (P4, 2026-11-16).
+- It is not a bootable kernel: `ostd/src/lib.rs` comments out `prelude`,
+  `panic`, `logger`, `console`, `io`, `smp`, and the `ostd_macros`/`ktest`
+  exports; the OSDK test kernel imports exactly those (`ostd::ktest`,
+  `ostd::panic`, `ostd::prelude`).
+- Restoring them would be new code outside rev 43da079, so it would no longer
+  be the frozen verified artifact.
+- Toolchain/ABI: frozen code is compiled with rustc 1.98.1; OSDK 0.16.0 uses
+  nightly-2025-02-01 (1.86). Linking the Verus rlib into the OSDK kernel is not
+  compatible; compiling the whole kernel with 1.98.1 first requires the missing
+  runtime surface above.
+- No OSDK integration exists in the frozen tree (`osdk/`/`OSDK.toml` absent).
 
-Exact blocker: **no bootable image for the frozen verified ostd**.
+See `verus-artifact-2026-11-16/P4-RUN.md` for commands/logs. This is an
+architectural blocker, not a missing command.
 
 ## 4. Executable model test — not the kernel
 

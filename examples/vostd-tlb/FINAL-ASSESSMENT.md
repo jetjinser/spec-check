@@ -47,10 +47,14 @@ user; this assessment covers the internal work only.
 - **Correction:** the split returns `Err(Mapped)`, so `VmSpace::map` flushes;
   the A5/A6 real-body claim is not reproduced and F-029 is reclassified as a
   contract gap. See `THREAT-MODEL.md`.
-- **Frozen artifact run remains absent:** OSDK builds plain-Rust kernels, the
-  frozen ostd is Verus-built, and no bootable image for the frozen verification
-  tree exists. The v0.16.0 tag is a same-version *runtime* tree, but it is still
-  unverified and not the frozen artifact; the main Asterinas tree is 0.18.
+- **Frozen artifact run — architectural blocker (P4, 2026-11-16):** the frozen
+  crate verifies and compiles to `libostd.rlib` (`cargo verus build -p ostd
+  --target x86_64-unknown-none`: 1495/0), but it is not a kernel: runtime
+  modules (`prelude`, `panic`, `logger`, `console`, `io`, `smp`) and the
+  `ostd_macros`/`ktest` exports are commented out. The OSDK test kernel needs
+  exactly those, and rustc 1.98.1 (frozen) vs 1.86 (OSDK 0.16) is an ABI split.
+  Restoring the missing surface would be new code, not rev 43da079. Details:
+  `verus-artifact-2026-11-16/P4-RUN.md`.
 - An executable **model** test (`model-test/`) passes: split-then-remap without
   a flush leaves the stale TLB entry; split-gated flush removes it; unmap ops +
   dispatch_all revoke; no dispatch leaves entries; Range removes all

@@ -77,6 +77,8 @@ after invlpg: 0xBB
 The 4MB PSE variant shows the same. This confirms the hazard on a real VM: a
 missing flush after split+remap leaves a stale translation. It does **not**
 execute ostd; the ostd evidence remains W1/W2/A5/A6 and the model test.
+The frozen Verus crate can be compiled as a library (1495/0) but is not a
+bootable kernel (P4); see `verus-artifact-2026-11-16/P4-RUN.md`.
 
 ## ostd v0.16.0 runtime experiment (unverified tree)
 
