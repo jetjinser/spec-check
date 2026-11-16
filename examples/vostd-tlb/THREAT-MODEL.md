@@ -78,6 +78,21 @@ The 4MB PSE variant shows the same. This confirms the hazard on a real VM: a
 missing flush after split+remap leaves a stale translation. It does **not**
 execute ostd; the ostd evidence remains W1/W2/A5/A6 and the model test.
 
+## ostd v0.16.0 runtime experiment (unverified tree)
+
+`ostd-runtime-2026-11-16/` adds a ktest to Asterinas `v0.16.0` and runs it in
+QEMU (nightly-2025-02-01, local OSDK 0.16, `--boot-method qemu-direct`). It maps
+a 2M-aligned physical run through the kernel linear mapping (asserted huge,
+`level > 1`), warms the TLB (`0xAA`), remaps the 4K entry to frame B without
+`invlpg`, reads stale `0xAA`, then `invlpg` and reads `0xBB`.
+
+**Correction to F-029:** the split returns `Err(PageTableFrag::Mapped)`, so the
+real `VmSpace::map` takes its flush branch; and a user `VmSpace` cannot create a
+2M mapping in v0.16.0 (`Frame::map_level() == 1`). The A5/A6 claim that the real
+`map` split path misses a flush is not reproduced at runtime and is treated as a
+model/precondition artifact. F-029 remains a **contract gap** (W1 verifies),
+not a confirmed real-code defect. See the runtime README for limits.
+
 ## Evidence grade and preregistration
 
 `Confirmed` for "the current contract admits a wrong implementation" (the

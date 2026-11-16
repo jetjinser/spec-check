@@ -1,0 +1,10 @@
+diff --git a/tools/qemu_args.sh b/tools/qemu_args.sh
+index f667097c8..6c7ed84b2 100755
+--- a/tools/qemu_args.sh
++++ b/tools/qemu_args.sh
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/usr/bin/env bash
+ 
+ # SPDX-License-Identifier: MPL-2.0
+ 

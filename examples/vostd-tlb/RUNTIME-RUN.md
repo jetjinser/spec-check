@@ -1,11 +1,12 @@
 # Runtime / executable verification status
 
-Three distinct things are tracked here and must not be conflated:
+Four distinct things are tracked here and must not be conflated:
 
-1. **QEMU hardware/VM experiment** — executed; confirms the stale-translation
-   hazard at the VM level.
-2. **ostd kernel run** — attempted/assessed; still unavailable.
-3. **Executable model test** — executed; not a kernel.
+1. **QEMU hardware/VM experiment** — executed; confirms the hazard.
+2. **ostd v0.16.0 runtime ktest** — executed on the unverified same-version
+   tree; confirms the hazard and corrects F-029's real-body claim.
+3. **Frozen verified artifact run** — still unavailable.
+4. **Executable model test** — executed; not a kernel.
 
 ## 1. QEMU hardware/VM experiment — ACHIEVED
 
@@ -23,21 +24,31 @@ verdict: CONFIRMED stale 2M-page translation without flush
 A 4MB PSE variant shows the same. This is a real VM execution of the hazard
 pattern; it does not execute ostd.
 
-## 2. ostd kernel run — unavailable
+## 2. ostd v0.16.0 runtime ktest — ACHIEVED
 
-- OSDK 0.16 and QEMU are available in the Asterinas devshell, but OSDK builds
-  plain-Rust kernels while the frozen verified ostd is Verus-built; there is no
-  OSDK↔Verus integration.
-- `cargo check -p ostd` in the frozen tree fails with `E0554`; the Verus `vstd`
-  dependency has no plain-rustc build. The rewritten tree has no `osdk/` or
-  `OSDK.toml`.
-- Asterinas' runtime ostd is a **different, unverified 0.18 codebase**; testing
-  it would not validate the frozen 0.16 verified artifact.
-- The ktest framework needs a kernel image/runner that is not present here.
+`ostd-runtime-2026-11-16/` adds `tlb_probe_huge_split` to Asterinas v0.16.0 and
+runs it with `cargo osdk test ... --boot-method qemu-direct` (QEMU 11.1,
+nightly-2025-02-01, local OSDK 0.16). It splits a huge kernel linear mapping,
+remaps the 4K entry to frame B without invlpg, reads stale 0xAA, then invlpg and
+reads 0xBB. Result: `1 passed; 0 failed`.
+
+**Correction:** `Cursor::map` returns `Err(Mapped)` on the split/replacement, so
+`VmSpace::map` runs its flush branch; user `VmSpace` cannot create a 2M mapping
+in v0.16.0 (`Frame::map_level()==1`). The A5/A6 "real map misses a flush" claim
+is not reproduced; F-029 is a contract gap, not a confirmed real-code defect.
+
+## 3. Frozen verified artifact run — unavailable
+
+- OSDK builds plain-Rust kernels while the frozen ostd is Verus-built; there is
+  no OSDK↔Verus integration.
+- `cargo check -p ostd` in the frozen tree fails with `E0554`; `vstd` has no
+  plain-rustc build, and the rewritten tree has no `osdk/`/`OSDK.toml`.
+- Asterinas' runtime ostd is a different unverified codebase (0.18 on the main
+  tree; the 0.16.0 tag is the same-version runtime used above).
 
 Exact blocker: **no bootable image for the frozen verified ostd**.
 
-## 3. Executable model test — not the kernel
+## 4. Executable model test — not the kernel
 
 `model-test/` keeps page table and TLB caches separate and asserts:
 

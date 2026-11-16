@@ -1,0 +1,69 @@
+warning: Git tree '/home/jinser/vie/work/AES/asterinas' is dirty
+[Info] [normal] Forwarded QEMU guest port: 40726->22; 10527->8080 41836->6379 25945->5201 58025->31234 32615->31236 9110->11211
+[Info] [test] Forwarded QEMU guest port: 12256->22; 8497->8080 25082->6379 19417->5201 8642->31234 19080->31236 32069->11211
+    Updating crates.io index
+    Updating git repository `https://github.com/asterinas/inherit-methods-macro`
+    Updating git repository `https://github.com/asterinas/ostd-pod`
+     Locking 93 packages to latest compatible versions
+      Adding unwinding v0.2.5 (available: v0.2.11, requires Rust 1.88)
+warning: unstable feature specified for `-Ctarget-feature`: `ermsb`
+  |
+  = note: this feature is not stably supported; its behavior can change in the future
+
+warning: `linux-boot-params` (lib) generated 1 warning
+warning: `align_ext` (lib) generated 1 warning (1 duplicate)
+warning: `id-alloc` (lib) generated 1 warning (1 duplicate)
+warning: `ostd-test` (lib) generated 1 warning (1 duplicate)
+warning: `int-to-c-enum` (lib) generated 1 warning (1 duplicate)
+   Compiling ostd v0.16.0 (/tmp/asterinas-v016/ostd)
+   Compiling osdk-heap-allocator v0.16.0 (/tmp/asterinas-v016/osdk/deps/heap-allocator)
+   Compiling osdk-frame-allocator v0.16.0 (/tmp/asterinas-v016/osdk/deps/frame-allocator)
+   Compiling osdk-test-kernel v0.16.0 (/tmp/asterinas-v016/osdk/deps/test-kernel)
+warning: `osdk-heap-allocator` (lib) generated 1 warning (1 duplicate)
+warning: `osdk-frame-allocator` (lib) generated 1 warning (1 duplicate)
+warning: `osdk-test-kernel` (lib) generated 1 warning (1 duplicate)
+warning: `ostd` (lib) generated 1 warning (1 duplicate)
+   Compiling ostd-osdk-bin v0.16.0 (/tmp/asterinas-v016/target/osdk/ostd-test-base)
+warning: `ostd-osdk-bin` (bin "ostd-osdk-bin") generated 1 warning (1 duplicate)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 3.30s
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=01h].ECX.pcid [bit 17]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=01h].ECX.tsc-deadline [bit 24]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].EBX.hle [bit 4]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].EBX.invpcid [bit 10]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].EBX.rtm [bit 11]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].EBX.avx512f [bit 16]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].EBX.avx512dq [bit 17]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].EBX.avx512cd [bit 28]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].EBX.avx512bw [bit 30]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].EBX.avx512vl [bit 31]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].ECX.avx512vbmi [bit 1]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].ECX.avx512vbmi2 [bit 6]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].ECX.gfni [bit 8]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].ECX.vpclmulqdq [bit 10]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].ECX.avx512vnni [bit 11]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].ECX.avx512bitalg [bit 12]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].ECX.avx512-vpopcntdq [bit 14]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].EDX.spec-ctrl [bit 26]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=07h,ecx=00h].EDX.ssbd [bit 31]
+qemu-system-x86_64: warning: TCG doesn't support requested feature: CPUID[eax=0Dh,ecx=01h].EAX.xsavec [bit 1]
+c[?7l[2J[0mSeaBIOS (version rel-1.17.0-0-gb52ca86e094d-prebuilt.qemu.org)
+
+
+iPXE (http://ipxe.org) 00:02.0 CA00 PCI2.10 PnP PMM+7EFD1A00+7EF31A00 CA00
+Press Ctrl-B to configure iPXE (PCI 00:02.0)...                                                                               
+
+
+Booting from ROM..
+[ktest runner] running 171 tests in 3 crates
+
+[ktest runner] skipping crate "osdk-frame-allocator".
+
+[ktest runner] skipping crate "osdk-test-kernel".
+
+running 154 tests in crate "ostd"
+
+test ostd::mm::kspace::test::tlb_probe_huge_split ... [32mok[39m
+
+test result: [32mok[39m. 1 passed; 0 failed; 153 filtered out.
+
+[ktest runner] All crates tested.

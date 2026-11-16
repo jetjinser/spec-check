@@ -1,0 +1,73 @@
+diff --git a/ostd/src/mm/kspace/test.rs b/ostd/src/mm/kspace/test.rs
+index e80b804ea..726191f9c 100644
+--- a/ostd/src/mm/kspace/test.rs
++++ b/ostd/src/mm/kspace/test.rs
+@@ -105,3 +105,68 @@ fn manual_paddr_to_vaddr() {
+ 
+     assert_eq!(va, LINEAR_MAPPING_BASE_VADDR + pa);
+ }
++
++#[cfg(target_arch = "x86_64")]
++#[ktest]
++fn tlb_probe_huge_split() {
++    use crate::{
++        mm::kspace::{KERNEL_PAGE_TABLE, MappedItem},
++        task::disable_preempt,
++    };
++
++    const HUGE: usize = 2 * 1024 * 1024;
++
++    // A 2M-aligned physical run, reached through the kernel linear mapping.
++    let frames = FrameAllocOptions::new().alloc_segment(1024).unwrap();
++    let seg_start = frames.start_paddr();
++    let pa_a = (seg_start + HUGE - 1) & !(HUGE - 1);
++    assert!(pa_a + HUGE <= seg_start + 1024 * PAGE_SIZE);
++
++    let frame_b = FrameAllocOptions::new().alloc_frame().unwrap();
++    let pa_b = frame_b.start_paddr();
++    unsafe {
++        *(paddr_to_vaddr(pa_a) as *mut u8) = 0xAA;
++        *(paddr_to_vaddr(pa_b) as *mut u8) = 0xBB;
++    }
++
++    let va = paddr_to_vaddr(pa_a);
++    assert_eq!(va % HUGE, 0, "linear alias is not 2M aligned");
++    let warm = unsafe { *(va as *const u8) };
++    assert_eq!(warm, 0xAA);
++
++    let kpt = KERNEL_PAGE_TABLE.get().unwrap();
++    let guard = disable_preempt();
++
++    // Split the huge linear mapping and replace the 4K entry with frame B,
++    // without any TLB invalidation.
++    let prop = {
++        let mut cursor = kpt.cursor_mut(&guard, &(va..va + PAGE_SIZE)).unwrap();
++        cursor.jump(va).unwrap();
++        let (_, item) = cursor.query().unwrap();
++        let MappedItem::Untracked(_, level, prop) = item.expect("linear alias is mapped") else {
++            panic!("expected an untracked linear mapping");
++        };
++        assert!(level > 1, "expected a huge linear mapping, got level {level}");
++        let old = unsafe { cursor.map(MappedItem::Untracked(pa_b, 1, prop)) };
++        assert!(old.is_err(), "expected an existing huge mapping to be split");
++        prop
++    };
++
++    let stale = unsafe { *(va as *const u8) };
++    unsafe {
++        core::arch::asm!("invlpg [{}]", in(reg) va, options(nostack, preserves_flags));
++    }
++    let fresh = unsafe { *(va as *const u8) };
++
++    // Restore the 4K entry to frame A and invalidate before leaving.
++    {
++        let mut cursor = kpt.cursor_mut(&guard, &(va..va + PAGE_SIZE)).unwrap();
++        let _ = unsafe { cursor.map(MappedItem::Untracked(pa_a, 1, prop)) };
++    }
++    unsafe {
++        core::arch::asm!("invlpg [{}]", in(reg) va, options(nostack, preserves_flags));
++    }
++
++    assert_eq!(stale, 0xAA, "stale read after split+remap");
++    assert_eq!(fresh, 0xBB, "fresh read after invlpg");
++}
