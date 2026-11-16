@@ -91,7 +91,8 @@ prediction was registered. The patch work that follows is pre-registered in
 - The witnesses show a contract gap, not that the real kernel has stale TLB
   entries.
 - Hardware/TLB behavior is modeled by `TlbModel`; the witnesses do not test the
-  hardware model itself.
+  hardware model itself. The separate `qemu-hw-test/` reproduces the hazard on
+  QEMU but does not test `TlbModel`.
 - A fix must add a postcondition that observes the flush, and may need a model
   fix for `TlbFlushOp::Range` (the model currently removes only mappings
   covering `range.start`).

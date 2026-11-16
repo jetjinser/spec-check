@@ -15,7 +15,8 @@ survives a page-table split and remap when no invalidation is issued.
      read -> stale `0xAA`;
   4. `invlpg`, read -> `0xBB`.
 - `boot.S` — 32-bit PSE, 4MB page split to 4KB, same steps (secondary check).
-- `kernel*.elf`, `qemu*.log` — built artifacts and serial logs.
+- `kernel*.elf`/`*.o` — build outputs (gitignored, rebuilt by the scripts);
+  `qemu*.log` — tracked serial logs.
 - `build.sh`/`run.sh` (PSE), `build_pae.sh`/`run_pae.sh` (PAE).
 
 ## Reproduce

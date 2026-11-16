@@ -53,3 +53,10 @@ faithful (all pending ops applied), and the patch rejects W2.
   stronger model spec.
 - Model-level evidence only; no hardware reproduction.
 - Frozen rev 43da079.
+
+## Later note (2026-11-16)
+
+This run's boundary statements describe the verification-level run above. A
+separate QEMU hardware/VM experiment now reproduces the stale-translation hazard
+(`qemu-hw-test/`); it does not execute ostd and does not change this run's
+result.

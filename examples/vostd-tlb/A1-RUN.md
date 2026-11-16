@@ -51,3 +51,10 @@ Static flush behavior:
 - The split flag is an internal contract; if upstream prefers a result struct,
   the same facts carry over.
 - The TLB postcondition is model-level; no hardware reproduction.
+
+## Later note (2026-11-16)
+
+This run's boundary statements describe the verification-level run above. A
+separate QEMU hardware/VM experiment now reproduces the stale-translation hazard
+(`qemu-hw-test/`); it does not execute ostd and does not change this run's
+result.

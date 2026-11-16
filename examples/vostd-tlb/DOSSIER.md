@@ -66,7 +66,9 @@ is the recommended upstream shape.
 
 ## Not claimed
 
-- No hardware-level reproduction; the evidence is verification-level.
+- The ostd evidence is verification-level. A separate hardware/VM-level
+  reproduction of the stale-translation hazard exists (`qemu-hw-test/`, QEMU
+  2M PAE and 4M PSE), but it does not execute ostd.
 - The witnesses show the contract admits wrong bodies; only the `map` A5 run
   shows the real body missing a flush on one path.
 - Frozen rev 43da079 only; no upstream review yet.

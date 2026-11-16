@@ -1,6 +1,6 @@
 # Final internal assessment: did we reach the core outcome?
 
-Date: 2026-11-15. Frozen rev 43da079. Upstream actions are deferred by the
+Date: 2026-11-15 (updated 2026-11-16). Frozen rev 43da079. Upstream actions are deferred by the
 user; this assessment covers the internal work only.
 
 ## 1. Discovery / proof — ACHIEVED
@@ -38,9 +38,9 @@ user; this assessment covers the internal work only.
   translation survives a split+4K remap without invalidation (warm 0xAA; no
   invlpg 0xAA; invlpg 0xBB). See `qemu-hw-test/` and `qemu_pae.log`. This is a
   real VM execution of the hazard, not an ostd run.
-- OSDK/QEMU availability earlier:
-- Exact blocker: no `cargo-osdk` in nixpkgs, no `osdk/` or `OSDK.toml` in the
-  vostd tree, no kernel image/runner. The ktest suite cannot be booted here.
+- ostd kernel run remains absent: OSDK builds plain-Rust kernels, the frozen
+  ostd is Verus-built, and no bootable image for the frozen verification tree
+  exists. Asterinas' runtime ostd is a different 0.18 codebase.
 - An executable **model** test (`model-test/`) passes: split-then-remap without
   a flush leaves the stale TLB entry; split-gated flush removes it; unmap ops +
   dispatch_all revoke; no dispatch leaves entries; Range removes all
@@ -65,9 +65,10 @@ current TLB contracts, the real `map` split path misses a flush, and two
 verified patches reject the witnesses on the pristine revision.
 
 The fuller outcome is **not fully reached**: A2 keeps a redundant trailing
-Range op for the proof; runtime evidence is model-level because the kernel
-runner is absent; upstream is deferred. Next internal steps: finish the coverage
-invariant to drop the trailing op, and add a kernel-runner image when available.
+Range op for the proof; a hardware/VM-level hazard reproduction now exists in
+QEMU, but an **ostd kernel run** is still absent; upstream is deferred. Next
+internal steps: finish the coverage invariant to drop the trailing op, and add
+a bootable image for the frozen verified ostd when available.
 
 ## Update (2026-11-15, second internal pass)
 
@@ -75,9 +76,9 @@ invariant to drop the trailing op, and add a kernel-runner image when available.
   loop-coverage invariant failure plus the revocation postcondition. The
   trailing Range op remains in the delivered patch; exact obligations are in
   `A2-ATTEMPT.md`.
-- Runtime: OSDK 0.16 and QEMU are available in the Asterinas devshell, but OSDK
+- Runtime: the QEMU hardware/VM experiment (`qemu-hw-test/`) confirms the
+  hazard but does not execute ostd. OSDK 0.16 and QEMU are available, but OSDK
   builds plain-Rust kernels; the frozen verified ostd is Verus-built and has no
-  OSDK integration. The exact blocker is architectural (Verus vs OSDK), not a
-  missing tool. Asterinas' runtime ostd is a different 0.18 codebase, so a test
-  there would not validate the frozen artifact. The executable model test is
-  the strongest internal runtime evidence available.
+  OSDK integration. The blocker is architectural (Verus vs OSDK), not a missing
+  tool. Asterinas' runtime ostd is a different 0.18 codebase, so a test there
+  would not validate the frozen artifact.

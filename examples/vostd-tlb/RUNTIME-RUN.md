@@ -1,6 +1,13 @@
 # Runtime / executable verification status
 
-## QEMU hardware/VM experiment — ACHIEVED
+Three distinct things are tracked here and must not be conflated:
+
+1. **QEMU hardware/VM experiment** — executed; confirms the stale-translation
+   hazard at the VM level.
+2. **ostd kernel run** — attempted/assessed; still unavailable.
+3. **Executable model test** — executed; not a kernel.
+
+## 1. QEMU hardware/VM experiment — ACHIEVED
 
 `qemu-hw-test/` builds a minimal 32-bit PAE test kernel and boots it in QEMU
 11.1. It caches a 2MB translation (frame A, 0xAA), splits the page table to 4KB,
@@ -16,51 +23,21 @@ verdict: CONFIRMED stale 2M-page translation without flush
 A 4MB PSE variant shows the same. This is a real VM execution of the hazard
 pattern; it does not execute ostd.
 
-## ostd kernel run
+## 2. ostd kernel run — unavailable
 
-Still unavailable: OSDK builds plain-Rust kernels, the frozen ostd is
-Verus-annotated and has no OSDK integration; Asterinas' runtime ostd is a
-different 0.18 codebase.
+- OSDK 0.16 and QEMU are available in the Asterinas devshell, but OSDK builds
+  plain-Rust kernels while the frozen verified ostd is Verus-built; there is no
+  OSDK↔Verus integration.
+- `cargo check -p ostd` in the frozen tree fails with `E0554`; the Verus `vstd`
+  dependency has no plain-rustc build. The rewritten tree has no `osdk/` or
+  `OSDK.toml`.
+- Asterinas' runtime ostd is a **different, unverified 0.18 codebase**; testing
+  it would not validate the frozen 0.16 verified artifact.
+- The ktest framework needs a kernel image/runner that is not present here.
 
-## Model test
+Exact blocker: **no bootable image for the frozen verified ostd**.
 
-`model-test/` remains a separate executable model (not the kernel).
-
-# Runtime / executable verification status
-
-## QEMU
-
-`nix shell nixpkgs#qemu -c qemu-system-x86_64 --version` works (QEMU 11.1.2).
-QEMU is available; a bootable image and runner are not.
-
-## Runner found (but not for verified ostd)
-
-The Asterinas devshell provides `cargo-osdk 0.16.0` and QEMU, and the Asterinas
-root has an `OSDK.toml` plus an OSDK test-kernel. However:
-
-- Asterinas' `ostd` is the **runtime, unverified** codebase at version 0.18;
-  the frozen vostd `ostd` is 0.16 and is Verus-annotated (`verus!`, `vstd`).
-- OSDK's test-kernel builds with plain cargo/rustc, not the Verus toolchain.
-  `cargo check -p ostd` in the vostd tree fails with `E0554` (nightly features)
-  under the pinned stable devshell; more fundamentally, the Verus `vstd`
-  dependency has no plain-rustc build.
-- There is no OSDK↔Verus integration that would build the verified ostd into a
-  bootable image.
-
-A runtime test on Asterinas' unverified ostd would exercise a different
-codebase/version and would not validate the frozen verified artifact; it is
-therefore not used as runtime evidence here.
-
-## Earlier blocker notes
-
-- `cargo-osdk` is not a nixpkgs attribute (it is in the Asterinas devshell).
-- The rewritten vostd tree has no `osdk/` directory or `OSDK.toml`.
-- The ktest framework runs in a kernel image under the Asterinas runner, which
-  is not present in this environment.
-
-Exact blocker: **QEMU present, no OSDK/runner or kernel image to boot**.
-
-## Executable model test (not the kernel)
+## 3. Executable model test — not the kernel
 
 `model-test/` keeps page table and TLB caches separate and asserts:
 
@@ -78,5 +55,4 @@ nix develop ~/vie/work/AES/vostd/nix -c cargo run --offline
 # tlb model tests passed
 ```
 
-This is a model-level executable check, not a kernel run; do not cite it as
-runtime evidence for ostd.
+Do not cite this model test as runtime evidence for ostd.

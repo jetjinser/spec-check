@@ -54,8 +54,9 @@ on the frozen rev; baseline 1495/0.
 
 ## Boundary
 
-Verification-level evidence; no hardware/QEMU reproduction (the environment has
-no QEMU or osdk runner). A model-level reachability witness shows a valid view
+Verification-level evidence for ostd. A separate QEMU hardware/VM experiment
+(`qemu-hw-test/`) reproduces the stale-translation hazard for a 2MB split+remap,
+but it does not execute ostd. A model-level reachability witness shows a valid view
 with a present 2M mapping at the target VA (`reach-witness.patch`, 1496/0).
 The `map` postcondition and the split flag are internal API changes; review
 welcome on the preferred shape.
