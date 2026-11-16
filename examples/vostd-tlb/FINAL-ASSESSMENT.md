@@ -28,12 +28,13 @@ user; this assessment covers the internal work only.
   43da079 (`patch -p1 --dry-run`), unlike the earlier ktest-based patches; a
   macro-config difference between the ktest workspace and pristine required the
   `apply_all` proof on both map flush exits.
-- **Residual (final):** one trailing `Range` op in `unmap` is retained. The A2
-  removal attempts reached 1499/1 (removed-coverage invariant verified) and
-  1498/2 with the boundary-parent bridge; the remaining case needs a
-  processed-interval history invariant. Engineering decision: keep the one
-  extra range flush rather than grow the proof. `A2-ATTEMPT.md` records the
-  exact obligations.
+- **A2 resolved (2026-11-16):** the trailing `Range` op is removed at
+  **1502 verified / 0 errors**. The cursor-independent E'' invariant (old
+  mapping in range is removed, or has an `adjusted_base` fragment at the same
+  start), `split_while_huge_preserves_start_fragment`, and
+  `lemma_op_covers_submapping` close the break and final postcondition. Patch:
+  `a2-no-trailing/combined-tlb-contracts-no-trailing.patch`; W1/W2 +
+  postcondition remain 1499/1 on the shared model. See `A2-FINAL.md`.
 
 ## 3. Runtime evidence — HARDWARE + OSTD v0.16.0 RUNTIME ACHIEVED; FROZEN ARTIFACT RUN ABSENT
 
@@ -80,19 +81,16 @@ on QEMU and in runtime ostd v0.16.0, but the real `map` replacement/split path
 does flush; F-029 is a contract gap, not a confirmed real-code defect. Two
 verified patches reject the witnesses on the pristine revision.
 
-The fuller outcome is **not fully reached**: A2 keeps a redundant trailing
-Range op for the proof; hardware/VM and same-version runtime ostd evidence now
-exist, but the **frozen verified artifact** still cannot be run; upstream is
-deferred. Next internal steps: finish the coverage invariant to drop the
-trailing op, and add a bootable image for the frozen verified ostd when
-available.
+A2 is now closed (no trailing Range; 1502/0), and hardware/VM plus
+same-version runtime ostd evidence exist. The remaining gap is the **frozen
+verified artifact** run (P4 architectural blocker); upstream is deferred.
 
 ## Update (2026-11-15, second internal pass)
 
-- A2 removal was retried on the pristine combined tree: 1498/2, with the same
-  loop-coverage invariant failure plus the revocation postcondition. The
-  trailing Range op remains in the delivered patch; exact obligations are in
-  `A2-ATTEMPT.md`.
+- A2 removal was retried; the early 1498/2 attempt is superseded (2026-11-16) by
+  the E'' + split-start-fragment proof at 1502/0. The trailing Range is removed
+  in `combined-tlb-contracts-no-trailing.patch`; `A2-FINAL.md` has the final
+  account.
 - Runtime: the QEMU hardware/VM experiment (`qemu-hw-test/`) and the v0.16.0
   ostd ktest (`ostd-runtime-2026-11-16/`) confirm the hazard; neither executes
   the frozen Verus artifact. The runtime ktest also corrects F-029's

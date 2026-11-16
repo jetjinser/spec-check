@@ -1,6 +1,7 @@
 # A2 final: trailing Range flush removed (verified)
 
-Date: 2026-11-16. Branch `work/a2-interval`. The trailing
+Date: 2026-11-16. Merged to `master`; the `baseline-2026-11-16` tag is
+intentionally **not** moved. The trailing
 `TlbFlushOp::Range(start_va..end_va)` is **removed** from `unmap`; the result is
 verified at **1502 verified / 0 errors** with `dispatch_all` + per-item
 `_with` flushes.
@@ -9,7 +10,8 @@ verified at **1502 verified / 0 errors** with `dispatch_all` + per-item
 
 `a2-no-trailing/combined-tlb-contracts-no-trailing.patch` (728 lines, five
 files) applies cleanly to pristine 43da079 (`patch -p1 --dry-run` checked) and
-replaces the old combined patch on this branch, for the unmap part.
+supersedes the old combined patch for the unmap part; the old
+`combined-tlb-contracts.patch` is retained for reference.
 
 Files changed vs pristine:
 
