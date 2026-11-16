@@ -16,6 +16,7 @@
 pub mod divergence;
 pub mod ledger;
 pub mod mutation;
+pub mod mutation_generate;
 mod probe_infra;
 pub mod synthesize;
 pub mod vacuity;

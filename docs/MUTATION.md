@@ -71,3 +71,35 @@ Outputs:
 Do not promote a survivor to a confirmed defect automatically. Record the
 intent source, runtime/test evidence, and any candidate contract repair
 separately.
+
+
+## Generation v1 (`mutation-generate`)
+
+`mutation-generate` is a conservative, function-scoped v1. It extracts named
+function bodies with brace matching, applies a frozen set of line-local
+operators, and writes an exact-snippet manifest for `analyses-mutation`.
+
+```json
+{
+  "target_workspace": "/path/to/frozen/checkout",
+  "source": "src/file.rs",
+  "package": "pkg",
+  "module": "mod::path",
+  "target": "x86_64-unknown-none",
+  "target_dir": "/tmp/mutation-target",
+  "full_confirm": true,
+  "functions": ["f", "g"],
+  "operators": ["return_constant", "literal_shift", "comparison_flip", "boolean_flip", "state_value", "index_zero"],
+  "max_mutants": 80
+}
+```
+
+```sh
+cargo-spec-check mutation-generate   --config GENERATE.json --out MUTANTS.json --report GENERATION-REPORT.json
+```
+
+The report records generated counts by operator and skipped non-unique snippets.
+Generated mutants are not assumed to compile; run `analyses-mutation` to measure
+compile/reject/survivor rates. The generator does not claim semantic validity,
+reachability, or completeness. HIR/MIR-guided generation is deferred until v1
+metrics justify it.

@@ -91,6 +91,42 @@ fn check() -> Result<()> {
         }
         return Ok(());
     }
+    if args.first().is_some_and(|s| s == "mutation-generate") {
+        let usage = "mutation-generate --config FILE --out FILE [--report FILE]";
+        let mut values = BTreeMap::new();
+        let mut iter = args.iter().skip(1);
+        while let Some(key) = iter.next() {
+            match key.as_str() {
+                "--config" | "--out" | "--report" => {
+                    let value = iter.next().ok_or(usage)?.clone();
+                    if values.insert(key.clone(), value).is_some() {
+                        return Err(usage.into());
+                    }
+                }
+                _ => return Err(usage.into()),
+            }
+        }
+        let get = |k: &str| values.get(k).map(String::as_str).ok_or("missing option");
+        let config: spec_check_analyses::mutation_generate::Config =
+            serde_json::from_slice(&fs::read(get("--config")?)?)?;
+        let (manifest, report) = spec_check_analyses::mutation_generate::generate(&config)?;
+        write_json(Path::new(get("--out")?), &manifest)?;
+        if let Some(path) = values.get("--report") {
+            write_json(Path::new(path), &report)?;
+        }
+        println!(
+            "mutation-generate: {} mutants from {} functions ({} non-unique snippets, {} same, {} truncated)",
+            report.generated,
+            report.functions.len(),
+            report.skipped_non_unique,
+            report.skipped_same,
+            report.truncated,
+        );
+        for (op, count) in &report.by_operator {
+            println!("  {op}: {count}");
+        }
+        return Ok(());
+    }
     if args.first().is_some_and(|s| s == "analyses-mutation") {
         let keys = ["--manifest", "--cargo-verus", "--z3", "--vstd", "--out"];
         if args.len() != 11 || keys.iter().enumerate().any(|(i, k)| args[1 + i * 2] != *k) {

@@ -39,4 +39,10 @@ cargo-spec-check analyses-mutation \
   --cargo-verus PATH --z3 PATH --vstd PATH --out OUT
 ```
 
-See `docs/MUTATION.md` for the manifest schema and evidence boundaries.
+The generator can produce that manifest from a frozen source file:
+
+```sh
+cargo-spec-check mutation-generate   --config GENERATE.json --out MUTATIONS.json --report REPORT.json
+```
+
+See `docs/MUTATION.md` for both schemas and evidence boundaries.
