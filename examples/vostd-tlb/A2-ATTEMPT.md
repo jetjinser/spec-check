@@ -117,3 +117,8 @@ Engineering decision: keep the trailing `Range(start..end)` op. It is one
 additional range flush per `unmap`; the per-item `_with` ops remain, and
 `dispatch_all` is faithful. The verified combined patch (1500/0, W1/W2 rejected)
 is final.
+
+## A2 final (2026-11-16)
+
+The processed-interval/break follow-up is recorded in `A2-FINAL.md`; the
+trailing Range remains the delivered engineering choice.

@@ -1,0 +1,38 @@
+error: postcondition not satisfied
+    --> ostd/src/mm/vm_space.rs:1095:13
+     |
+1095 | /             forall|m: Mapping|
+1096 | |                 #[trigger] old(cursor_owner)@.mappings.contains(m)
+1097 | |                     && old(cursor_owner)@.cur_va <= m.va_range.start
+1098 | |                     && m.va_range.start < old(cursor_owner)@.cur_va + len
+1099 | |                     ==> !final(tlb_model).mappings.contains(m),
+     | |______________________________________________________________^ failed this postcondition
+...
+1102 |       pub fn unmap(&mut self, len: usize) -> usize {
+     |  __________________________________________________-
+1103 | |         proof {
+1104 | |             cursor_owner.view_preserves_inv();
+...    |
+1738 | |         num_unmapped
+1739 | |     }
+     | |_____- at the end of the function body
+
+error: loop invariant not satisfied
+    --> ostd/src/mm/vm_space.rs:1248:17
+     |
+1156 | /                 forall |m: Mapping| old(cursor_owner)@.mappings.contains(m)
+1157 | |                     && start_va <= m.va_range.start
+1158 | |                     && m.va_range.start < cursor_owner@.cur_va
+1159 | |                     ==> removed.contains(m) || exists|sm: Mapping| #[trigger]
+1160 | |                         removed.contains(sm)
+1161 | |                             && sm.va_range.start == m.va_range.start
+1162 | |                             && sm.va_range.end <= m.va_range.end,
+     | |                                                                -
+     | |                                                                |
+     | |________________________________________________________________failed this invariant
+     |                                                                  (hint: if this is not supposed to be true at the break, use 'invariant_except_break' for it instead of 'invariant', and use 'ensures' for what is true at the break)
+...
+1248 |                   break;
+     |                   ^^^^^ at this loop exit
+
+error: assertion failed
