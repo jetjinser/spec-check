@@ -168,7 +168,7 @@ pub fn parse_verification(text: &str) -> Option<(usize, usize)> {
     Some((verified, errors))
 }
 
-fn classify(text: &str, returncode: Option<i32>) -> (Status, Option<usize>, Option<usize>) {
+fn classify(text: &str, _returncode: Option<i32>) -> (Status, Option<usize>, Option<usize>) {
     if let Some((verified, errors)) = parse_verification(text) {
         if errors == 0 {
             (Status::Verified, Some(verified), Some(0))
@@ -177,8 +177,6 @@ fn classify(text: &str, returncode: Option<i32>) -> (Status, Option<usize>, Opti
         }
     } else if text.contains("error[E") || text.contains("could not compile") {
         (Status::CompileError, None, None)
-    } else if returncode == Some(0) {
-        (Status::Unknown, None, None)
     } else {
         (Status::Unknown, None, None)
     }

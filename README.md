@@ -46,3 +46,18 @@ cargo-spec-check mutation-generate   --config GENERATE.json --out MUTATIONS.json
 ```
 
 See `docs/MUTATION.md` for both schemas and evidence boundaries.
+
+## Development checks
+
+`make check` runs formatting and workspace tests. If `cargo` is not in
+`PATH`, the Makefile enters `../vostd/nix` by default; override with
+`SPEC_CHECK_NIX=/path/to/devshell` or run inside the devshell directly.
+
+```sh
+make fmt-check
+make test
+make check   # fmt-check + workspace tests
+```
+
+`make clippy` is available for local review; CI currently gates formatting and
+workspace tests only.
