@@ -1,0 +1,728 @@
+--- a/ostd/specs/mm/page_table/cursor/split_while_huge_lemmas.rs
++++ b/ostd/specs/mm/page_table/cursor/split_while_huge_lemmas.rs
+@@ -444,6 +444,85 @@
+         }
+     }
+ 
++    /// Start-fragment: every mapping in the original view has a descendant in
++    /// `split_while_huge(size)` with the same VA start (its first page fragment).
++    #[verifier::rlimit(120)]
++    pub proof fn split_while_huge_preserves_start_fragment(self, size: usize, m: Mapping)
++        requires
++            self.inv(),
++            size >= PAGE_SIZE,
++            self.mappings.contains(m),
++        ensures
++            exists|sm: Mapping| #[trigger] self.split_while_huge(size).mappings.contains(sm)
++                && sm.va_range.start == m.va_range.start
++                && sm.va_range.end <= m.va_range.end,
++        decreases
++                if self.present() {
++                    self.query_mapping().page_size as int
++                } else {
++                    0
++                },
++    {
++        if self.present() {
++            let qm = self.query_mapping();
++            if qm.page_size > size {
++                let new_size = qm.page_size / NR_ENTRIES;
++                self.lemma_query_mapping();
++                assert(set![4096usize, 2097152, 1073741824].contains(new_size)) by {
++                    if qm.page_size != 2097152 && qm.page_size != 1073741824 {
++                        assert(false);
++                    }
++                };
++                let new_self = self.split_if_mapped_huge_spec(new_size);
++                Self::split_if_mapped_huge_spec_preserves_inv(self, new_size);
++                Self::split_if_mapped_huge_spec_decreases_page_size(self, new_size);
++                if m == qm {
++                    let m0 = Self::split_index(m, new_size, 0);
++                    assert(new_self.mappings.contains(m0)) by {
++                        let domain = Set::<int>::range(0int, qm.page_size as int / new_size as int);
++                        let new_mappings = domain.map(
++                            |n: int| Self::split_index(qm, new_size, n as usize),
++                        );
++                        assert(NR_ENTRIES == 512) by (compute_only);
++                        assert(new_size == qm.page_size / NR_ENTRIES);
++                        assert(NR_ENTRIES > 1) by (compute_only);
++                        vstd::arithmetic::div_mod::lemma_div_is_strictly_smaller(
++                            qm.page_size as int,
++                            NR_ENTRIES as int,
++                        );
++                        assert(new_size < qm.page_size);
++                        vstd::arithmetic::div_mod::lemma_div_non_zero(
++                            qm.page_size as int,
++                            512int,
++                        );
++                        assert(new_size > 0);
++                        vstd::arithmetic::div_mod::lemma_div_non_zero(
++                            qm.page_size as int,
++                            new_size as int,
++                        );
++                        assert(domain.contains(0int));
++                        assert(new_mappings.contains(m0));
++                    };
++                    Self::lemma_split_index_inv(m, new_size, 0);
++                    new_self.split_while_huge_preserves_start_fragment(size, m0);
++                    let sm = choose|sm: Mapping| #[trigger] new_self.split_while_huge(
++                        size,
++                    ).mappings.contains(sm) && sm.va_range.start == m0.va_range.start
++                        && sm.va_range.end <= m0.va_range.end;
++                    assert(sm.va_range.start == m.va_range.start);
++                    assert(sm.va_range.end <= m.va_range.end);
++                } else {
++                    assert(new_self.mappings.contains(m));
++                    new_self.split_while_huge_preserves_start_fragment(size, m);
++                    let sm = choose|sm: Mapping| #[trigger] new_self.split_while_huge(
++                        size,
++                    ).mappings.contains(sm) && sm.va_range.start == m.va_range.start
++                        && sm.va_range.end <= m.va_range.end;
++                }
++            }
++        }
++    }
++
+     /// Refinement: every mapping in `split_while_huge(size).mappings` is either
+     /// from `self.mappings` or a sub-mapping of an entry in `self.mappings`.
+     /// Base lemma: every mapping in `split_if_mapped_huge_spec(new_size).mappings`
+--- a/ostd/specs/mm/tlb.rs
++++ b/ostd/specs/mm/tlb.rs
+@@ -1,4 +1,5 @@
+ use vstd::prelude::*;
++use core::ops::Range;
+ use vstd_extra::ownership::*;
+ 
+ use crate::specs::mm::page_table::*;
+@@ -97,16 +98,132 @@
+         self.pending.tracked_push(op);
+     }
+ 
+-    pub open spec fn dispatch_tlb_flush_spec(self) -> Self {
+-        let op = self.pending.last();
+-        let popped = TlbModel {
+-            pending: self.pending[..self.pending.len() - 1],
+-            mappings: self.mappings,
+-        };
++    pub open spec fn flush_range(self, range: Range<Vaddr>) -> Self {
++        let m = self.mappings.filter(|m: Mapping| m.va_range.start < range.end && range.start < m.va_range.end);
++        TlbModel { pending: self.pending, mappings: self.mappings - m }
++    }
++
++    pub open spec fn apply_op(mappings: Set<Mapping>, op: TlbFlushOp) -> Set<Mapping> {
++        match op {
++            TlbFlushOp::All => Set::<Mapping>::empty(),
++            TlbFlushOp::Address(va) => mappings.filter(|m: Mapping| !(m.va_range.start <= va < m.va_range.end)),
++            TlbFlushOp::Range(range) => mappings.filter(|m: Mapping| !(m.va_range.start < range.end && range.start < m.va_range.end)),
++        }
++    }
++
++    pub open spec fn apply_all(mappings: Set<Mapping>, pending: Seq<TlbFlushOp>) -> Set<Mapping>
++        decreases pending.len(),
++    {
++        if pending.len() == 0 {
++            mappings
++        } else {
++            TlbModel::apply_all(Self::apply_op(mappings, pending[0]), pending[1..])
++        }
++    }
++
++    pub open spec fn op_covers(op: TlbFlushOp, m: Mapping) -> bool {
+         match op {
+-            TlbFlushOp::All => popped,
+-            TlbFlushOp::Address(va) => popped.flush(va),
+-            TlbFlushOp::Range(range) => popped.flush(range.start),
++            TlbFlushOp::All => true,
++            TlbFlushOp::Address(va) => m.va_range.start <= va < m.va_range.end,
++            TlbFlushOp::Range(range) => m.va_range.start < range.end && range.start < m.va_range.end,
++        }
++    }
++
++    pub proof fn lemma_op_covers_submapping(op: TlbFlushOp, sm: Mapping, m: Mapping)
++        requires
++            Self::op_covers(op, sm),
++            sm.va_range.start == m.va_range.start,
++            sm.va_range.end <= m.va_range.end,
++        ensures
++            Self::op_covers(op, m),
++    {
++        match op {
++            TlbFlushOp::All => {},
++            TlbFlushOp::Address(va) => {
++                assert(m.va_range.start <= va < m.va_range.end);
++            },
++            TlbFlushOp::Range(range) => {
++                assert(m.va_range.start < range.end);
++                assert(range.start < m.va_range.end);
++            },
++        }
++    }
++
++    pub proof fn lemma_apply_op_subset(mappings: Set<Mapping>, op: TlbFlushOp)
++        ensures
++            Self::apply_op(mappings, op).subset_of(mappings),
++    {
++        match op {
++            TlbFlushOp::All => {},
++            TlbFlushOp::Address(va) => {},
++            TlbFlushOp::Range(range) => {},
++        }
++    }
++
++    pub proof fn lemma_apply_op_not_contains(mappings: Set<Mapping>, op: TlbFlushOp, m: Mapping)
++        requires
++            Self::op_covers(op, m),
++        ensures
++            !Self::apply_op(mappings, op).contains(m),
++    {
++        match op {
++            TlbFlushOp::All => {},
++            TlbFlushOp::Address(va) => {},
++            TlbFlushOp::Range(range) => {},
++        }
++    }
++
++    pub proof fn lemma_apply_all_subset(mappings: Set<Mapping>, pending: Seq<TlbFlushOp>)
++        ensures
++            Self::apply_all(mappings, pending).subset_of(mappings),
++        decreases pending.len(),
++    {
++        if pending.len() > 0 {
++            Self::lemma_apply_op_subset(mappings, pending[0]);
++            Self::lemma_apply_all_subset(Self::apply_op(mappings, pending[0]), pending[1..]);
++        }
++    }
++
++    pub proof fn lemma_apply_all_removed(
++        mappings: Set<Mapping>,
++        pending: Seq<TlbFlushOp>,
++        m: Mapping,
++    )
++        requires
++            exists|i: int| 0 <= i < pending.len() && #[trigger] Self::op_covers(pending[i], m),
++        ensures
++            !Self::apply_all(mappings, pending).contains(m),
++        decreases pending.len(),
++    {
++        if pending.len() == 0 {
++            let i = choose|i: int| 0 <= i < pending.len() && #[trigger] Self::op_covers(pending[i], m);
++            assert(0 <= i < pending.len());
++            assert(false);
++        } else {
++            let i = choose|i: int| 0 <= i < pending.len() && #[trigger] Self::op_covers(pending[i], m);
++            if i == 0 {
++                Self::lemma_apply_op_not_contains(mappings, pending[0], m);
++                Self::lemma_apply_all_subset(Self::apply_op(mappings, pending[0]), pending[1..]);
++            } else {
++                assert(Self::apply_all(mappings, pending) == Self::apply_all(
++                    Self::apply_op(mappings, pending[0]),
++                    pending[1..],
++                ));
++                assert(exists|j: int| 0 <= j < pending[1..].len() && #[trigger] Self::op_covers(
++                    pending[1..][j],
++                    m,
++                )) by {
++                    assert(pending[1..][i - 1] == pending[i]);
++                }
++                Self::lemma_apply_all_removed(Self::apply_op(mappings, pending[0]), pending[1..], m);
++            }
++        }
++    }
++
++    pub open spec fn dispatch_tlb_flush_spec(self) -> Self {
++        TlbModel {
++            pending: Seq::<TlbFlushOp>::empty(),
++            mappings: Self::apply_all(self.mappings, self.pending),
+         }
+     }
+ }
+--- a/ostd/src/mm/kspace/kvirt_area.rs
++++ b/ostd/src/mm/kspace/kvirt_area.rs
+@@ -630,9 +630,10 @@
+             // `item_slot_in_regions` for the current item is delivered by the
+             // loop invariant (instantiated at i = it.index()), itself established by
+             // the function precondition.
++            let mut split = false;
+             let res = unsafe {
+                 #[verus_spec(with Tracked(&mut cursor_owner), Tracked(entry_owner), Tracked(regions), Tracked(guards))]
+-                cursor.map(item)
++                cursor.map(item, &mut split)
+             };
+ 
+             // `item_slot_in_regions` preservation for the remaining frames
+@@ -919,9 +920,10 @@
+                 proof {
+                     let idx = crate::specs::mm::frame::mapping::frame_to_index(pa);
+                 }
++                let mut split = false;
+                 let _ = unsafe {
+                     #[verus_spec(with Tracked(&mut cursor_owner), Tracked(entry_owner), Tracked(regions), Tracked(guards))]
+-                    cursor.map(item)
++                    cursor.map(item, &mut split)
+                 };
+ 
+                 proof {
+--- a/ostd/src/mm/page_table/cursor/mod.rs
++++ b/ostd/src/mm/page_table/cursor/mod.rs
+@@ -2351,7 +2351,7 @@
+     }
+ 
+     #[verifier::rlimit(300)]
+-    #[verus_spec(
++    #[verus_spec(split_result =>
+         with Tracked(owner): Tracked<&mut CursorOwner<'rcu, C>>,
+              Tracked(regions): Tracked<&mut MetaRegionOwners>,
+              Tracked(guards): Tracked<&mut Guards>,
+@@ -2368,6 +2368,7 @@
+             final(self).0.level == level,
+             final(owner).in_locked_range(),
+             final(owner)@ == old(owner)@.split_while_huge(page_size::<PagingConsts>(level)),
++            split_result == false ==> final(owner)@ == old(owner)@,
+             forall |item: C::Item| #![trigger Self::item_slot_in_regions(item, *old(regions))]
+                 Self::item_slot_in_regions(item, *old(regions)) ==>
+                 Self::item_slot_in_regions(item, *final(regions)),
+@@ -2388,7 +2389,7 @@
+                 old(regions).slots.contains_key(idx) ==> final(regions).slots.contains_key(idx),
+     )]
+     #[verifier::spinoff_prover]
+-    pub fn map_loop(&mut self, level: PagingLevel, rcu_guard: &'rcu A) {
++    pub fn map_loop(&mut self, level: PagingLevel, rcu_guard: &'rcu A) -> (split: bool) {
+         // Keep quantified continuation and region predicates local to this loop proof.
+         hide(CursorContinuation::view_mappings);
+         hide(CursorOwner::view_mappings);
+@@ -2401,6 +2402,7 @@
+         let ghost guard_level = self.0.guard_level;
+         let ghost barrier_va = self.0.barrier_va;
+         let ghost owner0 = *owner;
++        let mut split = false;
+         proof {
+             owner0.split_while_huge_at_level_noop();
+         }
+@@ -2423,6 +2425,7 @@
+                 owner.metaregion_sound(*regions),
+                 !owner.popped_too_high,
+                 owner@ == owner0@.split_while_huge(page_size::<PagingConsts>(self.0.level)),
++                split == false ==> owner@ == owner0@,
+                 forall|item: C::Item|
+                     #![trigger Self::item_slot_in_regions(item, *old(regions))]
+                     Self::item_slot_in_regions(item, *old(regions)) ==> Self::item_slot_in_regions(
+@@ -2732,6 +2735,7 @@
+                     #[verus_spec(with Tracked(&mut child_owner), Tracked(&mut parent_owner), Tracked(regions),
+                             Tracked(guards))]
+                     cur_entry.split_if_mapped_huge(rcu_guard)).unwrap();
++                    split = true;
+ 
+                     proof {
+                         continuation.entry_own.tracked_put_node(parent_owner);
+@@ -2806,6 +2810,7 @@
+                 },
+             }
+         }
++        split
+     }
+ 
+     /// Maps the item starting from the current address to a physical address range.
+@@ -2907,10 +2912,11 @@
+                 old(regions).contains(idx) ==> final(regions).contains(idx),
+             final(self).0.guard_level == old(self).0.guard_level,
+             final(self).0.barrier_va == old(self).0.barrier_va,
++            (res is Ok && !*final(split_out)) ==> !old(owner)@.present(),
+     )]
+     #[verifier::spinoff_prover]
+     #[verifier::rlimit(300)]
+-    pub unsafe fn map(&mut self, item: C::Item) -> (res: Result<(), PageTableFrag<C>>) {
++    pub unsafe fn map(&mut self, item: C::Item, split_out: &mut bool) -> (res: Result<(), PageTableFrag<C>>) {
+         hide(MetaSlotOwner::storage_perm);
+         hide(MetaSlotOwner::vtable_ptr_perm);
+         let ghost self0 = *self;
+@@ -2970,7 +2976,8 @@
+         }
+ 
+         #[verus_spec(with Tracked(owner), Tracked(regions), Tracked(guards))]
+-        self.map_loop(level, rcu_guard);
++        let split = self.map_loop(level, rcu_guard);
++        *split_out = split;
+ 
+         let ghost owner1 = *owner;
+         let ghost regions_before_new_child = *regions;
+@@ -3037,6 +3044,7 @@
+             };
+         }
+ 
++        let ghost owner_pre_replace = *owner;
+         #[verus_spec(with Tracked(owner), Tracked(new_owner), Tracked(regions), Tracked(guards))]
+         let frag = self.replace_cur_entry(Child::Frame(pa, level, prop));
+ 
+@@ -3067,6 +3075,15 @@
+         if let Some(frag) = frag {
+             Err(frag)
+         } else {
++            proof {
++                assert(owner_pre_replace.cur_entry_owner().is_absent());
++                owner_pre_replace.lemma_cur_entry_absent_not_present();
++                if !split {
++                    assert(owner1@ == owner0@);
++                    assert(owner_pre_replace@ == owner1@);
++                    assert(!old(owner)@.present());
++                }
++            }
+             Ok(())
+         }
+     }
+--- a/ostd/src/mm/vm_space.rs
++++ b/ostd/src/mm/vm_space.rs
+@@ -927,16 +927,71 @@
+                 old(cursor_owner)@,
+                 final(cursor_owner)@,
+             ),
++            forall|m: Mapping|
++                #[trigger] old(cursor_owner)@.mappings.contains(m)
++                    && m.va_range.start <= old(self).pt_cursor.0.va
++                    && old(self).pt_cursor.0.va < m.va_range.end
++                    ==> !final(tlb_model).mappings.contains(m),
+     )]
+     pub fn map(&mut self, frame: UFrame, prop: PageProperty) {
+         let start_va = self.virt_addr();
+         let item = MappedItem { frame: frame, prop: prop };
+ 
+         // SAFETY: It is safe to map untyped memory into the userspace.
+-        let Err(frag) = (unsafe {
++        let mut split = false;
++        let res = unsafe {
+             #[verus_spec(with Tracked(cursor_owner), Tracked(entry_owner), Tracked(regions), Tracked(guards))]
+-            self.pt_cursor.map(item)
+-        }) else {
++            self.pt_cursor.map(item, &mut split)
++        };
++        proof {
++            assert(res is Ok && !split ==> !old(cursor_owner)@.present());
++        }
++        let Err(frag) = res else {
++            if split {
++                #[verus_spec(with Tracked(tlb_model))]
++                self.flusher.issue_tlb_flush(TlbFlushOp::Address(start_va));
++                let ghost tlb_before_split_flush = *tlb_model;
++                #[verus_spec(with Tracked(tlb_model))]
++                self.flusher.dispatch_tlb_flush();
++                proof {
++                    let last: int = tlb_before_split_flush.pending.len() - 1;
++                    assert(tlb_before_split_flush.pending[last] == TlbFlushOp::Address(start_va));
++                    assert(final(tlb_model).mappings == TlbModel::apply_all(
++                        tlb_before_split_flush.mappings,
++                        tlb_before_split_flush.pending,
++                    ));
++                    assert forall|m: Mapping|
++                        old(cursor_owner)@.mappings.contains(m)
++                            && m.va_range.start <= start_va
++                            && start_va < m.va_range.end
++                        implies !final(tlb_model).mappings.contains(m) by {
++                        assert(TlbModel::op_covers(TlbFlushOp::Address(start_va), m));
++                        assert(exists|i: int| 0 <= i < tlb_before_split_flush.pending.len()
++                            && #[trigger] TlbModel::op_covers(tlb_before_split_flush.pending[i], m)) by {
++                            assert(tlb_before_split_flush.pending[last] == TlbFlushOp::Address(start_va));
++                        };
++                        TlbModel::lemma_apply_all_removed(
++                            tlb_before_split_flush.mappings,
++                            tlb_before_split_flush.pending,
++                            m,
++                        );
++                    };
++                }
++            } else {
++                proof {
++                    assert forall|m: Mapping|
++                        old(cursor_owner)@.mappings.contains(m)
++                            && m.va_range.start <= start_va
++                            && start_va < m.va_range.end
++                            implies !final(tlb_model).mappings.contains(m) by {
++                        assert(old(cursor_owner)@.cur_va == start_va);
++                        assert(old(cursor_owner)@.mappings.filter(
++                            |x: Mapping| x.va_range.start <= start_va < x.va_range.end,
++                        ).contains(m));
++                        assert(old(cursor_owner)@.present());
++                    };
++                }
++            }
+             return;  // No mapping exists at the current address.
+         };
+ 
+@@ -950,8 +1005,33 @@
+                     TlbFlushOp::Address(start_va),
+                     old_frame.into_dyn(),
+                 );
++                let ghost tlb_before_replace_flush = *tlb_model;
+                 #[verus_spec(with Tracked(tlb_model))]
+                 self.flusher.dispatch_tlb_flush();
++                proof {
++                    let last: int = tlb_before_replace_flush.pending.len() - 1;
++                    assert(tlb_before_replace_flush.pending[last] == TlbFlushOp::Address(start_va));
++                    assert(final(tlb_model).mappings == TlbModel::apply_all(
++                        tlb_before_replace_flush.mappings,
++                        tlb_before_replace_flush.pending,
++                    ));
++                    assert forall|m: Mapping|
++                        old(cursor_owner)@.mappings.contains(m)
++                            && m.va_range.start <= start_va
++                            && start_va < m.va_range.end
++                        implies !final(tlb_model).mappings.contains(m) by {
++                        assert(TlbModel::op_covers(TlbFlushOp::Address(start_va), m));
++                        assert(exists|i: int| 0 <= i < tlb_before_replace_flush.pending.len()
++                            && #[trigger] TlbModel::op_covers(tlb_before_replace_flush.pending[i], m)) by {
++                            assert(tlb_before_replace_flush.pending[last] == TlbFlushOp::Address(start_va));
++                        };
++                        TlbModel::lemma_apply_all_removed(
++                            tlb_before_replace_flush.mappings,
++                            tlb_before_replace_flush.pending,
++                            m,
++                        );
++                    };
++                }
+             },
+             PageTableFrag::StrayPageTable { .. } => {
+                 assert(false) by {
+@@ -1012,6 +1092,11 @@
+             final(self).pt_cursor.0.invariants(*final(cursor_owner), *final(regions), *final(guards)),
+             old(cursor_owner)@.unmap_spec(len, final(cursor_owner)@, r),
+             final(tlb_model).inv(),
++            forall|m: Mapping|
++                #[trigger] old(cursor_owner)@.mappings.contains(m)
++                    && old(cursor_owner)@.cur_va <= m.va_range.start
++                    && m.va_range.start < old(cursor_owner)@.cur_va + len
++                    ==> !final(tlb_model).mappings.contains(m),
+     )]
+     #[verifier::spinoff_prover]
+     pub fn unmap(&mut self, len: usize) -> usize {
+@@ -1028,6 +1113,7 @@
+ 
+         assert(!self.pt_cursor.0.find_next_panic_condition(len));
+ 
++        let start_va_exec = self.virt_addr();
+         let end_va = self.virt_addr() + len;
+         let mut num_unmapped: usize = 0;
+ 
+@@ -1044,6 +1130,15 @@
+             // and for UserPtConfig that evaluates to 2^47.
+             lemma_vaddr_range_spec_user();
+             assert((self.pt_cursor.0.va + len) % PAGE_SIZE as int == 0) by (compute);
++            assert forall|m: Mapping| old(cursor_owner)@.mappings.contains(m)
++                && start_va <= m.va_range.start
++                && m.va_range.start < end_va
++                implies removed.contains(m) || exists|sm: Mapping| #[trigger]
++                    adjusted_base.contains(sm)
++                        && sm.va_range.start == m.va_range.start
++                        && sm.va_range.end <= m.va_range.end by {
++                assert(adjusted_base.contains(m));
++            };
+         }
+ 
+         #[verus_spec(
+@@ -1064,6 +1159,16 @@
+                 // Everything removed is in the [start, end) range.
+                 forall |m: Mapping| #[trigger] removed.contains(m) ==>
+                     start_va <= m.va_range.start < end_va,
++                forall |m: Mapping| removed.contains(m) ==> exists|i: int|
++                    0 <= i < tlb_model.pending.len()
++                        && #[trigger] TlbModel::op_covers(tlb_model.pending[i], m),
++                forall |m: Mapping| old(cursor_owner)@.mappings.contains(m)
++                    && start_va <= m.va_range.start
++                    && m.va_range.start < end_va
++                    ==> removed.contains(m) || exists|sm: Mapping| #[trigger]
++                        adjusted_base.contains(sm)
++                            && sm.va_range.start == m.va_range.start
++                            && sm.va_range.end <= m.va_range.end,
+                 // Per-config VA bound: every removed mapping fits within the
+                 // user VA space, sourced from the cursor view prior to removal.
+                 forall |m: Mapping| #[trigger] removed.contains(m) ==>
+@@ -1154,8 +1259,17 @@
+ 
+             let ghost old_adjusted = adjusted_base;
+             let ghost old_removed = removed;
++            assert(prev_mappings == old_adjusted.difference(old_removed));
++            assert forall|m: Mapping| old(cursor_owner)@.mappings.contains(m)
++                && start_va <= m.va_range.start
++                && m.va_range.start < end_va
++                implies old_removed.contains(m) || exists|sm: Mapping| #[trigger]
++                    old_adjusted.contains(sm)
++                        && sm.va_range.start == m.va_range.start
++                        && sm.va_range.end <= m.va_range.end by {};
+ 
+             let ghost frag_ghost = frag;
++            let ghost pending_before = tlb_model.pending;
+ 
+             match frag {
+                 PageTableFrag::Mapped { va, item, .. } => {
+@@ -1365,6 +1479,93 @@
+                         removed.contains(e) implies adjusted_base.contains(e) by {};
+                 };
+ 
++                // Pending-op coverage of everything removed so far.
++                let ghost op_va: int = match frag_ghost {
++                    PageTableFrag::Mapped { va: fv, .. } => fv as int,
++                    PageTableFrag::StrayPageTable { va: fv, .. } => fv as int,
++                };
++                let ghost op_len: int = match frag_ghost {
++                    PageTableFrag::StrayPageTable { len: fl, .. } => fl as int,
++                    _ => 0,
++                };
++                let ghost issued_op = match frag_ghost {
++                    PageTableFrag::Mapped { .. } => TlbFlushOp::Address(op_va as usize),
++                    PageTableFrag::StrayPageTable { .. } => TlbFlushOp::Range(op_va as usize..(op_va + op_len) as usize),
++                };
++                assert(tlb_model.pending == pending_before.push(issued_op));
++                assert forall|m: Mapping| removed.contains(m) implies exists|i: int|
++                    0 <= i < tlb_model.pending.len()
++                        && #[trigger] TlbModel::op_covers(tlb_model.pending[i], m) by {
++                    if old_removed.contains(m) {
++                        let i = choose|i: int| 0 <= i < pending_before.len()
++                            && #[trigger] TlbModel::op_covers(pending_before[i], m);
++                        assert(0 <= i < pending_before.len());
++                        assert(tlb_model.pending[i] == pending_before[i]);
++                        assert(TlbModel::op_covers(tlb_model.pending[i], m));
++                    } else {
++                        let last: nat = pending_before.len();
++                        assert(tlb_model.pending[last as int] == issued_op);
++                        if is_mapped {
++                            assert(m == mm);
++                            assert(mm.va_range.start == op_va);
++                            assert(mm.va_range.start < mm.va_range.end);
++                            assert(TlbModel::op_covers(issued_op, m));
++                        } else {
++                            assert(subtree.contains(m));
++                            assert(op_va <= m.va_range.start < op_va + op_len);
++                            assert(m.va_range.start < m.va_range.end);
++                            assert(TlbModel::op_covers(issued_op, m));
++                        }
++                    }
++                };
++
++                // E'': every old mapping in [start,end) is removed, or has an
++                // adjusted-base fragment with the same start.
++                assert forall|m: Mapping| old(cursor_owner)@.mappings.contains(m)
++                    && start_va <= m.va_range.start
++                    && m.va_range.start < end_va
++                    implies removed.contains(m) || exists|sm2: Mapping| #[trigger]
++                        adjusted_base.contains(sm2)
++                            && sm2.va_range.start == m.va_range.start
++                            && sm2.va_range.end <= m.va_range.end by {
++                    if !removed.contains(m) {
++                        assert(!old_removed.contains(m)) by {
++                            if old_removed.contains(m) {
++                                assert(removed.contains(m));
++                            }
++                        }
++                        let sm0 = choose|sm0: Mapping| #[trigger]
++                            old_adjusted.contains(sm0)
++                                && sm0.va_range.start == m.va_range.start
++                                && sm0.va_range.end <= m.va_range.end;
++                        if old_removed.contains(sm0) {
++                            if is_mapped {
++                                assert(sm.union(old_removed).contains(sm0));
++                            } else {
++                                assert(adjusted_base.contains(sm0));
++                            }
++                        } else {
++                            assert(prev_mappings.contains(sm0)) by {
++                                assert(old_adjusted.difference(old_removed).contains(sm0));
++                            };
++                            if is_mapped {
++                                sv.split_while_huge_preserves_start_fragment(mm.page_size, sm0);
++                                let sm2 = choose|sm2: Mapping| #[trigger]
++                                    sm.contains(sm2)
++                                        && sm2.va_range.start == sm0.va_range.start
++                                        && sm2.va_range.end <= sm0.va_range.end;
++                                assert(adjusted_base.contains(sm2)) by {
++                                    assert(adjusted_base == sm.union(old_removed));
++                                };
++                                assert(sm2.va_range.start == m.va_range.start);
++                                assert(sm2.va_range.end <= m.va_range.end);
++                            } else {
++                                assert(adjusted_base.contains(sm0));
++                            }
++                        }
++                    }
++                };
++
+                 // Maintain: not-yet-removed mappings in [start, end) are either
+                 // ahead of the cursor or sub-mappings of a boundary-straddling parent.
+                 assert forall|m: Mapping|
+@@ -1548,9 +1749,80 @@
+                     && m.property == parent.property by {};
+         }
+ 
++        let ghost tlb_before_dispatch = *tlb_model;
+         #[verus_spec(with Tracked(tlb_model))]
+         self.flusher.dispatch_tlb_flush();
+ 
++        proof {
++            assert(final(tlb_model).mappings == TlbModel::apply_all(
++                tlb_before_dispatch.mappings,
++                tlb_before_dispatch.pending,
++            ));
++            assert(cursor_owner@.cur_va >= end_va);
++            assert forall|m: Mapping|
++                old(cursor_owner)@.mappings.contains(m)
++                    && old(cursor_owner)@.cur_va <= m.va_range.start
++                    && m.va_range.start < old(cursor_owner)@.cur_va + len
++                implies !final(tlb_model).mappings.contains(m) by {
++                assert(start_va == old(cursor_owner)@.cur_va);
++                assert(end_va == old(cursor_owner)@.cur_va + len);
++                assert(m.inv());
++                if removed.contains(m) {
++                    let i = choose|i: int| 0 <= i < tlb_before_dispatch.pending.len()
++                        && #[trigger] TlbModel::op_covers(tlb_before_dispatch.pending[i], m);
++                    TlbModel::lemma_apply_all_removed(
++                        tlb_before_dispatch.mappings,
++                        tlb_before_dispatch.pending,
++                        m,
++                    );
++                } else {
++                    let sm2 = choose|sm2: Mapping| #[trigger]
++                        adjusted_base.contains(sm2)
++                            && sm2.va_range.start == m.va_range.start
++                            && sm2.va_range.end <= m.va_range.end;
++                    assert(sm2.va_range.start < cursor_owner@.cur_va) by {
++                        assert(sm2.va_range.start == m.va_range.start);
++                        assert(m.va_range.start < end_va);
++                    }
++                    assert(removed.contains(sm2)) by {
++                        if !removed.contains(sm2) {
++                            assert(sm2.va_range.start >= cursor_owner@.cur_va
++                                || exists|parent: Mapping| #[trigger]
++                                    old(cursor_owner)@.mappings.contains(parent)
++                                        && parent.va_range.start < start_va
++                                        && parent.va_range.start <= sm2.va_range.start
++                                        && sm2.va_range.end <= parent.va_range.end
++                                        && sm2.pa_range.start == (parent.pa_range.start
++                                            + (sm2.va_range.start
++                                            - parent.va_range.start)) as Paddr
++                                        && sm2.property == parent.property);
++                            assert(!exists|parent: Mapping| #[trigger]
++                                old(cursor_owner)@.mappings.contains(parent)
++                                    && parent.va_range.start < start_va
++                                    && parent.va_range.start <= sm2.va_range.start
++                                    && sm2.va_range.end <= parent.va_range.end
++                                    && sm2.pa_range.start == (parent.pa_range.start
++                                        + (sm2.va_range.start
++                                        - parent.va_range.start)) as Paddr
++                                    && sm2.property == parent.property);
++                        }
++                    };
++                    let i = choose|i: int| 0 <= i < tlb_before_dispatch.pending.len()
++                        && #[trigger] TlbModel::op_covers(tlb_before_dispatch.pending[i], sm2);
++                    TlbModel::lemma_op_covers_submapping(
++                        tlb_before_dispatch.pending[i],
++                        sm2,
++                        m,
++                    );
++                    TlbModel::lemma_apply_all_removed(
++                        tlb_before_dispatch.mappings,
++                        tlb_before_dispatch.pending,
++                        m,
++                    );
++                }
++            };
++        }
++
+         num_unmapped
+     }
+ 

@@ -122,3 +122,9 @@ is final.
 
 The processed-interval/break follow-up is recorded in `A2-FINAL.md`; the
 trailing Range remains the delivered engineering choice.
+
+## A2 resolved (2026-11-16)
+
+The cursor-independent E'' invariant plus
+`split_while_huge_preserves_start_fragment` closes the break; the trailing Range
+is removed at 1502/0. See `A2-FINAL.md` and `a2-no-trailing/`.
