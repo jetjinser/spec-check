@@ -458,6 +458,13 @@ mod tests {
     }
 
     #[test]
+    fn matching_brace_ignores_lifetimes() {
+        let src = "fn f<'a>(x: &'a u8) { let y = x; }\n";
+        let (range, _) = function_body(src, "f").unwrap();
+        assert_eq!(&src[range], " let y = x; ");
+    }
+
+    #[test]
     fn proof_regions_are_not_mutated() {
         let dir =
             std::env::temp_dir().join(format!("spec-check-mutgen-proof-{}", std::process::id()));
