@@ -103,7 +103,12 @@ fn matching_brace(source: &str, open: usize) -> Option<usize> {
                     continue;
                 }
                 b'"' => mode = 3,
-                b'\'' => mode = 4,
+                b'\'' => {
+                    // A lifetime such as `'rcu` is not a char literal.
+                    if i + 2 < bytes.len() && (bytes[i + 1] == b'\\' || bytes[i + 2] == b'\'') {
+                        mode = 4;
+                    }
+                }
                 b'{' => depth += 1,
                 b'}' => {
                     depth -= 1;
