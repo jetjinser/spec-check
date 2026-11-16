@@ -1,7 +1,9 @@
 # A2 attempt: removing the trailing Range flush
 
-Status: **not completed**; exact failing obligations recorded. The verified
-`dispatch_all` + trailing Range version remains the candidate.
+Status: **resolved 2026-11-16**; this file preserves the failed attempts and
+their exact obligations. Final result: trailing Range removed, 1502/0; see
+`A2-FINAL.md`. Earlier “keep the trailing Range” decisions below are historical,
+not current.
 
 ## Change attempted
 
@@ -113,15 +115,15 @@ boundary-parent case therefore needs a processed-interval history, not a
 per-mapping predicate. Closing it is a larger invariant than the value of
 removing one redundant range flush.
 
-Engineering decision: keep the trailing `Range(start..end)` op. It is one
-additional range flush per `unmap`; the per-item `_with` ops remain, and
-`dispatch_all` is faithful. The verified combined patch (1500/0, W1/W2 rejected)
-is final.
+Historical engineering decision (superseded): keep the trailing
+`Range(start..end)` op. It is one additional range flush per `unmap`; the
+per-item `_with` ops remain, and `dispatch_all` is faithful. The cursor-
+independent E'' proof later removed it.
 
 ## A2 final (2026-11-16)
 
-The processed-interval/break follow-up is recorded in `A2-FINAL.md`; the
-trailing Range remains the delivered engineering choice.
+Initially recorded as “trailing Range retained”; superseded the same day by the
+cursor-independent E'' proof. See `A2-FINAL.md` (1502/0).
 
 ## A2 resolved (2026-11-16)
 
