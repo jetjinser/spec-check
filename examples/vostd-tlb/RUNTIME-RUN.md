@@ -1,5 +1,33 @@
 # Runtime / executable verification status
 
+## QEMU hardware/VM experiment — ACHIEVED
+
+`qemu-hw-test/` builds a minimal 32-bit PAE test kernel and boots it in QEMU
+11.1. It caches a 2MB translation (frame A, 0xAA), splits the page table to 4KB,
+remaps the VA to frame B (0xBB) **without invlpg**, and reads again:
+
+```
+warm read: 0xAA
+after 2M split+remap (no invlpg): 0xAA
+after invlpg: 0xBB
+verdict: CONFIRMED stale 2M-page translation without flush
+```
+
+A 4MB PSE variant shows the same. This is a real VM execution of the hazard
+pattern; it does not execute ostd.
+
+## ostd kernel run
+
+Still unavailable: OSDK builds plain-Rust kernels, the frozen ostd is
+Verus-annotated and has no OSDK integration; Asterinas' runtime ostd is a
+different 0.18 codebase.
+
+## Model test
+
+`model-test/` remains a separate executable model (not the kernel).
+
+# Runtime / executable verification status
+
 ## QEMU
 
 `nix shell nixpkgs#qemu -c qemu-system-x86_64 --version` works (QEMU 11.1.2).
