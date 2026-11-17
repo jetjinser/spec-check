@@ -76,11 +76,15 @@ intent source, runtime/test evidence, and any candidate contract repair
 separately.
 
 
-## Generation v1 (`mutation-generate`)
+## Generation v1/v2 (`mutation-generate`)
 
-`mutation-generate` is a conservative, function-scoped v1. It extracts named
-function bodies with brace matching, applies a frozen set of line-local
+`mutation-generate` is a conservative, function-scoped generator. It extracts
+named function bodies with brace matching, applies a frozen set of line-local
 operators, and writes an exact-snippet manifest for `analyses-mutation`.
+
+v1.1 filters proof/`assert ... by`/invariant regions and spec markers. v2 also
+skips `=>`, `->`, generic, and bit-shift delimiters so syntax is not mutated as
+a comparison.
 
 ```json
 {
@@ -104,5 +108,6 @@ cargo-spec-check mutation-generate   --config GENERATE.json --out MUTANTS.json -
 The report records generated counts by operator and skipped non-unique snippets.
 Generated mutants are not assumed to compile; run `analyses-mutation` to measure
 compile/reject/survivor rates. The generator does not claim semantic validity,
-reachability, or completeness. HIR/MIR-guided generation is deferred until v1
-metrics justify it.
+reachability, or completeness. The syntax filter improves compileability; the
+retrospective benchmark still has exact recall 0/3, so HIR/MIR-guided or
+template-directed generation remains future work.
