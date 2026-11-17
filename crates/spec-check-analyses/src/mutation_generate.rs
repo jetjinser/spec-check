@@ -467,6 +467,7 @@ pub fn generate(config: &Config) -> Result<(crate::mutation::Manifest, Generatio
         target: config.target.clone(),
         target_dir: config.target_dir.clone(),
         full_confirm: config.full_confirm,
+        full_target_dir: None,
         mutations,
     };
     Ok((manifest, report))
