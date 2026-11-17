@@ -22,9 +22,15 @@ use std::{
     time::Instant,
 };
 
+pub const MANIFEST_SCHEMA_VERSION: &str = "mutation.manifest.v1";
+pub const REPORT_SCHEMA_VERSION: &str = "mutation.report.v1";
+
 /// Project-side mutation manifest.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Manifest {
+    /// Version of the manifest contract. Older manifests default to v1.
+    #[serde(default = "default_manifest_schema_version")]
+    pub schema_version: String,
     /// Workspace root containing the package.
     pub target_workspace: PathBuf,
     /// Source file to mutate, relative to `target_workspace`.
@@ -59,6 +65,10 @@ fn default_true() -> bool {
 
 fn default_timeout() -> u64 {
     900
+}
+
+fn default_manifest_schema_version() -> String {
+    MANIFEST_SCHEMA_VERSION.to_string()
 }
 
 /// One exact-snippet mutation.
@@ -120,6 +130,7 @@ pub struct Summary {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct MutationReport {
+    pub schema_version: String,
     pub target_workspace: PathBuf,
     pub source: PathBuf,
     pub package: String,
@@ -141,6 +152,12 @@ impl Drop for SourceGuard {
 }
 
 fn validate(manifest: &Manifest) -> Result<(), String> {
+    if manifest.schema_version != MANIFEST_SCHEMA_VERSION {
+        return Err(format!(
+            "unsupported manifest schema_version {:?} (expected {})",
+            manifest.schema_version, MANIFEST_SCHEMA_VERSION
+        ));
+    }
     if manifest.mutations.is_empty() {
         return Err("no mutations in manifest".into());
     }
@@ -409,6 +426,7 @@ pub fn run(
     }
     fs::write(output.join("results.jsonl"), jsonl).map_err(|e| e.to_string())?;
     Ok(MutationReport {
+        schema_version: REPORT_SCHEMA_VERSION.to_string(),
         target_workspace: manifest.target_workspace.clone(),
         source: manifest.source.clone(),
         package: manifest.package.clone(),
@@ -444,6 +462,41 @@ mod tests {
         assert_eq!(apply_once("x = a + b;", &mutation()).unwrap(), "x = a - b;");
         assert!(apply_once("a + b; a + b;", &mutation()).is_err());
         assert!(apply_once("a + c;", &mutation()).is_err());
+    }
+
+    #[test]
+    fn legacy_manifest_defaults_to_v1() {
+        let raw = r#"{
+            "target_workspace": "/ws",
+            "source": "src/lib.rs",
+            "package": "p",
+            "module": "m",
+            "target_dir": "/target",
+            "mutations": [{"id": "m1", "old": "0", "new": "1"}]
+        }"#;
+        let manifest: Manifest = serde_json::from_str(raw).unwrap();
+        assert_eq!(manifest.schema_version, MANIFEST_SCHEMA_VERSION);
+        assert!(manifest.full_confirm);
+        assert_eq!(manifest.timeout_seconds, 900);
+    }
+
+    #[test]
+    fn rejects_unknown_manifest_schema() {
+        let mut manifest = Manifest {
+            schema_version: "mutation.manifest.v99".into(),
+            target_workspace: PathBuf::from("/ws"),
+            source: "src/lib.rs".into(),
+            package: "p".into(),
+            module: "m".into(),
+            target: None,
+            target_dir: PathBuf::from("/target"),
+            full_confirm: false,
+            full_target_dir: None,
+            timeout_seconds: 1,
+            mutations: vec![mutation()],
+        };
+        assert!(validate(&manifest).is_err());
+        manifest.schema_version = MANIFEST_SCHEMA_VERSION.into();
     }
 
     #[test]
@@ -492,6 +545,7 @@ mod tests {
     #[test]
     fn full_confirmation_uses_a_separate_target_dir() {
         let manifest = Manifest {
+            schema_version: MANIFEST_SCHEMA_VERSION.to_string(),
             target_workspace: PathBuf::from("/ws"),
             source: "src/lib.rs".into(),
             package: "p".into(),
@@ -533,6 +587,7 @@ mod tests {
         perms.set_mode(0o755);
         std::fs::set_permissions(&fake, perms).unwrap();
         let manifest = Manifest {
+            schema_version: MANIFEST_SCHEMA_VERSION.to_string(),
             target_workspace: workspace,
             source: "src/lib.rs".into(),
             package: "p".into(),
@@ -588,6 +643,7 @@ mod tests {
         std::fs::set_permissions(&fake, perms).unwrap();
 
         let manifest = Manifest {
+            schema_version: MANIFEST_SCHEMA_VERSION.to_string(),
             target_workspace: workspace,
             source: "src/lib.rs".into(),
             package: "p".into(),

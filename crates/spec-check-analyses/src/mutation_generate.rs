@@ -268,8 +268,8 @@ fn candidates_for_line(
                 "true" => "false",
                 _ => "true",
             };
-            let old = format!("{}{}", &c[1], value);
-            let new = format!("{}{}", &c[1], replacement);
+            let old = format!("{}return {}", &c[1], value);
+            let new = format!("{}return {}", &c[1], replacement);
             push(
                 &mut out,
                 function,
@@ -465,6 +465,7 @@ pub fn generate(config: &Config) -> Result<(crate::mutation::Manifest, Generatio
         })
         .collect();
     let manifest = crate::mutation::Manifest {
+        schema_version: crate::mutation::MANIFEST_SCHEMA_VERSION.to_string(),
         target_workspace: config.target_workspace.clone(),
         source: config.source.clone(),
         package: config.package.clone(),
@@ -530,6 +531,34 @@ mod tests {
         let src = "fn f<'a>(x: &'a u8) { let y = x; }\n";
         let (range, _) = function_body(src, "f").unwrap();
         assert_eq!(&src[range], " let y = x; ");
+    }
+
+    #[test]
+    fn multiline_return_constant_is_generated() {
+        let dir = std::env::temp_dir().join(format!(
+            "spec-check-mutgen-multiline-{}",
+            std::process::id()
+        ));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("src")).unwrap();
+        std::fs::write(dir.join("src/lib.rs"), "fn f() {\n    return 0;\n}\n").unwrap();
+        let config = Config {
+            target_workspace: dir.clone(),
+            source: "src/lib.rs".into(),
+            package: "p".into(),
+            module: "m".into(),
+            target: None,
+            target_dir: dir.join("target"),
+            full_confirm: false,
+            functions: vec!["f".into()],
+            operators: vec!["return_constant".into()],
+            max_mutants: 10,
+            timeout_seconds: 900,
+        };
+        let (manifest, report) = generate(&config).unwrap();
+        assert_eq!(report.generated, 1, "report: {report:?}");
+        assert_eq!(manifest.mutations.len(), 1);
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]

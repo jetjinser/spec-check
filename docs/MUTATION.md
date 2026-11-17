@@ -145,3 +145,16 @@ It classifies proof/spec regions, property templates, registry overlaps,
 local test/source intent references, and the confirmation route. It never
 promotes a survivor. Project-specific equivalence judgement, runtime evidence,
 and contract repair stay project-side.
+
+
+## Schemas
+
+Versioned contracts live in `schemas/`:
+
+- `mutation.manifest.v1.schema.json`
+- `mutation.report.v1.schema.json`
+- `mutation.triage.v1.schema.json`
+
+Manifests are validated by the tool. Reports and triage output carry the same
+`schema_version` and can be checked with any JSON Schema 2020-12 validator.
+Older manifests without `schema_version` default to v1 at runtime.

@@ -34,6 +34,7 @@ pub struct Entry {
 
 #[derive(Debug, Clone, Serialize)]
 pub struct Report {
+    pub schema_version: String,
     pub manifest: String,
     pub results: String,
     pub source: String,
@@ -270,6 +271,7 @@ pub fn run(
         *routes.entry(entry.confirmation_route.clone()).or_default() += 1;
     }
     let report = Report {
+        schema_version: "mutation.triage.v1".to_string(),
         manifest: manifest_path.display().to_string(),
         results: results_path.display().to_string(),
         source: source_path.display().to_string(),

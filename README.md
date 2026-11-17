@@ -71,3 +71,13 @@ make check   # fmt-check + workspace tests
 
 `make clippy` is available for local review; CI currently gates formatting and
 workspace tests only.
+
+
+## Mutation quickstart
+
+A Vostd-independent example lives in
+[`examples/mutation-quickstart/`](examples/mutation-quickstart/README.md). It
+uses a fake verifier so the generate/run/triage data flow can be exercised
+without a Verus installation.
+
+CI advisory guidance: [`docs/MUTATION-CI.md`](docs/MUTATION-CI.md).

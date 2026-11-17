@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec-check.dev/schemas/mutation.report.v1.schema.json",
+  "title": "spec-check mutation report",
+  "type": "object",
+  "required": ["schema_version", "target_workspace", "source", "package", "module", "baseline_focus", "results", "summary"],
+  "properties": {
+    "schema_version": { "const": "mutation.report.v1" },
+    "target_workspace": { "type": "string" },
+    "source": { "type": "string" },
+    "package": { "type": "string" },
+    "module": { "type": "string" },
+    "baseline_focus": { "type": "object" },
+    "results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "focus", "final_status"],
+        "properties": {
+          "id": { "type": "string" },
+          "description": { "type": "string" },
+          "focus": { "type": "object" },
+          "full": { "type": ["object", "null"] },
+          "final_status": { "type": "string" },
+          "first_error": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["mutants", "verified_survivors", "rejected", "compile_errors", "timeouts", "unknown"],
+      "properties": {
+        "mutants": { "type": "integer", "minimum": 0 },
+        "verified_survivors": { "type": "integer", "minimum": 0 },
+        "rejected": { "type": "integer", "minimum": 0 },
+        "compile_errors": { "type": "integer", "minimum": 0 },
+        "timeouts": { "type": "integer", "minimum": 0 },
+        "unknown": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

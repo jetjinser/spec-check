@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec-check.dev/schemas/mutation.triage.v1.schema.json",
+  "title": "spec-check mutation triage",
+  "type": "object",
+  "required": ["schema_version", "manifest", "results", "source", "survivors", "routes", "entries"],
+  "properties": {
+    "schema_version": { "const": "mutation.triage.v1" },
+    "manifest": { "type": "string" },
+    "results": { "type": "string" },
+    "source": { "type": "string" },
+    "survivors": { "type": "integer", "minimum": 0 },
+    "routes": { "type": "object", "additionalProperties": { "type": "integer" } },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "function", "region", "property_template", "equivalence_risk", "confirmation_route", "old", "new"],
+        "properties": {
+          "id": { "type": "string" },
+          "function": { "type": "string" },
+          "line": { "type": ["integer", "null"] },
+          "operator": { "type": "string" },
+          "region": { "enum": ["implementation", "spec_or_proof"] },
+          "property_template": { "type": "string" },
+          "equivalence_risk": { "type": "string" },
+          "confirmation_route": { "type": "string" },
+          "registry_matches": { "type": "array", "items": { "type": "string" } },
+          "intent_refs": { "type": "array", "items": { "type": "string" } },
+          "old": { "type": "string" },
+          "new": { "type": "string" },
+          "focus_log": { "type": ["string", "null"] },
+          "full_log": { "type": ["string", "null"] }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -39,6 +39,7 @@ use std::{
     process::Command,
 };
 mod check_flow;
+mod mutation_cli;
 fn print_help() {
     print!(
         "cargo-spec-check\n\
@@ -47,10 +48,10 @@ fn print_help() {
          \x20 cargo-spec-check --manifest-path PATH --package NAME --verus-root PATH --out PATH\n\
          \n\
          Contract mutation:\n\
-         \x20 cargo-spec-check mutation-generate --config FILE --out FILE [--report FILE]\n\
-         \x20 cargo-spec-check mutation --manifest FILE --cargo-verus PATH --z3 PATH --vstd PATH --out DIRECTORY [--dry-run]\n\
-         \x20 cargo-spec-check analyses-mutation ...   (compatibility alias)\n\
-         \x20 cargo-spec-check mutation-triage --manifest FILE --results FILE --source FILE --out FILE [--registry FILE]\n\
+         \x20 cargo-spec-check mutation generate --config FILE --out FILE [--report FILE]\n\
+         \x20 cargo-spec-check mutation run --manifest FILE --cargo-verus PATH --z3 PATH --vstd PATH --out DIR [--dry-run] [--mode advisory|strict]\n\
+         \x20 cargo-spec-check mutation triage --manifest FILE --results FILE --source FILE --out FILE [--registry FILE]\n\
+         \x20 (compatibility: mutation-generate, analyses-mutation, mutation-triage)\n\
          \n\
          Other analyses:\n\
          \x20 analyses-vacuity, analyses-divergence, and legacy campaign commands are accepted.\n\
@@ -69,6 +70,9 @@ fn check() -> Result<()> {
     if args.is_empty() || (args.len() == 1 && (args[0] == "--help" || args[0] == "-h")) {
         print_help();
         return Ok(());
+    }
+    if let Some(result) = mutation_cli::dispatch(&args) {
+        return result;
     }
     if args.first().is_some_and(|s| s == "analyses-vacuity") {
         let keys = ["--manifest", "--cargo-verus", "--z3", "--vstd", "--out"];
@@ -111,131 +115,6 @@ fn check() -> Result<()> {
         write_json(&out.join("report.json"), &report)?;
         for v in &report.verdicts {
             println!("{}: {:?}", v.name, v.verdict);
-        }
-        return Ok(());
-    }
-    if args.first().is_some_and(|s| s == "mutation-generate") {
-        let usage = "mutation-generate --config FILE --out FILE [--report FILE]";
-        let mut values = BTreeMap::new();
-        let mut iter = args.iter().skip(1);
-        while let Some(key) = iter.next() {
-            match key.as_str() {
-                "--config" | "--out" | "--report" => {
-                    let value = iter.next().ok_or(usage)?.clone();
-                    if values.insert(key.clone(), value).is_some() {
-                        return Err(usage.into());
-                    }
-                }
-                _ => return Err(usage.into()),
-            }
-        }
-        let get = |k: &str| values.get(k).map(String::as_str).ok_or("missing option");
-        let config: spec_check_analyses::mutation_generate::Config =
-            serde_json::from_slice(&fs::read(get("--config")?)?)?;
-        let (manifest, report) = spec_check_analyses::mutation_generate::generate(&config)?;
-        write_json(Path::new(get("--out")?), &manifest)?;
-        if let Some(path) = values.get("--report") {
-            write_json(Path::new(path), &report)?;
-        }
-        println!(
-            "mutation-generate: {} mutants from {} functions ({} non-unique snippets, {} same, {} truncated)",
-            report.generated,
-            report.functions.len(),
-            report.skipped_non_unique,
-            report.skipped_same,
-            report.truncated,
-        );
-        for (op, count) in &report.by_operator {
-            println!("  {op}: {count}");
-        }
-        return Ok(());
-    }
-    if args
-        .first()
-        .is_some_and(|s| s == "mutation" || s == "analyses-mutation")
-    {
-        let usage = "mutation (or analyses-mutation) --manifest FILE --cargo-verus PATH --z3 PATH --vstd PATH --out DIRECTORY [--dry-run]";
-        let mut values = BTreeMap::new();
-        let mut dry_run = false;
-        let mut iter = args.iter().skip(1);
-        while let Some(key) = iter.next() {
-            match key.as_str() {
-                "--dry-run" => dry_run = true,
-                "--manifest" | "--cargo-verus" | "--z3" | "--vstd" | "--out" => {
-                    let value = iter.next().ok_or(usage)?.clone();
-                    if values.insert(key.clone(), value).is_some() {
-                        return Err(usage.into());
-                    }
-                }
-                _ => return Err(usage.into()),
-            }
-        }
-        let manifest_path = values.get("--manifest").ok_or(usage)?;
-        let manifest: spec_check_analyses::mutation::Manifest =
-            serde_json::from_slice(&fs::read(manifest_path)?)?;
-        if dry_run {
-            let report = spec_check_analyses::mutation::validate_manifest(&manifest)?;
-            println!(
-                "mutation dry-run: {} valid mutants in {} (source {})",
-                report.mutants,
-                report.target_workspace.display(),
-                report.source.display()
-            );
-            for warning in report.warnings {
-                println!("warning: {warning}");
-            }
-            return Ok(());
-        }
-        let get = |k: &str| values.get(k).map(String::as_str).ok_or(usage);
-        let out = Path::new(get("--out")?);
-        let report = spec_check_analyses::mutation::run(
-            &manifest,
-            Path::new(get("--cargo-verus")?),
-            Path::new(get("--z3")?),
-            out,
-        )?;
-        fs::create_dir_all(out)?;
-        write_json(&out.join("report.json"), &report)?;
-        println!(
-            "mutation: {} mutants, {} verified survivors, {} rejected, {} compile errors, {} timeouts, {} unknown",
-            report.summary.mutants,
-            report.summary.verified_survivors,
-            report.summary.rejected,
-            report.summary.compile_errors,
-            report.summary.timeouts,
-            report.summary.unknown,
-        );
-        for result in &report.results {
-            println!("{}: {}", result.id, result.final_status);
-        }
-        return Ok(());
-    }
-    if args.first().is_some_and(|s| s == "mutation-triage") {
-        let usage = "mutation-triage --manifest FILE --results FILE --source FILE --out FILE [--registry FILE]";
-        let mut values = BTreeMap::new();
-        let mut iter = args.iter().skip(1);
-        while let Some(key) = iter.next() {
-            match key.as_str() {
-                "--manifest" | "--results" | "--source" | "--out" | "--registry" => {
-                    let value = iter.next().ok_or(usage)?.clone();
-                    if values.insert(key.clone(), value).is_some() {
-                        return Err(usage.into());
-                    }
-                }
-                _ => return Err(usage.into()),
-            }
-        }
-        let get = |k: &str| values.get(k).map(String::as_str).ok_or(usage);
-        let report = spec_check_analyses::mutation_triage::run(
-            Path::new(get("--manifest")?),
-            Path::new(get("--results")?),
-            Path::new(get("--source")?),
-            values.get("--registry").map(Path::new),
-            Path::new(get("--out")?),
-        )?;
-        println!("mutation-triage: {} survivors", report.survivors);
-        for (route, count) in &report.routes {
-            println!("  {route}: {count}");
         }
         return Ok(());
     }
