@@ -42,6 +42,8 @@ does not live in this repository.
   so a cached focused run cannot hide the full verification summary; override
   with `full_target_dir`. Each Verus run has a wall timeout (`timeout_seconds`,
   default 900); timed-out runs are reported as `timeout`, not as survivors.
+  On Unix the verifier is put in its own process group and the group is killed,
+  so rustc/z3 descendants are stopped with cargo-verus.
 - Source bytes are restored after the run, including on error.
 - `--vstd` is accepted for CLI parity with the other analyses; the target
   workspace's build configuration supplies the actual Verus/vstd context.

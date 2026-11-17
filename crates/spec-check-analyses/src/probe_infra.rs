@@ -339,6 +339,12 @@ pub(crate) fn run_captured_timeout(
         .map_err(|e| e.to_string())?;
     let err = file.try_clone().map_err(|e| e.to_string())?;
     cmd.stdout(file).stderr(err);
+    #[cfg(unix)]
+    {
+        use std::os::unix::process::CommandExt;
+        // Put the verifier and its rustc/z3 descendants in one process group.
+        cmd.process_group(0);
+    }
     let mut child = cmd
         .spawn()
         .map_err(|e| format!("failed to execute cargo-verus: {e}"))?;
@@ -349,6 +355,13 @@ pub(crate) fn run_captured_timeout(
             Some(status) => break Some(status),
             None if Instant::now() >= deadline => {
                 timed_out = true;
+                #[cfg(unix)]
+                {
+                    // `child.kill()` only signals the direct cargo-verus
+                    // process; kill its process group to stop rustc/z3 too.
+                    let pid = child.id() as libc::pid_t;
+                    let _ = unsafe { libc::kill(-pid, libc::SIGKILL) };
+                }
                 let _ = child.kill();
                 break child.wait().ok();
             }
