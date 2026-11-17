@@ -191,6 +191,31 @@ fn skip_line(line: &str) -> bool {
         || t.contains("final(")
 }
 
+fn is_comparison_token(line: &str, m: &regex::Match<'_>) -> bool {
+    let bytes = line.as_bytes();
+    let prev = if m.start() > 0 {
+        bytes[m.start() - 1]
+    } else {
+        0
+    };
+    let next = bytes.get(m.end()).copied().unwrap_or(0);
+    match m.as_str() {
+        // `->` and `=>` are syntax, not comparisons.
+        ">" => {
+            if prev == b'-' || prev == b'=' {
+                return false;
+            }
+            // A closing generic delimiter, e.g. `Range<T>` or `Vec<T>>`.
+            !(prev.is_ascii_alphanumeric()
+                && matches!(next, b'>' | b')' | b',' | b';' | b' ' | b'|' | b'&' | b':')
+                && line[..m.start()].contains('<'))
+        }
+        // Do not rewrite the opening bracket of a generic type.
+        "<" => next != b'<' && prev != b'<' && !next.is_ascii_uppercase(),
+        _ => true,
+    }
+}
+
 fn replace_once(line: &str, old: &str, new: &str) -> Option<String> {
     if old.is_empty() || old == new {
         return None;
@@ -280,6 +305,9 @@ fn candidates_for_line(
     if enabled.iter().any(|o| o == "comparison_flip") {
         let re = Regex::new(r"(<=|>=|==|!=|<|>)").unwrap();
         for m in re.find_iter(line).take(2) {
+            if !is_comparison_token(line, &m) {
+                continue;
+            }
             let replacement = match m.as_str() {
                 "<" => "<=",
                 "<=" => "<",
@@ -455,6 +483,38 @@ mod tests {
         assert_eq!(&src[range], " if x { y(); } ");
         assert_eq!(line, 1);
         assert!(function_body(src, "missing").is_none());
+    }
+
+    #[test]
+    fn comparison_generation_skips_arrows_and_generics() {
+        let dir =
+            std::env::temp_dir().join(format!("spec-check-mutgen-syntax-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(dir.join("src")).unwrap();
+        std::fs::write(
+            dir.join("src/lib.rs"),
+            "fn f<T>(x: T) -> bool { let g = |v: usize| -> bool { v < 1 }; x == x }\n",
+        )
+        .unwrap();
+        let config = Config {
+            target_workspace: dir.clone(),
+            source: "src/lib.rs".into(),
+            package: "p".into(),
+            module: "m".into(),
+            target: None,
+            target_dir: dir.join("target"),
+            full_confirm: false,
+            functions: vec!["f".into()],
+            operators: vec!["comparison_flip".into()],
+            max_mutants: 20,
+        };
+        let (manifest, _) = generate(&config).unwrap();
+        for m in &manifest.mutations {
+            assert!(!m.new.contains("->="));
+            assert!(!m.new.contains("=>"));
+            assert!(!m.new.contains("<T>="));
+        }
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]
