@@ -19,7 +19,6 @@ use std::{
     collections::BTreeSet,
     fs,
     path::{Path, PathBuf},
-    process::Command,
     time::Instant,
 };
 
@@ -203,38 +202,27 @@ fn run_one(
     focus: bool,
 ) -> Result<RunResult, String> {
     let mode = if focus { "focus" } else { "check" };
-    let mut cmd = Command::new(cargo_verus);
-    cmd.current_dir(&manifest.target_workspace)
-        .arg(mode)
-        .args(["-p", &manifest.package, "--offline"])
-        .args(["--target-dir", &manifest.target_dir.to_string_lossy()]);
-    if let Some(target) = &manifest.target {
-        cmd.args(["--target", target]);
-    }
-    cmd.args(["--lib", "--"]);
+    let mut verus_args: Vec<&str> = Vec::new();
     if focus {
-        cmd.args(["--verify-module", &manifest.module]);
+        verus_args.extend(["--verify-module", manifest.module.as_str()]);
     }
-    cmd.env("VERUS_USE_RUSTUP", "0")
-        .env("VERUS_Z3_PATH", z3)
-        .env("RUSTC_BOOTSTRAP", "1");
-
-    let started = Instant::now();
-    let output = cmd
-        .output()
-        .map_err(|e| format!("failed to run {}: {e}", cargo_verus.display()))?;
-    let elapsed = started.elapsed().as_secs_f64();
-    let mut log = String::new();
-    log.push_str(&format!("$ {:?}\n", cmd));
-    log.push_str("--- stdout ---\n");
-    log.push_str(&String::from_utf8_lossy(&output.stdout));
-    log.push_str("\n--- stderr ---\n");
-    log.push_str(&String::from_utf8_lossy(&output.stderr));
+    let mut cmd = crate::probe_infra::target_command(
+        cargo_verus,
+        mode,
+        &manifest.target_workspace,
+        &manifest.package,
+        &manifest.target_dir,
+        manifest.target.as_ref(),
+        &verus_args,
+        z3,
+    );
     let log_name = format!("{mutation_id}-{}.log", if focus { "focus" } else { "full" });
-    fs::write(out.join("logs").join(&log_name), log.as_bytes())
-        .map_err(|e| format!("write {log_name}: {e}"))?;
-
-    let returncode = output.status.code();
+    let log_path = out.join("logs").join(&log_name);
+    let started = Instant::now();
+    let (exit_status, log) = crate::probe_infra::run_captured(&mut cmd, &log_path)
+        .map_err(|e| format!("run {log_name}: {e}"))?;
+    let elapsed = started.elapsed().as_secs_f64();
+    let returncode = exit_status.code();
     let (status, verified, errors) = classify(&log, returncode);
     Ok(RunResult {
         status,
