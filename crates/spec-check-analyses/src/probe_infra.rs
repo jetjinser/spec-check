@@ -516,3 +516,58 @@ pub(crate) fn parse_target_log(log: &str) -> ParsedTargetLog {
     }
     (events, summaries, crate_sections)
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::{path::Path, process::Command, time::Duration};
+
+    #[cfg(unix)]
+    #[test]
+    fn timeout_kills_descendant_process_group() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let root =
+            std::env::temp_dir().join(format!("spec-check-process-group-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&root);
+        std::fs::create_dir_all(&root).unwrap();
+        let pidfile = root.join("child.pid");
+        let script = root.join("fake-verifier.sh");
+        std::fs::write(
+            &script,
+            format!(
+                "#!/bin/sh\nsleep 30 &\necho $! > {}\nwait\n",
+                pidfile.display()
+            ),
+        )
+        .unwrap();
+        let mut perms = std::fs::metadata(&script).unwrap().permissions();
+        perms.set_mode(0o755);
+        std::fs::set_permissions(&script, perms).unwrap();
+
+        let mut cmd = Command::new(&script);
+        let log = root.join("run.log");
+        let (_status, _log, timed_out) =
+            run_captured_timeout(&mut cmd, &log, Duration::from_secs(2)).unwrap();
+        assert!(timed_out);
+
+        let pid: u32 = std::fs::read_to_string(&pidfile)
+            .expect("child pid file")
+            .trim()
+            .parse()
+            .expect("pid");
+        let proc_path = format!("/proc/{pid}");
+        for _ in 0..30 {
+            let state = std::fs::read_to_string(format!("/proc/{pid}/stat"))
+                .ok()
+                .and_then(|stat| stat.split_whitespace().nth(2).map(str::to_string));
+            if !Path::new(&proc_path).exists() || state.as_deref() == Some("Z") {
+                let _ = std::fs::remove_dir_all(&root);
+                return;
+            }
+            std::thread::sleep(Duration::from_millis(100));
+        }
+        let _ = std::fs::remove_dir_all(&root);
+        panic!("descendant process {pid} survived process-group timeout");
+    }
+}
