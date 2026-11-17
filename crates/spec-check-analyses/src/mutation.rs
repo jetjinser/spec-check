@@ -47,11 +47,18 @@ pub struct Manifest {
     /// summary. Defaults to `<target_dir>/full`.
     #[serde(default)]
     pub full_target_dir: Option<PathBuf>,
+    /// Per-Verus-run wall timeout in seconds. Defaults to 900.
+    #[serde(default = "default_timeout")]
+    pub timeout_seconds: u64,
     pub mutations: Vec<Mutation>,
 }
 
 fn default_true() -> bool {
     true
+}
+
+fn default_timeout() -> u64 {
+    900
 }
 
 /// One exact-snippet mutation.
@@ -72,6 +79,7 @@ pub enum Status {
     Verified,
     Rejected,
     CompileError,
+    TimedOut,
     Unknown,
 }
 
@@ -82,6 +90,10 @@ pub struct RunResult {
     pub errors: Option<usize>,
     pub returncode: Option<i32>,
     pub elapsed_seconds: f64,
+    pub timed_out: bool,
+    /// `fresh` when a verification summary was observed; `cached` when cargo
+    /// finished without one; `unknown` otherwise.
+    pub cache_status: String,
     pub log: String,
 }
 
@@ -102,6 +114,7 @@ pub struct Summary {
     pub verified_survivors: usize,
     pub rejected: usize,
     pub compile_errors: usize,
+    pub timeouts: usize,
     pub unknown: usize,
 }
 
@@ -146,6 +159,40 @@ fn validate(manifest: &Manifest) -> Result<(), String> {
     Ok(())
 }
 
+#[derive(Debug, Clone, Serialize)]
+pub struct ValidationReport {
+    pub source: PathBuf,
+    pub target_workspace: PathBuf,
+    pub mutants: usize,
+    pub warnings: Vec<String>,
+}
+
+/// Validate a manifest without running Verus or modifying the source.
+pub fn validate_manifest(manifest: &Manifest) -> Result<ValidationReport, String> {
+    validate(manifest)?;
+    let source = manifest.target_workspace.join(&manifest.source);
+    if !manifest.target_workspace.is_dir() {
+        return Err(format!(
+            "target workspace is not a directory: {}",
+            manifest.target_workspace.display()
+        ));
+    }
+    let pristine = fs::read_to_string(&source).map_err(|e| format!("{}: {e}", source.display()))?;
+    let mut warnings = Vec::new();
+    for mutation in &manifest.mutations {
+        apply_once(&pristine, mutation)?;
+        if mutation.new == mutation.old {
+            warnings.push(format!("{}: new snippet equals old snippet", mutation.id));
+        }
+    }
+    Ok(ValidationReport {
+        source,
+        target_workspace: manifest.target_workspace.clone(),
+        mutants: manifest.mutations.len(),
+        warnings,
+    })
+}
+
 /// Apply one mutation to `pristine`, requiring exactly one occurrence.
 pub fn apply_once(pristine: &str, mutation: &Mutation) -> Result<String, String> {
     let count = pristine.matches(&mutation.old).count();
@@ -172,8 +219,14 @@ pub fn parse_verification(text: &str) -> Option<(usize, usize)> {
     Some((verified, errors))
 }
 
-fn classify(text: &str, _returncode: Option<i32>) -> (Status, Option<usize>, Option<usize>) {
-    if let Some((verified, errors)) = parse_verification(text) {
+fn classify(
+    text: &str,
+    _returncode: Option<i32>,
+    timed_out: bool,
+) -> (Status, Option<usize>, Option<usize>) {
+    if timed_out {
+        (Status::TimedOut, None, None)
+    } else if let Some((verified, errors)) = parse_verification(text) {
         if errors == 0 {
             (Status::Verified, Some(verified), Some(0))
         } else {
@@ -184,6 +237,19 @@ fn classify(text: &str, _returncode: Option<i32>) -> (Status, Option<usize>, Opt
     } else {
         (Status::Unknown, None, None)
     }
+}
+
+fn cache_status(text: &str, status: Status, returncode: Option<i32>) -> String {
+    if status == Status::TimedOut {
+        return "timeout".into();
+    }
+    if parse_verification(text).is_some() {
+        return "fresh".into();
+    }
+    if returncode == Some(0) && text.contains("Finished") {
+        return "cached".into();
+    }
+    "unknown".into()
 }
 
 fn first_error(text: &str) -> Option<String> {
@@ -235,17 +301,21 @@ fn run_one(
     let log_name = format!("{mutation_id}-{}.log", if focus { "focus" } else { "full" });
     let log_path = out.join("logs").join(&log_name);
     let started = Instant::now();
-    let (exit_status, log) = crate::probe_infra::run_captured(&mut cmd, &log_path)
-        .map_err(|e| format!("run {log_name}: {e}"))?;
+    let timeout = std::time::Duration::from_secs(manifest.timeout_seconds.max(1));
+    let (exit_status, log, timed_out) =
+        crate::probe_infra::run_captured_timeout(&mut cmd, &log_path, timeout)
+            .map_err(|e| format!("run {log_name}: {e}"))?;
     let elapsed = started.elapsed().as_secs_f64();
-    let returncode = exit_status.code();
-    let (status, verified, errors) = classify(&log, returncode);
+    let returncode = exit_status.and_then(|s| s.code());
+    let (status, verified, errors) = classify(&log, returncode, timed_out);
     Ok(RunResult {
         status,
         verified,
         errors,
         returncode,
         elapsed_seconds: (elapsed * 10.0).round() / 10.0,
+        timed_out,
+        cache_status: cache_status(&log, status, returncode),
         log: format!("logs/{log_name}"),
     })
 }
@@ -281,6 +351,8 @@ pub fn run(
                 "verified_survivor"
             } else if full.status == Status::Rejected {
                 "focus_verified_full_rejected"
+            } else if full.status == Status::TimedOut {
+                "full_timeout"
             } else {
                 "full_unknown"
             };
@@ -292,6 +364,7 @@ pub fn run(
                     Status::Verified => "verified_survivor".to_string(),
                     Status::Rejected => "rejected".to_string(),
                     Status::CompileError => "compile_error".to_string(),
+                    Status::TimedOut => "timeout".to_string(),
                     Status::Unknown => "unknown".to_string(),
                 },
             )
@@ -324,7 +397,11 @@ pub fn run(
         .iter()
         .filter(|r| r.final_status == "compile_error")
         .count();
-    let unknown = results.len() - verified_survivors - rejected - compile_errors;
+    let timeouts = results
+        .iter()
+        .filter(|r| r.final_status == "timeout" || r.final_status == "full_timeout")
+        .count();
+    let unknown = results.len() - verified_survivors - rejected - compile_errors - timeouts;
     let mut jsonl = String::new();
     for result in &results {
         jsonl.push_str(&serde_json::to_string(result).map_err(|e| e.to_string())?);
@@ -342,6 +419,7 @@ pub fn run(
             verified_survivors,
             rejected,
             compile_errors,
+            timeouts,
             unknown,
         },
         results,
@@ -369,6 +447,24 @@ mod tests {
     }
 
     #[test]
+    fn classify_timeout_and_cache_status() {
+        let (status, _, _) = classify("no summary", Some(0), true);
+        assert!(matches!(status, Status::TimedOut));
+        assert_eq!(
+            cache_status("Finished `dev` profile", Status::Unknown, Some(0)),
+            "cached"
+        );
+        assert_eq!(
+            cache_status(
+                "verification results:: 1 verified, 0 errors",
+                Status::Verified,
+                Some(0)
+            ),
+            "fresh"
+        );
+    }
+
+    #[test]
     fn parses_last_verification_line() {
         let text = "verification results:: 12 verified, 1 errors\n\
                     verification results:: 13 verified, 0 errors";
@@ -377,10 +473,18 @@ mod tests {
 
     #[test]
     fn classifies_verified_and_rejected() {
-        let (s, v, e) = classify("verification results:: 13 verified, 0 errors", Some(0));
+        let (s, v, e) = classify(
+            "verification results:: 13 verified, 0 errors",
+            Some(0),
+            false,
+        );
         assert!(matches!(s, Status::Verified));
         assert_eq!((v, e), (Some(13), Some(0)));
-        let (s, _, e) = classify("verification results:: 12 verified, 1 errors", Some(1));
+        let (s, _, e) = classify(
+            "verification results:: 12 verified, 1 errors",
+            Some(1),
+            false,
+        );
         assert!(matches!(s, Status::Rejected));
         assert_eq!(e, Some(1));
     }
@@ -396,6 +500,7 @@ mod tests {
             target_dir: PathBuf::from("/target"),
             full_confirm: true,
             full_target_dir: None,
+            timeout_seconds: 900,
             mutations: vec![mutation()],
         };
         assert_eq!(target_dir_for(&manifest, true), PathBuf::from("/target"));
@@ -406,6 +511,56 @@ mod tests {
         let mut explicit = manifest.clone();
         explicit.full_target_dir = Some(PathBuf::from("/full"));
         assert_eq!(target_dir_for(&explicit, false), PathBuf::from("/full"));
+    }
+
+    #[cfg(unix)]
+    #[test]
+    fn run_marks_timeouts_without_a_survivor() {
+        use std::os::unix::fs::PermissionsExt;
+
+        let root = std::env::temp_dir().join(format!(
+            "spec-check-mutation-timeout-{}",
+            std::process::id()
+        ));
+        let _ = std::fs::remove_dir_all(&root);
+        let workspace = root.join("workspace");
+        let source = workspace.join("src/lib.rs");
+        std::fs::create_dir_all(source.parent().unwrap()).unwrap();
+        std::fs::write(&source, "fn f() { let x = 0; }\n").unwrap();
+        let fake = root.join("cargo-verus");
+        std::fs::write(&fake, "#!/bin/sh\nsleep 5\n").unwrap();
+        let mut perms = std::fs::metadata(&fake).unwrap().permissions();
+        perms.set_mode(0o755);
+        std::fs::set_permissions(&fake, perms).unwrap();
+        let manifest = Manifest {
+            target_workspace: workspace,
+            source: "src/lib.rs".into(),
+            package: "p".into(),
+            module: "m".into(),
+            target: None,
+            target_dir: root.join("target"),
+            full_confirm: true,
+            full_target_dir: None,
+            timeout_seconds: 1,
+            mutations: vec![Mutation {
+                id: "m1".into(),
+                description: "zero to one".into(),
+                old: "0".into(),
+                new: "1".into(),
+            }],
+        };
+        let report = run(
+            &manifest,
+            &fake,
+            Path::new("/nonexistent/z3"),
+            &root.join("out"),
+        )
+        .expect("timeout run");
+        assert!(matches!(report.baseline_focus.status, Status::TimedOut));
+        assert!(matches!(report.results[0].focus.status, Status::TimedOut));
+        assert_eq!(report.summary.timeouts, 1);
+        assert_eq!(report.summary.verified_survivors, 0);
+        let _ = std::fs::remove_dir_all(&root);
     }
 
     #[cfg(unix)]
@@ -441,6 +596,7 @@ mod tests {
             target_dir: root.join("target"),
             full_confirm: true,
             full_target_dir: None,
+            timeout_seconds: 900,
             mutations: vec![Mutation {
                 id: "m1".into(),
                 description: "zero to one".into(),

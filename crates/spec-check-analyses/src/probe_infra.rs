@@ -320,6 +320,49 @@ pub(crate) fn run_captured(
     Ok((status, log))
 }
 
+/// Like `run_captured`, but kills the child after `timeout`. Returns whether
+/// the deadline fired so callers can distinguish timeout from a real result.
+pub(crate) fn run_captured_timeout(
+    cmd: &mut Command,
+    log_path: &Path,
+    timeout: std::time::Duration,
+) -> Result<(Option<std::process::ExitStatus>, String, bool), String> {
+    use std::{thread, time::Instant};
+    if let Some(parent) = log_path.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+    let file = std::fs::OpenOptions::new()
+        .create(true)
+        .truncate(true)
+        .write(true)
+        .open(log_path)
+        .map_err(|e| e.to_string())?;
+    let err = file.try_clone().map_err(|e| e.to_string())?;
+    cmd.stdout(file).stderr(err);
+    let mut child = cmd
+        .spawn()
+        .map_err(|e| format!("failed to execute cargo-verus: {e}"))?;
+    let deadline = Instant::now() + timeout;
+    let mut timed_out = false;
+    let status = loop {
+        match child.try_wait().map_err(|e| e.to_string())? {
+            Some(status) => break Some(status),
+            None if Instant::now() >= deadline => {
+                timed_out = true;
+                let _ = child.kill();
+                break child.wait().ok();
+            }
+            None => thread::sleep(std::time::Duration::from_millis(100)),
+        }
+    };
+    let mut log = std::fs::read_to_string(log_path).map_err(|e| e.to_string())?;
+    log.push_str(&format!(
+        "\n[cargo-verus {}]\n",
+        if timed_out { "timed out" } else { "finished" }
+    ));
+    Ok((status, log, timed_out))
+}
+
 pub(crate) fn verus_env(cmd: &mut Command, z3: &Path) {
     cmd.env("VERUS_USE_RUSTUP", "0")
         .env("VERUS_Z3_PATH", z3)

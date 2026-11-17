@@ -30,6 +30,8 @@ pub struct Config {
     pub operators: Vec<String>,
     #[serde(default = "default_max")]
     pub max_mutants: usize,
+    #[serde(default = "default_timeout")]
+    pub timeout_seconds: u64,
 }
 
 fn default_true() -> bool {
@@ -37,6 +39,9 @@ fn default_true() -> bool {
 }
 fn default_max() -> usize {
     80
+}
+fn default_timeout() -> u64 {
+    900
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -468,6 +473,7 @@ pub fn generate(config: &Config) -> Result<(crate::mutation::Manifest, Generatio
         target_dir: config.target_dir.clone(),
         full_confirm: config.full_confirm,
         full_target_dir: None,
+        timeout_seconds: config.timeout_seconds,
         mutations,
     };
     Ok((manifest, report))
@@ -508,6 +514,7 @@ mod tests {
             functions: vec!["f".into()],
             operators: vec!["comparison_flip".into()],
             max_mutants: 20,
+            timeout_seconds: 900,
         };
         let (manifest, _) = generate(&config).unwrap();
         for m in &manifest.mutations {
@@ -544,6 +551,7 @@ mod tests {
             functions: vec!["f".into()],
             operators: vec!["comparison_flip".into()],
             max_mutants: 10,
+            timeout_seconds: 900,
         };
         let (manifest, _) = generate(&config).unwrap();
         assert!(
@@ -572,6 +580,7 @@ mod tests {
             functions: vec!["f".into()],
             operators: vec!["return_constant".into()],
             max_mutants: 10,
+            timeout_seconds: 900,
         };
         let (manifest, report) = generate(&config).unwrap();
         assert_eq!(report.generated, 1);

@@ -23,6 +23,7 @@ does not live in this repository.
   "target_dir": "/tmp/spec-check-mutation-target",
   "full_confirm": true,
   "full_target_dir": "/tmp/spec-check-mutation-target/full",
+  "timeout_seconds": 900,
   "mutations": [
     {
       "id": "SP-07",
@@ -39,7 +40,8 @@ does not live in this repository.
 - A focus-verified mutant is full-confirmed with `cargo-verus check` when
   `full_confirm` is true. Full confirmation uses `<target_dir>/full` by default,
   so a cached focused run cannot hide the full verification summary; override
-  with `full_target_dir`.
+  with `full_target_dir`. Each Verus run has a wall timeout (`timeout_seconds`,
+  default 900); timed-out runs are reported as `timeout`, not as survivors.
 - Source bytes are restored after the run, including on error.
 - `--vstd` is accepted for CLI parity with the other analyses; the target
   workspace's build configuration supplies the actual Verus/vstd context.
@@ -47,7 +49,7 @@ does not live in this repository.
 ## Command
 
 ```sh
-cargo-spec-check analyses-mutation \
+cargo-spec-check mutation \
   --manifest MUTATIONS.json \
   --cargo-verus /path/to/cargo-verus \
   --z3 /path/to/z3 \
@@ -55,11 +57,22 @@ cargo-spec-check analyses-mutation \
   --out OUT
 ```
 
+`analyses-mutation` is kept as a compatibility alias. Validate a manifest
+without running Verus:
+
+```sh
+cargo-spec-check mutation --manifest MUTATIONS.json --dry-run
+```
+
 Outputs:
 
 - `report.json` — baseline focus, per-mutant focus/full results, summary.
 - `results.jsonl` — one machine-readable record per mutant.
 - `logs/` — captured Verus output per run.
+
+Each run result also records `timed_out` and `cache_status` (`fresh`, `cached`,
+`timeout`, or `unknown`). Use a fresh target directory for an authoritative
+full confirmation; a cached cargo run cannot provide a verification summary.
 
 ## Interpretation
 
@@ -111,3 +124,22 @@ compile/reject/survivor rates. The generator does not claim semantic validity,
 reachability, or completeness. The syntax filter improves compileability; the
 retrospective benchmark still has exact recall 0/3, so HIR/MIR-guided or
 template-directed generation remains future work.
+
+
+## Generic triage (`mutation-triage`)
+
+`mutation-triage` joins a manifest, its JSONL results, and the pristine source:
+
+```sh
+cargo-spec-check mutation-triage \
+  --manifest MUTATIONS.json \
+  --results OUT/results.jsonl \
+  --source PATH/TO/SOURCE \
+  --registry OPTIONAL_FINDINGS.json \
+  --out OUT/triage.json
+```
+
+It classifies proof/spec regions, property templates, registry overlaps,
+local test/source intent references, and the confirmation route. It never
+promotes a survivor. Project-specific equivalence judgement, runtime evidence,
+and contract repair stay project-side.

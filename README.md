@@ -34,9 +34,19 @@ report. A `verified_survivor` is a **contract-gap candidate**, never an
 automatic bug verdict.
 
 ```sh
-cargo-spec-check analyses-mutation \
+cargo-spec-check mutation \
   --manifest MUTATIONS.json \
   --cargo-verus PATH --z3 PATH --vstd PATH --out OUT
+```
+
+`mutation --dry-run --manifest MUTATIONS.json` validates it without running
+Verus. `mutation-triage` joins the manifest, results, and source into a
+structured candidate review:
+
+```sh
+cargo-spec-check mutation-triage \
+  --manifest MUTATIONS.json --results OUT/results.jsonl \
+  --source PATH/TO/SOURCE --out OUT/triage.json
 ```
 
 The generator can produce that manifest from a frozen source file:
