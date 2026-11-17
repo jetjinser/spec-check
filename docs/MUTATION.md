@@ -22,6 +22,7 @@ does not live in this repository.
   "target": "x86_64-unknown-none",
   "target_dir": "/tmp/spec-check-mutation-target",
   "full_confirm": true,
+  "full_target_dir": "/tmp/spec-check-mutation-target/full",
   "mutations": [
     {
       "id": "SP-07",
@@ -36,7 +37,9 @@ does not live in this repository.
 - Every `old` snippet must occur exactly once in the pristine source.
 - `module` is used for `cargo-verus focus --verify-module`.
 - A focus-verified mutant is full-confirmed with `cargo-verus check` when
-  `full_confirm` is true.
+  `full_confirm` is true. Full confirmation uses `<target_dir>/full` by default,
+  so a cached focused run cannot hide the full verification summary; override
+  with `full_target_dir`.
 - Source bytes are restored after the run, including on error.
 - `--vstd` is accepted for CLI parity with the other analyses; the target
   workspace's build configuration supplies the actual Verus/vstd context.

@@ -39,6 +39,23 @@ use std::{
     process::Command,
 };
 mod check_flow;
+fn print_help() {
+    print!(
+        "cargo-spec-check\n\
+         \n\
+         Main check:\n\
+         \x20 cargo-spec-check --manifest-path PATH --package NAME --verus-root PATH --out PATH\n\
+         \n\
+         Contract mutation:\n\
+         \x20 cargo-spec-check mutation-generate --config FILE --out FILE [--report FILE]\n\
+         \x20 cargo-spec-check analyses-mutation --manifest FILE --cargo-verus PATH --z3 PATH --vstd PATH --out DIRECTORY\n\
+         \n\
+         Other analyses:\n\
+         \x20 analyses-vacuity, analyses-divergence, and legacy campaign commands are accepted.\n\
+         \x20 See docs/MUTATION.md and docs/ARCHITECTURE.md.\n"
+    );
+}
+
 fn check() -> Result<()> {
     let binary = env::current_exe()?;
     let binary_hash = hash(&fs::read(&binary)?)?;
@@ -46,6 +63,10 @@ fn check() -> Result<()> {
     let mut options = BTreeMap::new();
     if args.first().is_some_and(|s| s == "spec-check") {
         args.remove(0);
+    }
+    if args.is_empty() || (args.len() == 1 && (args[0] == "--help" || args[0] == "-h")) {
+        print_help();
+        return Ok(());
     }
     if args.first().is_some_and(|s| s == "analyses-vacuity") {
         let keys = ["--manifest", "--cargo-verus", "--z3", "--vstd", "--out"];

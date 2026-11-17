@@ -42,6 +42,11 @@ pub struct Manifest {
     /// Run a full crate check after a focused survivor. Defaults to true.
     #[serde(default = "default_true")]
     pub full_confirm: bool,
+    /// Optional target dir for full-crate confirmation. Using a separate dir
+    /// prevents a cached focused run from masking the full verification
+    /// summary. Defaults to `<target_dir>/full`.
+    #[serde(default)]
+    pub full_target_dir: Option<PathBuf>,
     pub mutations: Vec<Mutation>,
 }
 
@@ -193,6 +198,16 @@ fn first_error(text: &str) -> Option<String> {
         .map(|line| line.trim().chars().take(300).collect())
 }
 
+fn target_dir_for(manifest: &Manifest, focus: bool) -> PathBuf {
+    if focus {
+        return manifest.target_dir.clone();
+    }
+    manifest
+        .full_target_dir
+        .clone()
+        .unwrap_or_else(|| manifest.target_dir.join("full"))
+}
+
 fn run_one(
     manifest: &Manifest,
     cargo_verus: &Path,
@@ -206,12 +221,13 @@ fn run_one(
     if focus {
         verus_args.extend(["--verify-module", manifest.module.as_str()]);
     }
+    let target_dir = target_dir_for(manifest, focus);
     let mut cmd = crate::probe_infra::target_command(
         cargo_verus,
         mode,
         &manifest.target_workspace,
         &manifest.package,
-        &manifest.target_dir,
+        &target_dir,
         manifest.target.as_ref(),
         &verus_args,
         z3,
@@ -369,6 +385,29 @@ mod tests {
         assert_eq!(e, Some(1));
     }
 
+    #[test]
+    fn full_confirmation_uses_a_separate_target_dir() {
+        let manifest = Manifest {
+            target_workspace: PathBuf::from("/ws"),
+            source: "src/lib.rs".into(),
+            package: "p".into(),
+            module: "m".into(),
+            target: None,
+            target_dir: PathBuf::from("/target"),
+            full_confirm: true,
+            full_target_dir: None,
+            mutations: vec![mutation()],
+        };
+        assert_eq!(target_dir_for(&manifest, true), PathBuf::from("/target"));
+        assert_eq!(
+            target_dir_for(&manifest, false),
+            PathBuf::from("/target/full")
+        );
+        let mut explicit = manifest.clone();
+        explicit.full_target_dir = Some(PathBuf::from("/full"));
+        assert_eq!(target_dir_for(&explicit, false), PathBuf::from("/full"));
+    }
+
     #[cfg(unix)]
     #[test]
     fn run_restores_source_and_confirms_survivor() {
@@ -401,6 +440,7 @@ mod tests {
             target: None,
             target_dir: root.join("target"),
             full_confirm: true,
+            full_target_dir: None,
             mutations: vec![Mutation {
                 id: "m1".into(),
                 description: "zero to one".into(),
