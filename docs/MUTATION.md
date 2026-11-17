@@ -56,10 +56,11 @@ cargo-spec-check mutation \
   --cargo-verus /path/to/cargo-verus \
   --z3 /path/to/z3 \
   --vstd /path/to/verus/source \
-  --out OUT
+  --out OUT [--mode advisory|strict]
 ```
 
-`analyses-mutation` is kept as a compatibility alias. Validate a manifest
+`analyses-mutation` is kept as a compatibility alias. Advisory is the default;
+strict exits non-zero on survivors/timeouts/unknowns without promoting them. Validate a manifest
 without running Verus:
 
 ```sh
